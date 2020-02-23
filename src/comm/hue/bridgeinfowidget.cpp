@@ -15,7 +15,7 @@
 namespace hue {
 
 BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget* parent)
-    : cor::ListItemWidget(bridge.IP(), parent),
+    : cor::ListItemWidget(bridge.id(), parent),
       mState{EBridgeDiscoveryState::unknown} {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     setStyleSheet(styleSheet);
@@ -125,14 +125,12 @@ BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget* parent)
 }
 
 void BridgeInfoWidget::updateBridge(const hue::Bridge& bridge) {
-    if (!(bridge == mBridge)) {
-        mNameWidget->setText(bridge.customName());
-        mIPAddress->setText("<b>IP:</b>  " + bridge.IP());
-        mAPI->setText("<b>API:</b>  " + bridge.API());
-        mID->setText("<b>ID:</b>  " + bridge.id());
-        handleBridgeState(bridge.state());
-        mBridge = bridge;
-    }
+    mNameWidget->setText(bridge.customName());
+    mIPAddress->setText("<b>IP:</b>  " + bridge.IP());
+    mAPI->setText("<b>API:</b>  " + bridge.API());
+    mID->setText("<b>ID:</b>  " + bridge.id());
+    handleBridgeState(bridge.state());
+    mBridge = bridge;
 }
 
 void BridgeInfoWidget::handleBridgeState(EBridgeDiscoveryState state) {
@@ -150,7 +148,8 @@ void BridgeInfoWidget::handleBridgeState(EBridgeDiscoveryState state) {
             auto width = int(min * 0.333f);
             mImage->setPixmap(
                 mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-        } else if (state == EBridgeDiscoveryState::lookingForResponse) {
+        } else if (state == EBridgeDiscoveryState::lookingForResponse
+                   || state == EBridgeDiscoveryState::testingConnectionInfo) {
             mImage->setMovie(mMovie);
             mMovie->start();
         }
@@ -192,13 +191,12 @@ void BridgeInfoWidget::mouseReleaseEvent(QMouseEvent*) {
 
 void BridgeInfoWidget::resize() {
     auto min = width();
-    if (mBridge.state() != EBridgeDiscoveryState::lookingForResponse) {
+    if (mBridge.state() != EBridgeDiscoveryState::lookingForResponse
+        && mBridge.state() != EBridgeDiscoveryState::testingConnectionInfo) {
         auto width = int(min * 0.45f);
         mImage->setFixedWidth(width);
         mImage->setPixmap(
             mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    } else {
-        mImage->setFixedWidth(int(min * 0.45f));
     }
     auto yPos = 0;
 

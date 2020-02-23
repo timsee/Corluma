@@ -120,13 +120,14 @@ void BridgeDiscovery::reloadGroupData() {
 
 void BridgeDiscovery::handleDiscovery() {
     for (auto notFoundBridge : mNotFoundBridges) {
-        if (notFoundBridge.IP() != "") {
-            if (notFoundBridge.username() == "") {
+        if (!notFoundBridge.IP().isEmpty()) {
+            if (notFoundBridge.username().isEmpty()) {
                 requestUsername(notFoundBridge);
                 // IP addresses can change, if a username exists for a previous IP but not a new
                 // one, test it on new IP
                 for (auto innerBridge : mNotFoundBridges) {
-                    if (notFoundBridge.IP() != innerBridge.IP() && innerBridge.username() != "") {
+                    if (notFoundBridge.IP() != innerBridge.IP()
+                        && !innerBridge.username().isEmpty()) {
                         notFoundBridge.username(innerBridge.username());
                         attemptFinalCheck(notFoundBridge);
                     }
@@ -169,7 +170,7 @@ void BridgeDiscovery::attemptFinalCheck(const hue::Bridge& bridge) {
     request.setHeader(QNetworkRequest::ContentTypeHeader,
                       QStringLiteral("text/html; charset=utf-8"));
 #ifdef DEBUG_BRIDGE_DISCOVERY
-    qDebug() << __func__;
+    qDebug() << __func__ << bridge;
 #endif
     mNetworkManager->get(request);
 }
@@ -220,174 +221,246 @@ void BridgeDiscovery::requestUsername(const hue::Bridge& bridge) {
 // Slots
 //-----------------
 
-void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
-    if (reply->error() == QNetworkReply::NoError) {
-        QString string = reply->readAll();
-        QString IP = reply->url().toString();
-#ifdef DEBUG_BRIDGE_DISCOVERY
-        qDebug() << __func__ << "Response:" << string;
-#endif
-        QJsonDocument jsonResponse = QJsonDocument::fromJson(string.toUtf8());
-        if (IP != kNUPnPAddress) {
-            // check validity of the document
-            if (!jsonResponse.isNull()) {
-                if (jsonResponse.isObject()) {
-                    QStringList list = IP.split("/");
-                    QString username;
-                    if (list.size() == 5) {
-                        IP = list[2];
-                        username = list[4];
-                    }
 
-                    if (IP != "" && username != "") {
-                        hue::Bridge bridgeToMove;
-                        bool bridgeFound = false;
-                        for (auto bridge : mNotFoundBridges) {
-                            if (bridge.username() == username && bridge.IP() == IP) {
-                                bridgeFound = true;
-                                bridgeToMove = bridge;
-                                auto it = std::find(mNotFoundBridges.begin(),
-                                                    mNotFoundBridges.end(),
-                                                    bridge);
-                                mNotFoundBridges.erase(it);
-                                break;
-                            }
-                        }
-                        if (bridgeFound) {
-                            bridgeToMove.state(EBridgeDiscoveryState::connected);
-                            mFoundBridges.insert(bridgeToMove.id().toStdString(), bridgeToMove);
-                            updateJSON(bridgeToMove);
-                            parseInitialUpdate(bridgeToMove, jsonResponse);
-                        }
+void BridgeDiscovery::handleNUPnPReply(const QJsonDocument& jsonResponse) {
+    if (jsonResponse.isArray()) {
+        if (!jsonResponse.array().empty()) {
+#ifdef DEBUG_BRIDGE_DISCOVERY
+            qDebug() << __func__ << "NUPnP packet:" << jsonResponse;
+#endif
+            for (auto ref : jsonResponse.array()) {
+                if (ref.isObject()) {
+                    QJsonObject object = ref.toObject();
+                    if (object["internalipaddress"].isString() && object["id"].isString()) {
+                        // Used by N-UPnP, this gives the IP address of the Hue bridge
+                        hue::Bridge bridge(object["internalipaddress"].toString(),
+                                           generateUniqueName(),
+                                           object["id"].toString().toLower());
+                        testNewlyDiscoveredBridge(bridge);
                     }
-                } else if (jsonResponse.isArray()) {
-                    if (jsonResponse.array().empty()) {
-                        // qDebug() << " test packet received from " << IP;
-                    } else {
-                        QJsonObject outsideObject = jsonResponse.array().at(0).toObject();
-                        if (outsideObject["error"].isObject()) {
-                            for (auto&& notFoundBridge : mNotFoundBridges) {
-                                auto modifiedIP = notFoundBridge.IP() + "/api";
-                                if (IP.contains(modifiedIP)) {
-                                    notFoundBridge.state(EBridgeDiscoveryState::lookingForUsername);
-                                }
-                            }
-                            // error packets are sent when a message cannot be parsed
-                            QJsonObject innerObject = outsideObject["error"].toObject();
-                            if (innerObject["description"].isString()) {
-                                // qDebug() << "Description" <<
-                                // innerObject["description"].toString();
-                            }
-                        } else if (outsideObject["success"].isObject()) {
-                            // success packets are sent when a message is parsed and the Hue react
-                            // in some  way.
-                            QJsonObject innerObject = outsideObject["success"].toObject();
-                            if (innerObject["username"].isString()) {
-                                QStringList list = IP.split("/");
-                                if (list.size() == 4) {
-                                    IP = list[2];
-                                }
-                                for (auto&& notFoundBridge : mNotFoundBridges) {
-                                    if (IP == notFoundBridge.IP()) {
-                                        notFoundBridge.username(innerObject["username"].toString());
-                                        qDebug()
-                                            << "Discovered username:" << notFoundBridge.username()
-                                            << " for " << notFoundBridge.IP();
-                                    }
-                                }
-                            }
-                        } else {
-                            qDebug() << "Document is an array, but we don't recognize it...";
-                        }
-                    }
-                } else {
-                    qDebug() << "Document is not an object";
                 }
-            } else {
-                qDebug() << "Invalid JSON...";
             }
         } else {
 #ifdef DEBUG_BRIDGE_DISCOVERY
-            qDebug() << __func__ << "NUPnP packet:" << string;
+            qDebug() << __func__ << "NUPnP packet is empty";
 #endif
-            if (jsonResponse.isArray()) {
-                // qDebug() << "got a NUPnP packet:" << string;
-                for (auto ref : jsonResponse.array()) {
-                    if (ref.isObject()) {
-                        QJsonObject object = ref.toObject();
-                        if (object["internalipaddress"].isString() && object["id"].isString()) {
-                            // Used by N-UPnP, this gives the IP address of the Hue bridge
-                            hue::Bridge bridge(object["internalipaddress"].toString(),
-                                               generateUniqueName(),
-                                               object["id"].toString().toLower());
-                            testNewlyDiscoveredBridge(bridge);
-                        }
-                    }
-                }
-            }
         }
     }
 }
 
-void BridgeDiscovery::parseInitialUpdate(const hue::Bridge& bridge, const QJsonDocument& json) {
-    if (json.isObject()) {
-        QJsonObject object = json.object();
-
-        if (object["config"].isObject()) {
-            QJsonObject configObject = object["config"].toObject();
-            auto bridgeCopy = bridge;
-            bridgeCopy.updateConfig(configObject);
-            updateJSON(bridgeCopy);
+void BridgeDiscovery::handleStandardReply(const QString& IP, const QJsonDocument& jsonResponse) {
+    // check validity of the document
+    if (!jsonResponse.isNull()) {
+        if (jsonResponse.isObject()) {
+            handleInitialDiscoveryPacket(IP, jsonResponse.object());
+        } else if (jsonResponse.isArray()) {
+            handleResponseArray(IP, jsonResponse.array());
+        } else {
+            qDebug() << "Document is not an object";
         }
+    } else {
+        qDebug() << "Invalid JSON...";
+    }
+}
 
-        QJsonObject lightsObject;
-        if (object["lights"].isObject()) {
-            lightsObject = object["lights"].toObject();
-            QStringList keys = lightsObject.keys();
-            QJsonArray lightsArray;
-            std::vector<HueMetadata> lights;
-            for (auto& key : keys) {
-                if (lightsObject.value(key).isObject()) {
-                    QJsonObject innerObject = lightsObject.value(key).toObject();
-                    if (innerObject["uniqueid"].isString() && innerObject["name"].isString()) {
-                        double index = key.toDouble();
-
-                        HueMetadata hueLight(innerObject, bridge.id(), index);
-                        lights.push_back(hueLight);
-
-                        QJsonObject lightObject;
-                        lightObject["uniqueid"] = hueLight.uniqueID();
-                        lightObject["index"] = index;
-                        lightObject["name"] = hueLight.name();
-                        lightObject["swversion"] = hueLight.softwareVersion();
-                        lightObject["hardwareType"] = hardwareTypeToString(hueLight.hardwareType());
-                        lightsArray.push_back(lightObject);
+void BridgeDiscovery::handleResponseArray(const QString& fullIP, const QJsonArray& array) {
+    // this function handles resolving two states, but it gets its packets in convoluted ways. The
+    // first state is getting an initial response from an IP, which will be an error if no username
+    // is provided. If this is the case, it sets the not found bridge to be looking for a username.
+    // This also handles when a username is recieved from the bridge, which sets the bridge into the
+    // state of testing its username, since a username and IP is all thats needed to fully talk to a
+    // hue bridge.
+    if (!array.empty()) {
+#ifdef DEBUG_BRIDGE_DISCOVERY
+        qDebug() << __func__ << " error packet: " << array;
+#endif
+        QJsonObject outsideObject = array.at(0).toObject();
+        if (outsideObject["error"].isObject()) {
+            for (auto&& notFoundBridge : mNotFoundBridges) {
+                auto modifiedIP = notFoundBridge.IP() + "/api";
+                if (fullIP.contains(modifiedIP)) {
+                    if (notFoundBridge.username().isEmpty()) {
+#ifdef DEBUG_BRIDGE_DISCOVERY
+                        qDebug() << __func__ << " Found a response for " << notFoundBridge.IP()
+                                 << " switching to looking for username";
+#endif
+                        notFoundBridge.state(EBridgeDiscoveryState::lookingForUsername);
+                    } else {
+                        qDebug() << " error packet when username exists"
+                                 << notFoundBridge.username();
                     }
                 }
             }
-
-
-            cor::Dictionary<HueMetadata> lightDict;
-            for (const auto& light : lights) {
-                lightDict.insert(light.uniqueID().toStdString(), light);
+            // error packets are sent when a message cannot be parsed
+            QJsonObject innerObject = outsideObject["error"].toObject();
+            if (innerObject["description"].isString()) {
+                // qDebug() << "Description" <<
+                // innerObject["description"].toString();
             }
+        } else if (outsideObject["success"].isObject()) {
+#ifdef DEBUG_BRIDGE_DISCOVERY
+            qDebug() << __func__ << " success packet: " << outsideObject;
+#endif
+            QJsonObject innerObject = outsideObject["success"].toObject();
+            if (innerObject["username"].isString()) {
+#ifdef DEBUG_BRIDGE_DISCOVERY
+                qDebug() << __func__ << " Found a username!";
+#endif
+                QStringList list = fullIP.split("/");
+                QString IP;
+                if (list.size() == 4) {
+                    IP = list[2];
+                }
 
-            auto bridgeResult = mFoundBridges.item(bridge.id().toStdString());
-            if (bridgeResult.second) {
-                auto foundBridge = bridgeResult.first;
-                foundBridge.lights(lightDict);
-                mFoundBridges.update(foundBridge.id().toStdString(), foundBridge);
+                for (auto&& notFoundBridge : mNotFoundBridges) {
+                    if (IP == notFoundBridge.IP()) {
+                        notFoundBridge.username(innerObject["username"].toString());
+                        notFoundBridge.state(EBridgeDiscoveryState::testingConnectionInfo);
+                        qDebug() << "Discovered username:" << notFoundBridge.username() << " for "
+                                 << notFoundBridge.IP();
+                    }
+                }
             }
+        } else {
+            qDebug() << "Document is an array, but we don't recognize it...";
+        }
+    } else {
+        qDebug() << " json response array is empty";
+    }
+}
 
-            updateJSONLights(bridge, lightsArray);
+QString BridgeDiscovery::idFromBridgePacket(const QJsonObject& object) {
+    if (object["config"].isObject()) {
+        auto configObject = object["config"].toObject();
+        if (configObject["bridgeid"].isString()) {
+            return configObject["bridgeid"].toString().toLower();
+        } else {
+            qDebug() << " config object's bridgeid is not correct" << configObject;
+        }
+    }
 
-            if (object["schedules"].isObject() && object["groups"].isObject()) {
-                QJsonObject schedulesObject = object["schedules"].toObject();
-                QJsonObject groupsObject = object["groups"].toObject();
-                auto bridgeCopy = bridge;
-                bridgeCopy.lights(lightDict);
-                mHue->bridgeDiscovered(bridgeCopy, lightsObject, groupsObject, schedulesObject);
+    return QString();
+}
+
+void BridgeDiscovery::handleInitialDiscoveryPacket(const QString& fullIP,
+                                                   const QJsonObject& object) {
+    QStringList list = fullIP.split("/");
+    QString IP;
+    QString username;
+    if (list.size() == 5) {
+        IP = list[2];
+        username = list[4];
+    }
+
+    // get the id from the initial discovery packet, so that we can properly check in the not found
+    // bridges for this light. When at all possible, we try to use id for checks to simplify logic.
+    QString id = idFromBridgePacket(object);
+#ifdef DEBUG_BRIDGE_DISCOVERY
+    qDebug() << __func__ << "IP: " << IP << "username" << username << " id " << id;
+#endif
+
+    if (!id.isEmpty()) {
+        hue::Bridge bridgeToMove;
+        bool bridgeFound = false;
+        for (auto bridge : mNotFoundBridges) {
+            if (bridge.id() == id) {
+                bridgeFound = true;
+                bridgeToMove = bridge;
+                auto it = std::find(mNotFoundBridges.begin(), mNotFoundBridges.end(), bridge);
+                mNotFoundBridges.erase(it);
+                break;
             }
+        }
+        if (bridgeFound) {
+#ifdef DEBUG_BRIDGE_DISCOVERY
+            qDebug() << __func__ << "found bridge in not found bridges, removing";
+#endif
+            bridgeToMove.state(EBridgeDiscoveryState::connected);
+            mFoundBridges.insert(bridgeToMove.id().toStdString(), bridgeToMove);
+            updateJSON(bridgeToMove);
+            parseInitialUpdate(bridgeToMove, object);
+        } else {
+#ifdef DEBUG_BRIDGE_DISCOVERY
+            qDebug() << __func__ << "did not find bridge in list of not found bridges"
+                     << jsonResponse;
+#endif
+        }
+    } else {
+#ifdef DEBUG_BRIDGE_DISCOVERY
+        qDebug() << __func__ << "The received id was empty! IP: " << IP << " username: " << username
+                 << " id " << id;
+#endif
+    }
+}
+
+void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
+    if (reply->error() == QNetworkReply::NoError) {
+        QString string = reply->readAll();
+        QString IP = reply->url().toString();
+        QJsonDocument jsonResponse = QJsonDocument::fromJson(string.toUtf8());
+        if (IP == kNUPnPAddress) {
+            handleNUPnPReply(jsonResponse);
+        } else {
+            handleStandardReply(IP, jsonResponse);
+        }
+    }
+}
+
+void BridgeDiscovery::parseInitialUpdate(const hue::Bridge& bridge, const QJsonObject& object) {
+    if (object["config"].isObject()) {
+        QJsonObject configObject = object["config"].toObject();
+        auto bridgeCopy = bridge;
+        bridgeCopy.updateConfig(configObject);
+        updateJSON(bridgeCopy);
+    }
+
+    QJsonObject lightsObject;
+    if (object["lights"].isObject()) {
+        lightsObject = object["lights"].toObject();
+        QStringList keys = lightsObject.keys();
+        QJsonArray lightsArray;
+        std::vector<HueMetadata> lights;
+        for (auto& key : keys) {
+            if (lightsObject.value(key).isObject()) {
+                QJsonObject innerObject = lightsObject.value(key).toObject();
+                if (innerObject["uniqueid"].isString() && innerObject["name"].isString()) {
+                    auto index = int(key.toDouble());
+
+                    HueMetadata hueLight(innerObject, bridge.id(), index);
+                    lights.push_back(hueLight);
+
+                    QJsonObject lightObject;
+                    lightObject["uniqueid"] = hueLight.uniqueID();
+                    lightObject["index"] = index;
+                    lightObject["name"] = hueLight.name();
+                    lightObject["swversion"] = hueLight.softwareVersion();
+                    lightObject["hardwareType"] = hardwareTypeToString(hueLight.hardwareType());
+                    lightsArray.push_back(lightObject);
+                }
+            }
+        }
+
+
+        cor::Dictionary<HueMetadata> lightDict;
+        for (const auto& light : lights) {
+            lightDict.insert(light.uniqueID().toStdString(), light);
+        }
+
+        auto bridgeResult = mFoundBridges.item(bridge.id().toStdString());
+        if (bridgeResult.second) {
+            auto foundBridge = bridgeResult.first;
+            foundBridge.lights(lightDict);
+            mFoundBridges.update(foundBridge.id().toStdString(), foundBridge);
+        }
+
+        updateJSONLights(bridge, lightsArray);
+
+        if (object["schedules"].isObject() && object["groups"].isObject()) {
+            QJsonObject schedulesObject = object["schedules"].toObject();
+            QJsonObject groupsObject = object["groups"].toObject();
+            auto bridgeCopy = bridge;
+            bridgeCopy.lights(lightDict);
+            mHue->bridgeDiscovered(bridgeCopy, lightsObject, groupsObject, schedulesObject);
         }
     }
 }
@@ -408,15 +481,15 @@ void BridgeDiscovery::receivedUPnP(const QHostAddress& sender, const QString& pa
 #endif
 
         // get ID from UPnP
-        auto id = sender.toString();
+        auto IP = sender.toString();
+        QString id;
         QStringList paramArray = payload.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
-        for (const auto& param : paramArray) {
+        for (auto param : paramArray) {
             if (param.contains("hue-bridgeid: ")) {
-                auto lightString = param;
-                id = lightString.remove("hue-bridgeid: ").toLower();
+                id = param.remove("hue-bridgeid: ").toLower();
             }
         }
-        hue::Bridge bridge(id, generateUniqueName());
+        hue::Bridge bridge(IP, generateUniqueName(), id);
         testNewlyDiscoveredBridge(bridge);
     }
 }
@@ -574,7 +647,7 @@ void BridgeDiscovery::updateJSON(const hue::Bridge& bridge) {
     for (auto value : array) {
         bool detectChanges = false;
         QJsonObject object = value.toObject();
-        hue::Bridge jsonBridge(object);
+        hue::Bridge jsonBridge(bridge.state(), object);
         if ((jsonBridge.id() == bridge.id()) && (newJsonObject != object)) {
             // check IP, add to copy if different
             if (jsonBridge.IP() != bridge.IP()) {
@@ -602,7 +675,7 @@ void BridgeDiscovery::updateJSON(const hue::Bridge& bridge) {
                 object["customName"] = bridge.customName();
             }
 
-            if (jsonBridge.macaddress() != bridge.macaddress() && bridge.macaddress() != "") {
+            if (jsonBridge.macaddress() != bridge.macaddress() && !bridge.macaddress().isEmpty()) {
                 detectChanges = true;
                 object["macaddress"] = bridge.macaddress();
             }
@@ -632,7 +705,7 @@ void BridgeDiscovery::updateJSONLights(const hue::Bridge& bridge, const QJsonArr
     for (auto value : array) {
         bool detectChanges = false;
         QJsonObject object = value.toObject();
-        hue::Bridge jsonBridge(object);
+        hue::Bridge jsonBridge(bridge.state(), object);
         // check if the controller is the same but the JSON isn't
         if (jsonBridge.id() == bridge.id()) {
             foundBridge = true;
@@ -708,7 +781,10 @@ bool BridgeDiscovery::loadJSON() {
                 QJsonObject object = value.toObject();
                 if (object["username"].isString() && object["IP"].isString()
                     && object["id"].isString()) {
-                    mNotFoundBridges.push_back(object);
+                    auto bridge = hue::Bridge(EBridgeDiscoveryState::testingConnectionInfo, object);
+                    // since we are loading information from JSON, we haven't verified its correct
+                    // yet.
+                    mNotFoundBridges.push_back(bridge);
                 }
             }
             return true;

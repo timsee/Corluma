@@ -12,7 +12,7 @@
 
 namespace hue {
 
-Bridge::Bridge(const QJsonObject& object) {
+Bridge::Bridge(EBridgeDiscoveryState state, const QJsonObject& object) {
     if (object["username"].isString() && object["IP"].isString() && object["id"].isString()) {
         mUsername = object["username"].toString();
         mIP = object["IP"].toString();
@@ -44,6 +44,8 @@ Bridge::Bridge(const QJsonObject& object) {
             mLights.insert(hueLight.uniqueID().toStdString(), hueLight);
         }
     }
+
+    mState = state;
 }
 
 QJsonObject Bridge::toJson() const {

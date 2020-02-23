@@ -40,7 +40,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
       mDataSyncNanoLeaf{new DataSyncNanoLeaf(mData, mComm, mAppSettings)},
       mSyncStatus{new SyncStatus(this)},
       mShareUtils{new ShareUtils(this)},
-      mSettingsPage{new SettingsPage(this, mGroups, mAppSettings, mShareUtils)},
+      mSettingsPage{new SettingsPage(this, mGroups, mComm, mAppSettings, mShareUtils)},
       mGreyOut{new GreyOutOverlay(this)} {
     // initialize geometry
     setGeometry(0, 0, startingSize.width(), startingSize.height());
@@ -85,7 +85,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     mSettingsPage->setVisible(false);
     mSettingsPage->isOpen(false);
     connect(mSettingsPage, SIGNAL(closePressed()), this, SLOT(settingsClosePressed()));
-    connect(mSettingsPage, SIGNAL(clickedInfoWidget()), this, SLOT(hueInfoWidgetClicked()));
+    connect(mSettingsPage, SIGNAL(clickedInfoWidget()), this, SLOT(lightInfoWidgetClicked()));
     connect(mSettingsPage, SIGNAL(clickedDiscovery()), this, SLOT(pushInDiscovery()));
     connect(mSettingsPage, SIGNAL(clickedLoadJSON(QString)), this, SLOT(loadJSON(QString)));
 
@@ -185,10 +185,10 @@ void MainWindow::loadJSON(QString path) {
         mLeftHandMenu->clearWidgets();
         mData->clearLights();
         mGroups->removeAppData();
+        mComm->hue()->discovery()->reloadGroupData();
         if (!mGroups->loadExternalData(path)) {
             qDebug() << "WARNING: loading external data failed at " << path;
         } else {
-            mComm->hue()->discovery()->reloadGroupData();
             qDebug() << "New app data saved!";
             mMainViewport->loadMoodPage();
         }
@@ -276,16 +276,6 @@ void MainWindow::loadPages() {
 
         mMoodDetailedWidget->setGeometry(0, -1 * height(), width(), height());
         mMoodDetailedWidget->setVisible(false);
-
-        // --------------
-        // Setup Light Info Widget
-        // --------------
-
-        mLightInfoWidget = new LightInfoListWidget(this, mAppSettings);
-        mLightInfoWidget->isOpen(false);
-
-        connect(mLightInfoWidget, SIGNAL(pressedClose()), this, SLOT(lightInfoClosePressed()));
-        mLightInfoWidget->setGeometry(0, -1 * height(), width(), height());
 
         mSettingsPage->enableButtons(true);
 
@@ -406,10 +396,12 @@ void MainWindow::switchToColorPage() {
 
 void MainWindow::settingsClosePressed() {
     pushOutSettingsPage();
-    if (!mDiscoveryPage->isOpen()) {
+    // this fixes the higlight of the left hand menu when its always open. "Settings" only gets
+    // highlighted if its always open. Checking if discovery page is open fixes an edge case where
+    // settings is called from discovery. this makes settings overlay over discovery, so correcting
+    // the left hand menu isnt necessary.
+    if (mLeftHandMenu->alwaysOpen() && !mDiscoveryPage->isOpen()) {
         mLeftHandMenu->buttonPressed(mMainViewport->currentPage());
-    } else {
-        mLeftHandMenu->buttonPressed(EPage::discoveryPage);
     }
 }
 
@@ -491,16 +483,6 @@ void MainWindow::detailedMoodDisplay(std::uint64_t key) {
     mMoodDetailedWidget->pushIn();
 }
 
-void MainWindow::hueInfoWidgetClicked() {
-    mGreyOut->greyOut(true);
-
-    mLightInfoWidget->scrollArea()->updateHues(mComm->hue()->discovery()->lights());
-    mLightInfoWidget->scrollArea()->updateNanoLeafs(mComm->nanoleaf()->lights().items());
-    mLightInfoWidget->scrollArea()->updateAruCorLights(mComm->arducor()->arduCorLights());
-    mLightInfoWidget->resize();
-    mLightInfoWidget->pushIn();
-}
-
 void MainWindow::editClosePressed() {
     mGreyOut->greyOut(false);
     if (mEditGroupPage->isOpen()) {
@@ -522,11 +504,6 @@ void MainWindow::detailedClosePressed() {
     mMoodDetailedWidget->pushOut();
 }
 
-
-void MainWindow::lightInfoClosePressed() {
-    mGreyOut->greyOut(false);
-    mLightInfoWidget->pushOut();
-}
 
 void MainWindow::resize() {
     mLeftHandMenu->resize();
@@ -629,10 +606,6 @@ void MainWindow::resize() {
             mMoodDetailedWidget->resize();
         }
 
-        if (mLightInfoWidget->isOpen()) {
-            mLightInfoWidget->resize();
-        }
-
         mRoutineWidget->resize(mMainViewport->x(),
                                QSize(mMainViewport->width(), mMainViewport->height()));
     }
@@ -657,10 +630,6 @@ void MainWindow::greyoutClicked() {
 
     if (mEditMoodPage->isOpen() || mEditGroupPage->isOpen()) {
         editClosePressed();
-    }
-
-    if (mLightInfoWidget->isOpen()) {
-        lightInfoClosePressed();
     }
 }
 
@@ -773,13 +742,6 @@ void MainWindow::mouseReleaseEvent(QMouseEvent* event) {
                 && mData->empty()) {
                 mTopMenu->pushInTapToSelectButton();
             }
-        } else if (!mLeftHandMenu->isIn()) {
-            mGreyOut->greyOut(true);
-            mLeftHandMenu->pushIn();
-            mTopMenu->pushOutTapToSelectButton();
-            if (mSettingsPage->isOpen()) {
-                settingsClosePressed();
-            }
         } else if (!mLeftHandMenu->isIn()
                    && (mDiscoveryPage->isOpen() || mSettingsPage->isOpen())) {
             mLeftHandMenu->pushIn();
@@ -820,10 +782,6 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
         return;
     } else if (mDiscoveryPage->isOpen()) {
         pushOutDiscovery();
-    }
-
-    if (mMainViewport->currentPage() == page) {
-        ignorePushOut = true;
     }
 
     if (page == EPage::settingsPage || page == EPage::discoveryPage) {
@@ -958,12 +916,12 @@ void MainWindow::setupStateObserver() {
     connect(mSyncStatus, SIGNAL(statusChanged(bool)), mStateObserver, SLOT(dataInSync(bool)));
 
     // light info widget
-    connect(mLightInfoWidget,
+    connect(mSettingsPage->lightInfoWidget(),
             SIGNAL(lightNameChanged(QString, QString)),
             mStateObserver,
             SLOT(lightNameChange(QString, QString)));
 
-    connect(mLightInfoWidget,
+    connect(mSettingsPage->lightInfoWidget(),
             SIGNAL(deleteLight(QString)),
             mStateObserver,
             SLOT(deleteLight(QString)));

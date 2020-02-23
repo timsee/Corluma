@@ -42,6 +42,9 @@ public:
     /// true if checked, false otherwise.
     bool checked() { return mIsChecked; }
 
+    /// resize programmatically
+    void resize();
+
 signals:
 
     /// signals the bridge's key when the discover hues button is pressed
@@ -98,9 +101,6 @@ private slots:
     void deleteButtonPressed();
 
 private:
-    /// resize programmatically
-    void resize();
-
     /// state of bridge
     EBridgeDiscoveryState mState;
 

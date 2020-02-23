@@ -7,13 +7,15 @@
 #include <QScrollArea>
 #include <QWidget>
 
+#include "comm/commlayer.h"
 #include "cor/objects/page.h"
 #include "cor/widgets/slider.h"
 #include "cor/widgets/webview.h"
 #include "globalsettingswidget.h"
+#include "greyoutoverlay.h"
+#include "lightinfolistwidget.h"
 #include "settingsbutton.h"
 #include "shareutils/shareutils.hpp"
-
 
 /// enum for state of corluma web views, tracks which is shown
 enum class ECorlumaWebView { FAQ, copyright, none };
@@ -45,6 +47,7 @@ public:
      */
     explicit SettingsPage(QWidget* parent,
                           GroupData* parser,
+                          CommLayer* comm,
                           AppSettings* appSettings,
                           ShareUtils* shareUtils);
 
@@ -65,6 +68,9 @@ public:
      * the copyright page's button won't ever disable, but the View/Edit Lights button will.
      */
     void enableButtons(bool enable);
+
+    /// pointer to light info widget
+    LightInfoListWidget* lightInfoWidget() { return mLightInfoWidget; }
 
 signals:
 
@@ -96,6 +102,7 @@ signals:
     void clickedLoadJSON(QString path);
 
 private slots:
+
     /*!
      * \brief closeButtonPressed signaled from close button, emits a close signal.
      */
@@ -108,8 +115,17 @@ private slots:
      */
     void settingsButtonPressed(const QString& title);
 
+    /// called when the greyout is clicked
+    void greyOutClicked();
+
     /// hides whatever webview is showing. If none is showing, this does nothing.
     void hideCurrentWebView();
+
+    /// light info widgedt clicked
+    void lightInfoWidgetClicked();
+
+    /// light info widget close button pressed.
+    void lightInfoClosePressed();
 
 protected:
     /*!
@@ -192,6 +208,15 @@ private:
 
     /// pointer to object that handles sharing on mobile devices.
     ShareUtils* mShareUtils;
+
+    /// pointer to comm layer
+    CommLayer* mComm;
+
+    /// widget for greying out the page when other widgets are overlaid
+    GreyOutOverlay* mGreyOut;
+
+    /// widget for displaying information about lights
+    LightInfoListWidget* mLightInfoWidget;
 
     /// true if showing debug options, false otherwise.
     bool mShowingDebug;

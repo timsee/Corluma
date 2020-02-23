@@ -21,7 +21,7 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer* comm, QWidget* parent)
       mIPWidget(new cor::TextInputWidget(parentWidget()->parentWidget(),
                                          "Add an IP Address for a Bridge:",
                                          "192.168.0.100")),
-      mGreyout{new GreyOutOverlay(parentWidget()->parentWidget())}, // this is ugly
+      mGreyout{new GreyOutOverlay(parentWidget()->parentWidget())},
       mHueDiscoveryState{EHueDiscoveryState::findingIpAddress} {
     mScale = 0.4f;
 
@@ -67,20 +67,12 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer* comm, QWidget* parent)
     mBridgeSchedulesWidget->setVisible(false);
     mBridgeSchedulesWidget->isOpen(false);
     connect(mBridgeSchedulesWidget, SIGNAL(closePressed()), this, SLOT(schedulesClosePressed()));
+
+    mGreyout->greyOut(false);
 }
 
 void DiscoveryHueWidget::hueDiscoveryUpdate(EHueDiscoveryState newState) {
     mHueDiscoveryState = newState;
-
-    hue::Bridge notFoundBridge;
-    for (const auto& foundBridges : mComm->hue()->discovery()->notFoundBridges()) {
-        notFoundBridge = foundBridges;
-    }
-
-    hue::Bridge foundBridge;
-    for (const auto& foundBridges : mComm->hue()->discovery()->bridges().items()) {
-        foundBridge = foundBridges;
-    }
 
     switch (mHueDiscoveryState) {
         case EHueDiscoveryState::findingIpAddress:
@@ -138,7 +130,7 @@ void DiscoveryHueWidget::updateBridgeGUI() {
         int widgetIndex = -1;
         int i = 0;
         for (const auto& widget : mListWidget->widgets()) {
-            if (widget->key() == bridge.IP()) {
+            if (widget->key() == bridge.id()) {
                 auto bridgeInfoWidget = dynamic_cast<hue::BridgeInfoWidget*>(widget);
                 widgetIndex = i;
                 bridgeInfoWidget->updateBridge(bridge);
@@ -328,19 +320,23 @@ void DiscoveryHueWidget::resize() {
     mListWidget->mainWidget()->setFixedHeight(yHeight);
     mListWidget->mainWidget()->setFixedWidth(width());
     mHueLightDiscovery->resize();
+    // call resize function of each widget
+    for (auto widget : mListWidget->widgets()) {
+        auto bridgeInfoWidget = dynamic_cast<hue::BridgeInfoWidget*>(widget);
+        bridgeInfoWidget->resize();
+    }
 }
 
 void DiscoveryHueWidget::resizeEvent(QResizeEvent*) {
     if (mBridgeSchedulesWidget->isOpen()) {
-        mGreyout->resize();
         mBridgeSchedulesWidget->resize();
     }
 
     if (mBridgeGroupsWidget->isOpen()) {
-        mGreyout->resize();
         mBridgeGroupsWidget->resize();
     }
 
+    mGreyout->resize();
     resize();
 }
 
@@ -352,7 +348,7 @@ void DiscoveryHueWidget::deleteBridgeFromAppData(hue::Bridge bridge) {
     reply = QMessageBox::question(this, "Delete Bridge?", text, QMessageBox::Yes | QMessageBox::No);
     if (reply == QMessageBox::Yes) {
         mComm->hue()->discovery()->deleteBridge(bridge);
-        mListWidget->removeWidget(bridge.IP());
+        mListWidget->removeWidget(bridge.id());
         resize();
     }
 }

@@ -21,12 +21,25 @@
 
 SettingsPage::SettingsPage(QWidget* parent,
                            GroupData* parser,
+                           CommLayer* comm,
                            AppSettings* appSettings,
                            ShareUtils* shareUtils)
     : QWidget(parent),
       mGroups(parser),
-      mShareUtils(shareUtils) {
+      mShareUtils(shareUtils),
+      mComm{comm},
+      mGreyOut{new GreyOutOverlay(parentWidget())},
+      mLightInfoWidget{new LightInfoListWidget(parentWidget(), appSettings)} {
     mShowingDebug = true;
+
+    // --------------
+    // Setup Light Info Widget
+    // --------------
+
+    mLightInfoWidget->isOpen(false);
+
+    connect(mLightInfoWidget, SIGNAL(pressedClose()), this, SLOT(lightInfoClosePressed()));
+    mLightInfoWidget->setGeometry(0, -1 * height(), width(), height());
 
     mCurrentWebView = ECorlumaWebView::none;
 
@@ -118,6 +131,9 @@ SettingsPage::SettingsPage(QWidget* parent,
     mGlobalWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mScrollLayout->addWidget(mGlobalWidget);
 
+    mGreyOut->setVisible(false);
+    connect(mGreyOut, SIGNAL(clicked()), this, SLOT(greyOutClicked()));
+
     //------------
     // Final Cleanup
     //------------
@@ -167,6 +183,11 @@ void SettingsPage::resizeEvent(QResizeEvent*) {
             mCopyrightWidget->setGeometry(hiddenWidget);
             return;
     }
+
+
+    mLightInfoWidget->resize();
+
+    mGreyOut->resize();
 }
 
 
@@ -245,7 +266,7 @@ void SettingsPage::settingsButtonPressed(const QString& title) {
     } else if (title == "Backup Save Data") {
         saveButtonClicked();
     } else if (title == "View/Edit Lights") {
-        emit clickedInfoWidget();
+        lightInfoWidgetClicked();
     } else if (title == "Find New Lights") {
         emit clickedDiscovery();
     } else if (title == "Copyright") {
@@ -290,6 +311,30 @@ void SettingsPage::hideCurrentWebView() {
     cor::moveWidget(widget, QPoint(0, 0), QPoint(0, widget->height()));
 
     mCurrentWebView = ECorlumaWebView::none;
+}
+
+
+void SettingsPage::lightInfoWidgetClicked() {
+    mGreyOut->greyOut(true);
+
+    mLightInfoWidget->isOpen();
+    mLightInfoWidget->scrollArea()->updateHues(mComm->hue()->discovery()->lights());
+    mLightInfoWidget->scrollArea()->updateNanoLeafs(mComm->nanoleaf()->lights().items());
+    mLightInfoWidget->scrollArea()->updateAruCorLights(mComm->arducor()->arduCorLights());
+    mLightInfoWidget->resize();
+    mLightInfoWidget->pushIn();
+}
+
+
+void SettingsPage::lightInfoClosePressed() {
+    mGreyOut->greyOut(false);
+    mLightInfoWidget->pushOut();
+}
+
+void SettingsPage::greyOutClicked() {
+    if (mLightInfoWidget->isOpen()) {
+        lightInfoClosePressed();
+    }
 }
 
 void SettingsPage::pushIn(const QPoint& startPoint, const QPoint& endPoint) {

@@ -49,7 +49,6 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     mScrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     QScroller::grabGesture(mScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
     mScrollArea->setWidget(mWidget);
-    mScrollArea->setFixedHeight(height() / 2);
     mScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     mScrollArea->horizontalScrollBar()->setEnabled(false);
 
@@ -285,21 +284,39 @@ void LeftHandMenu::updateLights() {
 
 
 void LeftHandMenu::buttonPressed(EPage page) {
-    mSingleColorButton->shouldHightlght(false);
-    mMultiColorButton->shouldHightlght(false);
-    mMoodButton->shouldHightlght(false);
-    mSettingsButton->shouldHightlght(false);
-    if (page == EPage::colorPage) {
-        mSingleColorButton->shouldHightlght(true);
-    } else if (page == EPage::palettePage) {
-        mMultiColorButton->shouldHightlght(true);
-    } else if (page == EPage::moodPage) {
-        mMoodButton->shouldHightlght(true);
-    } else if (page == EPage::settingsPage) {
-        mSettingsButton->shouldHightlght(true);
+    if (alwaysOpen()) {
+        mSingleColorButton->shouldHightlght(false);
+        mMultiColorButton->shouldHightlght(false);
+        mMoodButton->shouldHightlght(false);
+        mSettingsButton->shouldHightlght(false);
+        if (page == EPage::colorPage) {
+            mSingleColorButton->shouldHightlght(true);
+        } else if (page == EPage::palettePage) {
+            mMultiColorButton->shouldHightlght(true);
+        } else if (page == EPage::moodPage) {
+            mMoodButton->shouldHightlght(true);
+        } else if (page == EPage::settingsPage) {
+            mSettingsButton->shouldHightlght(true);
+        } else {
+            qDebug() << "Do not recognize key " << pageToString(page);
+        }
     } else {
-        qDebug() << "Do not recognize key " << pageToString(page);
+        if (page != EPage::settingsPage) {
+            mSingleColorButton->shouldHightlght(false);
+            mMultiColorButton->shouldHightlght(false);
+            mMoodButton->shouldHightlght(false);
+            if (page == EPage::colorPage) {
+                mSingleColorButton->shouldHightlght(true);
+            } else if (page == EPage::palettePage) {
+                mMultiColorButton->shouldHightlght(true);
+            } else if (page == EPage::moodPage) {
+                mMoodButton->shouldHightlght(true);
+            } else {
+                qDebug() << "Do not recognize key " << pageToString(page);
+            }
+        }
     }
+
     emit pressedButton(page);
 }
 

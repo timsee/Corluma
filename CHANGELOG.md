@@ -710,5 +710,13 @@ ___
 - Fixed a bug where the user could accidentally convert a group into a room or vice versa.
 - Fixed miscellaneous bugs.
 
+### **v0.18.2**
+#### Bug Fixes
+- `SingleColorStateWidget` defaults its routine to `singleSolid` if only hues are selected.
+- Clicking on a selected page on `LeftHandMenu` closes the menu and displays the page. 
+- Fixed edge cases with greyout.
+- Added additional state for `DiscoveryNanoleafWidget` when some but not all nanoleafs are discovered.
+- Fixed errors with Hue Bridge discovery. 
+- Fixed miscellaneous bugs.
 
 

@@ -158,6 +158,9 @@ public:
      */
     bool hasNanoLeafLights();
 
+    /// true if the lights could support routines, false if they cannot.
+    bool supportsRoutines();
+
     /// compute the best candidate for a collection based on the current lights.
     cor::Group findCurrentGroup(const std::vector<cor::Group>& collections);
 

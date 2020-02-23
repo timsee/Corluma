@@ -302,6 +302,16 @@ bool LightList::hasLightWithProtocol(EProtocolType protocol) const noexcept {
     return false;
 }
 
+bool LightList::supportsRoutines() {
+    for (const auto& light : mLights) {
+        if (light.protocol() == EProtocolType::arduCor
+            || light.protocol() == EProtocolType::nanoleaf) {
+            return true;
+        }
+    }
+    return false;
+}
+
 cor::Group LightList::findCurrentGroup(const std::vector<cor::Group>& groups) {
     // count number of lights in each collection currently selected
     std::vector<std::uint32_t> lightCount(groups.size(), 0);

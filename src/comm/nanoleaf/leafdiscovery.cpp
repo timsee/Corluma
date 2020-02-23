@@ -398,19 +398,26 @@ std::pair<QString, bool> LeafDiscovery::nameFromSerial(const QString& serialNumb
 }
 
 ENanoleafDiscoveryState LeafDiscovery::state() {
-    if (mUnknownLights.empty() && mNotFoundLights.empty() && !mFoundLights.empty()) {
+    if (!mFoundLights.empty() && mUnknownLights.empty() && mNotFoundLights.empty()) {
         return ENanoleafDiscoveryState::allNanoleafsConnected;
+    }
+
+    if (!mFoundLights.empty() && (!mUnknownLights.empty() || !mNotFoundLights.empty())) {
+        return ENanoleafDiscoveryState::someNanoleafsConnected;
     }
 
     if (!mNotFoundLights.empty()) {
         return ENanoleafDiscoveryState::lookingForPreviousNanoleafs;
     }
+
     if (mUnknownLights.empty() && mFoundLights.empty()) {
         return ENanoleafDiscoveryState::nothingFound;
     }
+
     if (!mUnknownLights.empty()) {
         return ENanoleafDiscoveryState::unknownNanoleafsFound;
     }
+
     return ENanoleafDiscoveryState::connectionError;
 }
 

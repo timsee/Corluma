@@ -14,9 +14,30 @@
 #include "cor/objects/room.h"
 
 /// bridge discovery state
-enum class EBridgeDiscoveryState { lookingForResponse, lookingForUsername, connected, unknown };
+enum class EBridgeDiscoveryState {
+    lookingForResponse,
+    lookingForUsername,
+    testingConnectionInfo,
+    connected,
+    unknown
+};
 Q_DECLARE_METATYPE(EBridgeDiscoveryState)
 
+inline QString bridgeDiscoveryStateToString(EBridgeDiscoveryState state) {
+    if (state == EBridgeDiscoveryState::lookingForResponse) {
+        return "looking for response";
+    } else if (state == EBridgeDiscoveryState::lookingForUsername) {
+        return "looking for username";
+    } else if (state == EBridgeDiscoveryState::testingConnectionInfo) {
+        return "testing connection info";
+    } else if (state == EBridgeDiscoveryState::connected) {
+        return "connected";
+    } else if (state == EBridgeDiscoveryState::unknown) {
+        return "unknown";
+    } else {
+        return "Not recognized";
+    }
+}
 
 namespace hue {
 
@@ -48,7 +69,7 @@ public:
           mCustomName{customName},
           mState{EBridgeDiscoveryState::lookingForUsername} {}
 
-    Bridge(const QJsonObject&);
+    Bridge(EBridgeDiscoveryState, const QJsonObject&);
 
     /*!
      * \brief IP The IP address of the current bridge

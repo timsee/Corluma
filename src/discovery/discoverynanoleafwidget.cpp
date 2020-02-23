@@ -25,7 +25,7 @@ DiscoveryNanoLeafWidget::DiscoveryNanoLeafWidget(CommLayer* comm, QWidget* paren
     mTopLayout->addWidget(mLabel, 7);
     mTopLayout->addWidget(mSpacer, 3);
 
-    mSearchWidget = new SearchWidget("192.168.0.114", this);
+    mSearchWidget = new SearchWidget("192.168.0.101", this);
     connect(mSearchWidget, SIGNAL(plusClicked()), this, SLOT(plusButtonClicked()));
     connect(mSearchWidget, SIGNAL(minusClicked()), this, SLOT(minusButtonClicked()));
 
@@ -65,7 +65,11 @@ void DiscoveryNanoLeafWidget::handleDiscovery(bool) {
             mLabel->setText("Looking for a NanoLeaf Aurora. This may take up to a minute...");
             break;
         case ENanoleafDiscoveryState::unknownNanoleafsFound:
-            mLabel->setText("NanoLeaf Aurora found! Please hold the power button for around 5 "
+            mLabel->setText("Aurora found! Hold the power button for around 5 "
+                            "seconds, until the LED to the left of it starts blinking. ");
+            break;
+        case ENanoleafDiscoveryState::someNanoleafsConnected:
+            mLabel->setText("Additional Aurora found! Please hold the power button for around 5 "
                             "seconds, until the LED to the left of it starts blinking. ");
             break;
         case ENanoleafDiscoveryState::allNanoleafsConnected:

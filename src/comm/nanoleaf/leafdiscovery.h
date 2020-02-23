@@ -16,6 +16,7 @@ enum class ENanoleafDiscoveryState {
     nothingFound,
     unknownNanoleafsFound,
     lookingForPreviousNanoleafs,
+    someNanoleafsConnected,
     allNanoleafsConnected
 };
 

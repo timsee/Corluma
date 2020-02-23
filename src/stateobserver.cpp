@@ -164,7 +164,12 @@ void StateObserver::computeState() {
         case EPage::colorPage: {
             cor::LightState state;
             state.isOn(mIsOn);
-            state.routine(mMainWindow->routineWidget()->routine());
+            if (mData->supportsRoutines()) {
+                state.routine(mMainWindow->routineWidget()->routine());
+            } else {
+                state.routine(ERoutine::singleSolid);
+            }
+
             if (mColorPage->pageType() == ESingleColorPickerMode::ambient) {
                 state.temperature(mTemperature);
                 auto color = cor::colorTemperatureToRGB(mTemperature);

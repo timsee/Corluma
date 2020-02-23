@@ -119,7 +119,7 @@ TopMenu::TopMenu(QWidget* parent,
     showSingleColorStateWidget(false);
 
     mMultiColorStateWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mMultiColorStateWidget->setFixedSize(int(mSize.width() * 3.5), mSize.height() / 2);
+    mMultiColorStateWidget->setFixedSize(int(mSize.width() * 3.2), mSize.height() / 2);
     mMultiColorStateWidget->setVisible(false);
     showMultiColorStateWidget(false);
 

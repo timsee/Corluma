@@ -21,7 +21,6 @@
 #include "greyoutoverlay.h"
 #include "icondata.h"
 #include "lefthandmenu.h"
-#include "lightinfolistwidget.h"
 #include "listmooddetailedwidget.h"
 #include "mainviewport.h"
 #include "nowifiwidget.h"
@@ -95,12 +94,6 @@ public slots:
 
     /// called when a request for a detailed mood is sent
     void detailedMoodDisplay(std::uint64_t key);
-
-    /// show the hue info widget.
-    void hueInfoWidgetClicked();
-
-    /// light info widget close button pressed.
-    void lightInfoClosePressed();
 
     /*!
      * \brief editClosePressed close the edit page
@@ -231,12 +224,6 @@ private:
      * \brief mMoodDetailedWidget widget for displaying detailed information about a mood.
      */
     ListMoodDetailedWidget* mMoodDetailedWidget;
-
-    /*!
-     * \brief mHueInfoWidget displays information about hue lights, including their serial numbers
-     * and their software versions. Can edit light names and delete lights from the Bridge.
-     */
-    LightInfoListWidget* mLightInfoWidget;
 
     /// true if wifi found, false otherwise
     bool mWifiFound;

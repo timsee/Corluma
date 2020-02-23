@@ -228,7 +228,7 @@ private:
 
     /// parses the initial full packet from a Bridge, which contains all its lights, schedules, and
     /// groups info.
-    void parseInitialUpdate(const hue::Bridge& bridge, const QJsonDocument& json);
+    void parseInitialUpdate(const hue::Bridge& bridge, const QJsonObject& json);
 
     /// update the existing JSON data to include lights data, in order to check for hardware changes
     /// on bootup.
@@ -239,6 +239,30 @@ private:
 
     /// load the json data.
     bool loadJSON();
+
+    /// handles when a NUPnP reply has provided a QJSONDocument. Parses the document and determines
+    /// what lights to add to discovery
+    void handleNUPnPReply(const QJsonDocument&);
+
+    /// handles when an IP address has provided the discovery object with a QJsonDocument and it is
+    /// not a NUPnP reply.
+    void handleStandardReply(const QString& IP, const QJsonDocument&);
+
+    /// called by @ref handleStandardReply. This is when the QJsonDocument is an QJsonObject, which
+    /// means we've reached the end of a discovery routine and have received full metadata about a
+    /// bridge. This parses the discovery packet and creates a found bridge if fully successful
+    void handleInitialDiscoveryPacket(const QString& IP, const QJsonObject&);
+
+    /// this handles discovery states that response in a QJSonArray. The two main states this
+    /// function handles is getting an initial response (which triggers looking for a username) and
+    /// getting a username (which triggers testing the username)
+    void handleResponseArray(const QString& IP, const QJsonArray&);
+
+    /// converts a QJsonObject to a id for a bridge, if possible. When working with bridges marked
+    /// as "not found" it is best to work with unique IDs, since IPs and usernames are subject to
+    /// change. This takes a QJsonObject and sees if we can extract the unique ID. returns an
+    /// empty string if it cannot parse the document properly.
+    QString idFromBridgePacket(const QJsonObject&);
 
     /// pointer to the parent CommHue object.
     CommHue* mHue;
