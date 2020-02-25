@@ -710,6 +710,7 @@ ___
 - Fixed a bug where the user could accidentally convert a group into a room or vice versa.
 - Fixed miscellaneous bugs.
 
+
 ### **v0.18.2**
 #### Bug Fixes
 - `SingleColorStateWidget` defaults its routine to `singleSolid` if only hues are selected.
@@ -718,5 +719,12 @@ ___
 - Added additional state for `DiscoveryNanoleafWidget` when some but not all nanoleafs are discovered.
 - Fixed errors with Hue Bridge discovery. 
 - Fixed miscellaneous bugs.
+
+
+### **v0.18.3**
+#### Bug Fixes
+- Fixed unncessary recomputation of color circle centers in `MultiColorPicker`.
+- Fixed unncessary rendering of certain widgets.
+- Cleaned up the `SingleLightBrightnessWidget`.
 
 

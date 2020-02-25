@@ -161,7 +161,8 @@ ColorSchemeCircles::ColorSchemeCircles(std::size_t count, ColorWheel* wheel, QWi
 #endif
 }
 
-void ColorSchemeCircles::updateColorScheme(const std::vector<QColor>& colorScheme) {
+void ColorSchemeCircles::updateColorScheme(const std::vector<QColor>& colorScheme,
+                                           bool shouldRecomputeLocations) {
     mCount = colorScheme.size();
 
     std::size_t numberOfSelectedDevices;
@@ -174,9 +175,11 @@ void ColorSchemeCircles::updateColorScheme(const std::vector<QColor>& colorSchem
     for (std::size_t i = 0; i < numberOfSelectedDevices; ++i) {
         // get color from scheme
         const auto& schemeColor = colorScheme[i];
-        // find color in wheel and use it to make center point
-        auto point = mWheel->findPixelByColor(schemeColor);
-        mCircles[i].center = point;
+        if (shouldRecomputeLocations) {
+            // find color in wheel and use it to make center point
+            auto point = mWheel->findPixelByColor(schemeColor);
+            mCircles[i].center = point;
+        }
         mCircles[i].shouldShow = true;
         mCircles[i].color = schemeColor;
     }

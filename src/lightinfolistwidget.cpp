@@ -25,6 +25,7 @@ LightInfoListWidget::LightInfoListWidget(QWidget* parent, AppSettings* appSettin
     mTopWidget = new cor::TopWidget("View/Edit Lights", ":images/closeX.png", this);
     connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(closePressed(bool)));
     mTopWidget->setFontPoint(20);
+    setVisible(false);
 
     for (auto&& button : mProtocolButtons) {
         button = new QPushButton(this);
@@ -99,10 +100,7 @@ bool LightInfoListWidget::handleProtocolType() {
 }
 void LightInfoListWidget::resize() {
     QSize size = parentWidget()->size();
-    setGeometry(int(size.width() * 0.125f),
-                int(size.height() * 0.125f),
-                int(size.width() * 0.75f),
-                int(size.height() * 0.75f));
+    setFixedSize(int(size.width() * 0.75f), int(size.height() * 0.75f));
 
     auto yPos = 0;
     mTopWidget->setFixedSize(width(), height() * 2 / 20);

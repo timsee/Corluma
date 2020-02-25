@@ -244,7 +244,6 @@ void TopMenu::resize(int xOffset) {
 
     mMainPalette->setGeometry(0, yPos, mPaletteWidth, mSize.height() / 2);
     yPos += mMainPalette->height() + padding;
-    yPos += mGlobalBrightness->height() + 20;
 
     mSelectLightsButton->resize(mStartSelectLightsButton);
 
@@ -585,13 +584,7 @@ void TopMenu::updateState(const cor::LightState& state) {
 
     if (mGlobalBrightness->isIn()) {
         mGlobalBrightness->updateColor(mData->mainColor());
-        // update brightness of the slider only if the wheel isn't HSV, and youre not showing a
-        // multi color routine
-        bool isHSVWheel =
-            (mCurrentPage == EPage::palettePage && mPalettePage->mode() == EGroupMode::HSV)
-            || (mCurrentPage == EPage::colorPage
-                && mColorPage->pageType() == ESingleColorPickerMode::HSV);
-        if (!isHSVWheel && routine <= cor::ERoutineSingleColorEnd) {
+        if (routine <= cor::ERoutineSingleColorEnd) {
             mGlobalBrightness->updateBrightness(mData->mainColor().valueF() * 100.0);
         }
     }

@@ -50,9 +50,9 @@ public:
      * \brief updateColorScheme update the color scheme and the indices of the picker selections
      * based off of the provided color scheme
      * \param colorScheme new values for the color scheme.
-     * \param adjustColorPositions true to adjust the actual color positions
+     * \param shouldRecomputePosition true to adjust the actual color positions
      */
-    void updateColorScheme(const std::vector<QColor>& colorScheme);
+    void updateColorScheme(const std::vector<QColor>& colorScheme, bool shouldRecomputePosition);
 
     /*!
      * \brief moveStandardCircle move a standard circle to a new position

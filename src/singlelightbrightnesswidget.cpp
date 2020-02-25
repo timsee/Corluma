@@ -103,15 +103,16 @@ void SingleLightBrightnessWidget::resize() {
                           mSize.height() - mTopSpacer);
     }
 
+    auto side = height() / 2;
     // handle individual widget sizes
     if (mIsLeftAlwaysOpen) {
-        mBrightnessSlider->setGeometry(mSize.width() + 5,
+        mBrightnessSlider->setGeometry(height() * 0.15 + side,
                                        0,
                                        width() - int(mSize.width() * 2),
                                        height());
 
     } else {
-        mBrightnessSlider->setGeometry(mSize.width() + 5,
+        mBrightnessSlider->setGeometry(height() * 0.15 + side,
                                        0,
                                        width() - int(mSize.width() * 1.2),
                                        height());
@@ -122,7 +123,6 @@ void SingleLightBrightnessWidget::brightnessSliderChanged(int newBrightness) {
     auto color = mBrightnessSlider->color();
     color.setHsvF(color.hueF(), color.saturationF(), newBrightness / 100.0);
     updateColor(color);
-    // qDebug() << " new brightness amde " << newBrightness;
     emit brightnessChanged(std::uint32_t(newBrightness));
 }
 
@@ -134,6 +134,7 @@ void SingleLightBrightnessWidget::paintEvent(QPaintEvent*) {
     painter.setBrush(brush);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    QRect rect(mSize.width() - height() / 2, height() * 0.05, height() / 2, height() / 2);
+    auto side = height() / 2;
+    QRect rect(height() * 0.05, height() * 0.05, side, side);
     painter.drawEllipse(rect);
 }

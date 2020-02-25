@@ -61,7 +61,6 @@ void StateObserver::singleLightBrightnessChanged(std::uint32_t brightness) {
         updateScheme(scheme, mPalettePage->colorPicker()->selectedLight());
         // update the states of the color picker widget as well, since this state change is coming
         // from another widget
-        mPalettePage->colorPicker()->updateColorStates(scheme);
         mPalettePage->updateBrightness(brightness);
     }
 }

@@ -44,7 +44,7 @@ void MultiColorPicker::updateBrightness(std::uint32_t brightness) {
             colorCopy.setHsvF(colorCopy.hueF(), colorCopy.saturationF(), newBrightness);
             auto schemeCopy = mScheme;
             schemeCopy[mCircleIndex] = colorCopy;
-            mColorSchemeCircles->updateColorScheme(schemeCopy);
+            mColorSchemeCircles->updateColorScheme(schemeCopy, false);
         } else {
             auto schemeCopy = mScheme;
             auto newBrightness = 0.5 + mBrightness / 100.0 / 2.0;
@@ -58,7 +58,7 @@ void MultiColorPicker::updateBrightness(std::uint32_t brightness) {
                                     mBrightness / 100.0);
                 mScheme[i] = actualColor;
             }
-            mColorSchemeCircles->updateColorScheme(schemeCopy);
+            mColorSchemeCircles->updateColorScheme(schemeCopy, false);
         }
     }
 }
@@ -108,7 +108,7 @@ void MultiColorPicker::updateColorStates(const std::vector<QColor>& colorSchemes
     }
 
     mScheme = newScheme;
-    mColorSchemeCircles->updateColorScheme(newScheme);
+    mColorSchemeCircles->updateColorScheme(newScheme, true);
 }
 
 

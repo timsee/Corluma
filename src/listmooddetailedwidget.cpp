@@ -45,7 +45,6 @@ ListMoodDetailedWidget::ListMoodDetailedWidget(QWidget* parent, GroupData* group
                                     QString("Group_Details"),
                                     QString("Group_Edit")};
     mFloatingMenu->setupButtons(buttons, EButtonSize::small);
-    mFloatingMenu->setVisible(false);
 
     //------------
     // ScrollArea Widget
@@ -100,11 +99,9 @@ void ListMoodDetailedWidget::clickedDevice(const QString&) {
 
 void ListMoodDetailedWidget::resize() {
     QSize size = parentWidget()->size();
-    setGeometry(int(size.width() * 0.125f),
-                int(size.height() * 0.125f),
-                int(size.width() * 0.75f),
-                int(size.height() * 0.75f));
-    moveFloatingLayout();
+    setFixedSize(int(size.width() * 0.75f), int(size.height() * 0.75f));
+    mOnOffSwitch->setFixedWidth(int(size.width() * 0.2));
+
     mSimpleGroupWidget->setGeometry(mPlaceholder->geometry());
     mEditPage->setGeometry(mPlaceholder->geometry());
     mScrollArea->setGeometry(mPlaceholder->geometry());
@@ -157,14 +154,6 @@ void ListMoodDetailedWidget::floatingLayoutButtonPressed(const QString& key) {
     }
 }
 
-void ListMoodDetailedWidget::moveFloatingLayout() {
-    QSize size = parentWidget()->size();
-    mOnOffSwitch->setFixedWidth(int(size.width() * 0.2));
-
-    QPoint topRight(int(size.width() * 0.875), int(size.height() * 0.125));
-    mFloatingMenu->move(topRight);
-}
-
 void ListMoodDetailedWidget::changedSwitchState(bool state) {
     if (state) {
         emit enableGroup(mKey);
@@ -172,9 +161,9 @@ void ListMoodDetailedWidget::changedSwitchState(bool state) {
 }
 
 void ListMoodDetailedWidget::resizeEvent(QResizeEvent*) {
-    if (isVisible()) {
-        resize();
-    }
+    resize();
+    QPoint topRight(this->x() + this->width(), this->y());
+    mFloatingMenu->move(topRight);
 }
 
 void ListMoodDetailedWidget::pushIn() {
@@ -199,7 +188,6 @@ void ListMoodDetailedWidget::pushIn() {
 }
 
 void ListMoodDetailedWidget::pushOut() {
-    mFloatingMenu->setVisible(false);
     isOpen(false);
     mPageKey = "";
 

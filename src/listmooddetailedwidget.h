@@ -77,9 +77,6 @@ private slots:
     void changedSwitchState(bool);
 
 private:
-    /// moves floating layout
-    void moveFloatingLayout();
-
     /// stores the current key for a page
     QString mPageKey;
 
