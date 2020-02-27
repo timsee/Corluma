@@ -727,4 +727,8 @@ ___
 - Fixed unncessary rendering of certain widgets.
 - Cleaned up the `SingleLightBrightnessWidget`.
 
+### **v0.18.4**
+#### Android Deployment Update
+- Switched builds for Android to Qt 5.14.
+- Updated Android assets.
 
