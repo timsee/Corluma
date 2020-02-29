@@ -144,20 +144,6 @@ public:
     /// true if any of the lights have the given protocol type.
     bool hasLightWithProtocol(EProtocolType) const noexcept;
 
-    /*!
-     * \brief hasArduinoLights helper that determines if there are any arduino based lights in the
-     * current data.
-     * \return true if any device is an arduino over Serial, UDP, or HTTP
-     */
-    bool hasArduinoLights();
-
-    /*!
-     * \brief hasNanoLeafLights helper that determines if there are any nanoleaf lights in the
-     * current data
-     * \return true if any device is a nanoleaf
-     */
-    bool hasNanoLeafLights();
-
     /// true if the lights could support routines, false if they cannot.
     bool supportsRoutines();
 

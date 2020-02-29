@@ -21,7 +21,6 @@
 #include "greyoutoverlay.h"
 #include "icondata.h"
 #include "lefthandmenu.h"
-#include "listmooddetailedwidget.h"
 #include "mainviewport.h"
 #include "nowifiwidget.h"
 #include "routinebuttonswidget.h"
@@ -92,16 +91,10 @@ public slots:
      */
     void editButtonClicked(bool);
 
-    /// called when a request for a detailed mood is sent
-    void detailedMoodDisplay(std::uint64_t key);
-
     /*!
      * \brief editClosePressed close the edit page
      */
     void editClosePressed();
-
-    /// called when the detail mood widget is closed
-    void detailedClosePressed();
 
     /*!
      * \brief settingsButtonFromDiscoveryPressed settings button pressed on discovery page. Handled
@@ -125,9 +118,6 @@ public slots:
      * button.
      */
     void topMenuButtonPressed(const QString&);
-
-    /// called when a mood is selected
-    void moodSelected(std::uint64_t);
 
 private slots:
 
@@ -219,11 +209,6 @@ private:
 
     /// page for editing or making a new mood
     EditMoodPage* mEditMoodPage;
-
-    /*!
-     * \brief mMoodDetailedWidget widget for displaying detailed information about a mood.
-     */
-    ListMoodDetailedWidget* mMoodDetailedWidget;
 
     /// true if wifi found, false otherwise
     bool mWifiFound;

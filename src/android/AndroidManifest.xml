@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<manifest package="org.corluma.Corluma" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="0.8" android:versionCode="0010000002" android:installLocation="auto">
+<manifest package="org.corluma.Corluma" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="0.18.5" android:versionCode="000018051" android:installLocation="auto">
     <uses-sdk android:minSdkVersion="23" android:targetSdkVersion="28"/>
 
     <!-- The following comment will be replaced upon deployment with default permissions based on the dependencies of the application.
@@ -14,7 +14,9 @@
 
     <supports-screens android:largeScreens="true" android:normalScreens="true" android:anyDensity="true" android:smallScreens="true"/>
 
-    <application android:hardwareAccelerated="true" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="Corluma" android:extractNativeLibs="true">
+    <application android:hardwareAccelerated="true" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="Corluma"
+        android:icon="@mipmap/ic_launcher"
+        android:extractNativeLibs="true">
         <activity android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density" android:name="org.corluma.activity.QShareActivity" android:label="Corluma"
             android:theme="@android:style/Theme.Black.NoTitleBar"
             android:screenOrientation="portrait"

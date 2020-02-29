@@ -14,13 +14,29 @@
 #include "listmoodpreviewwidget.h"
 #include "utils/qt.h"
 
-MoodPage::MoodPage(QWidget* parent, GroupData* groups)
+MoodPage::MoodPage(QWidget* parent, GroupData* groups, CommLayer* comm)
     : QWidget(parent),
       mGroups(groups),
+      mComm{comm},
+      mGreyOut{new GreyOutOverlay(parentWidget())},
       mCurrentMood{0} {
     mMoodsListWidget = new cor::ListWidget(this, cor::EListType::linear);
     mMoodsListWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     QScroller::grabGesture(mMoodsListWidget->viewport(), QScroller::LeftMouseButtonGesture);
+
+    // --------------
+    // Setup Mood Detailed Widget
+    // --------------
+
+    mMoodDetailedWidget = new ListMoodDetailedWidget(parent, mGroups, mComm);
+    connect(mMoodDetailedWidget, SIGNAL(pressedClose()), this, SLOT(detailedClosePressed()));
+
+
+    mMoodDetailedWidget->setGeometry(0, -1 * height(), width(), height());
+    mMoodDetailedWidget->setVisible(false);
+
+    mGreyOut->setVisible(false);
+    connect(mGreyOut, SIGNAL(clicked()), this, SLOT(greyoutClicked()));
 
     connect(mGroups, SIGNAL(newMoodAdded(QString)), this, SLOT(newMoodAdded(QString)));
 
@@ -157,7 +173,7 @@ ListMoodGroupWidget* MoodPage::initMoodsCollectionWidget(const QString& name,
 
 void MoodPage::selectedMood(const QString&, std::uint64_t moodKey) {
     mCurrentMood = moodKey;
-    emit clickedSelectedMood(moodKey);
+    moodSelected(moodKey);
 }
 
 
@@ -172,6 +188,12 @@ void MoodPage::resize() {
         moodWidget->resize();
     }
     mMoodsListWidget->resizeWidgets();
+
+    if (mMoodDetailedWidget->isOpen()) {
+        mMoodDetailedWidget->resize();
+    }
+
+    mGreyOut->resize();
 }
 
 void MoodPage::resizeEvent(QResizeEvent*) {
@@ -207,4 +229,33 @@ void MoodPage::shouldShowButtons(const QString& key, bool) {
 void MoodPage::clearWidgets() {
     mCurrentMood = 0;
     mMoodsListWidget->clearAll();
+}
+
+void MoodPage::greyoutClicked() {
+    if (mMoodDetailedWidget->isOpen()) {
+        detailedClosePressed();
+    }
+}
+
+void MoodPage::detailedMoodDisplay(std::uint64_t key) {
+    mGreyOut->greyOut(true);
+
+    const auto& moodResult = mGroups->moods().item(QString::number(key).toStdString());
+    cor::Mood detailedMood = moodResult.first;
+    if (moodResult.second) {
+        auto moodLights = mComm->makeMood(detailedMood);
+        detailedMood.lights(moodLights.items());
+        mMoodDetailedWidget->update(detailedMood);
+    }
+
+    mMoodDetailedWidget->pushIn();
+}
+
+void MoodPage::moodSelected(std::uint64_t key) {
+    detailedMoodDisplay(key);
+}
+
+void MoodPage::detailedClosePressed() {
+    mGreyOut->greyOut(false);
+    mMoodDetailedWidget->pushOut();
 }

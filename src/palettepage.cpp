@@ -59,10 +59,17 @@ void PalettePage::updateBrightness(std::uint32_t brightness) {
 // ----------------------------
 
 
-void PalettePage::show(std::size_t count,
-                       const std::vector<QColor>& colorScheme,
-                       bool hasArduinoDevices,
-                       bool hasNanoleafDevices) {
+void PalettePage::update(std::size_t count,
+                         const std::vector<QColor>& colorScheme,
+                         bool hasArduinoDevices,
+                         bool hasNanoleafDevices) {
+    if (mColorScheme.empty()) {
+        if (count > 0) {
+            mColorPicker->updateBrightness(colorScheme[0].valueF() * 100.0);
+        } else {
+            mColorPicker->updateBrightness(100);
+        }
+    }
     mColorScheme = colorScheme;
     lightCountChanged(count);
     mColorPicker->updateColorStates(mColorScheme);

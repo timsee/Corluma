@@ -153,7 +153,7 @@ private:
     QVBoxLayout* mTopRightLayout;
 
     /// layout for the buttons
-    QHBoxLayout* mButtonsLayout;
+    QGridLayout* mButtonsLayout;
 
     /// button that allows the user to discover new hue lights.
     QPushButton* mDiscoverHueButton;

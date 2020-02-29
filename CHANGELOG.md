@@ -727,8 +727,17 @@ ___
 - Fixed unncessary rendering of certain widgets.
 - Cleaned up the `SingleLightBrightnessWidget`.
 
+
 ### **v0.18.4**
 #### Android Deployment Update
 - Switched builds for Android to Qt 5.14.
 - Updated Android assets.
+
+
+### **v0.18.5**
+#### Bug Fixes
+- Fixed bugs with states on `PalettePage`.
+- Fixed sizes of widgets on `EditableFieldWidget`.
+- Fixed android launcher icons not showing.
+- Moved handling of moods from `MainWindow` to `MoodPage`.
 

@@ -6,12 +6,13 @@
 #include <QPushButton>
 #include <QWidget>
 
-#include "comm/commlayer.h"
 #include "cor/objects/group.h"
 #include "cor/objects/light.h"
 #include "cor/objects/page.h"
 #include "cor/presetpalettes.h"
 #include "cor/widgets/listwidget.h"
+#include "greyoutoverlay.h"
+#include "listmooddetailedwidget.h"
 #include "listmoodgroupwidget.h"
 
 /*!
@@ -27,7 +28,7 @@ class MoodPage : public QWidget, public cor::Page {
     Q_OBJECT
 public:
     /// constructor
-    explicit MoodPage(QWidget* parent, GroupData* groups);
+    explicit MoodPage(QWidget* parent, GroupData* groups, CommLayer* comm);
 
     /*!
      * \brief updateConnectionList updates the GUI elements that display the
@@ -48,6 +49,9 @@ public:
      */
     void makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
                               const std::vector<cor::Room>& roomList);
+
+    /// getter for mood detailed widget
+    ListMoodDetailedWidget* moodDetailedWidget() { return mMoodDetailedWidget; }
 
     /// called when the widget is hidden
     void hide();
@@ -73,9 +77,6 @@ signals:
      * load the edit page.
      */
     void clickedEditButton(bool isMood);
-
-    /// called when mood is selected
-    void clickedSelectedMood(std::uint64_t moodID);
 
 private slots:
     /*!
@@ -105,6 +106,15 @@ private slots:
      */
     void shouldShowButtons(const QString& key, bool isShowing);
 
+    /// called when the greyout is clicked
+    void greyoutClicked();
+
+    /// called when the detail mood widget is closed
+    void detailedClosePressed();
+
+    /// called when a request for a detailed mood is sent
+    void detailedMoodDisplay(std::uint64_t key);
+
 protected:
     /*!
      * \brief resizeEvent called every time the main window is resized.
@@ -112,11 +122,25 @@ protected:
     void resizeEvent(QResizeEvent*);
 
 private:
+    /// called when a mood is selected
+    void moodSelected(std::uint64_t);
+
     /// groups parser
     GroupData* mGroups;
 
+    /// comm layer
+    CommLayer* mComm;
+
     /// preset data for palettes from ArduCor
     PresetPalettes mPalettes;
+
+    /*!
+     * \brief mMoodDetailedWidget widget for displaying detailed information about a mood.
+     */
+    ListMoodDetailedWidget* mMoodDetailedWidget;
+
+    /// greyout for mood detailed widget
+    GreyOutOverlay* mGreyOut;
 
     /*!
      * \brief mMoodsListWidget List widget for devices. Either the moods widget or this device

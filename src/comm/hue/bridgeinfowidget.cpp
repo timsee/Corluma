@@ -86,15 +86,14 @@ BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget* parent)
     connect(mSchedulesButton, SIGNAL(clicked()), this, SLOT(schedulesListPressed()));
     mSchedulesButton->setStyleSheet(buttonStyleSheet);
 
-    mButtonsLayout = new QHBoxLayout;
-    mButtonsLayout->addWidget(mDiscoverHueButton, 2);
-    mButtonsLayout->addWidget(mGroupsButton, 2);
+    mButtonsLayout = new QGridLayout;
+    mButtonsLayout->addWidget(mDiscoverHueButton, 0, 0);
+    mButtonsLayout->addWidget(mGroupsButton, 0, 1);
     auto margin = int(this->width() * 0.05);
     mButtonsLayout->setSpacing(margin * 2);
     mButtonsLayout->setContentsMargins(margin, margin, margin, margin);
-    // mButtonsLayout->addWidget(mSchedulesButton, 2);
-    // for now, hide the schedules menu
-    mSchedulesButton->setVisible(false);
+    mButtonsLayout->addWidget(mSchedulesButton, 1, 0);
+    mSchedulesButton->setEnabled(false);
     mDiscoverHueButton->setEnabled(false);
     mGroupsButton->setEnabled(false);
 
@@ -107,8 +106,8 @@ BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget* parent)
     mTopRightLayout->addWidget(mIPAddress, 1);
     mTopRightLayout->addWidget(mAPI, 1);
     mTopRightLayout->addWidget(mID, 1);
-    mTopRightLayout->addLayout(mButtonsLayout, 2);
-    mTopRightLayout->addWidget(mSpacer, 2);
+    mTopRightLayout->addLayout(mButtonsLayout, 4);
+    mTopRightLayout->addWidget(mSpacer, 1);
 
     //-----
     // mid widget
@@ -140,6 +139,7 @@ void BridgeInfoWidget::handleBridgeState(EBridgeDiscoveryState state) {
             mBridgePixmap = QPixmap(":images/Hue-Bridge.png");
             mDiscoverHueButton->setEnabled(true);
             mGroupsButton->setEnabled(true);
+            mSchedulesButton->setEnabled(true);
             auto width = int(min * 0.333f);
             mImage->setPixmap(
                 mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation));

@@ -46,6 +46,13 @@ public:
      */
     void setFontPointSize(int pt);
 
+    /// programmatically resize
+    void resize();
+
+protected:
+    /// called when widget is resized
+    void resizeEvent(QResizeEvent*);
+
 signals:
 
     /// emitted when Accept is pressed and the text of the widget changes.
@@ -71,9 +78,6 @@ private:
 
     /// text stored when line editing starts, in case it is canceled.
     QString mStoredText;
-
-    /// layout
-    QHBoxLayout* mLayout;
 
     /// Label for displaying the editable text.
     QLabel* mText;

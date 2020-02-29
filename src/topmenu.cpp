@@ -130,7 +130,7 @@ TopMenu::TopMenu(QWidget* parent,
     mSelectLightsButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mSelectLightsButton, SIGNAL(pressed()), this, SLOT(menuButtonPressed()));
     QFontMetrics fm(mSelectLightsButton->font());
-    auto textWidth = fm.horizontalAdvance(mSelectLightsButton->text()) * 1.1;
+    auto textWidth = int(fm.horizontalAdvance(mSelectLightsButton->text()) * 1.1);
     auto selectLightsWidth = int(mSize.width() * 2.5);
     if (selectLightsWidth < textWidth) {
         selectLightsWidth = textWidth;
@@ -185,14 +185,17 @@ void TopMenu::lightCountChanged() {
 
     if (mCurrentPage == EPage::colorPage) {
         showRoutineWidget(false);
-        mColorPage->show(mData->mainColor(),
-                         mData->lights().size(),
-                         mComm->bestColorPickerType(mData->lights()));
+        mColorPage->update(mData->mainColor(),
+                           mData->lights().size(),
+                           mComm->bestColorPickerType(mData->lights()));
     } else if (mCurrentPage == EPage::palettePage) {
         showRoutineWidget(false);
         showMultiColorStateWidget(!mData->empty());
         mMultiColorStateWidget->updateState(mData->colorScheme());
-        mPalettePage->lightCountChanged(mData->lights().size());
+        mPalettePage->update(mData->lightCount(),
+                             mData->colorScheme(),
+                             mData->hasLightWithProtocol(EProtocolType::arduCor),
+                             mData->hasLightWithProtocol(EProtocolType::nanoleaf));
     }
 }
 
@@ -585,7 +588,7 @@ void TopMenu::updateState(const cor::LightState& state) {
     if (mGlobalBrightness->isIn()) {
         mGlobalBrightness->updateColor(mData->mainColor());
         if (routine <= cor::ERoutineSingleColorEnd) {
-            mGlobalBrightness->updateBrightness(mData->mainColor().valueF() * 100.0);
+            mGlobalBrightness->updateBrightness(int(mData->mainColor().valueF() * 100.0));
         }
     }
 }
@@ -619,11 +622,11 @@ void TopMenu::handleBrightnessSliders() {
                 if (mPalettePage->colorPicker()->currentScheme() == EColorSchemeType::custom) {
                     mGlobalBrightness->pushOut();
                     if (!mSingleLightBrightness->isIn()) {
-                        auto color = mData->lights().begin()->state().color();
-                        mSingleLightBrightness->updateColor(color);
-                        mSingleLightBrightness->updateBrightness(color.valueF() * 100.0);
+                        mSingleLightBrightness->pushIn();
                     }
-                    mSingleLightBrightness->pushIn();
+                    auto color = mData->lights().begin()->state().color();
+                    mSingleLightBrightness->updateColor(color);
+                    mSingleLightBrightness->updateBrightness(std::uint32_t(color.valueF() * 100.0));
                 } else {
                     updateGlobalBrightness = true;
                 }
@@ -667,9 +670,9 @@ void TopMenu::handleButtonLayouts() {
             pushRightFloatingLayout(mPaletteFloatingLayout);
             break;
         case EPage::palettePage:
-            if (mData->empty()) {
+            if (mData->empty() && mPaletteFloatingLayout->isVisible()) {
                 pushRightFloatingLayout(mPaletteFloatingLayout);
-            } else {
+            } else if (!mData->empty()) {
                 pullLeftFloatingLayout(mPaletteFloatingLayout);
             }
             mColorFloatingLayout->setVisible(false);

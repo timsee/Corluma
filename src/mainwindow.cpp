@@ -85,7 +85,6 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     mSettingsPage->setVisible(false);
     mSettingsPage->isOpen(false);
     connect(mSettingsPage, SIGNAL(closePressed()), this, SLOT(settingsClosePressed()));
-    connect(mSettingsPage, SIGNAL(clickedInfoWidget()), this, SLOT(lightInfoWidgetClicked()));
     connect(mSettingsPage, SIGNAL(clickedDiscovery()), this, SLOT(pushInDiscovery()));
     connect(mSettingsPage, SIGNAL(clickedLoadJSON(QString)), this, SLOT(loadJSON(QString)));
 
@@ -265,17 +264,6 @@ void MainWindow::loadPages() {
         mEditMoodPage->isOpen(false);
         connect(mEditMoodPage, SIGNAL(pressedClose()), this, SLOT(editClosePressed()));
         mEditMoodPage->setGeometry(0, -1 * height(), int(width() * 0.75), int(height() * 0.75));
-
-        // --------------
-        // Setup Mood Detailed Widget
-        // --------------
-
-        mMoodDetailedWidget = new ListMoodDetailedWidget(this, mGroups, mComm);
-        connect(mMoodDetailedWidget, SIGNAL(pressedClose()), this, SLOT(detailedClosePressed()));
-
-
-        mMoodDetailedWidget->setGeometry(0, -1 * height(), width(), height());
-        mMoodDetailedWidget->setVisible(false);
 
         mSettingsPage->enableButtons(true);
 
@@ -465,23 +453,6 @@ void MainWindow::editButtonClicked(bool isMood) {
     }
 }
 
-void MainWindow::moodSelected(std::uint64_t key) {
-    detailedMoodDisplay(key);
-}
-
-void MainWindow::detailedMoodDisplay(std::uint64_t key) {
-    mGreyOut->greyOut(true);
-
-    const auto& moodResult = mGroups->moods().item(QString::number(key).toStdString());
-    cor::Mood detailedMood = moodResult.first;
-    if (moodResult.second) {
-        auto moodLights = mComm->makeMood(detailedMood);
-        detailedMood.lights(moodLights.items());
-        mMoodDetailedWidget->update(detailedMood);
-    }
-
-    mMoodDetailedWidget->pushIn();
-}
 
 void MainWindow::editClosePressed() {
     mGreyOut->greyOut(false);
@@ -496,12 +467,6 @@ void MainWindow::editClosePressed() {
     }
     // TODO: update lefthandmenu
     // mMainViewport->lightPage()->updateRoomWidgets();
-}
-
-
-void MainWindow::detailedClosePressed() {
-    mGreyOut->greyOut(false);
-    mMoodDetailedWidget->pushOut();
 }
 
 
@@ -602,10 +567,6 @@ void MainWindow::resize() {
                                        int(size.height() * 0.75f));
         }
 
-        if (mMoodDetailedWidget->isOpen()) {
-            mMoodDetailedWidget->resize();
-        }
-
         mRoutineWidget->resize(mMainViewport->x(),
                                QSize(mMainViewport->width(), mMainViewport->height()));
     }
@@ -622,10 +583,6 @@ void MainWindow::greyoutClicked() {
             && mData->empty()) {
             mTopMenu->pushInTapToSelectButton();
         }
-    }
-
-    if (mMoodDetailedWidget->isOpen()) {
-        detailedClosePressed();
     }
 
     if (mEditMoodPage->isOpen() || mEditGroupPage->isOpen()) {
@@ -659,10 +616,6 @@ void MainWindow::wifiChecker() {
 }
 
 void MainWindow::backButtonPressed() {
-    if (mMoodDetailedWidget->isOpen()) {
-        detailedClosePressed();
-    }
-
     if (mSettingsPage->isOpen()) {
         settingsClosePressed();
     }
@@ -892,7 +845,7 @@ void MainWindow::setupStateObserver() {
             SLOT(singleLightBrightnessChanged(std::uint32_t)));
 
     // mood page
-    connect(mMoodDetailedWidget,
+    connect(mMainViewport->moodPage()->moodDetailedWidget(),
             SIGNAL(enableGroup(std::uint64_t)),
             mStateObserver,
             SLOT(moodChanged(std::uint64_t)));

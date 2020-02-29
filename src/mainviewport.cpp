@@ -36,13 +36,9 @@ MainViewport::MainViewport(MainWindow* parent,
     mPalettePage->isOpen(false);
     mPalettePage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    mMoodPage = new MoodPage(parent, groups);
+    mMoodPage = new MoodPage(parent, groups, comm);
     mMoodPage->isOpen(false);
     mMoodPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(mMoodPage,
-            SIGNAL(clickedSelectedMood(std::uint64_t)),
-            parent,
-            SLOT(moodSelected(std::uint64_t)));
     connect(mMoodPage, SIGNAL(clickedEditButton(bool)), parent, SLOT(editButtonClicked(bool)));
 }
 
@@ -129,19 +125,19 @@ void MainViewport::showMainPage(EPage page, bool skipTransition) {
     }
 
     if (page == EPage::colorPage) {
-        mColorPage->show(mData->mainColor(),
-                         mData->lights().size(),
-                         mComm->bestColorPickerType(mData->lights()));
+        mColorPage->update(mData->mainColor(),
+                           mData->lights().size(),
+                           mComm->bestColorPickerType(mData->lights()));
         mColorPage->setVisible(true);
     } else if (page == EPage::moodPage) {
         loadMoodPage();
         mMoodPage->setVisible(true);
     } else if (page == EPage::palettePage) {
         mPalettePage->resize();
-        mPalettePage->show(mData->lightCount(),
-                           mData->colorScheme(),
-                           mData->hasLightWithProtocol(EProtocolType::arduCor),
-                           mData->hasLightWithProtocol(EProtocolType::nanoleaf));
+        mPalettePage->update(mData->lightCount(),
+                             mData->colorScheme(),
+                             mData->hasLightWithProtocol(EProtocolType::arduCor),
+                             mData->hasLightWithProtocol(EProtocolType::nanoleaf));
         mPalettePage->setVisible(true);
     }
 }

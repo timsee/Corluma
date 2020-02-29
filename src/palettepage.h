@@ -32,11 +32,12 @@ public:
      */
     explicit PalettePage(QWidget* parent);
 
-    /// called whenever the group page is shown
-    void show(std::size_t count,
-              const std::vector<QColor>& colorScheme,
-              bool hasArduinoDevices,
-              bool hasNanoleafDevices);
+    /// called whenever the app's light data is updated in a way that would impact the PalettePage
+    /// (IE the number of selected lights changed)
+    void update(std::size_t count,
+                const std::vector<QColor>& colorScheme,
+                bool hasArduinoDevices,
+                bool hasNanoleafDevices);
 
     /// getter for current mode of page
     EGroupMode mode() { return mMode; }
@@ -55,9 +56,6 @@ public:
 
     /// called to programmatically resize the widget
     void resize();
-
-    /// changes the light count, affecting the menus on the page
-    void lightCountChanged(std::size_t count);
 
     /// getter for color picker
     MultiColorPicker* colorPicker() { return mColorPicker; }
@@ -95,6 +93,9 @@ protected:
     void resizeEvent(QResizeEvent*);
 
 private:
+    /// changes the light count, affecting the menus on the page
+    void lightCountChanged(std::size_t count);
+
     /// mode
     EGroupMode mMode;
 
