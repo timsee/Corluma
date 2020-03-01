@@ -26,7 +26,7 @@ class BridgeInfoWidget : public cor::ListItemWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit BridgeInfoWidget(const hue::Bridge& bridge, QWidget* parent);
+    explicit BridgeInfoWidget(const hue::Bridge& bridge, const QString& key, QWidget* parent);
 
     /// update the bridge being shown
     void updateBridge(const hue::Bridge& bridge);
@@ -44,6 +44,9 @@ public:
 
     /// resize programmatically
     void resize();
+
+    /// getter for bridge that is being displayed
+    const hue::Bridge& bridge() { return mBridge; }
 
 signals:
 

@@ -98,6 +98,9 @@ public:
     /// unique key
     const QString& id() const noexcept { return mId; }
 
+    /// setter for id, use very cautiously!
+    void id(const QString& id)  { mId = id; }
+
     /// api version of the software
     const QString& API() const noexcept { return mAPI; }
 

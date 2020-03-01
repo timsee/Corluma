@@ -72,41 +72,44 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer* comm, QWidget* parent)
 }
 
 void DiscoveryHueWidget::hueDiscoveryUpdate(EHueDiscoveryState newState) {
-    mHueDiscoveryState = newState;
+    if (newState != mHueDiscoveryState) {
+        mHueDiscoveryState = newState;
 
-    switch (mHueDiscoveryState) {
-        case EHueDiscoveryState::findingIpAddress:
-            mLabel->setText(QString("Looking for Bridge..."));
-            // qDebug() << "Hue Update: Finding IP Address";
-            emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
-            break;
-        case EHueDiscoveryState::findingDeviceUsername:
-            mLabel->setText(QString("Bridge Found! Please press Link button..."));
-            // qDebug() << "Hue Update: Bridge is waiting for link button to be pressed.";
-            emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
-            break;
-        case EHueDiscoveryState::testingFullConnection:
-            mLabel->setText(QString("Bridge button pressed! Testing connection..."));
-            // qDebug() << "Hue Update: IP and Username received, testing combination. ";
-            emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
-            break;
-        case EHueDiscoveryState::bridgeConnected: {
-            auto totalBridges = mComm->hue()->discovery()->bridges().size()
-                                + mComm->hue()->discovery()->notFoundBridges().size();
-            auto notFoundBridges =
-                totalBridges - mComm->hue()->discovery()->notFoundBridges().size();
-            mLabel->setText(
-                QString("%1 out of %2 bridges discovered. Searching for additional bridges...")
-                    .arg(QString::number(notFoundBridges), QString::number(totalBridges)));
-            // qDebug() << "Hue Update: Bridge Connected" << mComm->hueBridge().IP;
-            emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovered);
-            break;
+        switch (mHueDiscoveryState) {
+            case EHueDiscoveryState::findingIpAddress:
+                mLabel->setText(QString("Looking for Bridge..."));
+                // qDebug() << "Hue Update: Finding IP Address";
+                emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
+                break;
+            case EHueDiscoveryState::findingDeviceUsername:
+                mLabel->setText(QString("Bridge Found! Please press Link button..."));
+                // qDebug() << "Hue Update: Bridge is waiting for link button to be pressed.";
+                emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
+                break;
+            case EHueDiscoveryState::testingFullConnection:
+                mLabel->setText(QString("Bridge button pressed! Testing connection..."));
+                // qDebug() << "Hue Update: IP and Username received, testing combination. ";
+                emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
+                break;
+            case EHueDiscoveryState::bridgeConnected: {
+                auto totalBridges = mComm->hue()->discovery()->bridges().size()
+                                    + mComm->hue()->discovery()->notFoundBridges().size();
+                auto notFoundBridges =
+                    totalBridges - mComm->hue()->discovery()->notFoundBridges().size();
+                mLabel->setText(
+                    QString("%1 out of %2 bridges discovered. Searching for additional bridges...")
+                        .arg(QString::number(notFoundBridges), QString::number(totalBridges)));
+                // qDebug() << "Hue Update: Bridge Connected" << mComm->hueBridge().IP;
+                emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovered);
+                break;
+            }
+            case EHueDiscoveryState::allBridgesConnected:
+                mLabel->setText(QString(""));
+                // qDebug() << "Hue Update: All Bridges Connected" << mComm->hueBridge().IP;
+                emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovered);
+                break;
         }
-        case EHueDiscoveryState::allBridgesConnected:
-            mLabel->setText(QString(""));
-            // qDebug() << "Hue Update: All Bridges Connected" << mComm->hueBridge().IP;
-            emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovered);
-            break;
+        resize();
     }
 }
 
@@ -119,7 +122,7 @@ void DiscoveryHueWidget::handleDiscovery(bool) {
 
 void DiscoveryHueWidget::updateBridgeGUI() {
     auto bridgeList = mComm->hue()->bridges().items();
-    // get all found bridges
+    // get all not found bridges
     for (const auto& bridge : mComm->hue()->discovery()->notFoundBridges()) {
         bridgeList.push_back(bridge);
     }
@@ -130,8 +133,21 @@ void DiscoveryHueWidget::updateBridgeGUI() {
         int widgetIndex = -1;
         int i = 0;
         for (const auto& widget : mListWidget->widgets()) {
-            if (widget->key() == bridge.id()) {
-                auto bridgeInfoWidget = dynamic_cast<hue::BridgeInfoWidget*>(widget);
+            auto bridgeInfoWidget = dynamic_cast<hue::BridgeInfoWidget*>(widget);
+            if (bridgeInfoWidget->bridge().id().isEmpty() && widget->key() == bridge.IP()) {
+                // if theres no unique ID yet for this bridge, check if we can add a username
+                if (!bridge.username().isEmpty()) {
+                    // if we can add a username, remove the current widget and re-add with a new
+                    // username
+                    mListWidget->removeWidget(bridge.IP());
+                    break;
+                } else {
+                    // only update if we still don't have a username
+                    widgetIndex = i;
+                    bridgeInfoWidget->updateBridge(bridge);
+                }
+            } else if (widget->key() == bridge.id()) {
+                // standard case, theres a unique ID for this bridge
                 widgetIndex = i;
                 bridgeInfoWidget->updateBridge(bridge);
             }
@@ -140,7 +156,14 @@ void DiscoveryHueWidget::updateBridgeGUI() {
 
         // if it doesnt exist, add it
         if (widgetIndex == -1) {
-            auto widget = new hue::BridgeInfoWidget(bridge, mListWidget->mainWidget());
+            // if the bridge's key can be its id, use that. If not, we'll use a temporary widget
+            // that uses an IP address, but as soon as the real id is available, we'll delete this
+            // widget, and make a new one with the id as the key.
+            QString key = bridge.id();
+            if (key.isEmpty()) {
+                key = bridge.IP();
+            }
+            auto widget = new hue::BridgeInfoWidget(bridge, key, mListWidget->mainWidget());
             widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
             connect(widget,
                     SIGNAL(nameChanged(QString, QString)),

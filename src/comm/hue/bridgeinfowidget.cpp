@@ -14,8 +14,8 @@
 
 namespace hue {
 
-BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, QWidget* parent)
-    : cor::ListItemWidget(bridge.id(), parent),
+BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, const QString& key, QWidget* parent)
+    : cor::ListItemWidget(key, parent),
       mState{EBridgeDiscoveryState::unknown} {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     setStyleSheet(styleSheet);
@@ -133,29 +133,27 @@ void BridgeInfoWidget::updateBridge(const hue::Bridge& bridge) {
 }
 
 void BridgeInfoWidget::handleBridgeState(EBridgeDiscoveryState state) {
-    if (state != mState) {
-        auto min = width();
-        if (state == EBridgeDiscoveryState::connected) {
-            mBridgePixmap = QPixmap(":images/Hue-Bridge.png");
-            mDiscoverHueButton->setEnabled(true);
-            mGroupsButton->setEnabled(true);
-            mSchedulesButton->setEnabled(true);
-            auto width = int(min * 0.333f);
-            mImage->setPixmap(
-                mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-        } else if (state == EBridgeDiscoveryState::lookingForUsername) {
-            mBridgePixmap = QPixmap(":images/pressHueBridgeImage.png");
-            auto width = int(min * 0.333f);
-            mImage->setPixmap(
-                mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-        } else if (state == EBridgeDiscoveryState::lookingForResponse
-                   || state == EBridgeDiscoveryState::testingConnectionInfo) {
-            mImage->setMovie(mMovie);
-            mMovie->start();
-        }
-        mState = state;
-        adjustSize();
+    auto min = width();
+    auto width = int(min * 0.333f);
+    if (state == EBridgeDiscoveryState::connected) {
+        mBridgePixmap = QPixmap(":images/Hue-Bridge.png");
+        mDiscoverHueButton->setEnabled(true);
+        mGroupsButton->setEnabled(true);
+        mSchedulesButton->setEnabled(true);
+        mImage->setPixmap(
+            mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    } else if (state == EBridgeDiscoveryState::lookingForUsername) {
+        mBridgePixmap = QPixmap(":images/pressHueBridgeImage.png");
+        mImage->setPixmap(
+            mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    } else if (state == EBridgeDiscoveryState::lookingForResponse
+               || state == EBridgeDiscoveryState::testingConnectionInfo) {
+        mImage->setMovie(mMovie);
+        mMovie->start();
     }
+    mState = state;
+    mImage->setFixedWidth(width);
+    adjustSize();
 }
 
 void BridgeInfoWidget::setChecked(bool checked) {
@@ -190,14 +188,7 @@ void BridgeInfoWidget::mouseReleaseEvent(QMouseEvent*) {
 }
 
 void BridgeInfoWidget::resize() {
-    auto min = width();
-    if (mBridge.state() != EBridgeDiscoveryState::lookingForResponse
-        && mBridge.state() != EBridgeDiscoveryState::testingConnectionInfo) {
-        auto width = int(min * 0.45f);
-        mImage->setFixedWidth(width);
-        mImage->setPixmap(
-            mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    }
+    handleBridgeState(mBridge.state());
     auto yPos = 0;
 
     mMidLayout->setGeometry(QRect(0, yPos, width(), height()));

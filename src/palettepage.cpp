@@ -6,10 +6,7 @@
 
 #include "palettepage.h"
 
-#include <QDebug>
-
 #include "palettescrollarea.h"
-#include "utils/color.h"
 #include "utils/qt.h"
 
 PalettePage::PalettePage(QWidget* parent)
@@ -30,11 +27,6 @@ PalettePage::PalettePage(QWidget* parent)
     setMode(EGroupMode::wheel);
 }
 
-
-// ----------------------------
-// Slots
-// ----------------------------
-
 void PalettePage::paletteButtonClicked(EPalette palette) {
     mPaletteEnum = palette;
     mColorScheme = mPresetPalettes.palette(mPaletteEnum).colors();
@@ -51,11 +43,6 @@ void PalettePage::updateBrightness(std::uint32_t brightness) {
         mColorPicker->updateBrightness(brightness);
     }
 }
-
-// ----------------------------
-// Protected
-// ----------------------------
-
 
 void PalettePage::update(std::size_t count, const std::vector<QColor>& colorScheme) {
     if (mColorScheme.empty()) {

@@ -752,3 +752,10 @@ ___
 - Fixed bugs in getting the `ERoutine` enum from `RoutineButtonsWidget`.
 
 
+### **v0.18.7**
+#### Bug Fixes
+- Fixed bugs with manual Hue Bridge discovery.
+- Fixed bugs with displaying the state of Hue Bridges during discovery.
+- Fixed bugs with `BridgeInfoWidget` not updating properly. 
+
+

@@ -124,7 +124,7 @@ public:
     HueMetadata lightFromBridgeIDAndIndex(const QString& bridgeID, int index);
 
     /// update the lights metadata
-    void updateLight(const HueMetadata& light);
+    void updateLight(hue::Bridge bridge, const HueMetadata& light);
 
     /*!
      * \brief deleteBridge delete the bridge from app memory
@@ -228,7 +228,7 @@ private:
 
     /// parses the initial full packet from a Bridge, which contains all its lights, schedules, and
     /// groups info.
-    void parseInitialUpdate(const hue::Bridge& bridge, const QJsonObject& json);
+    hue::Bridge parseInitialUpdate(hue::Bridge bridge, const QJsonObject& json);
 
     /// update the existing JSON data to include lights data, in order to check for hardware changes
     /// on bootup.

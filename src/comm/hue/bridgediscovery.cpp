@@ -316,8 +316,10 @@ void BridgeDiscovery::handleResponseArray(const QString& fullIP, const QJsonArra
                     if (IP == notFoundBridge.IP()) {
                         notFoundBridge.username(innerObject["username"].toString());
                         notFoundBridge.state(EBridgeDiscoveryState::testingConnectionInfo);
+#ifdef DEBUG_BRIDGE_DISCOVERY
                         qDebug() << "Discovered username:" << notFoundBridge.username() << " for "
                                  << notFoundBridge.IP();
+#endif
                     }
                 }
             }
@@ -363,9 +365,10 @@ void BridgeDiscovery::handleInitialDiscoveryPacket(const QString& fullIP,
         hue::Bridge bridgeToMove;
         bool bridgeFound = false;
         for (auto bridge : mNotFoundBridges) {
-            if (bridge.id() == id) {
+            if ((bridge.id() == id) || (bridge.IP() == IP && bridge.username() == username)) {
                 bridgeFound = true;
                 bridgeToMove = bridge;
+                bridgeToMove.id(id);
                 auto it = std::find(mNotFoundBridges.begin(), mNotFoundBridges.end(), bridge);
                 mNotFoundBridges.erase(it);
                 break;
@@ -373,12 +376,11 @@ void BridgeDiscovery::handleInitialDiscoveryPacket(const QString& fullIP,
         }
         if (bridgeFound) {
 #ifdef DEBUG_BRIDGE_DISCOVERY
-            qDebug() << __func__ << "found bridge in not found bridges, removing";
+            qDebug() << __func__
+                     << "found bridge in not found bridges, removing and updating found bridges";
 #endif
-            bridgeToMove.state(EBridgeDiscoveryState::connected);
-            mFoundBridges.insert(bridgeToMove.id().toStdString(), bridgeToMove);
-            updateJSON(bridgeToMove);
-            parseInitialUpdate(bridgeToMove, object);
+            auto bridge = parseInitialUpdate(bridgeToMove, object);
+            updateJSON(bridge);
         } else {
 #ifdef DEBUG_BRIDGE_DISCOVERY
             qDebug() << __func__ << "did not find bridge in list of not found bridges"
@@ -406,12 +408,11 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
     }
 }
 
-void BridgeDiscovery::parseInitialUpdate(const hue::Bridge& bridge, const QJsonObject& object) {
+hue::Bridge BridgeDiscovery::parseInitialUpdate(hue::Bridge bridge, const QJsonObject& object) {
+    bridge.state(EBridgeDiscoveryState::connected);
     if (object["config"].isObject()) {
         QJsonObject configObject = object["config"].toObject();
-        auto bridgeCopy = bridge;
-        bridgeCopy.updateConfig(configObject);
-        updateJSON(bridgeCopy);
+        bridge.updateConfig(configObject);
     }
 
     QJsonObject lightsObject;
@@ -451,6 +452,9 @@ void BridgeDiscovery::parseInitialUpdate(const hue::Bridge& bridge, const QJsonO
             auto foundBridge = bridgeResult.first;
             foundBridge.lights(lightDict);
             mFoundBridges.update(foundBridge.id().toStdString(), foundBridge);
+        } else {
+            bridge.lights(lightDict);
+            mFoundBridges.insert(bridge.id().toStdString(), bridge);
         }
 
         updateJSONLights(bridge, lightsArray);
@@ -458,15 +462,15 @@ void BridgeDiscovery::parseInitialUpdate(const hue::Bridge& bridge, const QJsonO
         if (object["schedules"].isObject() && object["groups"].isObject()) {
             QJsonObject schedulesObject = object["schedules"].toObject();
             QJsonObject groupsObject = object["groups"].toObject();
-            auto bridgeCopy = bridge;
-            bridgeCopy.lights(lightDict);
-            mHue->bridgeDiscovered(bridgeCopy, lightsObject, groupsObject, schedulesObject);
+            bridge.lights(lightDict);
+            // signal a discovered bridge to the CommHue object
+            mHue->bridgeDiscovered(bridge, lightsObject, groupsObject, schedulesObject);
         }
     }
+    return bridge;
 }
 
-void BridgeDiscovery::updateLight(const HueMetadata& light) {
-    auto bridge = bridgeFromLight(light);
+void BridgeDiscovery::updateLight(hue::Bridge bridge, const HueMetadata& light) {
     auto dict = bridge.lights();
     dict.update(light.uniqueID().toStdString(), light);
     bridge.lights(dict);

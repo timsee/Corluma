@@ -91,15 +91,11 @@ public:
         auto appSize = cor::applicationSize();
         float sizeRatio = appSize.width() / float(appSize.height());
         if (sizeRatio > 1.0f) {
-            setGeometry(int(size.width() * 0.333f),
-                        int(size.height() * 0.333f),
-                        int(size.width() * 0.333f),
-                        int(size.height() * 0.333f));
+            setFixedSize(int(size.width() * 0.333f),
+                         int(size.height() * 0.333f));
         } else {
-            setGeometry(int(size.width() * 0.125f),
-                        int(size.height() * 0.25f),
-                        int(size.width() * 0.75f),
-                        int(size.height() * 0.2f));
+            setFixedSize(int(size.width() * 0.75f),
+                         int(size.height() * 0.2f));
         }
 
         int yPos = 0;
