@@ -126,6 +126,7 @@ void MainViewport::showMainPage(EPage page, bool skipTransition) {
 
     if (page == EPage::colorPage) {
         mColorPage->update(mData->mainColor(),
+                           mData->brightness(),
                            mData->lights().size(),
                            mComm->bestColorPickerType(mData->lights()));
         mColorPage->setVisible(true);
@@ -134,10 +135,7 @@ void MainViewport::showMainPage(EPage page, bool skipTransition) {
         mMoodPage->setVisible(true);
     } else if (page == EPage::palettePage) {
         mPalettePage->resize();
-        mPalettePage->update(mData->lightCount(),
-                             mData->colorScheme(),
-                             mData->hasLightWithProtocol(EProtocolType::arduCor),
-                             mData->hasLightWithProtocol(EProtocolType::nanoleaf));
+        mPalettePage->update(mData->lightCount(), mData->colorScheme());
         mPalettePage->setVisible(true);
     }
 }

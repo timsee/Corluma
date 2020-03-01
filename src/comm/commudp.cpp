@@ -73,7 +73,7 @@ void CommUDP::shutdown() {
 void CommUDP::sendPacket(const cor::Controller& controller, QString& packet) {
     if (mBound) {
         // send packet over UDP
-        // qDebug() << "sending udp" << packet << "to " << controller.name;
+        // qDebug() << "sending udp" << packet << "to " << controller.name();
         mSocket->writeDatagram(packet.toUtf8().data(), QHostAddress(controller.name()), PORT);
     } else {
         qDebug() << "WARNING: UDP port not bound";

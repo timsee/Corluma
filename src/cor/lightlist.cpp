@@ -97,6 +97,21 @@ void LightList::updateBrightness(std::uint32_t brightness) {
     emit dataUpdate();
 }
 
+std::uint32_t LightList::brightness() {
+    std::uint32_t brightnessSum = 0u;
+    for (const auto& light : mLights) {
+        const auto& state = light.state();
+        if (state.routine() <= cor::ERoutineSingleColorEnd) {
+            brightnessSum += std::uint32_t(state.color().valueF() * 100.0);
+        } else {
+            brightnessSum += state.palette().brightness();
+        }
+    }
+    if (!empty()) {
+        brightnessSum = brightnessSum / mLights.size();
+    }
+    return brightnessSum;
+}
 
 
 void LightList::updateSpeed(int speed) {

@@ -44,7 +44,10 @@ public:
     bool isIn() const noexcept { return mIsIn; }
 
     /// called when the count changes to reflect the light's state better
-    void lightCountChanged(bool isOn, const QColor& color, std::size_t count);
+    void lightCountChanged(bool isOn,
+                           const QColor& color,
+                           std::uint32_t brightness,
+                           std::size_t count);
 
 signals:
     /// the new value of the brightness slider

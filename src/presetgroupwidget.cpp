@@ -9,12 +9,8 @@
 #include "cor/presetpalettes.h"
 #include "utils/qt.h"
 
-PresetGroupWidget::PresetGroupWidget(const QString& name,
-                                     EPalette palette,
-                                     EPresetWidgetMode mode,
-                                     QWidget* parent)
+PresetGroupWidget::PresetGroupWidget(const QString& name, EPalette palette, QWidget* parent)
     : QWidget(parent) {
-    mMode = mode;
     mLayout = new QGridLayout(this);
 
     mLabel = new QLabel(this);
@@ -27,71 +23,34 @@ PresetGroupWidget::PresetGroupWidget(const QString& name,
     state.isOn(true);
     state.palette(palettes.palette(palette));
     state.speed(100);
-    if (mode == EPresetWidgetMode::arduino) {
-        int buttonCount = int(ERoutine::MAX) - int(cor::ERoutineSingleColorEnd) - 1;
-        mButtons = std::vector<cor::Button*>(std::size_t(buttonCount), nullptr);
-        mLayout->addWidget(mLabel, 0, 0, 1, buttonCount + 1);
 
-        std::uint32_t index = 0;
-        for (int routine = int(cor::ERoutineSingleColorEnd) + 1; routine < int(ERoutine::MAX);
-             routine++) {
-            state.routine(ERoutine(routine));
-            mButtons[index] = new cor::Button(this, state);
-            mButtons[index]->resizeIconAutomatically(true);
-            mButtons[index]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-            mButtons[index]->setStyleSheet(kUncheckedStyleSheet);
-            connect(mButtons[index],
-                    SIGNAL(buttonClicked(cor::LightState)),
-                    this,
-                    SLOT(multiButtonClicked(cor::LightState)));
-            // add to layout
-            mLayout->addWidget(mButtons[index], 1, int(index + 1), 6, 1);
-            mButtons[index]->setFixedHeight(int(mButtons[index]->size().width() * 0.9f));
-            index++;
-        }
-    } else {
-        mButtons = std::vector<cor::Button*>(1, nullptr);
-        mLayout->addWidget(mLabel, 0, 0, 1, 2);
-        uint32_t index = 0;
-        state.routine(ERoutine::multiFade);
-        mButtons[index] = new cor::Button(this, state);
-        mButtons[index]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        mButtons[index]->resizeIconAutomatically(false);
-        mButtons[index]->setStyleSheet(kUncheckedStyleSheet);
-        connect(mButtons[index],
-                SIGNAL(buttonClicked(cor::LightState)),
-                this,
-                SLOT(multiButtonClicked(cor::LightState)));
-        // add to layout
-        mLayout->addWidget(mButtons[index], 1, 1, 6, 1);
-    }
+    mLayout->addWidget(mLabel, 0, 0, 1, 2);
+    state.routine(ERoutine::multiBars);
+    mButton = new cor::Button(this, state);
+    mButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mButton->resizeIconAutomatically(false);
+    mButton->setStyleSheet(kUncheckedStyleSheet);
+    connect(mButton,
+            SIGNAL(buttonClicked(cor::LightState)),
+            this,
+            SLOT(multiButtonClicked(cor::LightState)));
+    // add to layout
+    mLayout->addWidget(mButton, 1, 1, 6, 1);
 }
 
-void PresetGroupWidget::setChecked(ERoutine routine, bool isChecked) {
-    if (mMode == EPresetWidgetMode::arduino) {
-        std::uint32_t index =
-            std::uint32_t(routine) - std::uint32_t(cor::ERoutineSingleColorEnd) - 1;
-        mButtons[index]->setChecked(isChecked);
-        if (isChecked) {
-            mButtons[index]->setStyleSheet(kCheckedStyleSheet);
-        } else {
-            mButtons[index]->setStyleSheet(kUncheckedStyleSheet);
-        }
+void PresetGroupWidget::setChecked(EPalette palette) {
+    bool shouldCheck = (mButton->state().palette().paletteEnum() == palette);
+    mButton->setChecked(shouldCheck);
+    if (shouldCheck) {
+        mButton->setStyleSheet(kCheckedStyleSheet);
     } else {
-        mButtons[0]->setChecked(isChecked);
-        if (isChecked) {
-            mButtons[0]->setStyleSheet(kCheckedStyleSheet);
-        } else {
-            mButtons[0]->setStyleSheet(kUncheckedStyleSheet);
-        }
+        mButton->setStyleSheet(kUncheckedStyleSheet);
     }
 }
 
 void PresetGroupWidget::resize() {
-    for (auto button : mButtons) {
-        button->setFixedHeight(button->width());
-        button->resizeIcon();
-    }
+    mButton->setFixedHeight(mButton->width());
+    mButton->resizeIcon();
 }
 
 const QString PresetGroupWidget::kCheckedStyleSheet = "background-color: rgb(67, 67, 67); ";

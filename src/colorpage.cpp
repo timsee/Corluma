@@ -40,9 +40,13 @@ void ColorPage::ambientUpdateReceived(std::uint32_t newAmbientValue, std::uint32
     emit ambientUpdate(newAmbientValue, newBrightness);
 }
 
-void ColorPage::update(const QColor& color, std::size_t lightCount, EColorPickerType bestType) {
+void ColorPage::update(const QColor& color,
+                       std::uint32_t brightness,
+                       std::size_t lightCount,
+                       EColorPickerType bestType) {
     mColor = color;
     mBestType = bestType;
+    mColorPicker->updateBrightness(brightness);
     if (lightCount == 0) {
         mColorPicker->enable(false, mBestType);
     } else {

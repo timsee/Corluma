@@ -186,16 +186,14 @@ void TopMenu::lightCountChanged() {
     if (mCurrentPage == EPage::colorPage) {
         showRoutineWidget(false);
         mColorPage->update(mData->mainColor(),
+                           mData->brightness(),
                            mData->lights().size(),
                            mComm->bestColorPickerType(mData->lights()));
     } else if (mCurrentPage == EPage::palettePage) {
         showRoutineWidget(false);
         showMultiColorStateWidget(!mData->empty());
         mMultiColorStateWidget->updateState(mData->colorScheme());
-        mPalettePage->update(mData->lightCount(),
-                             mData->colorScheme(),
-                             mData->hasLightWithProtocol(EProtocolType::arduCor),
-                             mData->hasLightWithProtocol(EProtocolType::nanoleaf));
+        mPalettePage->update(mData->lightCount(), mData->colorScheme());
     }
 }
 
@@ -271,12 +269,7 @@ void TopMenu::floatingLayoutButtonPressed(const QString& button) {
         }
         highlightButton("");
     } else if (button == "Preset") {
-        if (mData->hasLightWithProtocol(EProtocolType::arduCor)
-            || mData->hasLightWithProtocol(EProtocolType::nanoleaf)) {
-            mPalettePage->setMode(EGroupMode::arduinoPresets);
-        } else {
-            mPalettePage->setMode(EGroupMode::huePresets);
-        }
+        mPalettePage->setMode(EGroupMode::presets);
         showRoutineWidget(false);
         handleBrightnessSliders();
     } else if (button == "RGB") {
@@ -290,7 +283,7 @@ void TopMenu::floatingLayoutButtonPressed(const QString& button) {
             mColorPage->changePageType(ESingleColorPickerMode::HSV);
         }
         if (mPalettePage->isOpen()) {
-            mPalettePage->setMode(EGroupMode::HSV);
+            mPalettePage->setMode(EGroupMode::wheel);
             handleBrightnessSliders();
             showRoutineWidget(false);
         }
@@ -452,7 +445,7 @@ void TopMenu::showRoutineWidget(bool skipTransition) {
     } else if (mCurrentPage == EPage::palettePage) {
         // only push in if light count shows more than one light, has lights capable of multiple
         // colors, and the palette page is showing the HSV picker
-        if (hasMulti && mData->lightCount() > 1 && (mPalettePage->mode() == EGroupMode::HSV)) {
+        if (hasMulti && mData->lightCount() > 1) {
             shouldMoveIn = true;
         }
     }
@@ -587,9 +580,6 @@ void TopMenu::updateState(const cor::LightState& state) {
 
     if (mGlobalBrightness->isIn()) {
         mGlobalBrightness->updateColor(mData->mainColor());
-        if (routine <= cor::ERoutineSingleColorEnd) {
-            mGlobalBrightness->updateBrightness(int(mData->mainColor().valueF() * 100.0));
-        }
     }
 }
 
@@ -618,7 +608,7 @@ void TopMenu::handleBrightnessSliders() {
     } else {
         bool updateGlobalBrightness = false;
         if (mCurrentPage == EPage::palettePage) {
-            if (mPalettePage->mode() == EGroupMode::HSV) {
+            if (mPalettePage->mode() == EGroupMode::wheel) {
                 if (mPalettePage->colorPicker()->currentScheme() == EColorSchemeType::custom) {
                     mGlobalBrightness->pushOut();
                     if (!mSingleLightBrightness->isIn()) {
@@ -641,6 +631,7 @@ void TopMenu::handleBrightnessSliders() {
             mGlobalBrightness->pushIn();
             mGlobalBrightness->lightCountChanged(mData->isOn(),
                                                  mData->mainColor(),
+                                                 mData->brightness(),
                                                  mData->lights().size());
             mSingleLightBrightness->pushOut();
         }

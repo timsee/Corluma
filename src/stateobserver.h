@@ -54,8 +54,8 @@ public slots:
     /// routine changed from routine widget
     void routineChanged(ERoutine);
 
-    /// routine changed from a palette widget
-    void routineChanged(ERoutine, EPalette);
+    /// palette changed from a palette widget
+    void paletteChanged(EPalette);
 
     /// speed changed from a speed widget
     void speedChanged(std::uint32_t);

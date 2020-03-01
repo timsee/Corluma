@@ -741,3 +741,14 @@ ___
 - Fixed android launcher icons not showing.
 - Moved handling of moods from `MainWindow` to `MoodPage`.
 
+
+### **v0.18.6**
+#### The PalettePage Update
+- Refactored `PalettePage` to no longer track a `ERoutine`.
+- Fixed bugs with `PaletteScrollArea`.
+- Fixed palette bugs with `DataSyncArduino`.
+- Fixed edge cases with the brightness states when different lights with a variety of states are selected.
+- Fixed edge cases with the brightness states when you change between pages.
+- Fixed bugs in getting the `ERoutine` enum from `RoutineButtonsWidget`.
+
+

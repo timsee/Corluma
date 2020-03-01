@@ -47,7 +47,10 @@ public:
     void updateBrightness(std::uint32_t brightness);
 
     /// called when the app state is updated (IE when the selected lights changed)
-    void update(const QColor& color, std::size_t lightCount, EColorPickerType bestType);
+    void update(const QColor& color,
+                std::uint32_t brightness,
+                std::size_t lightCount,
+                EColorPickerType bestType);
 
     /// getter for currently selected color
     const QColor color() const noexcept { return mColor; }

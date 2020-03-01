@@ -594,11 +594,10 @@ void MainWindow::wifiChecker() {
     mWifiFound = cor::wifiEnabled();
 
     // NOTE: this is a bit of a UX hack since its a non-documented feature, but it would make a more
-    // confusing UX to 99%+ of potential users
-    // to fully show this edge case at this point. The No wifi detected screen will get hidden
-    // if theres a serial connection, since serial is the one exception to not needing wifi.
-    // This edge case only comes up if the user is using arduino devices on a non-mobile build
-    // in a place where they don't have a wifi connection.
+    // confusing UX to 99%+ of potential users to fully show this edge case at this point. The No
+    // wifi detected screen will get hidden if theres a serial connection, since serial is the one
+    // exception to not needing wifi. This edge case only comes up if the user is using arduino
+    // devices on a non-mobile build in a place where they don't have a wifi connection.
 #ifndef MOBILE_BUILD
     if (!mWifiFound) {
         mWifiFound = !mComm->lightDict(ECommType::serial).empty();
@@ -808,9 +807,9 @@ void MainWindow::setupStateObserver() {
 
     // palette page setup
     connect(mMainViewport->palettePage(),
-            SIGNAL(routineUpdate(ERoutine, EPalette)),
+            SIGNAL(paletteUpdate(EPalette)),
             mStateObserver,
-            SLOT(routineChanged(ERoutine, EPalette)));
+            SLOT(paletteChanged(EPalette)));
 
     connect(mMainViewport->palettePage()->colorPicker(),
             SIGNAL(schemeUpdate(std::vector<QColor>, std::uint32_t)),

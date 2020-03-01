@@ -8,9 +8,6 @@
 #include "cor/objects/light.h"
 #include "cor/widgets/button.h"
 
-/// mode of this widget
-enum class EPresetWidgetMode { arduino, hue };
-
 /*!
  * \copyright
  * Copyright (C) 2015 - 2020.
@@ -32,20 +29,16 @@ public:
      * \param colors colors in color group
      * \param parent parent widget
      */
-    explicit PresetGroupWidget(const QString& name,
-                               EPalette palette,
-                               EPresetWidgetMode mode,
-                               QWidget* parent);
+    explicit PresetGroupWidget(const QString& name, EPalette palette, QWidget* parent);
 
     /*!
      * \brief setChecked acts similarly to the setChecked of a standard QPushButton, but
      * allows you to call the specific button of the PresetGroupWidget by its lighting
-     * routine.
+     * palette.
      *
-     * \param routine lighting routine button to check or uncheck.
-     * \param isChecked true to check button, false otherwise.
+     * \param palette palette to use
      */
-    void setChecked(ERoutine routine, bool isChecked);
+    void setChecked(EPalette palette);
 
     /// resize this widget and all subwidgets
     void resize();
@@ -70,11 +63,7 @@ private slots:
     void multiButtonClicked(cor::LightState object) { emit presetButtonClicked(object); }
 
 private:
-    /*!
-     * \brief mButtons Buttons used in the grid in the scroll area, each one signals
-     * a EColorPreset and a ELightingMode.
-     */
-    std::vector<cor::Button*> mButtons;
+    cor::Button* mButton;
 
     /*!
      * \brief mLabel label for name of preset group.
@@ -85,9 +74,6 @@ private:
      * \brief mLayout layout of widget
      */
     QGridLayout* mLayout;
-
-    /// mode for preset widget
-    EPresetWidgetMode mMode;
 
     /*!
      * \brief kCheckedStyleSheet stylesheet for when the icon is checked

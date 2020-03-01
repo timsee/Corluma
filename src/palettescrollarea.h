@@ -22,27 +22,21 @@ public:
     explicit PaletteScrollArea(QWidget* parent);
 
     /*!
-     * \brief setupButtons sets up the routine buttons.
-     */
-    void setupButtons(bool isArduino);
-
-    /*!
      * \brief highlightRoutineButton highlights the button that implements
-     * the routine parameter. If it can't find a button that
+     * the palette. If it can't find a button that
      * implements this lighting routine, then all buttons are unhighlighted
      *
-     * \param routine the lighting routine the highlighted button implements.
      * \param palette the color group that the highlighted button implements.
      */
-    void highlightRoutineButton(ERoutine routine, EPalette palette);
+    void highlightButton(EPalette palette);
 
     /// programmatically resize
     void resize();
 
 signals:
 
-    /// emits the routine and palette clicked when a button is clicked
-    void paletteClicked(ERoutine, EPalette);
+    /// emits the palette clicked when a button is clicked
+    void paletteClicked(EPalette);
 
 private slots:
 

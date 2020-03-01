@@ -40,8 +40,9 @@ void StateObserver::globalBrightnessChanged(std::uint32_t brightness) {
     // UI updates. These shouldn't signal any further changes, but since a UI element has updated
     if (mMainViewport->currentPage() == EPage::colorPage) {
         mColorPage->updateBrightness(brightness);
-        mTopMenu->singleColorStateWidget()->updateState(mData->mainColor(),
-                                                        mMainWindow->routineWidget()->routine());
+        mTopMenu->singleColorStateWidget()->updateState(
+            mData->mainColor(),
+            mMainWindow->routineWidget()->singleRoutine());
     }
     if (mMainViewport->currentPage() == EPage::palettePage) {
         mPalettePage->updateBrightness(brightness);
@@ -50,7 +51,7 @@ void StateObserver::globalBrightnessChanged(std::uint32_t brightness) {
 }
 
 void StateObserver::singleLightBrightnessChanged(std::uint32_t brightness) {
-    if (mPalettePage->mode() == EGroupMode::HSV) {
+    if (mPalettePage->mode() == EGroupMode::wheel) {
         // update the color scheme color in mData
         auto scheme = mData->colorScheme();
         auto color = scheme[mPalettePage->colorPicker()->selectedLight()];
@@ -91,7 +92,8 @@ void StateObserver::isOnChanged(bool isOn) {
 }
 
 
-void StateObserver::routineChanged(ERoutine, EPalette) {
+void StateObserver::paletteChanged(EPalette) {
+    mIsOn = true;
     computeState();
 }
 
@@ -164,7 +166,7 @@ void StateObserver::computeState() {
             cor::LightState state;
             state.isOn(mIsOn);
             if (mData->supportsRoutines()) {
-                state.routine(mMainWindow->routineWidget()->routine());
+                state.routine(mMainWindow->routineWidget()->singleRoutine());
             } else {
                 state.routine(ERoutine::singleSolid);
             }
@@ -188,18 +190,25 @@ void StateObserver::computeState() {
         case EPage::palettePage: {
             cor::LightState state;
             state.isOn(mIsOn);
-            state.routine(mMainWindow->routineWidget()->routine());
             state.speed(mSpeed);
-            state.param(mMainWindow->routineWidget()->parameter());
-            Palette palette(paletteToString(mPalettePage->palette()),
-                            mPalettePage->colorScheme(),
-                            100u);
-            // skip global brightness if HSV and using a custom scheme
-            if (mPalettePage->mode() != EGroupMode::HSV
-                || mPalettePage->colorPicker()->currentScheme() != EColorSchemeType::custom) {
-                palette.brightness(mTopMenu->globalBrightness()->brightness());
+            state.routine(mMainWindow->routineWidget()->multiRoutine());
+
+            if (mPalettePage->mode() == EGroupMode::wheel) {
+                state.param(mMainWindow->routineWidget()->parameter());
+                Palette palette(paletteToString(mPalettePage->palette()),
+                                mPalettePage->colorScheme(),
+                                100u);
+                if (mPalettePage->colorPicker()->currentScheme() != EColorSchemeType::custom) {
+                    palette.brightness(mTopMenu->globalBrightness()->brightness());
+                }
+                state.palette(palette);
+            } else if (mPalettePage->mode() == EGroupMode::presets) {
+                state.param(mMainWindow->routineWidget()->parameter());
+                Palette palette(paletteToString(mPalettePage->palette()),
+                                mPalettePage->colorScheme(),
+                                mTopMenu->globalBrightness()->brightness());
+                state.palette(palette);
             }
-            state.palette(palette);
             mData->updateState(state);
             mTopMenu->updateState(state);
             break;

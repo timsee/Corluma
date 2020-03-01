@@ -9,7 +9,7 @@
 class PaletteScrollArea;
 
 /// mode of the page
-enum class EGroupMode { arduinoPresets, huePresets, HSV };
+enum class EGroupMode { presets, wheel };
 
 /*!
  * \copyright
@@ -34,10 +34,7 @@ public:
 
     /// called whenever the app's light data is updated in a way that would impact the PalettePage
     /// (IE the number of selected lights changed)
-    void update(std::size_t count,
-                const std::vector<QColor>& colorScheme,
-                bool hasArduinoDevices,
-                bool hasNanoleafDevices);
+    void update(std::size_t count, const std::vector<QColor>& colorScheme);
 
     /// getter for current mode of page
     EGroupMode mode() { return mMode; }
@@ -69,24 +66,13 @@ public:
 signals:
 
     /// a button was pressed, signaling a routine change.
-    void routineUpdate(ERoutine, EPalette);
+    void paletteUpdate(EPalette);
 
 private slots:
 
-    void paletteButtonClicked(ERoutine, EPalette);
-
-    /*!
-     * \brief newRoutineSelected called whenever a routine button is clicked. Sends
-     * the routine to the backend data so that it can get sent to the connected devices.
-     */
-    void newRoutineSelected(ERoutine);
+    void paletteButtonClicked(EPalette);
 
 protected:
-    /*!
-     * \brief called whenever the page is shown on screen.
-     */
-    void showEvent(QShowEvent*);
-
     /*!
      * \brief resizeEvent called every time the main window is resized.
      */
@@ -108,11 +94,7 @@ private:
     /// preset data for palettes from ArduCor
     PresetPalettes mPresetPalettes;
 
-    /// PaletteScrollArea containing arduino and nanoleaf palette/routine combos
-    PaletteScrollArea* mArduinoPaletteScrollArea;
-
-    /// PaletteScrollArea containing hue palettes.
-    PaletteScrollArea* mHuePaletteScrollArea;
+    PaletteScrollArea* mPaletteScrollArea;
 
     /// color picker for color schemes
     MultiColorPicker* mColorPicker;

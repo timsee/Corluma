@@ -55,6 +55,10 @@ public:
      */
     bool isOn();
 
+    /// computes the brightness, based off of the single and multi color routines. If lights are in
+    /// varying states, this will give back an average brightness.
+    std::uint32_t brightness();
+
     /*!
      * \brief updateState update the state for all current lights.
      * \param state new lighting state.

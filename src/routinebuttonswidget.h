@@ -72,8 +72,11 @@ public:
     /// true if open, false if hidden
     bool isOpen() const noexcept { return mIsOpen; }
 
-    /// last routine clicked
-    ERoutine routine() { return state().routine(); }
+    /// last routine clicked on the single routine options
+    ERoutine singleRoutine() { return mSingleState.routine(); }
+
+    /// last routine clicke don the multi routine options
+    ERoutine multiRoutine() { return mMultiState.routine(); }
 
     /// last parameter used
     std::uint32_t parameter() { return state().param(); }

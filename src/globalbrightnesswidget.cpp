@@ -61,7 +61,10 @@ void GlobalBrightnessWidget::updateBrightness(int brightness) {
 }
 
 
-void GlobalBrightnessWidget::lightCountChanged(bool isOn, const QColor& color, std::size_t count) {
+void GlobalBrightnessWidget::lightCountChanged(bool isOn,
+                                               const QColor& color,
+                                               std::uint32_t brightness,
+                                               std::size_t count) {
     if (count > 0) {
         pushIn();
         mBrightnessSlider->enable(true);
@@ -71,7 +74,6 @@ void GlobalBrightnessWidget::lightCountChanged(bool isOn, const QColor& color, s
             mOnOffSwitch->setSwitchState(ESwitchState::off);
         }
 
-        auto brightness = int(color.valueF() * 100.0);
         updateBrightness(brightness);
         updateColor(color);
     } else {
