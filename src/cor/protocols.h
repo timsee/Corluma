@@ -170,9 +170,9 @@ enum class EColorMode { HSV, dimmable, CT, XY, MAX };
  */
 inline QString colorModeToString(EColorMode mode) {
     if (mode == EColorMode::HSV) {
-        return "HSV";
+        return "hs";
     } else if (mode == EColorMode::CT) {
-        return "CT";
+        return "ct";
     } else {
         return "ColorMode not recognized";
     }
@@ -186,9 +186,9 @@ inline QString colorModeToString(EColorMode mode) {
  * \return EColorMode based off of string.
  */
 inline EColorMode stringtoColorMode(const QString& mode) {
-    if (mode == "HSV" || mode == "hs") {
+    if (mode == "hs") {
         return EColorMode::HSV;
-    } else if (mode == "CT" || mode == "ct") {
+    } else if (mode == "ct") {
         return EColorMode::CT;
     } else if (mode == "") {
         // edge case from phillips hue

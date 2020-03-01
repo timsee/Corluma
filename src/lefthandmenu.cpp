@@ -104,7 +104,9 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
 
     mRenderThread = new QTimer(this);
     connect(mRenderThread, SIGNAL(timeout()), this, SLOT(renderUI()));
-
+    if (mAlwaysOpen) {
+        mRenderThread->start(333);
+    }
     connect(this, SIGNAL(changedDeviceCount()), this, SLOT(deviceCountChanged()));
 }
 

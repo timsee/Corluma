@@ -477,8 +477,6 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge,
         if (stateObject["on"].isBool() && stateObject["reachable"].isBool()
             && stateObject["bri"].isDouble()) {
             HueMetadata metadata(object, bridge.id(), i);
-            QString colorMode = stateObject["colormode"].toString();
-            metadata.colorMode(stringtoColorMode(colorMode));
 
             HueLight hue(metadata);
             fillDevice(hue);

@@ -759,3 +759,8 @@ ___
 - Fixed bugs with `BridgeInfoWidget` not updating properly. 
 
 
+### **v0.18.75**
+#### Bug Fixes
+- Fixed an issue with Hue color modes.
+- Fixed edge cases with the `LeftHandMenu` when it is always open.
+

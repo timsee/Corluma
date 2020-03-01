@@ -243,6 +243,10 @@ void MainWindow::loadPages() {
                 this,
                 SLOT(topMenuButtonPressed(QString)));
 
+        // push the greyout and lefthand menu up
+        mLeftHandMenu->raise();
+        mGreyOut->raise();
+
         // --------------
         // Setup Layout
         // --------------

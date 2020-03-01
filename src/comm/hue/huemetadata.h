@@ -45,6 +45,10 @@ public:
         } else if (name.contains("white lamp")) {
             name.replace("white lamp", "White Lamp");
         }
+
+
+        auto state = object["state"].toObject();
+        mColorMode = stringtoColorMode((state["colormode"].toString()));
         QString hueString = QString("Hue ");
         name.replace(name.indexOf(hueString), hueString.size(), QString(""));
         mName = name;
@@ -93,6 +97,16 @@ public:
             result = false;
         }
         return result;
+    }
+
+    /// converts a HueMetadata to a string
+    operator QString() const {
+        std::stringstream tempString;
+        tempString << "hue::Metadata: "
+                   << " bridgeID: " << bridgeID().toStdString()
+                   << " uniqueID: " << uniqueID().toStdString() << " name: " << name().toStdString()
+                   << " colorMode: " << colorModeToString(colorMode()).toStdString();
+        return QString::fromStdString(tempString.str());
     }
 
 private:

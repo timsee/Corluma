@@ -40,9 +40,14 @@ void StateObserver::globalBrightnessChanged(std::uint32_t brightness) {
     // UI updates. These shouldn't signal any further changes, but since a UI element has updated
     if (mMainViewport->currentPage() == EPage::colorPage) {
         mColorPage->updateBrightness(brightness);
-        mTopMenu->singleColorStateWidget()->updateState(
-            mData->mainColor(),
-            mMainWindow->routineWidget()->singleRoutine());
+        if (mData->supportsRoutines()) {
+            mTopMenu->singleColorStateWidget()->updateState(
+                mData->mainColor(),
+                mMainWindow->routineWidget()->singleRoutine());
+        } else {
+            mTopMenu->singleColorStateWidget()->updateState(mData->mainColor(),
+                                                            ERoutine::singleSolid);
+        }
     }
     if (mMainViewport->currentPage() == EPage::palettePage) {
         mPalettePage->updateBrightness(brightness);
