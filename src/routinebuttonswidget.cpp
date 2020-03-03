@@ -121,7 +121,7 @@ void RoutineButtonsWidget::initMultiRoutinesButtons() {
     mMultiRoutines = std::vector<std::pair<QString, cor::LightState>>(5);
     QJsonObject routineObject;
     state.isOn(true);
-    state.palette(Palette(paletteToString(EPalette::custom), colors, 51));
+    state.palette(cor::Palette(paletteToString(EPalette::custom), colors, 51));
 
     mMultiRoutines[0].first = "Glimmer";
     state.routine(ERoutine::multiGlimmer);
@@ -197,7 +197,7 @@ void RoutineButtonsWidget::highlightRoutineButton(const QString& label) {
 void RoutineButtonsWidget::multiRoutineColorsChanged(const std::vector<QColor>& colors) {
     for (std::size_t i = 0u; i < mMultiRoutineButtons.size(); i++) {
         auto state = mMultiRoutines[i].second;
-        state.palette(Palette(paletteToString(EPalette::custom), colors, 51));
+        state.palette(cor::Palette(paletteToString(EPalette::custom), colors, 51));
         mMultiRoutineButtons[i]->updateRoutine(state);
     }
 }

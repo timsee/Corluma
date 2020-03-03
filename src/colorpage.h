@@ -16,13 +16,12 @@
  * \brief The ColorPage provides a way to change the color of the lights selected in the app.
  *
  * The page contains a ColorPicker that allows the user to choose colors. The color picker has
- * various modes such as standard, which gives full range of RGB, and ambient, which allows the
- * user to choose different shades of white.
+ * three main modes: an HSV mode, which requires the user to use a slider to change the brightness,
+ * an RGB mode which has brightness tied into the color picker's wheel, and an ambient mode, which
+ * allows the user to choose between different temperatures of white.
  *
- * For arduino-based projects, there is also a pop up menu on the bottom that allows the user to
- * choose routines for the arduino. To get the single color routines, the user should be on the
- * standard color picker. To get the multi color routines, the user should be on the multi color
- * picker.
+ * While the user is on this page, there is also a pop up menu on the bottom that allows the user to
+ * choose routines for lights that can be individually indexed, such as arduinos and nanoleafs.
  */
 class ColorPage : public QWidget, public cor::Page {
     Q_OBJECT

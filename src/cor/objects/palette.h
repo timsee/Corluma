@@ -11,6 +11,8 @@
 #include "utils/cormath.h"
 #include "utils/exception.h"
 
+namespace cor {
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2020.
@@ -18,8 +20,9 @@
  *
  *
  * \brief The Palette class defines a name, a vector of colors, and an enum. Each
- *        palette maintains a JSON representation and a standard representation of
- *        all of its data.
+ * palette maintains a JSON representation and a standard representation of
+ * all of its data. The enum will be defined as "custom" if it doesn't match a known palette
+ * for Corluma.
  */
 class Palette {
 public:
@@ -193,5 +196,6 @@ inline std::ostream& operator<<(std::ostream& out, const Palette& palette) {
     return out;
 }
 
+} // namespace cor
 
 #endif // PALETTE_H

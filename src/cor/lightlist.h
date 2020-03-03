@@ -20,10 +20,10 @@ namespace cor {
  *
  *
  *
- * \brief The LightList class stores and maintains the data
- * about the state and settings of the application. It also saves
- * the settings sent to the LED hardware, such as the current brightness
- * and current lighting routine.
+ * \brief The LightList class stores and maintains a list of lights and their desired states. This
+ * object is used for storing what the user <i>wants</i> the lights to be. It also has some helper
+ * functions that generalize the state of lights. For instance, theres a brightness function that
+ * looks at the brightness of all lights in the list and returns an average.
  */
 class LightList : public QObject {
     Q_OBJECT

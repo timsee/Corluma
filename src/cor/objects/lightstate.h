@@ -15,7 +15,11 @@ namespace cor {
 
 /*!
  * \brief The LightState class stores the state of a light during display or a mood. A LightState is
- * whether or not a light is on, waht color its showing, etc.
+ * whether or not a light is on, what color its showing, etc. LightStates are standardized across
+ * all light types, so a Hue will accept the same state as a Nanoleaf. However, not all lights
+ * support all types of states. For instance, a hue can't support multiple colors simultaneously. It
+ * is up to the dowwnstream systems to handle checks and verify that the light state they are given
+ * makes sense with the light they are controlling.
  */
 class LightState {
 public:

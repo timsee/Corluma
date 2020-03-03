@@ -21,9 +21,14 @@ class DiscoveryNanoLeafWidget;
  * Released under the GNU General Public License.
  *
  *
- * \brief The DiscoveryPage class provides the user an interface to discover new connections with
- * lights. Each enabled communication type gets its own dedicated page. When the user opens the app
- * the first time, they are required to connect to a light before they are able to leave this page.
+ * \brief The DiscoveryPage class provides the user an interface to discover new light hardware.
+ * Each type of hardware gets its own page with its own dedicated widgets. This page is used to walk
+ * the user through set up steps (IE, for a Hue Bridge, it shows the user auto discovered bridges,
+ * allows them to enter an IP address manually, and tells them to press the button on the bridge to
+ * finish the discovery steps). Then, once a light is fully set up, the user can modify some
+ * settings, or delete the connection info. This page can also be used to view light-specific
+ * metadata that doesn't have a place in the UI of the rest of the app. For instance, for Hue
+ * Bridges you can view the schedules in the bridge, and some metadata such as the API version.
  *
  */
 class DiscoveryPage : public QWidget, public cor::Page {

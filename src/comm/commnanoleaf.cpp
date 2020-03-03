@@ -648,9 +648,9 @@ void CommNanoleaf::parseCommandRequestUpdatePacket(const nano::LeafMetadata& lea
         // set the palette
         if (!colors.empty()) {
             // take the brightness from a _different_ packet
-            Palette palette(paletteToString(EPalette::custom),
-                            colors,
-                            state.palette().brightness());
+            cor::Palette palette(paletteToString(EPalette::custom),
+                                 colors,
+                                 state.palette().brightness());
             state.customPalette(palette);
             state.palette(palette);
         }
@@ -1042,7 +1042,7 @@ void CommNanoleaf::routineChange(const nano::LeafMetadata& leafLight, QJsonObjec
         if (routine <= cor::ERoutineSingleColorEnd) {
             paletteEnum = EPalette::unknown;
         } else {
-            Palette palette = Palette(routineObject["palette"].toObject());
+            cor::Palette palette = cor::Palette(routineObject["palette"].toObject());
             paletteEnum = palette.paletteEnum();
         }
 

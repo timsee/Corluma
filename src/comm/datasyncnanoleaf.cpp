@@ -127,7 +127,7 @@ void DataSyncNanoLeaf::cleanupSync() {
 
 namespace {
 
-bool compareTwoPalettes(const Palette& commPalette, const Palette& dataPalette) {
+bool compareTwoPalettes(const cor::Palette& commPalette, const cor::Palette& dataPalette) {
     if (dataPalette.colors().size() == commPalette.colors().size()) {
         auto lambda = [](const QColor& a, const QColor& b) -> bool { return a.hueF() < b.hueF(); };
         auto sortedDataColors = dataPalette.colors();

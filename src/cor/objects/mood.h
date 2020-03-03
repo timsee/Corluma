@@ -14,7 +14,9 @@ namespace cor {
 /*!
  * \brief The Mood class is a recipe for creating a group of lights with predefined states. A mood
  * has a unique ID, a name, and a list of states of lights. A mood can also have default states for
- * entire groups, as well as additional information about the mood.
+ * entire groups, as well as additional information about the mood. Default states are used as a
+ * fallback. If a light already has information in the mood, <i>and</i> its covered by a default
+ * state, the state prefers the info on the light over the default state.
  */
 class Mood {
 public:

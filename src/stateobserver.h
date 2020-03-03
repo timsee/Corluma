@@ -21,7 +21,16 @@ namespace cor {
 
 /*!
  * \brief The StateObserver class listens to state changes in any of the main widgets of the
- * application, and computes the intended state for the selected lights.
+ * application, and computes the intended state for the selected lights. It then triggers any
+ * updates that are required for the app. This includes both UI updates and packets that need to be
+ * sent to light hardware. The observer is set up from the MainWindow and acts as a sorta arbitrator
+ * for all user actions.
+ *
+ * This class exists to simplify app design. Before its existence, if the user wanted to select a
+ * color from the ColorPage, they also needed to query the RoutineButtonsWidget to check what
+ * routine to use, and in some cases, the GlobalBrightnessWidget to check how bright the lights
+ * should be. This class allows widgets to have less relationships with each other, and instead,
+ * theres one class that pays attention to everyone and resolves the complex relationships.
  */
 class StateObserver : public QObject {
     Q_OBJECT

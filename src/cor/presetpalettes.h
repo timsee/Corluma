@@ -25,7 +25,7 @@ public:
     const std::vector<QColor>& paletteVector(EPalette palette);
 
     /// getter for a full palette based on a palette enum
-    const Palette& palette(EPalette palette);
+    const cor::Palette& palette(EPalette palette);
 
     /// find a palette enum based on a JSON
     EPalette findPalette(const QJsonObject& object);
@@ -37,7 +37,7 @@ public:
 
 private:
     /// vector for palettes
-    std::vector<Palette> mPalettes;
+    std::vector<cor::Palette> mPalettes;
 
     /// vector for averaged colors
     std::vector<QColor> mAverageColors;

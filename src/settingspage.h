@@ -26,17 +26,20 @@ enum class ECorlumaWebView { FAQ, copyright, none };
  * Released under the GNU General Public License.
  *
  *
- * \brief The SettingsPage provides a way to configure the
- * application settings.
+ * \brief The SettingsPage provides a way to configure the application settings and view copyright
+ * information.
  *
- * It provides the ability to change the speed the LEDs update
- * and the amount of minutes it takes for the LEDs to timeout.
+ * The first set of options relate to connected lights and allow the user to choose to add new
+ * connections, or delete data on existing lights. The next set of options relate to the app's save
+ * data and can be used to archive the current data or load data from a different version of the
+ * app. Due to restrictions caused by discovery methods and license agreements, discovery data is
+ * never saved in archivable data. However, groups, rooms, and moods are always saved and can be
+ * shared among multiple instances of the app. The next set of pages are pages like a Copyright
+ * page, which give necessary copyright info.
  *
- * It also provides a way to switch between different communication types.
- * It currently support Serial, HTTP, UDP, and Hue lights. This interface
- * automatically populates serial and Hue connections, but allows users to
- * add and remove connections for UDP and HTTP.
- *
+ * At the bottom of the settings page is the GlobalSettingsWidget, which allows the user to set some
+ * unique app settings. For instance, it currently supports turning on and off specific types of
+ * hardware, and turning on and off a timeout.
  */
 class SettingsPage : public QWidget, public cor::Page {
     Q_OBJECT

@@ -432,7 +432,7 @@ void CommHue::handleSuccessPacket(const hue::Bridge& bridge,
                         light.state(state);
                         if (valueChanged) {
                             updateLight(light);
-                            mDiscovery->updateLight(bridge, metadata);
+                            mDiscovery->updateLight(metadata);
                         }
                     } else if (list[3] == "name") {
                         // fill device
@@ -559,7 +559,7 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge,
             hue.state(state);
             if (wasDiscovered) {
                 updateLight(hue);
-                mDiscovery->updateLight(bridge, metadata);
+                mDiscovery->updateLight(metadata);
             } else {
                 addLight(hue);
             }

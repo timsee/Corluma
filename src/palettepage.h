@@ -16,12 +16,23 @@ enum class EGroupMode { presets, wheel };
  * Copyright (C) 2015 - 2020.
  * Released under the GNU General Public License.
  *
- * \brief The Palete provides a way to use the palettes from ArduCor
- * to do Multi Color Routines.
+ * \brief The Palete provides a way for the user to set more than one color at a time, either across
+ * multiple lights, or on a single light that supports individually accessible RGB LEDs. Hues would
+ * be the classic example of a light that can only support one color, while an arduino light strip
+ * is a good example of a light that can supoprt multiple colors.
  *
- * It contains a grid of buttons that map color presets to lighting
- * modes. The list expands vertically into a QScrollArea.
+ * The page is split up into two sub-pages. One page is a MultiColorPicker, which allows the user to
+ * drag up to six selected colors around, or to alternatively choose a relationship of colors (IE,
+ * complementary or triad) and change all the colors at once. There also exists a PaletteScrollArea,
+ * which allows the user to choose a predefined set of colors, such as "Fire" (reds, oranges
+ * yellows), "Water" (blues, teals, purples), or "Poison"(purples, greys).
  *
+ * There also exists a RoutineButtonsWidget that is not part of this page, but is accessible through
+ * a menu when this page is open if a light supports individually addressable LEDs. This page can be
+ * used to change the type of routine that is being used to display the colors. For instance, the
+ * "Multi Glimmer" uses one color as a base, and randomly sets a small subset of lights to other
+ * colors. "Multi Random Solid" sets all LEDs to the same color, and then on each update, it chooses
+ * a color from the palette, and sets all lights to that color.
  */
 class PalettePage : public QWidget, public cor::Page {
     Q_OBJECT

@@ -40,11 +40,11 @@ Q_DECLARE_METATYPE(EDataSyncType)
 class CommLayer;
 
 /*!
- * \brief The DataSync base class is used for datasync threads. These threads compares the data
- * layer's representation of devices with the commlayer's  understanding of devices and tries to
- * sync them up. The DataLayer's representation is used as the "desired" state of lights. The
+ * \brief The DataSync base class is used for datasync threads. These threads compares the
+ * LightList's representation of lights with the CommLayer's  understanding of lights and tries to
+ * sync them up. The LightList's representation is used as the "desired" state of lights. The
  * CommLayer's understanding is used as the current state. If the desired state and current state do
- * not match, the commlayer is requested to send packets to try to update the devices. Different
+ * not match, the ComMLayer is requested to send packets to try to update the devices. Different
  * datasync threads run at different speeds and have different criteria for how to handle syncing.
  * Philips hue lights, for instance, require syncing of schedules and groups on top of standard
  * information. Because of this, derived classes impelement the different rules for handling syncing

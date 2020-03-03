@@ -4,17 +4,7 @@
 \page front_overview Frontend Overview
 \brief An overview of the frontend classes in Colruma.
 
-<div class="overviewSection">
-  <div class="overviewTitle">
-    <h2>Main Window</h2>      
-  </div>
-  <div class="overviewImage">
-    \image html mainWindowPreview.png
-  </div>
-  \copydoc MainWindow
-</div>
-
-\section sec_1_frontend Page Classes
+\section sec_1_frontend Main Widgets
 
 <table class="tableRightHandImage">
   <tr>
@@ -28,11 +18,11 @@
   </tr>
   <tr>
     <td> 
-        <h2>Light Page</h2>
-        \copydoc LightPage 
+        <h2>Left Hand Menu</h2>
+        \copydoc LeftHandMenu
     </td>
     <td>         
-        \image html lightPagePreview.png
+        \image html leftHandMenuPreview.png
     </td>
   </tr>
   <tr>
@@ -64,6 +54,15 @@
   </tr>
   <tr>
     <td> 
+       <h2>Mood Page</h2>   
+       \copydoc MoodPage 
+    </td>
+    <td>         
+        \image html moodPagePreview.png
+    </td>
+  </tr>
+  <tr>
+    <td> 
        <h2>Settings Page</h2>   
        \copydoc SettingsPage 
     </td>
@@ -72,18 +71,6 @@
     </td>
   </tr>
 </table>
-
-\section sec_2_frontend Custom UI Elements
-
-<div class="overviewSection">
-  <div class="overviewTitle">
-    <h2>Color Picker</h2>      
-  </div>
-  <div class="overviewImage">
-    \image html colorPickerPreview.png 
-  </div>
-  \copydoc ColorPicker
-</div>
 
 </div>
 */

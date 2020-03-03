@@ -15,9 +15,16 @@ namespace cor {
 
 
 /*!
- * \brief The Light class is the base datatype used for controlling
- *        and displaying the state of the light devices, such as Philips
- *        Hue or an arduino-controlled light cube.
+ * \brief The Light class is the base datatype used for working with lights in Corluma. At a
+ * minimum, it contains a unique ID for referencing the light, a CommType for the communication used
+ * to talk to the light, and a LightState to define the state of the light (IE, is it on, what color
+ * is it). The Light object is a bit heavy and when possible, its better to think in LightStates and
+ * allow a LightList to assign a state to multiple lights.
+ *
+ * Most light protocols also have their own derived class of light, which contains all light
+ * information, plus some additional metadata about that type of hardware that is unique to that
+ * hardware. For example, some hardware comes with API versions, but not all do, so theres no way to
+ * query an API version of a standard Light object.
  */
 class Light {
 public:

@@ -15,11 +15,22 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief The GroupData class Manipulates and Reads a JSON representation of multiple lights.
- * There exists two types of "groups". The first is a collection which contains any number of
- * light devices but does not contain any reference to the lights overall state. The second is a
- * mood, which contains both the path to the light device and data such as its brightness, color,
- * etc.
+ * \brief The GroupData class manipulates and reads a JSON representation of multiple lights. This
+ * data can be exported or overriden from the SettingsPage. The data stored here is only the data
+ * that can't be stored externally. For example, Hue Bridges support groups and rooms, so all hue
+ * related data is stored on the bridge. Moods are not easily supported, so hue's are stored in
+ * moods. Arduinos support none of these features, so all data for arduinos are stored locally.
+ *
+ *
+ * There exists three ways to group lights. The first is a "room". Each light can only belong to one
+ * room, and the state of the light is not important (which is to say, whether a light is on or off,
+ * its still part of a room." The next group is more generic, and has the more generic name "group."
+ * A group is simply any predefined set of lights, without state data. For instance, 3 lights that
+ * are all part of the same lighting fixture can be made into a group. Technically speaking, all
+ * rooms are special cases of groups. The final type of group is a "mood." Moods are more complex,
+ * and they store not only unique lights, but also their states. Moods can also have "default
+ * states" for groups and rooms. If a light is part of a group or room with a default state and is
+ * not specifically marked as part of a mood, the light will inherit the default state.
  */
 class GroupData : public QObject, public cor::JSONSaveData {
     Q_OBJECT

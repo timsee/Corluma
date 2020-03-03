@@ -124,7 +124,7 @@ public:
     HueMetadata lightFromBridgeIDAndIndex(const QString& bridgeID, int index);
 
     /// update the lights metadata
-    void updateLight(hue::Bridge bridge, const HueMetadata& light);
+    void updateLight(const HueMetadata& light);
 
     /*!
      * \brief deleteBridge delete the bridge from app memory

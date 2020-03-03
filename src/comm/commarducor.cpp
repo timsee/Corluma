@@ -324,9 +324,10 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                                            intVector[j + 2]);
                                         j = j + 3;
                                     }
-                                    state.customPalette(Palette(paletteToString(EPalette::custom),
-                                                                colors,
-                                                                brightness));
+                                    state.customPalette(
+                                        cor::Palette(paletteToString(EPalette::custom),
+                                                     colors,
+                                                     brightness));
                                     if (state.palette().paletteEnum() == EPalette::custom) {
                                         state.palette(state.customPalette());
                                     }
@@ -469,7 +470,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                         auto brightness = state.customPalette().brightness();
                                         auto paletteString = paletteToString(EPalette::custom);
                                         state.customPalette(
-                                            Palette(paletteString, colors, brightness));
+                                            cor::Palette(paletteString, colors, brightness));
                                         light.state(state);
                                         light.isReachable(true);
                                         commByType(type)->updateLight(light);

@@ -63,7 +63,7 @@ QString ArduCorPacketParser::routinePacket(int index, const QJsonObject& routine
             }
         } else if (routineObject["palette"].isObject()) {
             QJsonObject object = routineObject["palette"].toObject();
-            Palette palette(object);
+            cor::Palette palette(object);
             paletteEnum = palette.paletteEnum();
             if (paletteEnum == EPalette::unknown) {
                 isValidJSON = false;

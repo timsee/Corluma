@@ -14,7 +14,7 @@
  *
  * \brief The IconData class creates all the pixel-y square icons that are seen throughout
  * the app. The grids are made by using a very small buffer of RGB values to do the
- * computation. For display, this buffer gets upscaled to the desired icon size.
+ * computation.
  *
  */
 class IconData {

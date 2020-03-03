@@ -17,9 +17,8 @@ namespace cor {
  * Released under the GNU General Public License.
  *
  *
- * \brief The Group class is a lightweight class for storing information about a grouip of lights. A
- * group has its own name and unique ID,  and it always contains a list of unique IDs of lights. It
- * may also contain a list of subgroups, referencable by their unique ID.
+ * \brief The Group class is a lightweight class for storing information about a group of lights. A
+ * group has its own name and unique ID,  and it always contains a list of unique IDs of lights.
  */
 class Group {
 public:

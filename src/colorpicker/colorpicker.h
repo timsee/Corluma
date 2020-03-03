@@ -26,8 +26,11 @@ enum class EColorPickerType { dimmable, CT, color };
  * replaced by a wheel that contains only shades of white and the RGB sliders are replaced by one
  * slider for choosing the temperature, and one slider for choosing the brightness.
  *
- * There also exists a multi color picker, which allows removes the sliders in favor of one slider
- * and two rows of buttons. This layout is good for modifying multiple colors at once.
+ * There also exists a multi color picker, which allows the user to choose multiple selections at
+ * once. This verison of the picker also comes with color schemes, which simplify the process of
+ * changing mutliple colors at once. For instance, you can choose the "complementary scheme" and if
+ * you change one color, all colors update to be a complement of the current color. In the "custom
+ * scheme", the user can choose each color indpendently.
  */
 class ColorPicker : public QWidget {
     Q_OBJECT

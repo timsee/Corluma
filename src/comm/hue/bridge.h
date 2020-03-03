@@ -86,6 +86,8 @@ public:
         mMacaddress = object["mac"].toString();
     }
 
+    bool isValid() { return !username().isEmpty() && !IP().isEmpty() && !id().isEmpty(); }
+
     /*!
      * \brief username the username assigned by the bridge. Received
      *        by sending a request packet ot the bridge.
@@ -99,7 +101,7 @@ public:
     const QString& id() const noexcept { return mId; }
 
     /// setter for id, use very cautiously!
-    void id(const QString& id)  { mId = id; }
+    void id(const QString& id) { mId = id; }
 
     /// api version of the software
     const QString& API() const noexcept { return mAPI; }

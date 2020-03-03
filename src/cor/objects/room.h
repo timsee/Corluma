@@ -13,8 +13,9 @@ namespace cor {
  *
  *
  * \brief The Room class is a derived class of a group and is a special case. No single light can
- * belong to more than one room. On top of that, rooms can contain "subgroups" which are groups that
- * only contain lights that are part of the room.
+ * belong to more than one room. It may also contain a list of subgroups, referencable by their
+ * unique ID. A subgroup points to the unique ID of another valid group, where all lights within the
+ * subgroup are also part of the main group.
  */
 class Room : public Group {
 public:

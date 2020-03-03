@@ -21,8 +21,14 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief The MoodPage class is a page that shows "moods" which are predefined
- * collections of lights with predefined states.
+ * \brief The MoodPage class is a page that shows "moods" which are collections of lights with
+ * predefined states. This widget is the place that user can choose from pre-made moods, or make
+ * their own mood.
+ *
+ * Moods can be thought of as a recipe for lights. They have a list of lights and exact states for
+ * those lights, as well as a set of "default states" for groups and rooms. Default states have less
+ * priority than light states, so if a light is part of a group and is already defined as having a
+ * state, the individual light state definition will override the group's defintion.
  */
 class MoodPage : public QWidget, public cor::Page {
     Q_OBJECT

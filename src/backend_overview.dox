@@ -6,19 +6,53 @@
 
 The backend handles communicating with the lights, storing data about the session, and generating the icons for the GUI. 
 
-\section sec_1 CommLayer
+<h1>Core Objects</h1>
+
+\section sec_1 cor::LightState
+
+\copydoc cor::LightState
+
+\section sec_2 cor::Light
+
+\copydoc cor::Light
+
+\section sec_3 cor::Palette
+
+\copydoc cor::Palette
+
+\section sec_4 cor::Group
+
+\copydoc cor::Group
+
+\section sec_5 cor::Room
+
+\copydoc cor::Room
+
+\section sec_6 cor::Mood
+
+\copydoc cor::Mood
+
+
+
+<h1>Main Backend Classes</h1>
+
+\section sec_7 CommLayer
 
 \copydoc CommLayer
 
-\section sec_2 DeviceList
+\section sec_8 LightList
 
-\copydoc DeviceList
+\copydoc LightList
 
-\section sec_3 DataSync
+\section sec_9 DataSync
 
 \copydoc DataSync
 
-\section sec_4 IconData
+\section sec_10 cor::StateObserver
+
+\copydoc cor::StateObserver
+
+\section sec_11 IconData
 
 \copydoc IconData
 

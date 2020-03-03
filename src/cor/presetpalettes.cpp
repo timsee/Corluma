@@ -14,8 +14,8 @@
 #include "utils/exception.h"
 
 PresetPalettes::PresetPalettes()
-    : mPalettes(std::vector<Palette>(std::uint32_t(EPalette::unknown),
-                                     Palette("", std::vector<QColor>(1), 50))) {
+    : mPalettes(std::vector<cor::Palette>(std::uint32_t(EPalette::unknown),
+                                          cor::Palette("", std::vector<QColor>(1), 50))) {
     // open the palette file
     QFile paletteFile(":/resources/palettes.json");
     if (paletteFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -30,7 +30,7 @@ PresetPalettes::PresetPalettes()
         for (auto jsonRef : doc.array()) {
             if (jsonRef.isObject()) {
                 QJsonObject object = jsonRef.toObject();
-                Palette palette(object);
+                cor::Palette palette(object);
                 mPalettes[std::uint32_t(palette.paletteEnum())] = palette;
             }
         }
@@ -62,7 +62,7 @@ const std::vector<QColor>& PresetPalettes::paletteVector(EPalette palette) {
     return mPalettes[std::uint32_t(palette)].colors();
 }
 
-const Palette& PresetPalettes::palette(EPalette palette) {
+const cor::Palette& PresetPalettes::palette(EPalette palette) {
     return mPalettes[std::uint32_t(palette)];
 }
 

@@ -28,10 +28,24 @@ class CommNanoleaf;
  * Released under the GNU General Public License.
  *
  *
- * \brief The CommLayer class provides communication protocols
- *  that allow the user to connect and send packets to an LED
- *  array. Currently it supports serial, UDP, and HTTP.
+ * \brief The CommLayer class provides communication protocols that allow the user to connect and
+ * send packets to a light. Each light protocol type has its own class for maintaining communciation
+ * with lights of that type, and all of those classes are wrapped by CommLayer and given a
+ * standardized API. Each protocol also has its own discovery class, which handles <i>just</i>
+ * discovery of the lights, and storage of that discovery data.
  *
+ * CommLayer is important in generalizing the divergent APIs of lights. Even though some lights may
+ * use RGB, some may use HSV, and some may not even support colors, CommLayer gives them all the
+ * same high level API, and allows the developer to access more specific fucntions, if necessary.
+ *
+ * CommLayer also stores the state of the lights, based off of packets it receives. Each light can
+ * be queryed by either a cor::Light object or its unique ID. When a user decides to change the
+ * state of the light, the CommLayer's stored state is queryed and packets keep getting sent until
+ * the CommLayer's state matches the user's desired state.
+ *
+ * A UPnP discovery object is also wrapped by CommLayer, which is used to discover lights that give
+ * their discovery information over UPnP. Since UPnP requires binding to a socket, all discovery
+ * objects share the same UPnPDiscovery object, and subscribe/unsubscribe to listening to it.
  */
 class CommLayer : public QObject {
     Q_OBJECT
@@ -70,6 +84,7 @@ public:
      */
     void shutdown(EProtocolType type);
 
+    /// removes light from saved data, returns true if successful
     bool removeLight(const cor::Light& light);
 
     /*!

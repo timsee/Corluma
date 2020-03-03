@@ -470,11 +470,14 @@ hue::Bridge BridgeDiscovery::parseInitialUpdate(hue::Bridge bridge, const QJsonO
     return bridge;
 }
 
-void BridgeDiscovery::updateLight(hue::Bridge bridge, const HueMetadata& light) {
-    auto dict = bridge.lights();
-    dict.update(light.uniqueID().toStdString(), light);
-    bridge.lights(dict);
-    mFoundBridges.update(bridge.id().toStdString(), bridge);
+void BridgeDiscovery::updateLight(const HueMetadata& light) {
+    auto bridge = bridgeFromLight(light);
+    if (bridge.isValid()) {
+        auto dict = bridge.lights();
+        dict.update(light.uniqueID().toStdString(), light);
+        bridge.lights(dict);
+        mFoundBridges.update(bridge.id().toStdString(), bridge);
+    }
 }
 
 
@@ -599,7 +602,7 @@ hue::Bridge BridgeDiscovery::bridgeFromLight(const HueMetadata& light) {
             return foundBridge;
         }
     }
-    THROW_EXCEPTION("Did not find bridge " + light.uniqueID().toStdString());
+    return {};
 }
 
 hue::Bridge BridgeDiscovery::bridgeFromIP(const QString& IP) {
