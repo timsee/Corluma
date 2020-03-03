@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.17.46</span>
+   &#160;<span id="projectnumber">v0.18.8</span>
    </div>
   </td>
  </tr>
@@ -80,9 +80,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a0ca3aa17340ce0c0dbe74b3754126b9f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_scheme_circles.html#a0ca3aa17340ce0c0dbe74b3754126b9f">updateSingleColor</a> (const QColor &amp;color)</td></tr>
 <tr class="memdesc:a0ca3aa17340ce0c0dbe74b3754126b9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateSingleColor updates every color to a single color  <a href="#a0ca3aa17340ce0c0dbe74b3754126b9f">More...</a><br /></td></tr>
 <tr class="separator:a0ca3aa17340ce0c0dbe74b3754126b9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7e323a63fe92399b66183917be7c27be"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_scheme_circles.html#a7e323a63fe92399b66183917be7c27be">updateColorScheme</a> (const std::vector&lt; QColor &gt; &amp;colorScheme)</td></tr>
-<tr class="memdesc:a7e323a63fe92399b66183917be7c27be"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateColorScheme update the color scheme and the indices of the picker selections based off of the provided color scheme  <a href="#a7e323a63fe92399b66183917be7c27be">More...</a><br /></td></tr>
-<tr class="separator:a7e323a63fe92399b66183917be7c27be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf2754f4ba96a1d12f032b48725e1433"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_scheme_circles.html#acf2754f4ba96a1d12f032b48725e1433">updateColorScheme</a> (const std::vector&lt; QColor &gt; &amp;colorScheme, bool shouldRecomputePosition)</td></tr>
+<tr class="memdesc:acf2754f4ba96a1d12f032b48725e1433"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateColorScheme update the color scheme and the indices of the picker selections based off of the provided color scheme  <a href="#acf2754f4ba96a1d12f032b48725e1433">More...</a><br /></td></tr>
+<tr class="separator:acf2754f4ba96a1d12f032b48725e1433"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33624c8b6a4796478c37f5ea3c71cce5"><td class="memItemLeft" align="right" valign="top">std::vector&lt; QColor &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_scheme_circles.html#a33624c8b6a4796478c37f5ea3c71cce5">moveStandardCircle</a> (std::uint32_t i, QPointF newPos)</td></tr>
 <tr class="memdesc:a33624c8b6a4796478c37f5ea3c71cce5"><td class="mdescLeft">&#160;</td><td class="mdescRight">moveStandardCircle move a standard circle to a new position  <a href="#a33624c8b6a4796478c37f5ea3c71cce5">More...</a><br /></td></tr>
 <tr class="separator:a33624c8b6a4796478c37f5ea3c71cce5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -166,8 +166,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a id="a7e323a63fe92399b66183917be7c27be"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7e323a63fe92399b66183917be7c27be">&#9670;&nbsp;</a></span>updateColorScheme()</h2>
+<a id="acf2754f4ba96a1d12f032b48725e1433"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf2754f4ba96a1d12f032b48725e1433">&#9670;&nbsp;</a></span>updateColorScheme()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -176,15 +176,25 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
           <td class="memname">void ColorSchemeCircles::updateColorScheme </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; QColor &gt; &amp;&#160;</td>
-          <td class="paramname"><em>colorScheme</em></td><td>)</td>
+          <td class="paramname"><em>colorScheme</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>shouldRecomputePosition</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">colorScheme</td><td>new values for the color scheme. </td></tr>
-    <tr><td class="paramname">adjustColorPositions</td><td>true to adjust the actual color positions </td></tr>
+    <tr><td class="paramname">shouldRecomputePosition</td><td>true to adjust the actual color positions </td></tr>
   </table>
   </dd>
 </dl>

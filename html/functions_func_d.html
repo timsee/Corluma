@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.17.46</span>
+   &#160;<span id="projectnumber">v0.18.8</span>
    </div>
   </td>
  </tr>
@@ -44,7 +44,7 @@ $(function() {
 
 <h3><a id="index_d"></a>- d -</h3><ul>
 <li>dataInSync()
-: <a class="el" href="class_top_menu.html#a65d80953054a68348da3a987d295c57f">TopMenu</a>
+: <a class="el" href="classcor_1_1_state_observer.html#a8ea115916f3fa0a74387853ba7812ebd">cor::StateObserver</a>
 </li>
 <li>dataLength()
 : <a class="el" href="class_icon_data.html#af88917c4c57a6ca6589db61dc55bbe32">IconData</a>
@@ -58,6 +58,19 @@ $(function() {
 <li>DataSyncNanoLeaf()
 : <a class="el" href="class_data_sync_nano_leaf.html#a78c69b563ad6b572bd682928f815dce8">DataSyncNanoLeaf</a>
 </li>
+<li>dataUpdate()
+: <a class="el" href="classcor_1_1_light_list.html#a1cbdef7ff44c88c8dfa8ae3cdac4eedb">cor::LightList</a>
+</li>
+<li>date()
+: <a class="el" href="classnano_1_1_leaf_date.html#a2cdac506b214e389ab8acb0d59f7eb42">nano::LeafDate</a>
+</li>
+<li>defaults()
+: <a class="el" href="classcor_1_1_mood.html#a33b7c00b7976d003ac1dfcde86c2757a">cor::Mood</a>
+</li>
+<li>deleteBridge()
+: <a class="el" href="classhue_1_1_bridge_discovery.html#af1ebc41042ae894c5a6594af4da22062">hue::BridgeDiscovery</a>
+, <a class="el" href="classhue_1_1_bridge_info_widget.html#acd97ccb7159f9d8eb57f0c7384a76931">hue::BridgeInfoWidget</a>
+</li>
 <li>deleteButton()
 : <a class="el" href="class_edit_page_top_menu.html#a09786cf4b752bb8b0ab8a3af6e2c0641">EditPageTopMenu</a>
 </li>
@@ -69,19 +82,22 @@ $(function() {
 </li>
 <li>deleteLight()
 : <a class="el" href="class_comm_ardu_cor.html#a08dae7166b51a93c3b88c658f09b4c66">CommArduCor</a>
-, <a class="el" href="class_comm_hue.html#ac6f73985df06c8570f6478bf46eb0cc0">CommHue</a>
+, <a class="el" href="class_comm_hue.html#a61fd336f65b832d3c59723df93413900">CommHue</a>
+, <a class="el" href="class_comm_layer.html#a407b233655df53a34ca5237a65fd34f1">CommLayer</a>
 , <a class="el" href="class_comm_nanoleaf.html#abf4465c7628d2ccc9a65c6decb05900b">CommNanoleaf</a>
+, <a class="el" href="classcor_1_1_state_observer.html#ad988bf9d91a0d52c60764b6c9bd5aefc">cor::StateObserver</a>
 , <a class="el" href="class_light_info_list_widget.html#a32e8863fa7f0c27cf11b83f63b1ab7e4">LightInfoListWidget</a>
-, <a class="el" href="class_main_window.html#a2121e304bd3f33e9ac1e6db0c180ba9f">MainWindow</a>
 </li>
 <li>deleteSchedule()
-: <a class="el" href="class_comm_hue.html#a3de7a0ee906a9ecf1f4dd32208ecdea7">CommHue</a>
+: <a class="el" href="class_comm_hue.html#a9e19286a67b7e8bcd9b4a018dab58d45">CommHue</a>
 </li>
-<li>detailedClosePressed()
-: <a class="el" href="class_main_window.html#afb2bd9d13771b8093b679b83ea8020c7">MainWindow</a>
+<li>description()
+: <a class="el" href="classhue_1_1_schedule.html#afe3c024f753417a4d7afe614361d5086">hue::Schedule</a>
 </li>
-<li>detailedMoodDisplay()
-: <a class="el" href="class_main_window.html#a1850ccf41cb31b34a5eaf42397f173c8">MainWindow</a>
+<li>detailsHidden()
+: <a class="el" href="class_ardu_cor_info_widget.html#ae62badbcd5fd87b9dd57759595e6facc">ArduCorInfoWidget</a>
+, <a class="el" href="classhue_1_1_hue_info_widget.html#a59f4c417661c09e94a990513ad84886d">hue::HueInfoWidget</a>
+, <a class="el" href="classnano_1_1_leaf_light_info_widget.html#a20298458cb0db51bd8aadeb37268b73e">nano::LeafLightInfoWidget</a>
 </li>
 <li>deviceClicked()
 : <a class="el" href="class_list_room_widget.html#aa7528a44d5bd3ca433f1493cb574146a">ListRoomWidget</a>
@@ -97,8 +113,14 @@ $(function() {
 : <a class="el" href="class_list_room_widget.html#ad2577fe1295b2e6320579dbe4eaca235">ListRoomWidget</a>
 , <a class="el" href="class_list_simple_group_widget.html#a28bbfe812c6cffae825c62b7ca7ab727">ListSimpleGroupWidget</a>
 </li>
+<li>Dictionary()
+: <a class="el" href="classcor_1_1_dictionary.html#af29af4332466f3be2b0632f1a6f74ef7">cor::Dictionary&lt; T &gt;</a>
+</li>
 <li>disableSizeChecks()
 : <a class="el" href="class_search_widget.html#a27eb0b385d4a1c4b34a2a1fc7b562d71">SearchWidget</a>
+</li>
+<li>discoverHuesPressed()
+: <a class="el" href="classhue_1_1_bridge_info_widget.html#a755fe236f3b4e21efd64a56b04f0594c">hue::BridgeInfoWidget</a>
 </li>
 <li>discoverSerialPorts()
 : <a class="el" href="class_comm_serial.html#aa28ae34c659a8b20650f8a6a3f9f2d97">CommSerial</a>
@@ -137,6 +159,15 @@ $(function() {
 </li>
 <li>displayOnlyDevices()
 : <a class="el" href="class_list_simple_group_widget.html#ad736c6cb9bf12dbe69d347813c7d4ba7">ListSimpleGroupWidget</a>
+</li>
+<li>doesIPExist()
+: <a class="el" href="classhue_1_1_bridge_discovery.html#a7a9a446128e7fcb164a9eb38dba2a9a4">hue::BridgeDiscovery</a>
+</li>
+<li>doesLightExist()
+: <a class="el" href="classcor_1_1_light_list.html#a65100e564ceb69336f7de71738237176">cor::LightList</a>
+</li>
+<li>downsizeTextWidthToFit()
+: <a class="el" href="classcor_1_1_check_box.html#a16393497b98d9f40b3553ad58201a8f7">cor::CheckBox</a>
 </li>
 <li>DropdownTopWidget()
 : <a class="el" href="class_dropdown_top_widget.html#aa49f0e26b8bfede53a07cc4b08e83715">DropdownTopWidget</a>

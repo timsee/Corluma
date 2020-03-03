@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.17.46</span>
+   &#160;<span id="projectnumber">v0.18.8</span>
    </div>
   </td>
  </tr>
@@ -45,32 +45,27 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p>An overview of the frontend classes in Colruma.</p>
-<div class="frontendOverview"></div><div class="frontendOverview"><div class="overviewSection"> <div class="overviewTitle"> <h2>Main Window</h2>
-</div></div></div><div class="frontendOverview"><div class="overviewSection"><div class="overviewTitle"> </div> <div class="overviewImage"> <div class="image">
-<img src="mainWindowPreview.png" alt="mainWindowPreview.png"/>
-</div>
- </div><p> The <a class="el" href="class_main_window.html" title="The MainWindow class is the only window in this application. It contains a QStackedWidget which shows...">MainWindow</a> class is the only window in this application. It contains a QStackedWidget which shows all the central pages of the application. </p><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License.</dd></dl>
-<p>On the top of the <a class="el" href="class_main_window.html" title="The MainWindow class is the only window in this application. It contains a QStackedWidget which shows...">MainWindow</a>, there is an on/off button in the far left. This button will reflect the current mode when on, and will be black when off. There is also a slider to control the overall brightness of the LEDs. </div></div><div class="frontendOverview"></div><h1><a class="anchor" id="sec_1_frontend"></a>
-Page Classes</h1>
+<div class="frontendOverview"></div><div class="frontendOverview"></div><h1><a class="anchor" id="sec_1_frontend"></a>
+Main Widgets</h1>
 <div class="frontendOverview"> <table class="tableRightHandImage">
 <tr>
 <td><h2>Discovery Page</h2>
-<p class="endtd">The <a class="el" href="class_discovery_page.html" title="The DiscoveryPage class provides the user an interface to discover new connections with lights...">DiscoveryPage</a> class provides the user an interface to discover new connections with lights. Each enabled communication type gets its own dedicated page. When the user opens the app the first time, they are required to connect to a light before they are able to leave this page. </p><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License.  </dd></dl>
+<p class="endtd">The <a class="el" href="class_discovery_page.html" title="The DiscoveryPage class provides the user an interface to discover new light hardware. Each type of hardware gets its own page with its own dedicated widgets. This page is used to walk the user through set up steps (IE, for a Hue Bridge, it shows the user auto discovered bridges, allows them to enter an IP address manually, and tells them to press the button on the bridge to finish the discovery steps). Then, once a light is fully set up, the user can modify some settings, or delete the connection info. This page can also be used to view light-specific metadata that doesn&#39;t have a place in the UI of the rest of the app. For instance, for Hue Bridges you can view the schedules in the bridge, and some metadata such as the API version. ">DiscoveryPage</a> class provides the user an interface to discover new light hardware. Each type of hardware gets its own page with its own dedicated widgets. This page is used to walk the user through set up steps (IE, for a Hue Bridge, it shows the user auto discovered bridges, allows them to enter an IP address manually, and tells them to press the button on the bridge to finish the discovery steps). Then, once a light is fully set up, the user can modify some settings, or delete the connection info. This page can also be used to view light-specific metadata that doesn't have a place in the UI of the rest of the app. For instance, for Hue Bridges you can view the schedules in the bridge, and some metadata such as the API version. </p><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License.  </dd></dl>
 </td><td><div class="image">
 <img src="discoveryPagePreview.png" alt="discoveryPagePreview.png"/>
 </div>
    </td></tr>
 <tr>
-<td><h2>Light Page</h2>
-<p></p>
-<p class="endtd"></p>
+<td><h2>Left Hand Menu</h2>
+<p class="endtd">The <a class="el" href="class_left_hand_menu.html" title="The LeftHandMenu class is a left hand drawer that can either be pulled in or out when the app has a p...">LeftHandMenu</a> class is a left hand drawer that can either be pulled in or out when the app has a portrait aspect ratio. If it is a landscape aspect ratio, the drawer is permanently out. This menu contains buttons for all the main pages of the app, as well as the ability to choose specific lights to control. </p><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License.  </dd></dl>
 </td><td><div class="image">
-<img src="lightPagePreview.png" alt="lightPagePreview.png"/>
+<img src="leftHandMenuPreview.png" alt="leftHandMenuPreview.png"/>
 </div>
    </td></tr>
 <tr>
 <td><h2>Edit Page</h2>
-<p class="endtd">The <a class="el" href="class_edit_group_page.html" title="The EditGroupPage class is a widget for editing and making new groups. ">EditGroupPage</a> class is a widget for editing and making new groups. </p><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License.  </dd></dl>
+<p class="endtd">The <a class="el" href="class_edit_group_page.html" title="The EditGroupPage class is a widget for editing and making new groups. It can make either groups or r...">EditGroupPage</a> class is a widget for editing and making new groups. It can make either groups or rooms, but it cannot make moods. It can also define if a group should be a room or a group. If it is editing an existing room/group, this option is greyed out. </p><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License.</dd></dl>
+<p>The metadata for the group is only stored in the app if theres no other place to store it. For example, in the case of a Hue Bridge, it can store both groups and rooms, so this page sends messages to bridge. This allows multiple versions of the app to use the same data without explicitly syncing the app's save data.  </p>
 </td><td><div class="image">
 <img src="editPagePreview.png" alt="editPagePreview.png"/>
 </div>
@@ -78,37 +73,40 @@ Page Classes</h1>
 <tr>
 <td><h2>Color Page</h2>
 <p>The <a class="el" href="class_color_page.html" title="The ColorPage provides a way to change the color of the lights selected in the app. ">ColorPage</a> provides a way to change the color of the lights selected in the app. </p><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License.</dd></dl>
-<p>The page contains a <a class="el" href="class_color_picker.html" title="The ColorPicker class is a GUI object designed to give the user ability to choose RGB values in a var...">ColorPicker</a> that allows the user to choose colors. The color picker has various modes such as standard, which gives full range of RGB, and ambient, which allows the user to choose different shades of white.</p>
-<p class="endtd">For arduino-based projects, there is also a pop up menu on the bottom that allows the user to choose routines for the arduino. To get the single color routines, the user should be on the standard color picker. To get the multi color routines, the user should be on the multi color picker.  </p>
+<p>The page contains a <a class="el" href="class_color_picker.html" title="The ColorPicker class is a GUI object designed to give the user ability to choose RGB values in a var...">ColorPicker</a> that allows the user to choose colors. The color picker has three main modes: an HSV mode, which requires the user to use a slider to change the brightness, an RGB mode which has brightness tied into the color picker's wheel, and an ambient mode, which allows the user to choose between different temperatures of white.</p>
+<p class="endtd">While the user is on this page, there is also a pop up menu on the bottom that allows the user to choose routines for lights that can be individually indexed, such as arduinos and nanoleafs.  </p>
 </td><td><div class="image">
 <img src="colorPagePreview.png" alt="colorPagePreview.png"/>
 </div>
    </td></tr>
 <tr>
 <td><h2>Palette Page</h2>
-<p class="endtd">The Palete provides a way to use the palettes from ArduCor to do Multi Color Routines. </p><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2016. Released under the GNU General Public License.</dd></dl>
-<p>It contains a grid of buttons that map color presets to lighting modes. The list expands vertically into a QScrollArea.  </p>
+<p>The Palete provides a way for the user to set more than one color at a time, either across multiple lights, or on a single light that supports individually accessible RGB LEDs. Hues would be the classic example of a light that can only support one color, while an arduino light strip is a good example of a light that can supoprt multiple colors. </p><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License.</dd></dl>
+<p>The page is split up into two sub-pages. One page is a <a class="el" href="class_multi_color_picker.html" title="The MultiColorPicker class is a color picker designed for choosing multiple colors at once...">MultiColorPicker</a>, which allows the user to drag up to six selected colors around, or to alternatively choose a relationship of colors (IE, complementary or triad) and change all the colors at once. There also exists a <a class="el" href="class_palette_scroll_area.html" title="The PaletteScrollArea class is a QScrollArea that contains a series of buttons that can be used to si...">PaletteScrollArea</a>, which allows the user to choose a predefined set of colors, such as "Fire" (reds, oranges yellows), "Water" (blues, teals, purples), or "Poison"(purples, greys).</p>
+<p class="endtd">There also exists a <a class="el" href="class_routine_buttons_widget.html" title="The RoutineButtonsWidget class is a basic widget that holds a grid of lightsbuttons that each map to ...">RoutineButtonsWidget</a> that is not part of this page, but is accessible through a menu when this page is open if a light supports individually addressable LEDs. This page can be used to change the type of routine that is being used to display the colors. For instance, the "Multi Glimmer" uses one color as a base, and randomly sets a small subset of lights to other colors. "Multi Random Solid" sets all LEDs to the same color, and then on each update, it chooses a color from the palette, and sets all lights to that color.  </p>
 </td><td><div class="image">
 <img src="palettePagePreview.png" alt="palettePagePreview.png"/>
 </div>
    </td></tr>
 <tr>
+<td><h2>Mood Page</h2>
+<p class="endtd">The <a class="el" href="class_mood_page.html" title="The MoodPage class is a page that shows &quot;moods&quot; which are collections of lights with predefined state...">MoodPage</a> class is a page that shows "moods" which are collections of lights with predefined states. This widget is the place that user can choose from pre-made moods, or make their own mood. </p><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License.</dd></dl>
+<p>Moods can be thought of as a recipe for lights. They have a list of lights and exact states for those lights, as well as a set of "default states" for groups and rooms. Default states have less priority than light states, so if a light is part of a group and is already defined as having a state, the individual light state definition will override the group's defintion.  </p>
+</td><td><div class="image">
+<img src="moodPagePreview.png" alt="moodPagePreview.png"/>
+</div>
+   </td></tr>
+<tr>
 <td><h2>Settings Page</h2>
-<p>The <a class="el" href="class_settings_page.html" title="The SettingsPage provides a way to configure the application settings. ">SettingsPage</a> provides a way to configure the application settings. </p><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License.</dd></dl>
-<p>It provides the ability to change the speed the LEDs update and the amount of minutes it takes for the LEDs to timeout.</p>
-<p class="endtd">It also provides a way to switch between different communication types. It currently support Serial, HTTP, UDP, and Hue lights. This interface automatically populates serial and Hue connections, but allows users to add and remove connections for UDP and HTTP.  </p>
+<p>The <a class="el" href="class_settings_page.html" title="The SettingsPage provides a way to configure the application settings and view copyright information...">SettingsPage</a> provides a way to configure the application settings and view copyright information. </p><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License.</dd></dl>
+<p>The first set of options relate to connected lights and allow the user to choose to add new connections, or delete data on existing lights. The next set of options relate to the app's save data and can be used to archive the current data or load data from a different version of the app. Due to restrictions caused by discovery methods and license agreements, discovery data is never saved in archivable data. However, groups, rooms, and moods are always saved and can be shared among multiple instances of the app. The next set of pages are pages like a Copyright page, which give necessary copyright info.</p>
+<p class="endtd">At the bottom of the settings page is the <a class="el" href="class_global_settings_widget.html" title="The GlobalSettingsWidget class is a widget for the settings page that contains all the advanced setti...">GlobalSettingsWidget</a>, which allows the user to set some unique app settings. For instance, it currently supports turning on and off specific types of hardware, and turning on and off a timeout.  </p>
 </td><td><div class="image">
 <img src="settingsPagePreview.png" alt="settingsPagePreview.png"/>
 </div>
    </td></tr>
 </table>
-</div><div class="frontendOverview"></div><h1><a class="anchor" id="sec_2_frontend"></a>
-Custom UI Elements</h1>
-<div class="frontendOverview"> <div class="overviewSection"> <div class="overviewTitle"> <h2>Color Picker</h2>
-</div></div></div><div class="frontendOverview"><div class="overviewSection"><div class="overviewTitle"> </div> <div class="overviewImage"> <div class="image">
-<img src="colorPickerPreview.png" alt="colorPickerPreview.png"/>
-</div>
- </div><p> The <a class="el" href="class_color_picker.html" title="The ColorPicker class is a GUI object designed to give the user ability to choose RGB values in a var...">ColorPicker</a> class is a GUI object designed to give the user ability to choose RGB values in a variety of ways. The standard layout provides the user with a color wheel and three sliders, one for red, one for green, and one for blue. All other layouts use this style as a base but modify it slightly. For example, in the ambient layout, the RGB wheel is replaced by a wheel that contains only shades of white and the RGB sliders are replaced by one slider for choosing the temperature, and one slider for choosing the brightness. There also exists a multi color picker, which allows removes the sliders in favor of one slider and two rows of buttons. This layout is good for modifying multiple colors at once. </div></div><div class="frontendOverview"></div> </div></div><!-- contents -->
+</div><div class="frontendOverview"></div> </div></div><!-- contents -->
 
 <hr>
 <table style="width:100%">

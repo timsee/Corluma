@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.17.46</span>
+   &#160;<span id="projectnumber">v0.18.8</span>
    </div>
   </td>
  </tr>
@@ -87,65 +87,62 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#acdcd223b12613b92a682a2c8b50f17a6">shutdown</a> ()</td></tr>
 <tr class="memdesc:acdcd223b12613b92a682a2c8b50f17a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">shutdown defined in <a class="el" href="class_comm_type.html" title="inherited by comm types, provides a general interface that can be used to do connections and sending ...">CommType</a> <br /></td></tr>
 <tr class="separator:acdcd223b12613b92a682a2c8b50f17a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a873dfef4d5a3cd6737e46353a553ab30"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a873dfef4d5a3cd6737e46353a553ab30">changeColor</a> (const hue::Bridge &amp;bridge, int lightIndex, const QColor &amp;color)</td></tr>
+<tr class="memitem:a873dfef4d5a3cd6737e46353a553ab30"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a873dfef4d5a3cd6737e46353a553ab30">changeColor</a> (const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;bridge, int lightIndex, const QColor &amp;color)</td></tr>
 <tr class="memdesc:a873dfef4d5a3cd6737e46353a553ab30"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeColor send a packet to a hue bridge to change the color of a given hue light.  <a href="#a873dfef4d5a3cd6737e46353a553ab30">More...</a><br /></td></tr>
 <tr class="separator:a873dfef4d5a3cd6737e46353a553ab30"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc1c7ce9c7f297b0cff81f26284982ce"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#acc1c7ce9c7f297b0cff81f26284982ce">changeColorCT</a> (const hue::Bridge &amp;bridge, int lightIndex, int brightness, int ct)</td></tr>
+<tr class="memitem:acc1c7ce9c7f297b0cff81f26284982ce"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#acc1c7ce9c7f297b0cff81f26284982ce">changeColorCT</a> (const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;bridge, int lightIndex, int brightness, int ct)</td></tr>
 <tr class="memdesc:acc1c7ce9c7f297b0cff81f26284982ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">changeAmbientLight changes the color of the bulb to match the color temperature given. This is the only way to interact with white ambiance bulbs and it can also be used with the RGB bulbs.  <a href="#acc1c7ce9c7f297b0cff81f26284982ce">More...</a><br /></td></tr>
 <tr class="separator:acc1c7ce9c7f297b0cff81f26284982ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8c6c9540bbae7c61f31ad26ee75d8012"><td class="memItemLeft" align="right" valign="top"><a id="a8c6c9540bbae7c61f31ad26ee75d8012"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a8c6c9540bbae7c61f31ad26ee75d8012">turnOnOff</a> (const hue::Bridge &amp;bridge, int index, bool shouldTurnOn)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a8c6c9540bbae7c61f31ad26ee75d8012">turnOnOff</a> (const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;bridge, int index, bool shouldTurnOn)</td></tr>
 <tr class="memdesc:a8c6c9540bbae7c61f31ad26ee75d8012"><td class="mdescLeft">&#160;</td><td class="mdescRight">true to turn on, false to turn off <br /></td></tr>
 <tr class="separator:a8c6c9540bbae7c61f31ad26ee75d8012"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b3814c455232c84e2215d16aadddab1"><td class="memItemLeft" align="right" valign="top">hue::BridgeDiscovery *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a5b3814c455232c84e2215d16aadddab1">discovery</a> ()</td></tr>
+<tr class="memitem:a5b3814c455232c84e2215d16aadddab1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classhue_1_1_bridge_discovery.html">hue::BridgeDiscovery</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a5b3814c455232c84e2215d16aadddab1">discovery</a> ()</td></tr>
 <tr class="memdesc:a5b3814c455232c84e2215d16aadddab1"><td class="mdescLeft">&#160;</td><td class="mdescRight">discovery returns a pointer to the object used to discover the Hue Bridge. This can be used to connect to its signals or to check its current state.  <a href="#a5b3814c455232c84e2215d16aadddab1">More...</a><br /></td></tr>
 <tr class="separator:a5b3814c455232c84e2215d16aadddab1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abd122a4acfa23f9581b31fe88301759d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#abd122a4acfa23f9581b31fe88301759d">sendPacket</a> (const QJsonObject &amp;object)</td></tr>
 <tr class="memdesc:abd122a4acfa23f9581b31fe88301759d"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendPacket send a packet based off of a JSON object containing all relevant information about the packet  <a href="#abd122a4acfa23f9581b31fe88301759d">More...</a><br /></td></tr>
 <tr class="separator:abd122a4acfa23f9581b31fe88301759d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a75bf13a5bd28b6828df00f3ed0aeb414"><td class="memItemLeft" align="right" valign="top">HueMetadata&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a75bf13a5bd28b6828df00f3ed0aeb414">hueLightFromLight</a> (const cor::Light &amp;device)</td></tr>
-<tr class="memdesc:a75bf13a5bd28b6828df00f3ed0aeb414"><td class="mdescLeft">&#160;</td><td class="mdescRight">hueLightFromLight For every cor::Light with type hue, there is a SHueLight that represents the same device.The SHueLight contains hue-specific information such as the bulb's software version and model ID. This information This function takes the cor::Light and returns the mapped SHueLight  <a href="#a75bf13a5bd28b6828df00f3ed0aeb414">More...</a><br /></td></tr>
+<tr class="memitem:a75bf13a5bd28b6828df00f3ed0aeb414"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_hue_metadata.html">HueMetadata</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a75bf13a5bd28b6828df00f3ed0aeb414">hueLightFromLight</a> (const <a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;device)</td></tr>
+<tr class="memdesc:a75bf13a5bd28b6828df00f3ed0aeb414"><td class="mdescLeft">&#160;</td><td class="mdescRight">hueLightFromLight For every <a class="el" href="classcor_1_1_light.html" title="The Light class is the base datatype used for working with lights in Corluma. At a minimum...">cor::Light</a> with type hue, there is a SHueLight that represents the same device.The SHueLight contains hue-specific information such as the bulb's software version and model ID. This information This function takes the <a class="el" href="classcor_1_1_light.html" title="The Light class is the base datatype used for working with lights in Corluma. At a minimum...">cor::Light</a> and returns the mapped SHueLight  <a href="#a75bf13a5bd28b6828df00f3ed0aeb414">More...</a><br /></td></tr>
 <tr class="separator:a75bf13a5bd28b6828df00f3ed0aeb414"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8b80833f0f35e62ea27427c139379fa7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a8b80833f0f35e62ea27427c139379fa7">sendSchedule</a> (SHueSchedule schedule)</td></tr>
-<tr class="memdesc:a8b80833f0f35e62ea27427c139379fa7"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendSchedule send a schedule to the Hue Bridge. This schedule gets kept on the bridge and will not be deleted unless explicitly asked to be deleted.  <a href="#a8b80833f0f35e62ea27427c139379fa7">More...</a><br /></td></tr>
-<tr class="separator:a8b80833f0f35e62ea27427c139379fa7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1bcecc8974f359e7d4e8661c2751dcc6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a1bcecc8974f359e7d4e8661c2751dcc6">sendSchedule</a> (<a class="el" href="classhue_1_1_schedule.html">hue::Schedule</a> schedule)</td></tr>
+<tr class="memdesc:a1bcecc8974f359e7d4e8661c2751dcc6"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendSchedule send a schedule to the Hue Bridge. This schedule gets kept on the bridge and will not be deleted unless explicitly asked to be deleted.  <a href="#a1bcecc8974f359e7d4e8661c2751dcc6">More...</a><br /></td></tr>
+<tr class="separator:a1bcecc8974f359e7d4e8661c2751dcc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac12170f5466d258751a228029ac7aedd"><td class="memItemLeft" align="right" valign="top"><a id="ac12170f5466d258751a228029ac7aedd"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#ac12170f5466d258751a228029ac7aedd">stopBackgroundTimers</a> ()</td></tr>
 <tr class="memdesc:ac12170f5466d258751a228029ac7aedd"><td class="mdescLeft">&#160;</td><td class="mdescRight">stop the timers that sync things like schedules and groups in the background. <br /></td></tr>
 <tr class="separator:ac12170f5466d258751a228029ac7aedd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a487731bad72fa0ee01f1409c29bc39da"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a487731bad72fa0ee01f1409c29bc39da">createIdleTimeout</a> (const hue::Bridge &amp;bridge, int i, int minutes)</td></tr>
+<tr class="memitem:a487731bad72fa0ee01f1409c29bc39da"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a487731bad72fa0ee01f1409c29bc39da">createIdleTimeout</a> (const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;bridge, int i, int minutes)</td></tr>
 <tr class="memdesc:a487731bad72fa0ee01f1409c29bc39da"><td class="mdescLeft">&#160;</td><td class="mdescRight">createIdleTimeout create an idle timeout schedule for a specific light.  <a href="#a487731bad72fa0ee01f1409c29bc39da">More...</a><br /></td></tr>
 <tr class="separator:a487731bad72fa0ee01f1409c29bc39da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc585786dff72f7c6a0322bb791398cc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#abc585786dff72f7c6a0322bb791398cc">postJson</a> (const hue::Bridge &amp;bridge, const QString &amp;resource, const QJsonObject &amp;object)</td></tr>
+<tr class="memitem:abc585786dff72f7c6a0322bb791398cc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#abc585786dff72f7c6a0322bb791398cc">postJson</a> (const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;bridge, const QString &amp;resource, const QJsonObject &amp;object)</td></tr>
 <tr class="memdesc:abc585786dff72f7c6a0322bb791398cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">postJson helper function that takes a JSON object and posts it to the hue bridge.  <a href="#abc585786dff72f7c6a0322bb791398cc">More...</a><br /></td></tr>
 <tr class="separator:abc585786dff72f7c6a0322bb791398cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae39b621422dd5b921a62a02fff23059a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#ae39b621422dd5b921a62a02fff23059a">putJson</a> (const hue::Bridge &amp;bridge, const QString &amp;resource, const QJsonObject &amp;object)</td></tr>
+<tr class="memitem:ae39b621422dd5b921a62a02fff23059a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#ae39b621422dd5b921a62a02fff23059a">putJson</a> (const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;bridge, const QString &amp;resource, const QJsonObject &amp;object)</td></tr>
 <tr class="memdesc:ae39b621422dd5b921a62a02fff23059a"><td class="mdescLeft">&#160;</td><td class="mdescRight">putJson helper function that takes a JSON object and puts it on the hue bridge.  <a href="#ae39b621422dd5b921a62a02fff23059a">More...</a><br /></td></tr>
 <tr class="separator:ae39b621422dd5b921a62a02fff23059a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61f2880c794e8871423b600fe07cd2c1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a61f2880c794e8871423b600fe07cd2c1">updateIdleTimeout</a> (const hue::Bridge &amp;bridge, bool enable, int scheduleID, int minutes)</td></tr>
+<tr class="memitem:a61f2880c794e8871423b600fe07cd2c1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a61f2880c794e8871423b600fe07cd2c1">updateIdleTimeout</a> (const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;bridge, bool enable, int scheduleID, int minutes)</td></tr>
 <tr class="memdesc:a61f2880c794e8871423b600fe07cd2c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateIdleTimeout upate the idle tieout for a specific schedule. This is called during data sync to turn off the idle timeout and after datasync it gets called again to turn the idle timeout back on.  <a href="#a61f2880c794e8871423b600fe07cd2c1">More...</a><br /></td></tr>
 <tr class="separator:a61f2880c794e8871423b600fe07cd2c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af89310599fbb12443272923f6faa0db3"><td class="memItemLeft" align="right" valign="top">const cor::Dictionary&lt; hue::Bridge &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#af89310599fbb12443272923f6faa0db3">bridges</a> ()</td></tr>
+<tr class="memitem:af89310599fbb12443272923f6faa0db3"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classcor_1_1_dictionary.html">cor::Dictionary</a>&lt; <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#af89310599fbb12443272923f6faa0db3">bridges</a> ()</td></tr>
 <tr class="memdesc:af89310599fbb12443272923f6faa0db3"><td class="mdescLeft">&#160;</td><td class="mdescRight">bridges getter for the found bridges and their associated info  <a href="#af89310599fbb12443272923f6faa0db3">More...</a><br /></td></tr>
 <tr class="separator:af89310599fbb12443272923f6faa0db3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc2197131a6b7dabef3b406bee54ab64"><td class="memItemLeft" align="right" valign="top">QJsonObject&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#acc2197131a6b7dabef3b406bee54ab64">SHueCommandToJsonObject</a> (SHueCommand command)</td></tr>
-<tr class="memdesc:acc2197131a6b7dabef3b406bee54ab64"><td class="mdescLeft">&#160;</td><td class="mdescRight">SHueCommandToJsonObject converts a SHueCommand into a Json object that can be sent to a hue as a command. Neat!  <a href="#acc2197131a6b7dabef3b406bee54ab64">More...</a><br /></td></tr>
-<tr class="separator:acc2197131a6b7dabef3b406bee54ab64"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a575efeaef990ac94e07110b80efcc2e7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a575efeaef990ac94e07110b80efcc2e7">createGroup</a> (const hue::Bridge &amp;bridge, const QString &amp;name, std::vector&lt; HueMetadata &gt; lights, bool isRoom)</td></tr>
+<tr class="memitem:a575efeaef990ac94e07110b80efcc2e7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a575efeaef990ac94e07110b80efcc2e7">createGroup</a> (const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;bridge, const QString &amp;name, std::vector&lt; <a class="el" href="class_hue_metadata.html">HueMetadata</a> &gt; lights, bool isRoom)</td></tr>
 <tr class="memdesc:a575efeaef990ac94e07110b80efcc2e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">createGroup create a new group of lights on the hue bridge  <a href="#a575efeaef990ac94e07110b80efcc2e7">More...</a><br /></td></tr>
 <tr class="separator:a575efeaef990ac94e07110b80efcc2e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7b342521c43a152eb4c26b00e6ce4395"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a7b342521c43a152eb4c26b00e6ce4395">updateGroup</a> (const hue::Bridge &amp;bridge, cor::Group group, std::vector&lt; HueMetadata &gt; lights)</td></tr>
+<tr class="memitem:a7b342521c43a152eb4c26b00e6ce4395"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a7b342521c43a152eb4c26b00e6ce4395">updateGroup</a> (const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;bridge, <a class="el" href="classcor_1_1_group.html">cor::Group</a> group, std::vector&lt; <a class="el" href="class_hue_metadata.html">HueMetadata</a> &gt; lights)</td></tr>
 <tr class="memdesc:a7b342521c43a152eb4c26b00e6ce4395"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateGroup change the lights in an already-existing hue group  <a href="#a7b342521c43a152eb4c26b00e6ce4395">More...</a><br /></td></tr>
 <tr class="separator:a7b342521c43a152eb4c26b00e6ce4395"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a13942da8bba505c964ae29f9d63ea426"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a13942da8bba505c964ae29f9d63ea426">deleteGroup</a> (const hue::Bridge &amp;bridge, cor::Group group)</td></tr>
+<tr class="memitem:a13942da8bba505c964ae29f9d63ea426"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a13942da8bba505c964ae29f9d63ea426">deleteGroup</a> (const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;bridge, <a class="el" href="classcor_1_1_group.html">cor::Group</a> group)</td></tr>
 <tr class="memdesc:a13942da8bba505c964ae29f9d63ea426"><td class="mdescLeft">&#160;</td><td class="mdescRight">deleteGroup delete a group from the hue bridge  <a href="#a13942da8bba505c964ae29f9d63ea426">More...</a><br /></td></tr>
 <tr class="separator:a13942da8bba505c964ae29f9d63ea426"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a27e96ed0f76db9ba44609611f6d94602"><td class="memItemLeft" align="right" valign="top"><a id="a27e96ed0f76db9ba44609611f6d94602"></a>
-const std::vector&lt; cor::Group &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a27e96ed0f76db9ba44609611f6d94602">groups</a> ()</td></tr>
+const std::vector&lt; <a class="el" href="classcor_1_1_group.html">cor::Group</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a27e96ed0f76db9ba44609611f6d94602">groups</a> ()</td></tr>
 <tr class="memdesc:a27e96ed0f76db9ba44609611f6d94602"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for list of groups <br /></td></tr>
 <tr class="separator:a27e96ed0f76db9ba44609611f6d94602"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0a6fb051f78e6d518d1f751b807ee21c"><td class="memItemLeft" align="right" valign="top"><a id="a0a6fb051f78e6d518d1f751b807ee21c"></a>
-const std::vector&lt; HueMetadata &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a0a6fb051f78e6d518d1f751b807ee21c">newLights</a> ()</td></tr>
+const std::vector&lt; <a class="el" href="class_hue_metadata.html">HueMetadata</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a0a6fb051f78e6d518d1f751b807ee21c">newLights</a> ()</td></tr>
 <tr class="memdesc:a0a6fb051f78e6d518d1f751b807ee21c"><td class="mdescLeft">&#160;</td><td class="mdescRight">list of lights recently discovered by a scan <br /></td></tr>
 <tr class="separator:a0a6fb051f78e6d518d1f751b807ee21c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b26d735505e71d3657103d9162a9074"><td class="memItemLeft" align="right" valign="top"><a id="a6b26d735505e71d3657103d9162a9074"></a>
@@ -153,44 +150,44 @@ const std::vector&lt; QString &gt; &amp;&#160;</td><td class="memItemRight" vali
 <tr class="memdesc:a6b26d735505e71d3657103d9162a9074"><td class="mdescLeft">&#160;</td><td class="mdescRight">serial numbers for lights that we are searching for. <br /></td></tr>
 <tr class="separator:a6b26d735505e71d3657103d9162a9074"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a918aeeb3fe0b8c5c74dc179166f7c780"><td class="memItemLeft" align="right" valign="top"><a id="a918aeeb3fe0b8c5c74dc179166f7c780"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a918aeeb3fe0b8c5c74dc179166f7c780">requestNewLights</a> (const hue::Bridge &amp;bridge)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a918aeeb3fe0b8c5c74dc179166f7c780">requestNewLights</a> (const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;bridge)</td></tr>
 <tr class="memdesc:a918aeeb3fe0b8c5c74dc179166f7c780"><td class="mdescLeft">&#160;</td><td class="mdescRight">request a list of all recently discovered lights <br /></td></tr>
 <tr class="separator:a918aeeb3fe0b8c5c74dc179166f7c780"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8aa1b9e25bd1ba8c00113e1f7db07f80"><td class="memItemLeft" align="right" valign="top"><a id="a8aa1b9e25bd1ba8c00113e1f7db07f80"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a8aa1b9e25bd1ba8c00113e1f7db07f80">scanIsActive</a> ()</td></tr>
 <tr class="memdesc:a8aa1b9e25bd1ba8c00113e1f7db07f80"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if scan is active, false otherwise <br /></td></tr>
 <tr class="separator:a8aa1b9e25bd1ba8c00113e1f7db07f80"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3de7a0ee906a9ecf1f4dd32208ecdea7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a3de7a0ee906a9ecf1f4dd32208ecdea7">deleteSchedule</a> (SHueSchedule schedule)</td></tr>
-<tr class="memdesc:a3de7a0ee906a9ecf1f4dd32208ecdea7"><td class="mdescLeft">&#160;</td><td class="mdescRight">deleteSchedule delete a hue schedule from the bridge  <a href="#a3de7a0ee906a9ecf1f4dd32208ecdea7">More...</a><br /></td></tr>
-<tr class="separator:a3de7a0ee906a9ecf1f4dd32208ecdea7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab3417492f306634c58f5d0f8cc8d231f"><td class="memItemLeft" align="right" valign="top">std::vector&lt; SHueSchedule &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#ab3417492f306634c58f5d0f8cc8d231f">schedules</a> (const hue::Bridge &amp;bridge)</td></tr>
-<tr class="memdesc:ab3417492f306634c58f5d0f8cc8d231f"><td class="mdescLeft">&#160;</td><td class="mdescRight">schedules getter for a list of all known schedules  <a href="#ab3417492f306634c58f5d0f8cc8d231f">More...</a><br /></td></tr>
-<tr class="separator:ab3417492f306634c58f5d0f8cc8d231f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a756990690ca7ace49fba2cf3cd2357d8"><td class="memItemLeft" align="right" valign="top">std::vector&lt; cor::Group &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a756990690ca7ace49fba2cf3cd2357d8">groups</a> (const hue::Bridge &amp;bridge)</td></tr>
+<tr class="memitem:a9e19286a67b7e8bcd9b4a018dab58d45"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a9e19286a67b7e8bcd9b4a018dab58d45">deleteSchedule</a> (<a class="el" href="classhue_1_1_schedule.html">hue::Schedule</a> schedule)</td></tr>
+<tr class="memdesc:a9e19286a67b7e8bcd9b4a018dab58d45"><td class="mdescLeft">&#160;</td><td class="mdescRight">deleteSchedule delete a hue schedule from the bridge  <a href="#a9e19286a67b7e8bcd9b4a018dab58d45">More...</a><br /></td></tr>
+<tr class="separator:a9e19286a67b7e8bcd9b4a018dab58d45"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1441eca1966f2658bf0e2524caf25d85"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classhue_1_1_schedule.html">hue::Schedule</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a1441eca1966f2658bf0e2524caf25d85">schedules</a> (const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;bridge)</td></tr>
+<tr class="memdesc:a1441eca1966f2658bf0e2524caf25d85"><td class="mdescLeft">&#160;</td><td class="mdescRight">schedules getter for a list of all known schedules  <a href="#a1441eca1966f2658bf0e2524caf25d85">More...</a><br /></td></tr>
+<tr class="separator:a1441eca1966f2658bf0e2524caf25d85"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a756990690ca7ace49fba2cf3cd2357d8"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classcor_1_1_group.html">cor::Group</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a756990690ca7ace49fba2cf3cd2357d8">groups</a> (const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;bridge)</td></tr>
 <tr class="memdesc:a756990690ca7ace49fba2cf3cd2357d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">groups getter for a list of all know groups  <a href="#a756990690ca7ace49fba2cf3cd2357d8">More...</a><br /></td></tr>
 <tr class="separator:a756990690ca7ace49fba2cf3cd2357d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9213e52d99b520cd204efe3132d6d43a"><td class="memItemLeft" align="right" valign="top"><a id="a9213e52d99b520cd204efe3132d6d43a"></a>
-hue::Bridge&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a9213e52d99b520cd204efe3132d6d43a">bridgeFromLight</a> (const cor::Light &amp;light)</td></tr>
-<tr class="memdesc:a9213e52d99b520cd204efe3132d6d43a"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the hue bridge that controls a cor::Light <br /></td></tr>
+<a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a9213e52d99b520cd204efe3132d6d43a">bridgeFromLight</a> (const <a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;light)</td></tr>
+<tr class="memdesc:a9213e52d99b520cd204efe3132d6d43a"><td class="mdescLeft">&#160;</td><td class="mdescRight">get the hue bridge that controls a <a class="el" href="classcor_1_1_light.html" title="The Light class is the base datatype used for working with lights in Corluma. At a minimum...">cor::Light</a> <br /></td></tr>
 <tr class="separator:a9213e52d99b520cd204efe3132d6d43a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6634301487fc344a20ae5aa2b98adcfd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a6634301487fc344a20ae5aa2b98adcfd">searchForNewLights</a> (const hue::Bridge &amp;bridge, const std::vector&lt; QString &gt; &amp;serialNumbers)</td></tr>
+<tr class="memitem:a6634301487fc344a20ae5aa2b98adcfd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a6634301487fc344a20ae5aa2b98adcfd">searchForNewLights</a> (const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;bridge, const std::vector&lt; QString &gt; &amp;serialNumbers)</td></tr>
 <tr class="memdesc:a6634301487fc344a20ae5aa2b98adcfd"><td class="mdescLeft">&#160;</td><td class="mdescRight">searchForNewLights search for new lights that havent been paired with the bridge yet  <a href="#a6634301487fc344a20ae5aa2b98adcfd">More...</a><br /></td></tr>
 <tr class="separator:a6634301487fc344a20ae5aa2b98adcfd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3b9cc42411b01aae0dec1235136a4e39"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a3b9cc42411b01aae0dec1235136a4e39">renameLight</a> (HueMetadata light, const QString &amp;newName)</td></tr>
+<tr class="memitem:a3b9cc42411b01aae0dec1235136a4e39"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a3b9cc42411b01aae0dec1235136a4e39">renameLight</a> (<a class="el" href="class_hue_metadata.html">HueMetadata</a> light, const QString &amp;newName)</td></tr>
 <tr class="memdesc:a3b9cc42411b01aae0dec1235136a4e39"><td class="mdescLeft">&#160;</td><td class="mdescRight">renameLight rename the light's name stored on the hue bridge.  <a href="#a3b9cc42411b01aae0dec1235136a4e39">More...</a><br /></td></tr>
 <tr class="separator:a3b9cc42411b01aae0dec1235136a4e39"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac6f73985df06c8570f6478bf46eb0cc0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#ac6f73985df06c8570f6478bf46eb0cc0">deleteLight</a> (const HueMetadata &amp;light)</td></tr>
-<tr class="memdesc:ac6f73985df06c8570f6478bf46eb0cc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">deleteLight delete the light and its stored data from the bridge  <a href="#ac6f73985df06c8570f6478bf46eb0cc0">More...</a><br /></td></tr>
-<tr class="separator:ac6f73985df06c8570f6478bf46eb0cc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a32a3b8dfe50b750f568454d82500760c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a32a3b8dfe50b750f568454d82500760c">brightnessChange</a> (const hue::Bridge &amp;bridge, int deviceIndex, int brightness)</td></tr>
+<tr class="memitem:a61fd336f65b832d3c59723df93413900"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a61fd336f65b832d3c59723df93413900">deleteLight</a> (const <a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;light)</td></tr>
+<tr class="memdesc:a61fd336f65b832d3c59723df93413900"><td class="mdescLeft">&#160;</td><td class="mdescRight">deleteLight delete the light and its stored data from the bridge  <a href="#a61fd336f65b832d3c59723df93413900">More...</a><br /></td></tr>
+<tr class="separator:a61fd336f65b832d3c59723df93413900"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32a3b8dfe50b750f568454d82500760c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a32a3b8dfe50b750f568454d82500760c">brightnessChange</a> (const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;bridge, int deviceIndex, int brightness)</td></tr>
 <tr class="memdesc:a32a3b8dfe50b750f568454d82500760c"><td class="mdescLeft">&#160;</td><td class="mdescRight">brightnessChange connected to CommPacketParser, this changes the brightness of a device.  <a href="#a32a3b8dfe50b750f568454d82500760c">More...</a><br /></td></tr>
 <tr class="separator:a32a3b8dfe50b750f568454d82500760c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6cb19c0801154b8239be923804a36159"><td class="memItemLeft" align="right" valign="top"><a id="a6cb19c0801154b8239be923804a36159"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a6cb19c0801154b8239be923804a36159">routineChange</a> (const hue::Bridge &amp;bridge, int deviceIndex, QJsonObject)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#a6cb19c0801154b8239be923804a36159">routineChange</a> (const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;bridge, int deviceIndex, QJsonObject)</td></tr>
 <tr class="memdesc:a6cb19c0801154b8239be923804a36159"><td class="mdescLeft">&#160;</td><td class="mdescRight">routineChange change the light state of the hue. This JSON object will contain a color and other information about the light. <br /></td></tr>
 <tr class="separator:a6cb19c0801154b8239be923804a36159"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae71c5dd56993aa10a0261af823a14851"><td class="memItemLeft" align="right" valign="top"><a id="ae71c5dd56993aa10a0261af823a14851"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#ae71c5dd56993aa10a0261af823a14851">bridgeDiscovered</a> (const hue::Bridge &amp;, const QJsonObject &amp;lightsObject, const QJsonObject &amp;groupObject, const QJsonObject &amp;schedulesObject)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_hue.html#ae71c5dd56993aa10a0261af823a14851">bridgeDiscovered</a> (const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;, const QJsonObject &amp;lightsObject, const QJsonObject &amp;groupObject, const QJsonObject &amp;schedulesObject)</td></tr>
 <tr class="memdesc:ae71c5dd56993aa10a0261af823a14851"><td class="mdescLeft">&#160;</td><td class="mdescRight">connectionStatusHasChanged called by the HueBridgeDiscovery object whenever its connection changes. <br /></td></tr>
 <tr class="separator:ae71c5dd56993aa10a0261af823a14851"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
@@ -209,16 +206,16 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a684c569bb57248ae4b0b2e4563339f74">stopStateUpdates</a> ()</td></tr>
 <tr class="memdesc:a684c569bb57248ae4b0b2e4563339f74 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">stopStateUpdates turn off the state update timers. <br /></td></tr>
 <tr class="separator:a684c569bb57248ae4b0b2e4563339f74 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7238ee9df8464546e7afd4c21b203303 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a7238ee9df8464546e7afd4c21b203303">addLight</a> (const cor::Light &amp;light)</td></tr>
+<tr class="memitem:a7238ee9df8464546e7afd4c21b203303 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a7238ee9df8464546e7afd4c21b203303">addLight</a> (const <a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;light)</td></tr>
 <tr class="memdesc:a7238ee9df8464546e7afd4c21b203303 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">addLight adds lights with specific unique IDs that have been previously discovered. This allows us to show previously learned lights as "Not Reachable" when they cannot be erached.  <a href="class_comm_type.html#a7238ee9df8464546e7afd4c21b203303">More...</a><br /></td></tr>
 <tr class="separator:a7238ee9df8464546e7afd4c21b203303 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3562cb0d1cb525c1bc883d81bac2db35 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a3562cb0d1cb525c1bc883d81bac2db35">updateLight</a> (const cor::Light &amp;device)</td></tr>
+<tr class="memitem:a3562cb0d1cb525c1bc883d81bac2db35 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a3562cb0d1cb525c1bc883d81bac2db35">updateLight</a> (const <a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;device)</td></tr>
 <tr class="memdesc:a3562cb0d1cb525c1bc883d81bac2db35 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDevice update all the data in the light device that matches the same controller and index. if a light device doesn't exist with these properties, then it creates a new one.  <a href="class_comm_type.html#a3562cb0d1cb525c1bc883d81bac2db35">More...</a><br /></td></tr>
 <tr class="separator:a3562cb0d1cb525c1bc883d81bac2db35 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab9d8ebeecae39e95cd2d2647379cadec inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ab9d8ebeecae39e95cd2d2647379cadec">fillDevice</a> (cor::Light &amp;device)</td></tr>
-<tr class="memdesc:ab9d8ebeecae39e95cd2d2647379cadec inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">fillDevice takes the controller and index of the referenced cor::Light and overwrites all other values with the values stored in the device table.  <a href="class_comm_type.html#ab9d8ebeecae39e95cd2d2647379cadec">More...</a><br /></td></tr>
+<tr class="memitem:ab9d8ebeecae39e95cd2d2647379cadec inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ab9d8ebeecae39e95cd2d2647379cadec">fillDevice</a> (<a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;device)</td></tr>
+<tr class="memdesc:ab9d8ebeecae39e95cd2d2647379cadec inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">fillDevice takes the controller and index of the referenced <a class="el" href="classcor_1_1_light.html" title="The Light class is the base datatype used for working with lights in Corluma. At a minimum...">cor::Light</a> and overwrites all other values with the values stored in the device table.  <a href="class_comm_type.html#ab9d8ebeecae39e95cd2d2647379cadec">More...</a><br /></td></tr>
 <tr class="separator:ab9d8ebeecae39e95cd2d2647379cadec inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a130a72e8b674f9d2d76bf419243083c3 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">const cor::Dictionary&lt; cor::Light &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a130a72e8b674f9d2d76bf419243083c3">lightDict</a> () const noexcept</td></tr>
+<tr class="memitem:a130a72e8b674f9d2d76bf419243083c3 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classcor_1_1_dictionary.html">cor::Dictionary</a>&lt; <a class="el" href="classcor_1_1_light.html">cor::Light</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a130a72e8b674f9d2d76bf419243083c3">lightDict</a> () const noexcept</td></tr>
 <tr class="memdesc:a130a72e8b674f9d2d76bf419243083c3 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceList list of the light devices  <a href="class_comm_type.html#a130a72e8b674f9d2d76bf419243083c3">More...</a><br /></td></tr>
 <tr class="separator:a130a72e8b674f9d2d76bf419243083c3 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2fc73b81632d43ac37cf12c12899362b inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a2fc73b81632d43ac37cf12c12899362b"></a>
@@ -311,7 +308,7 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const cor::Dictionary&lt;hue::Bridge&gt;&amp; CommHue::bridges </td>
+          <td class="memname">const <a class="el" href="classcor_1_1_dictionary.html">cor::Dictionary</a>&lt;<a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a>&gt;&amp; CommHue::bridges </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -336,7 +333,7 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
         <tr>
           <td class="memname">void CommHue::brightnessChange </td>
           <td>(</td>
-          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;&#160;</td>
           <td class="paramname"><em>bridge</em>, </td>
         </tr>
         <tr>
@@ -377,7 +374,7 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
         <tr>
           <td class="memname">void CommHue::changeColor </td>
           <td>(</td>
-          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;&#160;</td>
           <td class="paramname"><em>bridge</em>, </td>
         </tr>
         <tr>
@@ -418,7 +415,7 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
         <tr>
           <td class="memname">void CommHue::changeColorCT </td>
           <td>(</td>
-          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;&#160;</td>
           <td class="paramname"><em>bridge</em>, </td>
         </tr>
         <tr>
@@ -466,7 +463,7 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
         <tr>
           <td class="memname">void CommHue::createGroup </td>
           <td>(</td>
-          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;&#160;</td>
           <td class="paramname"><em>bridge</em>, </td>
         </tr>
         <tr>
@@ -478,7 +475,7 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::vector&lt; HueMetadata &gt;&#160;</td>
+          <td class="paramtype">std::vector&lt; <a class="el" href="class_hue_metadata.html">HueMetadata</a> &gt;&#160;</td>
           <td class="paramname"><em>lights</em>, </td>
         </tr>
         <tr>
@@ -513,7 +510,7 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
         <tr>
           <td class="memname">void CommHue::createIdleTimeout </td>
           <td>(</td>
-          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;&#160;</td>
           <td class="paramname"><em>bridge</em>, </td>
         </tr>
         <tr>
@@ -554,13 +551,13 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
         <tr>
           <td class="memname">void CommHue::deleteGroup </td>
           <td>(</td>
-          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;&#160;</td>
           <td class="paramname"><em>bridge</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">cor::Group&#160;</td>
+          <td class="paramtype"><a class="el" href="classcor_1_1_group.html">cor::Group</a>&#160;</td>
           <td class="paramname"><em>group</em>&#160;</td>
         </tr>
         <tr>
@@ -579,8 +576,8 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 </div>
 </div>
-<a id="ac6f73985df06c8570f6478bf46eb0cc0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac6f73985df06c8570f6478bf46eb0cc0">&#9670;&nbsp;</a></span>deleteLight()</h2>
+<a id="a61fd336f65b832d3c59723df93413900"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a61fd336f65b832d3c59723df93413900">&#9670;&nbsp;</a></span>deleteLight()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -588,7 +585,7 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
         <tr>
           <td class="memname">void CommHue::deleteLight </td>
           <td>(</td>
-          <td class="paramtype">const HueMetadata &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;&#160;</td>
           <td class="paramname"><em>light</em></td><td>)</td>
           <td></td>
         </tr>
@@ -603,8 +600,8 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 </div>
 </div>
-<a id="a3de7a0ee906a9ecf1f4dd32208ecdea7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3de7a0ee906a9ecf1f4dd32208ecdea7">&#9670;&nbsp;</a></span>deleteSchedule()</h2>
+<a id="a9e19286a67b7e8bcd9b4a018dab58d45"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9e19286a67b7e8bcd9b4a018dab58d45">&#9670;&nbsp;</a></span>deleteSchedule()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -612,7 +609,7 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
         <tr>
           <td class="memname">void CommHue::deleteSchedule </td>
           <td>(</td>
-          <td class="paramtype">SHueSchedule&#160;</td>
+          <td class="paramtype"><a class="el" href="classhue_1_1_schedule.html">hue::Schedule</a>&#160;</td>
           <td class="paramname"><em>schedule</em></td><td>)</td>
           <td></td>
         </tr>
@@ -637,7 +634,7 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">hue::BridgeDiscovery* CommHue::discovery </td>
+          <td class="memname"><a class="el" href="classhue_1_1_bridge_discovery.html">hue::BridgeDiscovery</a>* CommHue::discovery </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -687,9 +684,9 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; cor::Group &gt; CommHue::groups </td>
+          <td class="memname">std::vector&lt; <a class="el" href="classcor_1_1_group.html">cor::Group</a> &gt; CommHue::groups </td>
           <td>(</td>
-          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;&#160;</td>
           <td class="paramname"><em>bridge</em></td><td>)</td>
           <td></td>
         </tr>
@@ -712,9 +709,9 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">HueMetadata CommHue::hueLightFromLight </td>
+          <td class="memname"><a class="el" href="class_hue_metadata.html">HueMetadata</a> CommHue::hueLightFromLight </td>
           <td>(</td>
-          <td class="paramtype">const cor::Light &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;&#160;</td>
           <td class="paramname"><em>device</em></td><td>)</td>
           <td></td>
         </tr>
@@ -722,11 +719,11 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">device</td><td>a cor::Light that represents the SHueLight you want to receive </td></tr>
+    <tr><td class="paramname">device</td><td>a <a class="el" href="classcor_1_1_light.html" title="The Light class is the base datatype used for working with lights in Corluma. At a minimum...">cor::Light</a> that represents the SHueLight you want to receive </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>the SHueLight that represents the same device as the cor::Light given. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>the SHueLight that represents the same device as the <a class="el" href="classcor_1_1_light.html" title="The Light class is the base datatype used for working with lights in Corluma. At a minimum...">cor::Light</a> given. </dd></dl>
 
 </div>
 </div>
@@ -739,7 +736,7 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
         <tr>
           <td class="memname">void CommHue::postJson </td>
           <td>(</td>
-          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;&#160;</td>
           <td class="paramname"><em>bridge</em>, </td>
         </tr>
         <tr>
@@ -780,7 +777,7 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
         <tr>
           <td class="memname">void CommHue::putJson </td>
           <td>(</td>
-          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;&#160;</td>
           <td class="paramname"><em>bridge</em>, </td>
         </tr>
         <tr>
@@ -821,7 +818,7 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
         <tr>
           <td class="memname">void CommHue::renameLight </td>
           <td>(</td>
-          <td class="paramtype">HueMetadata&#160;</td>
+          <td class="paramtype"><a class="el" href="class_hue_metadata.html">HueMetadata</a>&#160;</td>
           <td class="paramname"><em>light</em>, </td>
         </tr>
         <tr>
@@ -847,16 +844,16 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 </div>
 </div>
-<a id="ab3417492f306634c58f5d0f8cc8d231f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab3417492f306634c58f5d0f8cc8d231f">&#9670;&nbsp;</a></span>schedules()</h2>
+<a id="a1441eca1966f2658bf0e2524caf25d85"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1441eca1966f2658bf0e2524caf25d85">&#9670;&nbsp;</a></span>schedules()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; SHueSchedule &gt; CommHue::schedules </td>
+          <td class="memname">std::vector&lt; <a class="el" href="classhue_1_1_schedule.html">hue::Schedule</a> &gt; CommHue::schedules </td>
           <td>(</td>
-          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;&#160;</td>
           <td class="paramname"><em>bridge</em></td><td>)</td>
           <td></td>
         </tr>
@@ -875,7 +872,7 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
         <tr>
           <td class="memname">void CommHue::searchForNewLights </td>
           <td>(</td>
-          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;&#160;</td>
           <td class="paramname"><em>bridge</em>, </td>
         </tr>
         <tr>
@@ -924,8 +921,8 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 </div>
 </div>
-<a id="a8b80833f0f35e62ea27427c139379fa7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8b80833f0f35e62ea27427c139379fa7">&#9670;&nbsp;</a></span>sendSchedule()</h2>
+<a id="a1bcecc8974f359e7d4e8661c2751dcc6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1bcecc8974f359e7d4e8661c2751dcc6">&#9670;&nbsp;</a></span>sendSchedule()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -933,7 +930,7 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
         <tr>
           <td class="memname">void CommHue::sendSchedule </td>
           <td>(</td>
-          <td class="paramtype">SHueSchedule&#160;</td>
+          <td class="paramtype"><a class="el" href="classhue_1_1_schedule.html">hue::Schedule</a>&#160;</td>
           <td class="paramname"><em>schedule</em></td><td>)</td>
           <td></td>
         </tr>
@@ -948,31 +945,6 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
 
 </div>
 </div>
-<a id="acc2197131a6b7dabef3b406bee54ab64"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acc2197131a6b7dabef3b406bee54ab64">&#9670;&nbsp;</a></span>SHueCommandToJsonObject()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">QJsonObject CommHue::SHueCommandToJsonObject </td>
-          <td>(</td>
-          <td class="paramtype">SHueCommand&#160;</td>
-          <td class="paramname"><em>command</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">command</td><td>the command to convert into json </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>a json representation of a command </dd></dl>
-
-</div>
-</div>
 <a id="a7b342521c43a152eb4c26b00e6ce4395"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7b342521c43a152eb4c26b00e6ce4395">&#9670;&nbsp;</a></span>updateGroup()</h2>
 
@@ -982,19 +954,19 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
         <tr>
           <td class="memname">void CommHue::updateGroup </td>
           <td>(</td>
-          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;&#160;</td>
           <td class="paramname"><em>bridge</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">cor::Group&#160;</td>
+          <td class="paramtype"><a class="el" href="classcor_1_1_group.html">cor::Group</a>&#160;</td>
           <td class="paramname"><em>group</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::vector&lt; HueMetadata &gt;&#160;</td>
+          <td class="paramtype">std::vector&lt; <a class="el" href="class_hue_metadata.html">HueMetadata</a> &gt;&#160;</td>
           <td class="paramname"><em>lights</em>&#160;</td>
         </tr>
         <tr>
@@ -1023,7 +995,7 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
         <tr>
           <td class="memname">void CommHue::updateIdleTimeout </td>
           <td>(</td>
-          <td class="paramtype">const hue::Bridge &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classhue_1_1_bridge.html">hue::Bridge</a> &amp;&#160;</td>
           <td class="paramname"><em>bridge</em>, </td>
         </tr>
         <tr>

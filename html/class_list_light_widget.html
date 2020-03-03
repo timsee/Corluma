@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.17.46</span>
+   &#160;<span id="projectnumber">v0.18.8</span>
    </div>
   </td>
  </tr>
@@ -50,12 +50,12 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="class_list_light_widget.html" title="The ListLightWidget class This widget is used on the SettingsPage as a replacement for a QListWidget ...">ListLightWidget</a> class This widget is used on the <a class="el" href="class_settings_page.html" title="The SettingsPage provides a way to configure the application settings. ">SettingsPage</a> as a replacement for a QListWidget on the connectionList. It shows more information than a standard QListWidget, by giving an icon that represents the lights states, the name of of the controller, and the index of the light.  
+<p>The <a class="el" href="class_list_light_widget.html" title="The ListLightWidget class This widget is used on the SettingsPage as a replacement for a QListWidget ...">ListLightWidget</a> class This widget is used on the <a class="el" href="class_settings_page.html" title="The SettingsPage provides a way to configure the application settings and view copyright information...">SettingsPage</a> as a replacement for a QListWidget on the connectionList. It shows more information than a standard QListWidget, by giving an icon that represents the lights states, the name of of the controller, and the index of the light.  
  <a href="class_list_light_widget.html#details">More...</a></p>
 
 <p><code>#include &quot;<a class="el" href="listlightwidget_8h_source.html">listlightwidget.h</a>&quot;</code></p>
 
-<p>Inherits ListItemWidget.</p>
+<p>Inherits <a class="el" href="classcor_1_1_list_item_widget.html">cor::ListItemWidget</a>.</p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
@@ -70,10 +70,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a33b4609c9bc5c523fff363ed1ca0ab03"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_light_widget.html#a33b4609c9bc5c523fff363ed1ca0ab03">ListLightWidget</a> (const cor::Light &amp;device, bool setHighlightable, cor::EWidgetType type, QWidget *parent)</td></tr>
+<tr class="memitem:a33b4609c9bc5c523fff363ed1ca0ab03"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_light_widget.html#a33b4609c9bc5c523fff363ed1ca0ab03">ListLightWidget</a> (const <a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;device, bool setHighlightable, <a class="el" href="namespacecor.html#a41a13d76f2c1dc8da00b4869e1f7d920">cor::EWidgetType</a> type, QWidget *parent)</td></tr>
 <tr class="memdesc:a33b4609c9bc5c523fff363ed1ca0ab03"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_list_light_widget.html" title="The ListLightWidget class This widget is used on the SettingsPage as a replacement for a QListWidget ...">ListLightWidget</a> Constructo.  <a href="#a33b4609c9bc5c523fff363ed1ca0ab03">More...</a><br /></td></tr>
 <tr class="separator:a33b4609c9bc5c523fff363ed1ca0ab03"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeda47cb7dad75e9299271f399251a18f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_light_widget.html#aeda47cb7dad75e9299271f399251a18f">updateWidget</a> (const cor::Light &amp;device)</td></tr>
+<tr class="memitem:aeda47cb7dad75e9299271f399251a18f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_light_widget.html#aeda47cb7dad75e9299271f399251a18f">updateWidget</a> (const <a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;device)</td></tr>
 <tr class="memdesc:aeda47cb7dad75e9299271f399251a18f"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateWidget update the widget with a new state for the device.  <a href="#aeda47cb7dad75e9299271f399251a18f">More...</a><br /></td></tr>
 <tr class="separator:aeda47cb7dad75e9299271f399251a18f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5add6c986e843db69aafd67e2ed980b5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_light_widget.html#a5add6c986e843db69aafd67e2ed980b5">setHighlightChecked</a> (bool <a class="el" href="class_list_light_widget.html#aaaaf2a566cf6823d6e519ef096257fa2">checked</a>)</td></tr>
@@ -91,9 +91,18 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <tr class="memdesc:a0b9fa0f6c384e6a02454e3cc0b5cbb81"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for name of controller <br /></td></tr>
 <tr class="separator:a0b9fa0f6c384e6a02454e3cc0b5cbb81"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acde5fc3a546e3ba3047caea520d43f40"><td class="memItemLeft" align="right" valign="top"><a id="acde5fc3a546e3ba3047caea520d43f40"></a>
-const cor::Light &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_light_widget.html#acde5fc3a546e3ba3047caea520d43f40">light</a> () const noexcept</td></tr>
+const <a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_light_widget.html#acde5fc3a546e3ba3047caea520d43f40">light</a> () const noexcept</td></tr>
 <tr class="memdesc:acde5fc3a546e3ba3047caea520d43f40"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for current light <br /></td></tr>
 <tr class="separator:acde5fc3a546e3ba3047caea520d43f40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classcor_1_1_list_item_widget"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classcor_1_1_list_item_widget')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classcor_1_1_list_item_widget.html">cor::ListItemWidget</a></td></tr>
+<tr class="memitem:aae982650f2d7e3c524299aa5c8a5fdcd inherit pub_methods_classcor_1_1_list_item_widget"><td class="memItemLeft" align="right" valign="top"><a id="aae982650f2d7e3c524299aa5c8a5fdcd"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_list_item_widget.html#aae982650f2d7e3c524299aa5c8a5fdcd">ListItemWidget</a> (const QString &amp;<a class="el" href="classcor_1_1_list_item_widget.html#af4596072d354b593f202ee51e1911c48">key</a>, QWidget *parent)</td></tr>
+<tr class="memdesc:aae982650f2d7e3c524299aa5c8a5fdcd inherit pub_methods_classcor_1_1_list_item_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor <br /></td></tr>
+<tr class="separator:aae982650f2d7e3c524299aa5c8a5fdcd inherit pub_methods_classcor_1_1_list_item_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4596072d354b593f202ee51e1911c48 inherit pub_methods_classcor_1_1_list_item_widget"><td class="memItemLeft" align="right" valign="top"><a id="af4596072d354b593f202ee51e1911c48"></a>
+const QString &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_list_item_widget.html#af4596072d354b593f202ee51e1911c48">key</a> () const</td></tr>
+<tr class="memdesc:af4596072d354b593f202ee51e1911c48 inherit pub_methods_classcor_1_1_list_item_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for key <br /></td></tr>
+<tr class="separator:af4596072d354b593f202ee51e1911c48 inherit pub_methods_classcor_1_1_list_item_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -109,6 +118,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list_light_widget.html#af0c79dca0135db009604906caaf00509">resizeEvent</a> (QResizeEvent *)</td></tr>
 <tr class="memdesc:af0c79dca0135db009604906caaf00509"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when widget is resized <br /></td></tr>
 <tr class="separator:af0c79dca0135db009604906caaf00509"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pro_attribs_classcor_1_1_list_item_widget"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classcor_1_1_list_item_widget')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classcor_1_1_list_item_widget.html">cor::ListItemWidget</a></td></tr>
+<tr class="memitem:a7bf29351cac86ec2c50b445c329af78b inherit pro_attribs_classcor_1_1_list_item_widget"><td class="memItemLeft" align="right" valign="top"><a id="a7bf29351cac86ec2c50b445c329af78b"></a>
+QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_list_item_widget.html#a7bf29351cac86ec2c50b445c329af78b">mKey</a></td></tr>
+<tr class="memdesc:a7bf29351cac86ec2c50b445c329af78b inherit pro_attribs_classcor_1_1_list_item_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">key for widget. <br /></td></tr>
+<tr class="separator:a7bf29351cac86ec2c50b445c329af78b inherit pro_attribs_classcor_1_1_list_item_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
@@ -125,7 +142,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="memname">ListLightWidget::ListLightWidget </td>
           <td>(</td>
-          <td class="paramtype">const cor::Light &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;&#160;</td>
           <td class="paramname"><em>light</em>, </td>
         </tr>
         <tr>
@@ -137,7 +154,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">cor::EWidgetType&#160;</td>
+          <td class="paramtype"><a class="el" href="namespacecor.html#a41a13d76f2c1dc8da00b4869e1f7d920">cor::EWidgetType</a>&#160;</td>
           <td class="paramname"><em>type</em>, </td>
         </tr>
         <tr>
@@ -231,7 +248,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="memname">void ListLightWidget::updateWidget </td>
           <td>(</td>
-          <td class="paramtype">const cor::Light &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;&#160;</td>
           <td class="paramname"><em>device</em></td><td>)</td>
           <td></td>
         </tr>

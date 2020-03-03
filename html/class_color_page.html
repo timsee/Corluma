@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.17.46</span>
+   &#160;<span id="projectnumber">v0.18.8</span>
    </div>
   </td>
  </tr>
@@ -56,7 +56,7 @@ $(function() {
 
 <p><code>#include &quot;<a class="el" href="colorpage_8h_source.html">colorpage.h</a>&quot;</code></p>
 
-<p>Inherits QWidget, and Page.</p>
+<p>Inherits QWidget, and <a class="el" href="classcor_1_1_page.html">cor::Page</a>.</p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-slots"></a>
 Public Slots</h2></td></tr>
@@ -67,10 +67,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
-<tr class="memitem:a2a114c3ee05ac456e1284699ed45133c"><td class="memItemLeft" align="right" valign="top"><a id="a2a114c3ee05ac456e1284699ed45133c"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a2a114c3ee05ac456e1284699ed45133c">routineUpdate</a> (cor::LightState)</td></tr>
-<tr class="memdesc:a2a114c3ee05ac456e1284699ed45133c"><td class="mdescLeft">&#160;</td><td class="mdescRight">sent out whenever a routine update is triggered <br /></td></tr>
-<tr class="separator:a2a114c3ee05ac456e1284699ed45133c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac450679260d0f21eb02c87207ccdc14b"><td class="memItemLeft" align="right" valign="top"><a id="ac450679260d0f21eb02c87207ccdc14b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#ac450679260d0f21eb02c87207ccdc14b">colorUpdate</a> (QColor)</td></tr>
+<tr class="memdesc:ac450679260d0f21eb02c87207ccdc14b"><td class="mdescLeft">&#160;</td><td class="mdescRight">sent out whenever a routine update is triggered <br /></td></tr>
+<tr class="separator:ac450679260d0f21eb02c87207ccdc14b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd5f52d8f4e167b5c4a761e174f01172"><td class="memItemLeft" align="right" valign="top"><a id="abd5f52d8f4e167b5c4a761e174f01172"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#abd5f52d8f4e167b5c4a761e174f01172">ambientUpdate</a> (std::uint32_t, std::uint32_t)</td></tr>
+<tr class="memdesc:abd5f52d8f4e167b5c4a761e174f01172"><td class="mdescLeft">&#160;</td><td class="mdescRight">sent out whenever an ambient color update is triggered <br /></td></tr>
+<tr class="separator:abd5f52d8f4e167b5c4a761e174f01172"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -80,14 +84,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6210157260e11d7d668113a2b8976d3f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a6210157260e11d7d668113a2b8976d3f">changePageType</a> (ESingleColorPickerMode page)</td></tr>
 <tr class="memdesc:a6210157260e11d7d668113a2b8976d3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">changePageType change the hue page type to display a different color picker.  <a href="#a6210157260e11d7d668113a2b8976d3f">More...</a><br /></td></tr>
 <tr class="separator:a6210157260e11d7d668113a2b8976d3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aafe8561aef3a73aa0ee37029f7f1d291"><td class="memItemLeft" align="right" valign="top"><a id="aafe8561aef3a73aa0ee37029f7f1d291"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#aafe8561aef3a73aa0ee37029f7f1d291">updateRoutineButton</a> ()</td></tr>
-<tr class="memdesc:aafe8561aef3a73aa0ee37029f7f1d291"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateRoutineButton helper to update the Routine button in the floating layout. Requires a bit of logic to abstract away the proper function call from the current app state. <br /></td></tr>
-<tr class="separator:aafe8561aef3a73aa0ee37029f7f1d291"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc333fa62110e6c504b5f10563809f8d"><td class="memItemLeft" align="right" valign="top"><a id="afc333fa62110e6c504b5f10563809f8d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#afc333fa62110e6c504b5f10563809f8d">handleRoutineWidget</a> (bool <a class="el" href="class_color_page.html#aac4f219e10a8b1f218a8025f167ec8ea">show</a>)</td></tr>
-<tr class="memdesc:afc333fa62110e6c504b5f10563809f8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">shows or hides the routine widget <br /></td></tr>
-<tr class="separator:afc333fa62110e6c504b5f10563809f8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a19399fc10a0469c8bc6231637cc6ac1d"><td class="memItemLeft" align="right" valign="top"><a id="a19399fc10a0469c8bc6231637cc6ac1d"></a>
 ESingleColorPickerMode&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a19399fc10a0469c8bc6231637cc6ac1d">pageType</a> ()</td></tr>
 <tr class="memdesc:a19399fc10a0469c8bc6231637cc6ac1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for current type of color page (ambiance, RGB, etc.) <br /></td></tr>
@@ -96,14 +92,27 @@ ESingleColorPickerMode&#160;</td><td class="memItemRight" valign="bottom"><a cla
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a3f9b9936362ab1e742f3bbfd2f5bfc3a">updateBrightness</a> (std::uint32_t brightness)</td></tr>
 <tr class="memdesc:a3f9b9936362ab1e742f3bbfd2f5bfc3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">programmatically updates brightness <br /></td></tr>
 <tr class="separator:a3f9b9936362ab1e742f3bbfd2f5bfc3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aac4f219e10a8b1f218a8025f167ec8ea"><td class="memItemLeft" align="right" valign="top"><a id="aac4f219e10a8b1f218a8025f167ec8ea"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#aac4f219e10a8b1f218a8025f167ec8ea">show</a> (const QColor &amp;color, std::uint32_t lightCount, EColorPickerType bestType)</td></tr>
-<tr class="memdesc:aac4f219e10a8b1f218a8025f167ec8ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when the widget is shown <br /></td></tr>
-<tr class="separator:aac4f219e10a8b1f218a8025f167ec8ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7998372d06f606422cb50c5c3b3f5062"><td class="memItemLeft" align="right" valign="top"><a id="a7998372d06f606422cb50c5c3b3f5062"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a7998372d06f606422cb50c5c3b3f5062">routineWidgetIsOpen</a> ()</td></tr>
-<tr class="memdesc:a7998372d06f606422cb50c5c3b3f5062"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if routine widget is open, false otherwise <br /></td></tr>
-<tr class="separator:a7998372d06f606422cb50c5c3b3f5062"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5005335bd6d7a5ee7d0f3c704e52261"><td class="memItemLeft" align="right" valign="top"><a id="af5005335bd6d7a5ee7d0f3c704e52261"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#af5005335bd6d7a5ee7d0f3c704e52261">update</a> (const QColor &amp;<a class="el" href="class_color_page.html#a9e08dd4b7a3a16b144ceb3c9e20f8f0a">color</a>, std::uint32_t brightness, std::size_t lightCount, EColorPickerType bestType)</td></tr>
+<tr class="memdesc:af5005335bd6d7a5ee7d0f3c704e52261"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when the app state is updated (IE when the selected lights changed) <br /></td></tr>
+<tr class="separator:af5005335bd6d7a5ee7d0f3c704e52261"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e08dd4b7a3a16b144ceb3c9e20f8f0a"><td class="memItemLeft" align="right" valign="top"><a id="a9e08dd4b7a3a16b144ceb3c9e20f8f0a"></a>
+const QColor&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a9e08dd4b7a3a16b144ceb3c9e20f8f0a">color</a> () const noexcept</td></tr>
+<tr class="memdesc:a9e08dd4b7a3a16b144ceb3c9e20f8f0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for currently selected color <br /></td></tr>
+<tr class="separator:a9e08dd4b7a3a16b144ceb3c9e20f8f0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classcor_1_1_page"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classcor_1_1_page')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classcor_1_1_page.html">cor::Page</a></td></tr>
+<tr class="memitem:a69d59d34911d4db9207478d8b45a6302 inherit pub_methods_classcor_1_1_page"><td class="memItemLeft" align="right" valign="top"><a id="a69d59d34911d4db9207478d8b45a6302"></a>
+virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_page.html#a69d59d34911d4db9207478d8b45a6302">~Page</a> ()=default</td></tr>
+<tr class="memdesc:a69d59d34911d4db9207478d8b45a6302 inherit pub_methods_classcor_1_1_page"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
+<tr class="separator:a69d59d34911d4db9207478d8b45a6302 inherit pub_methods_classcor_1_1_page"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67eb0ece3309ad695b40e99f3d7cdd60 inherit pub_methods_classcor_1_1_page"><td class="memItemLeft" align="right" valign="top"><a id="a67eb0ece3309ad695b40e99f3d7cdd60"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_page.html#a67eb0ece3309ad695b40e99f3d7cdd60">isOpen</a> (bool open) noexcept</td></tr>
+<tr class="memdesc:a67eb0ece3309ad695b40e99f3d7cdd60 inherit pub_methods_classcor_1_1_page"><td class="mdescLeft">&#160;</td><td class="mdescRight">setter for open flag <br /></td></tr>
+<tr class="separator:a67eb0ece3309ad695b40e99f3d7cdd60 inherit pub_methods_classcor_1_1_page"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6932c820fd25ce1469b5815fb50ac02 inherit pub_methods_classcor_1_1_page"><td class="memItemLeft" align="right" valign="top"><a id="ae6932c820fd25ce1469b5815fb50ac02"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_page.html#ae6932c820fd25ce1469b5815fb50ac02">isOpen</a> () const noexcept</td></tr>
+<tr class="memdesc:ae6932c820fd25ce1469b5815fb50ac02 inherit pub_methods_classcor_1_1_page"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if open, false otherwise <br /></td></tr>
+<tr class="separator:ae6932c820fd25ce1469b5815fb50ac02 inherit pub_methods_classcor_1_1_page"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -111,11 +120,19 @@ Protected Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_color_page.html#a846cf42238564e46e4c0e712e61b1833">resizeEvent</a> (QResizeEvent *)</td></tr>
 <tr class="memdesc:a846cf42238564e46e4c0e712e61b1833"><td class="mdescLeft">&#160;</td><td class="mdescRight">resizeEvent called every time the main window is resized. <br /></td></tr>
 <tr class="separator:a846cf42238564e46e4c0e712e61b1833"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pro_attribs_classcor_1_1_page"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classcor_1_1_page')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classcor_1_1_page.html">cor::Page</a></td></tr>
+<tr class="memitem:a03e964464a769f87a1b4beb376f7e7b8 inherit pro_attribs_classcor_1_1_page"><td class="memItemLeft" align="right" valign="top"><a id="a03e964464a769f87a1b4beb376f7e7b8"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_page.html#a03e964464a769f87a1b4beb376f7e7b8">mIsOpen</a></td></tr>
+<tr class="memdesc:a03e964464a769f87a1b4beb376f7e7b8 inherit pro_attribs_classcor_1_1_page"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if page is open, false if hidden. <br /></td></tr>
+<tr class="separator:a03e964464a769f87a1b4beb376f7e7b8 inherit pro_attribs_classcor_1_1_page"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License.</dd></dl>
-<p>The page contains a <a class="el" href="class_color_picker.html" title="The ColorPicker class is a GUI object designed to give the user ability to choose RGB values in a var...">ColorPicker</a> that allows the user to choose colors. The color picker has various modes such as standard, which gives full range of RGB, and ambient, which allows the user to choose different shades of white.</p>
-<p>For arduino-based projects, there is also a pop up menu on the bottom that allows the user to choose routines for the arduino. To get the single color routines, the user should be on the standard color picker. To get the multi color routines, the user should be on the multi color picker. </p>
+<p>The page contains a <a class="el" href="class_color_picker.html" title="The ColorPicker class is a GUI object designed to give the user ability to choose RGB values in a var...">ColorPicker</a> that allows the user to choose colors. The color picker has three main modes: an HSV mode, which requires the user to use a slider to change the brightness, an RGB mode which has brightness tied into the color picker's wheel, and an ambient mode, which allows the user to choose between different temperatures of white.</p>
+<p>While the user is on this page, there is also a pop up menu on the bottom that allows the user to choose routines for lights that can be individually indexed, such as arduinos and nanoleafs. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a4ad91de867db615a79d74bbfbd8f8cb3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4ad91de867db615a79d74bbfbd8f8cb3">&#9670;&nbsp;</a></span>ColorPage()</h2>

@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.17.46</span>
+   &#160;<span id="projectnumber">v0.18.8</span>
    </div>
   </td>
  </tr>
@@ -48,7 +48,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="class_icon_data.html" title="The IconData class creates all the pixel-y square icons that are seen throughout the app...">IconData</a> class creates all the pixel-y square icons that are seen throughout the app. The grids are made by using a very small buffer of RGB values to do the computation. For display, this buffer gets upscaled to the desired icon size.  
+<p>The <a class="el" href="class_icon_data.html" title="The IconData class creates all the pixel-y square icons that are seen throughout the app...">IconData</a> class creates all the pixel-y square icons that are seen throughout the app. The grids are made by using a very small buffer of RGB values to do the computation.  
  <a href="class_icon_data.html#details">More...</a></p>
 
 <p><code>#include &quot;<a class="el" href="icondata_8h_source.html">icondata.h</a>&quot;</code></p>
@@ -58,10 +58,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a39a260e6e8ad341b130075e6400b0dc1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#a39a260e6e8ad341b130075e6400b0dc1">IconData</a> ()</td></tr>
 <tr class="memdesc:a39a260e6e8ad341b130075e6400b0dc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a39a260e6e8ad341b130075e6400b0dc1">More...</a><br /></td></tr>
 <tr class="separator:a39a260e6e8ad341b130075e6400b0dc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a72f402465ef64bb05223a63d7227201e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#a72f402465ef64bb05223a63d7227201e">IconData</a> (std::uint32_t <a class="el" href="class_icon_data.html#ae270b171036936d5d89bf53a6e50f63d">width</a>, std::uint32_t <a class="el" href="class_icon_data.html#a7ebbd4de07d73dab042182ee406158cf">height</a>)</td></tr>
-<tr class="memdesc:a72f402465ef64bb05223a63d7227201e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standard Constructor, values must be a multiple of four.  <a href="#a72f402465ef64bb05223a63d7227201e">More...</a><br /></td></tr>
-<tr class="separator:a72f402465ef64bb05223a63d7227201e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c6a91559bbd554eb3a2101d087dfe04"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#a6c6a91559bbd554eb3a2101d087dfe04">setRoutine</a> (const cor::LightState &amp;state)</td></tr>
+<tr class="memitem:a6c6a91559bbd554eb3a2101d087dfe04"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#a6c6a91559bbd554eb3a2101d087dfe04">setRoutine</a> (const <a class="el" href="classcor_1_1_light_state.html">cor::LightState</a> &amp;state)</td></tr>
 <tr class="memdesc:a6c6a91559bbd554eb3a2101d087dfe04"><td class="mdescLeft">&#160;</td><td class="mdescRight">setRoutine sets the icon as a lighting routine. This takes a routine object and the associated palette for a routine, if one exists.  <a href="#a6c6a91559bbd554eb3a2101d087dfe04">More...</a><br /></td></tr>
 <tr class="separator:a6c6a91559bbd554eb3a2101d087dfe04"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a60de0644c894c117d1503387d0d1f06a"><td class="memItemLeft" align="right" valign="top"><a id="a60de0644c894c117d1503387d0d1f06a"></a>
@@ -125,9 +122,6 @@ std::uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 <tr class="memitem:a7ebbd4de07d73dab042182ee406158cf"><td class="memItemLeft" align="right" valign="top">std::uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#a7ebbd4de07d73dab042182ee406158cf">height</a> ()</td></tr>
 <tr class="memdesc:a7ebbd4de07d73dab042182ee406158cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">height getter for the data buffer's height.  <a href="#a7ebbd4de07d73dab042182ee406158cf">More...</a><br /></td></tr>
 <tr class="separator:a7ebbd4de07d73dab042182ee406158cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a77b29c1018f73f24e841078a9724dfde"><td class="memItemLeft" align="right" valign="top">const QImage&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#a77b29c1018f73f24e841078a9724dfde">renderAsQImage</a> ()</td></tr>
-<tr class="memdesc:a77b29c1018f73f24e841078a9724dfde"><td class="mdescLeft">&#160;</td><td class="mdescRight">renderAsQImage takes the data and outputs it as a QImage  <a href="#a77b29c1018f73f24e841078a9724dfde">More...</a><br /></td></tr>
-<tr class="separator:a77b29c1018f73f24e841078a9724dfde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9896631da91346c3f6f1b6cb3db1522d"><td class="memItemLeft" align="right" valign="top">const QPixmap&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_icon_data.html#a9896631da91346c3f6f1b6cb3db1522d">renderAsQPixmap</a> ()</td></tr>
 <tr class="memdesc:a9896631da91346c3f6f1b6cb3db1522d"><td class="mdescLeft">&#160;</td><td class="mdescRight">renderAsQPixmap takes the dat and outputs it as a QPixmap  <a href="#a9896631da91346c3f6f1b6cb3db1522d">More...</a><br /></td></tr>
 <tr class="separator:a9896631da91346c3f6f1b6cb3db1522d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -136,7 +130,7 @@ std::uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a39a260e6e8ad341b130075e6400b0dc1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a39a260e6e8ad341b130075e6400b0dc1">&#9670;&nbsp;</a></span>IconData() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a39a260e6e8ad341b130075e6400b0dc1">&#9670;&nbsp;</a></span>IconData()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -150,41 +144,6 @@ std::uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
       </table>
 </div><div class="memdoc">
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
-
-</div>
-</div>
-<a id="a72f402465ef64bb05223a63d7227201e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a72f402465ef64bb05223a63d7227201e">&#9670;&nbsp;</a></span>IconData() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">IconData::IconData </td>
-          <td>(</td>
-          <td class="paramtype">std::uint32_t&#160;</td>
-          <td class="paramname"><em>width</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::uint32_t&#160;</td>
-          <td class="paramname"><em>height</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">width</td><td>the width </td></tr>
-    <tr><td class="paramname">height</td><td>the height </td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>
@@ -204,24 +163,6 @@ std::uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
       </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>the height of the <a class="el" href="class_icon_data.html" title="The IconData class creates all the pixel-y square icons that are seen throughout the app...">IconData</a>. </dd></dl>
-
-</div>
-</div>
-<a id="a77b29c1018f73f24e841078a9724dfde"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a77b29c1018f73f24e841078a9724dfde">&#9670;&nbsp;</a></span>renderAsQImage()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const QImage IconData::renderAsQImage </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>a QImage representation of the data </dd></dl>
 
 </div>
 </div>
@@ -287,7 +228,7 @@ std::uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
         <tr>
           <td class="memname">void IconData::setRoutine </td>
           <td>(</td>
-          <td class="paramtype">const cor::LightState &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classcor_1_1_light_state.html">cor::LightState</a> &amp;&#160;</td>
           <td class="paramname"><em>state</em></td><td>)</td>
           <td></td>
         </tr>

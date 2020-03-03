@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.17.46</span>
+   &#160;<span id="projectnumber">v0.18.8</span>
    </div>
   </td>
  </tr>
@@ -52,7 +52,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="class_data_sync.html" title="The DataSync base class is used for datasync threads. These threads compares the data layer&#39;s represe...">DataSync</a> base class is used for datasync threads. These threads compares the data layer's representation of devices with the commlayer's understanding of devices and tries to sync them up. The DataLayer's representation is used as the "desired" state of lights. The <a class="el" href="class_comm_layer.html" title="The CommLayer class provides communication protocols that allow the user to connect and send packets ...">CommLayer</a>'s understanding is used as the current state. If the desired state and current state do not match, the commlayer is requested to send packets to try to update the devices. Different datasync threads run at different speeds and have different criteria for how to handle syncing. Philips hue lights, for instance, require syncing of schedules and groups on top of standard information. Because of this, derived classes impelement the different rules for handling syncing data.  
+<p>The <a class="el" href="class_data_sync.html" title="The DataSync base class is used for datasync threads. These threads compares the LightList&#39;s represen...">DataSync</a> base class is used for datasync threads. These threads compares the LightList's representation of lights with the <a class="el" href="class_comm_layer.html" title="The CommLayer class provides communication protocols that allow the user to connect and send packets ...">CommLayer</a>'s understanding of lights and tries to sync them up. The LightList's representation is used as the "desired" state of lights. The <a class="el" href="class_comm_layer.html" title="The CommLayer class provides communication protocols that allow the user to connect and send packets ...">CommLayer</a>'s understanding is used as the current state. If the desired state and current state do not match, the ComMLayer is requested to send packets to try to update the devices. Different datasync threads run at different speeds and have different criteria for how to handle syncing. Philips hue lights, for instance, require syncing of schedules and groups on top of standard information. Because of this, derived classes impelement the different rules for handling syncing data.  
 </p>
 
 <p><code>#include &quot;<a class="el" href="datasync_8h_source.html">datasync.h</a>&quot;</code></p>
@@ -63,7 +63,7 @@ $(function() {
 Public Slots</h2></td></tr>
 <tr class="memitem:ad297cadc581f1113c8862c554c9b40dd"><td class="memItemLeft" align="right" valign="top"><a id="ad297cadc581f1113c8862c554c9b40dd"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#ad297cadc581f1113c8862c554c9b40dd">resetSync</a> ()=0</td></tr>
-<tr class="memdesc:ad297cadc581f1113c8862c554c9b40dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetSync Tells the <a class="el" href="class_data_sync.html" title="The DataSync base class is used for datasync threads. These threads compares the data layer&#39;s represe...">DataSync</a> object that the commlayer and the datalayer are potentially no longer in sync and the <a class="el" href="class_data_sync.html#a0c68d026ca50c0c1c4dce244be86f0bb" title="syncData called by the SyncTimer. Runs the sync routine, which checks the data layer&#39;s desired repres...">syncData()</a> function needs to get called on the timer again. <br /></td></tr>
+<tr class="memdesc:ad297cadc581f1113c8862c554c9b40dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">resetSync Tells the <a class="el" href="class_data_sync.html" title="The DataSync base class is used for datasync threads. These threads compares the LightList&#39;s represen...">DataSync</a> object that the commlayer and the datalayer are potentially no longer in sync and the <a class="el" href="class_data_sync.html#a0c68d026ca50c0c1c4dce244be86f0bb" title="syncData called by the SyncTimer. Runs the sync routine, which checks the data layer&#39;s desired repres...">syncData()</a> function needs to get called on the timer again. <br /></td></tr>
 <tr class="separator:ad297cadc581f1113c8862c554c9b40dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b745d856c5f49ecbc79cf2aaedc7bd6"><td class="memItemLeft" align="right" valign="top"><a id="a6b745d856c5f49ecbc79cf2aaedc7bd6"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a6b745d856c5f49ecbc79cf2aaedc7bd6">commPacketReceived</a> (EProtocolType)=0</td></tr>
@@ -98,7 +98,7 @@ Protected Member Functions</h2></td></tr>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a27eecd4b4623fd0e1210497d5613a364">endOfSync</a> ()=0</td></tr>
 <tr class="memdesc:a27eecd4b4623fd0e1210497d5613a364"><td class="mdescLeft">&#160;</td><td class="mdescRight">endOfSync end the sync thread and start the cleanup thread. <br /></td></tr>
 <tr class="separator:a27eecd4b4623fd0e1210497d5613a364"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a45c054e275f1621ff3d0071b5ae4ae74"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a45c054e275f1621ff3d0071b5ae4ae74">sync</a> (const cor::Light &amp;dataDevice, const cor::Light &amp;commDevice)=0</td></tr>
+<tr class="memitem:a45c054e275f1621ff3d0071b5ae4ae74"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a45c054e275f1621ff3d0071b5ae4ae74">sync</a> (const <a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;dataDevice, const <a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;commDevice)=0</td></tr>
 <tr class="memdesc:a45c054e275f1621ff3d0071b5ae4ae74"><td class="mdescLeft">&#160;</td><td class="mdescRight">sync checks if the light device of a comm layer and a data layer are in sync.  <a href="#a45c054e275f1621ff3d0071b5ae4ae74">More...</a><br /></td></tr>
 <tr class="separator:a45c054e275f1621ff3d0071b5ae4ae74"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac290609617734e4e0d075687e459072b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#ac290609617734e4e0d075687e459072b">appendToPacket</a> (QString &amp;currentPacket, const QString &amp;newAddition, uint32_t maxPacketSize)</td></tr>
@@ -118,10 +118,10 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 Protected Attributes</h2></td></tr>
 <tr class="memitem:a9af4ff12861eeb642c46f5b8e1a5eb1e"><td class="memItemLeft" align="right" valign="top"><a id="a9af4ff12861eeb642c46f5b8e1a5eb1e"></a>
 EDataSyncType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a9af4ff12861eeb642c46f5b8e1a5eb1e">mType</a></td></tr>
-<tr class="memdesc:a9af4ff12861eeb642c46f5b8e1a5eb1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">type for this specific instance of the <a class="el" href="class_data_sync.html" title="The DataSync base class is used for datasync threads. These threads compares the data layer&#39;s represe...">DataSync</a> <br /></td></tr>
+<tr class="memdesc:a9af4ff12861eeb642c46f5b8e1a5eb1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">type for this specific instance of the <a class="el" href="class_data_sync.html" title="The DataSync base class is used for datasync threads. These threads compares the LightList&#39;s represen...">DataSync</a> <br /></td></tr>
 <tr class="separator:a9af4ff12861eeb642c46f5b8e1a5eb1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a72dc9a5476a3ba4948129a22b6397824"><td class="memItemLeft" align="right" valign="top"><a id="a72dc9a5476a3ba4948129a22b6397824"></a>
-cor::LightList *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a72dc9a5476a3ba4948129a22b6397824">mData</a></td></tr>
+<a class="el" href="classcor_1_1_light_list.html">cor::LightList</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_data_sync.html#a72dc9a5476a3ba4948129a22b6397824">mData</a></td></tr>
 <tr class="memdesc:a72dc9a5476a3ba4948129a22b6397824"><td class="mdescLeft">&#160;</td><td class="mdescRight">mData pointer to data layer. Used for checking what state the data layer desires the devices to be. <br /></td></tr>
 <tr class="separator:a72dc9a5476a3ba4948129a22b6397824"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a369794bb01f1bd5a2bd2b1c50d27c140"><td class="memItemLeft" align="right" valign="top"><a id="a369794bb01f1bd5a2bd2b1c50d27c140"></a>
@@ -353,13 +353,13 @@ std::vector&lt; <a class="el" href="struct_s_throttle.html">SThrottle</a> &gt;&#
         <tr>
           <td class="memname">bool DataSync::sync </td>
           <td>(</td>
-          <td class="paramtype">const cor::Light &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;&#160;</td>
           <td class="paramname"><em>dataDevice</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const cor::Light &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;&#160;</td>
           <td class="paramname"><em>commDevice</em>&#160;</td>
         </tr>
         <tr>

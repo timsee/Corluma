@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.17.46</span>
+   &#160;<span id="projectnumber">v0.18.8</span>
    </div>
   </td>
  </tr>
@@ -43,8 +43,7 @@ $(function() {
   <div class="summary">
 <a href="class_routine_buttons_widget-members.html">List of all members</a> &#124;
 <a href="#signals">Signals</a> &#124;
-<a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pro-methods">Protected Member Functions</a>  </div>
+<a href="#pub-methods">Public Member Functions</a>  </div>
   <div class="headertitle">
 <div class="title">RoutineButtonsWidget Class Reference</div>  </div>
 </div><!--header-->
@@ -59,16 +58,16 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
-<tr class="memitem:a9b4f40279f590a10a9ff240eac762a0b"><td class="memItemLeft" align="right" valign="top"><a id="a9b4f40279f590a10a9ff240eac762a0b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#a9b4f40279f590a10a9ff240eac762a0b">newRoutineSelected</a> (cor::LightState)</td></tr>
-<tr class="memdesc:a9b4f40279f590a10a9ff240eac762a0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">newRoutineSelected emitted whenever a button is pressed with the int representation of the routine that it represents. <br /></td></tr>
-<tr class="separator:a9b4f40279f590a10a9ff240eac762a0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4bf1585aa5732c4af62532d2f7cf1478"><td class="memItemLeft" align="right" valign="top"><a id="a4bf1585aa5732c4af62532d2f7cf1478"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#a4bf1585aa5732c4af62532d2f7cf1478">newRoutineSelected</a> (ERoutine)</td></tr>
+<tr class="memdesc:a4bf1585aa5732c4af62532d2f7cf1478"><td class="mdescLeft">&#160;</td><td class="mdescRight">emits when a routine is selected, sends just the routine itself <br /></td></tr>
+<tr class="separator:a4bf1585aa5732c4af62532d2f7cf1478"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:afbfee2659c3386b85eee0d2dca4784f7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#afbfee2659c3386b85eee0d2dca4784f7">RoutineButtonsWidget</a> (EWidgetGroup widgetGroup, const std::vector&lt; QColor &gt; &amp;colors, QWidget *parent)</td></tr>
-<tr class="memdesc:afbfee2659c3386b85eee0d2dca4784f7"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_routine_buttons_widget.html" title="The RoutineButtonsWidget class is a basic widget that holds a grid of lightsbuttons that each map to ...">RoutineButtonsWidget</a> constructor.  <a href="#afbfee2659c3386b85eee0d2dca4784f7">More...</a><br /></td></tr>
-<tr class="separator:afbfee2659c3386b85eee0d2dca4784f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71c3e9edfde28c5f5363041ce5935432"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#a71c3e9edfde28c5f5363041ce5935432">RoutineButtonsWidget</a> (QWidget *parent)</td></tr>
+<tr class="memdesc:a71c3e9edfde28c5f5363041ce5935432"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_routine_buttons_widget.html" title="The RoutineButtonsWidget class is a basic widget that holds a grid of lightsbuttons that each map to ...">RoutineButtonsWidget</a> constructor.  <a href="#a71c3e9edfde28c5f5363041ce5935432">More...</a><br /></td></tr>
+<tr class="separator:a71c3e9edfde28c5f5363041ce5935432"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa6c6ab324fa8ba6e12f8af2601bd8697"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#aa6c6ab324fa8ba6e12f8af2601bd8697">highlightRoutineButton</a> (const QString &amp;label)</td></tr>
 <tr class="memdesc:aa6c6ab324fa8ba6e12f8af2601bd8697"><td class="mdescLeft">&#160;</td><td class="mdescRight">highlightRoutineButton highlights the button that implements the routine parameter. If it can't find a button that implements the lighting routine, then all buttons are unhighlighted  <a href="#aa6c6ab324fa8ba6e12f8af2601bd8697">More...</a><br /></td></tr>
 <tr class="separator:aa6c6ab324fa8ba6e12f8af2601bd8697"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -78,34 +77,39 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a26e21e83d43742935e0af8bbe8dd4b70"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#a26e21e83d43742935e0af8bbe8dd4b70">multiRoutineColorsChanged</a> (const std::vector&lt; QColor &gt; &amp;colors)</td></tr>
 <tr class="memdesc:a26e21e83d43742935e0af8bbe8dd4b70"><td class="mdescLeft">&#160;</td><td class="mdescRight">multiRoutineColorsChanged can only be used by eMultiRotuines version of this widget, this updates all the colors of all the icons to reflect the new group of custom colors.  <a href="#a26e21e83d43742935e0af8bbe8dd4b70">More...</a><br /></td></tr>
 <tr class="separator:a26e21e83d43742935e0af8bbe8dd4b70"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac80813faf389f3a9f4a93e9ba66b5bef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#ac80813faf389f3a9f4a93e9ba66b5bef">resize</a> (QSize size)</td></tr>
-<tr class="memdesc:ac80813faf389f3a9f4a93e9ba66b5bef"><td class="mdescLeft">&#160;</td><td class="mdescRight">resize resize widget to given size  <a href="#ac80813faf389f3a9f4a93e9ba66b5bef">More...</a><br /></td></tr>
-<tr class="separator:ac80813faf389f3a9f4a93e9ba66b5bef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf43b3828da29f1bc1809d97b5d1f350"><td class="memItemLeft" align="right" valign="top"><a id="acf43b3828da29f1bc1809d97b5d1f350"></a>
-const std::vector&lt; std::pair&lt; QString, cor::LightState &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#acf43b3828da29f1bc1809d97b5d1f350">routines</a> ()</td></tr>
-<tr class="memdesc:acf43b3828da29f1bc1809d97b5d1f350"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for routines <br /></td></tr>
-<tr class="separator:acf43b3828da29f1bc1809d97b5d1f350"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a59ec1fb6c64173d6f90287a19dc47e94"><td class="memItemLeft" align="right" valign="top"><a id="a59ec1fb6c64173d6f90287a19dc47e94"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#a59ec1fb6c64173d6f90287a19dc47e94">showWidget</a> (bool shouldShow)</td></tr>
-<tr class="memdesc:a59ec1fb6c64173d6f90287a19dc47e94"><td class="mdescLeft">&#160;</td><td class="mdescRight">true to show widget, false to hide it <br /></td></tr>
-<tr class="separator:a59ec1fb6c64173d6f90287a19dc47e94"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af824613c0b5f2f185d3964f9073f037e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#af824613c0b5f2f185d3964f9073f037e">resize</a> (int x, QSize size)</td></tr>
+<tr class="memdesc:af824613c0b5f2f185d3964f9073f037e"><td class="mdescLeft">&#160;</td><td class="mdescRight">resize resize widget to given size  <a href="#af824613c0b5f2f185d3964f9073f037e">More...</a><br /></td></tr>
+<tr class="separator:af824613c0b5f2f185d3964f9073f037e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2deba48a0ad5aa703479958ae50489f8"><td class="memItemLeft" align="right" valign="top"><a id="a2deba48a0ad5aa703479958ae50489f8"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#a2deba48a0ad5aa703479958ae50489f8">pushIn</a> (EWidgetGroup)</td></tr>
+<tr class="memdesc:a2deba48a0ad5aa703479958ae50489f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">push widget in, displaying one of the widget groups <br /></td></tr>
+<tr class="separator:a2deba48a0ad5aa703479958ae50489f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff5d504b2da8548586ca645775d5b1cb"><td class="memItemLeft" align="right" valign="top"><a id="aff5d504b2da8548586ca645775d5b1cb"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#aff5d504b2da8548586ca645775d5b1cb">pushOut</a> ()</td></tr>
+<tr class="memdesc:aff5d504b2da8548586ca645775d5b1cb"><td class="mdescLeft">&#160;</td><td class="mdescRight">push widget out <br /></td></tr>
+<tr class="separator:aff5d504b2da8548586ca645775d5b1cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6524a99c9904adfa4a070d5ee286ca2a"><td class="memItemLeft" align="right" valign="top"><a id="a6524a99c9904adfa4a070d5ee286ca2a"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#a6524a99c9904adfa4a070d5ee286ca2a">isOpen</a> () const noexcept</td></tr>
 <tr class="memdesc:a6524a99c9904adfa4a070d5ee286ca2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if open, false if hidden <br /></td></tr>
 <tr class="separator:a6524a99c9904adfa4a070d5ee286ca2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
-Protected Member Functions</h2></td></tr>
-<tr class="memitem:a01c5390760ed64f4bb96402e91e549d1"><td class="memItemLeft" align="right" valign="top"><a id="a01c5390760ed64f4bb96402e91e549d1"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#a01c5390760ed64f4bb96402e91e549d1">paintEvent</a> (QPaintEvent *)</td></tr>
-<tr class="memdesc:a01c5390760ed64f4bb96402e91e549d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">paintEvent paint event for rendering. used to overwrite the background color of the widget so that it hides everything behind it. <br /></td></tr>
-<tr class="separator:a01c5390760ed64f4bb96402e91e549d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29e45d40af9846e2fccef4bb369f61e2"><td class="memItemLeft" align="right" valign="top"><a id="a29e45d40af9846e2fccef4bb369f61e2"></a>
+ERoutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#a29e45d40af9846e2fccef4bb369f61e2">singleRoutine</a> ()</td></tr>
+<tr class="memdesc:a29e45d40af9846e2fccef4bb369f61e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">last routine clicked on the single routine options <br /></td></tr>
+<tr class="separator:a29e45d40af9846e2fccef4bb369f61e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa305ecf5a4df245160c1aad6fec27618"><td class="memItemLeft" align="right" valign="top"><a id="aa305ecf5a4df245160c1aad6fec27618"></a>
+ERoutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#aa305ecf5a4df245160c1aad6fec27618">multiRoutine</a> ()</td></tr>
+<tr class="memdesc:aa305ecf5a4df245160c1aad6fec27618"><td class="mdescLeft">&#160;</td><td class="mdescRight">last routine clicke don the multi routine options <br /></td></tr>
+<tr class="separator:aa305ecf5a4df245160c1aad6fec27618"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab1644fc239e02537fb03e08e1fb3a989"><td class="memItemLeft" align="right" valign="top"><a id="ab1644fc239e02537fb03e08e1fb3a989"></a>
+std::uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_routine_buttons_widget.html#ab1644fc239e02537fb03e08e1fb3a989">parameter</a> ()</td></tr>
+<tr class="memdesc:ab1644fc239e02537fb03e08e1fb3a989"><td class="mdescLeft">&#160;</td><td class="mdescRight">last parameter used <br /></td></tr>
+<tr class="separator:ab1644fc239e02537fb03e08e1fb3a989"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="afbfee2659c3386b85eee0d2dca4784f7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afbfee2659c3386b85eee0d2dca4784f7">&#9670;&nbsp;</a></span>RoutineButtonsWidget()</h2>
+<a id="a71c3e9edfde28c5f5363041ce5935432"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71c3e9edfde28c5f5363041ce5935432">&#9670;&nbsp;</a></span>RoutineButtonsWidget()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -116,25 +120,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="memname">RoutineButtonsWidget::RoutineButtonsWidget </td>
           <td>(</td>
-          <td class="paramtype">EWidgetGroup&#160;</td>
-          <td class="paramname"><em>widgetGroup</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; QColor &gt; &amp;&#160;</td>
-          <td class="paramname"><em>colors</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype">QWidget *&#160;</td>
-          <td class="paramname"><em>parent</em>&#160;</td>
-        </tr>
-        <tr>
+          <td class="paramname"><em>parent</em></td><td>)</td>
           <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -145,8 +133,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">widgetGroup</td><td>type of widgetgroup. can be either single color routines or multi color routines </td></tr>
-    <tr><td class="paramname">colors</td><td>the colors to use for multi color routines. Not necessary for single color routines. </td></tr>
     <tr><td class="paramname">parent</td><td>parent of this widget</td></tr>
   </table>
   </dd>
@@ -204,8 +190,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a id="ac80813faf389f3a9f4a93e9ba66b5bef"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac80813faf389f3a9f4a93e9ba66b5bef">&#9670;&nbsp;</a></span>resize()</h2>
+<a id="af824613c0b5f2f185d3964f9073f037e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af824613c0b5f2f185d3964f9073f037e">&#9670;&nbsp;</a></span>resize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -213,9 +199,19 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
         <tr>
           <td class="memname">void RoutineButtonsWidget::resize </td>
           <td>(</td>
-          <td class="paramtype">QSize&#160;</td>
-          <td class="paramname"><em>size</em></td><td>)</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">QSize&#160;</td>
+          <td class="paramname"><em>size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">

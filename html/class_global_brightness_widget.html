@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.17.46</span>
+   &#160;<span id="projectnumber">v0.18.8</span>
    </div>
   </td>
  </tr>
@@ -62,12 +62,16 @@ Signals</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_global_brightness_widget.html#a0fe15921711fb9839a332a89985e8763">brightnessChanged</a> (std::uint32_t newValue)</td></tr>
 <tr class="memdesc:a0fe15921711fb9839a332a89985e8763"><td class="mdescLeft">&#160;</td><td class="mdescRight">the new value of the brightness slider <br /></td></tr>
 <tr class="separator:a0fe15921711fb9839a332a89985e8763"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a146b8895e22e24f1b01f7f8abb61c1eb"><td class="memItemLeft" align="right" valign="top"><a id="a146b8895e22e24f1b01f7f8abb61c1eb"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_global_brightness_widget.html#a146b8895e22e24f1b01f7f8abb61c1eb">isOnUpdate</a> (bool isOn)</td></tr>
+<tr class="memdesc:a146b8895e22e24f1b01f7f8abb61c1eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">the switch for turning all the lights on or off has been toggled <br /></td></tr>
+<tr class="separator:a146b8895e22e24f1b01f7f8abb61c1eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:af56281ee183ee4cbb3fc7d892601e1c3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_global_brightness_widget.html#af56281ee183ee4cbb3fc7d892601e1c3">GlobalBrightnessWidget</a> (const QSize &amp;size, bool isLeftAlwaysOpen, cor::LightList *data, QWidget *parent)</td></tr>
-<tr class="memdesc:af56281ee183ee4cbb3fc7d892601e1c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#af56281ee183ee4cbb3fc7d892601e1c3">More...</a><br /></td></tr>
-<tr class="separator:af56281ee183ee4cbb3fc7d892601e1c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae20fac7d00637c1a36e81f95acff5516"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_global_brightness_widget.html#ae20fac7d00637c1a36e81f95acff5516">GlobalBrightnessWidget</a> (const QSize &amp;size, bool isLeftAlwaysOpen, QWidget *parent)</td></tr>
+<tr class="memdesc:ae20fac7d00637c1a36e81f95acff5516"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#ae20fac7d00637c1a36e81f95acff5516">More...</a><br /></td></tr>
+<tr class="separator:ae20fac7d00637c1a36e81f95acff5516"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a361fae0664dae23a3e1fb1b981a5655e"><td class="memItemLeft" align="right" valign="top"><a id="a361fae0664dae23a3e1fb1b981a5655e"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_global_brightness_widget.html#a361fae0664dae23a3e1fb1b981a5655e">updateColor</a> (const QColor &amp;color)</td></tr>
 <tr class="memdesc:a361fae0664dae23a3e1fb1b981a5655e"><td class="mdescLeft">&#160;</td><td class="mdescRight">update the state of the widget <br /></td></tr>
@@ -96,16 +100,16 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_global_brightness_widget.html#a9af5e2e1a8386cab8865085641681fc8">isIn</a> () const noexcept</td></tr>
 <tr class="memdesc:a9af5e2e1a8386cab8865085641681fc8"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if in, false otherwise <br /></td></tr>
 <tr class="separator:a9af5e2e1a8386cab8865085641681fc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a71412f30a80a6adbd9e0b5c155779265"><td class="memItemLeft" align="right" valign="top"><a id="a71412f30a80a6adbd9e0b5c155779265"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_global_brightness_widget.html#a71412f30a80a6adbd9e0b5c155779265">lightCountChanged</a> (bool isOn, const QColor &amp;color, std::size_t count)</td></tr>
-<tr class="memdesc:a71412f30a80a6adbd9e0b5c155779265"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when the count changes to reflect the light's state better <br /></td></tr>
-<tr class="separator:a71412f30a80a6adbd9e0b5c155779265"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38f82460633508bd3fc3d577c1cd4c41"><td class="memItemLeft" align="right" valign="top"><a id="a38f82460633508bd3fc3d577c1cd4c41"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_global_brightness_widget.html#a38f82460633508bd3fc3d577c1cd4c41">lightCountChanged</a> (bool isOn, const QColor &amp;color, std::uint32_t <a class="el" href="class_global_brightness_widget.html#ab89b2c033edcbbbacf0652ba55f01fac">brightness</a>, std::size_t count)</td></tr>
+<tr class="memdesc:a38f82460633508bd3fc3d577c1cd4c41"><td class="mdescLeft">&#160;</td><td class="mdescRight">called when the count changes to reflect the light's state better <br /></td></tr>
+<tr class="separator:a38f82460633508bd3fc3d577c1cd4c41"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="af56281ee183ee4cbb3fc7d892601e1c3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af56281ee183ee4cbb3fc7d892601e1c3">&#9670;&nbsp;</a></span>GlobalBrightnessWidget()</h2>
+<a id="ae20fac7d00637c1a36e81f95acff5516"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae20fac7d00637c1a36e81f95acff5516">&#9670;&nbsp;</a></span>GlobalBrightnessWidget()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -124,12 +128,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
           <td></td>
           <td class="paramtype">bool&#160;</td>
           <td class="paramname"><em>isLeftAlwaysOpen</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">cor::LightList *&#160;</td>
-          <td class="paramname"><em>data</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>

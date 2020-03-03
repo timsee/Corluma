@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.17.46</span>
+   &#160;<span id="projectnumber">v0.18.8</span>
    </div>
   </td>
  </tr>
@@ -87,10 +87,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:a924841d71b8b5a975fdbb39335a4f6a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">shutdown defined in <a class="el" href="class_comm_type.html" title="inherited by comm types, provides a general interface that can be used to do connections and sending ...">CommType</a> <br /></td></tr>
 <tr class="separator:a924841d71b8b5a975fdbb39335a4f6a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7dcc8a3f0234a3f414fbac4ce7eb8e0d"><td class="memItemLeft" align="right" valign="top"><a id="a7dcc8a3f0234a3f414fbac4ce7eb8e0d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_u_d_p.html#a7dcc8a3f0234a3f414fbac4ce7eb8e0d">connectDiscovery</a> (ArduCorDiscovery *discovery)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_u_d_p.html#a7dcc8a3f0234a3f414fbac4ce7eb8e0d">connectDiscovery</a> (<a class="el" href="class_ardu_cor_discovery.html">ArduCorDiscovery</a> *discovery)</td></tr>
 <tr class="memdesc:a7dcc8a3f0234a3f414fbac4ce7eb8e0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">connects discovery object <br /></td></tr>
 <tr class="separator:a7dcc8a3f0234a3f414fbac4ce7eb8e0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a677d431bb94ae07d8fd03e17bfd159fc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_u_d_p.html#a677d431bb94ae07d8fd03e17bfd159fc">sendPacket</a> (const cor::Controller &amp;controller, QString &amp;packet)</td></tr>
+<tr class="memitem:a677d431bb94ae07d8fd03e17bfd159fc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_u_d_p.html#a677d431bb94ae07d8fd03e17bfd159fc">sendPacket</a> (const <a class="el" href="classcor_1_1_controller.html">cor::Controller</a> &amp;controller, QString &amp;packet)</td></tr>
 <tr class="memdesc:a677d431bb94ae07d8fd03e17bfd159fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">sendPacket sends the packet over UDP to a specified IP addres and port. Returns immediately and buffers unsent packets.  <a href="#a677d431bb94ae07d8fd03e17bfd159fc">More...</a><br /></td></tr>
 <tr class="separator:a677d431bb94ae07d8fd03e17bfd159fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4033978b9db25c018cf0b5ebe5a7d05b"><td class="memItemLeft" align="right" valign="top"><a id="a4033978b9db25c018cf0b5ebe5a7d05b"></a>
@@ -98,7 +98,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:a4033978b9db25c018cf0b5ebe5a7d05b"><td class="mdescLeft">&#160;</td><td class="mdescRight">true is port is successfully bound, false if errors occur. <br /></td></tr>
 <tr class="separator:a4033978b9db25c018cf0b5ebe5a7d05b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1efa4cb996ec645efa134f5387332389"><td class="memItemLeft" align="right" valign="top"><a id="a1efa4cb996ec645efa134f5387332389"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_u_d_p.html#a1efa4cb996ec645efa134f5387332389">testForController</a> (const cor::Controller &amp;controller)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_u_d_p.html#a1efa4cb996ec645efa134f5387332389">testForController</a> (const <a class="el" href="classcor_1_1_controller.html">cor::Controller</a> &amp;controller)</td></tr>
 <tr class="memdesc:a1efa4cb996ec645efa134f5387332389"><td class="mdescLeft">&#160;</td><td class="mdescRight">testForController sends a discovery packet to the currently connected serial port to test its connection. <br /></td></tr>
 <tr class="separator:a1efa4cb996ec645efa134f5387332389"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_comm_type"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_comm_type')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_comm_type.html">CommType</a></td></tr>
@@ -117,16 +117,16 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a684c569bb57248ae4b0b2e4563339f74">stopStateUpdates</a> ()</td></tr>
 <tr class="memdesc:a684c569bb57248ae4b0b2e4563339f74 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">stopStateUpdates turn off the state update timers. <br /></td></tr>
 <tr class="separator:a684c569bb57248ae4b0b2e4563339f74 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7238ee9df8464546e7afd4c21b203303 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a7238ee9df8464546e7afd4c21b203303">addLight</a> (const cor::Light &amp;light)</td></tr>
+<tr class="memitem:a7238ee9df8464546e7afd4c21b203303 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a7238ee9df8464546e7afd4c21b203303">addLight</a> (const <a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;light)</td></tr>
 <tr class="memdesc:a7238ee9df8464546e7afd4c21b203303 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">addLight adds lights with specific unique IDs that have been previously discovered. This allows us to show previously learned lights as "Not Reachable" when they cannot be erached.  <a href="class_comm_type.html#a7238ee9df8464546e7afd4c21b203303">More...</a><br /></td></tr>
 <tr class="separator:a7238ee9df8464546e7afd4c21b203303 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3562cb0d1cb525c1bc883d81bac2db35 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a3562cb0d1cb525c1bc883d81bac2db35">updateLight</a> (const cor::Light &amp;device)</td></tr>
+<tr class="memitem:a3562cb0d1cb525c1bc883d81bac2db35 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a3562cb0d1cb525c1bc883d81bac2db35">updateLight</a> (const <a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;device)</td></tr>
 <tr class="memdesc:a3562cb0d1cb525c1bc883d81bac2db35 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDevice update all the data in the light device that matches the same controller and index. if a light device doesn't exist with these properties, then it creates a new one.  <a href="class_comm_type.html#a3562cb0d1cb525c1bc883d81bac2db35">More...</a><br /></td></tr>
 <tr class="separator:a3562cb0d1cb525c1bc883d81bac2db35 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab9d8ebeecae39e95cd2d2647379cadec inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ab9d8ebeecae39e95cd2d2647379cadec">fillDevice</a> (cor::Light &amp;device)</td></tr>
-<tr class="memdesc:ab9d8ebeecae39e95cd2d2647379cadec inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">fillDevice takes the controller and index of the referenced cor::Light and overwrites all other values with the values stored in the device table.  <a href="class_comm_type.html#ab9d8ebeecae39e95cd2d2647379cadec">More...</a><br /></td></tr>
+<tr class="memitem:ab9d8ebeecae39e95cd2d2647379cadec inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#ab9d8ebeecae39e95cd2d2647379cadec">fillDevice</a> (<a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;device)</td></tr>
+<tr class="memdesc:ab9d8ebeecae39e95cd2d2647379cadec inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">fillDevice takes the controller and index of the referenced <a class="el" href="classcor_1_1_light.html" title="The Light class is the base datatype used for working with lights in Corluma. At a minimum...">cor::Light</a> and overwrites all other values with the values stored in the device table.  <a href="class_comm_type.html#ab9d8ebeecae39e95cd2d2647379cadec">More...</a><br /></td></tr>
 <tr class="separator:ab9d8ebeecae39e95cd2d2647379cadec inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a130a72e8b674f9d2d76bf419243083c3 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">const cor::Dictionary&lt; cor::Light &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a130a72e8b674f9d2d76bf419243083c3">lightDict</a> () const noexcept</td></tr>
+<tr class="memitem:a130a72e8b674f9d2d76bf419243083c3 inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classcor_1_1_dictionary.html">cor::Dictionary</a>&lt; <a class="el" href="classcor_1_1_light.html">cor::Light</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_type.html#a130a72e8b674f9d2d76bf419243083c3">lightDict</a> () const noexcept</td></tr>
 <tr class="memdesc:a130a72e8b674f9d2d76bf419243083c3 inherit pub_methods_class_comm_type"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceList list of the light devices  <a href="class_comm_type.html#a130a72e8b674f9d2d76bf419243083c3">More...</a><br /></td></tr>
 <tr class="separator:a130a72e8b674f9d2d76bf419243083c3 inherit pub_methods_class_comm_type"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2fc73b81632d43ac37cf12c12899362b inherit pub_methods_class_comm_type"><td class="memItemLeft" align="right" valign="top"><a id="a2fc73b81632d43ac37cf12c12899362b"></a>
@@ -184,7 +184,7 @@ ECommType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href=
         <tr>
           <td class="memname">void CommUDP::sendPacket </td>
           <td>(</td>
-          <td class="paramtype">const cor::Controller &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classcor_1_1_controller.html">cor::Controller</a> &amp;&#160;</td>
           <td class="paramname"><em>controller</em>, </td>
         </tr>
         <tr>
