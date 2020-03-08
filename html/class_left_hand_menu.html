@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.18.8</span>
+   &#160;<span id="projectnumber">v0.19.0</span>
    </div>
   </td>
  </tr>
@@ -44,7 +44,8 @@ $(function() {
 <a href="class_left_hand_menu-members.html">List of all members</a> &#124;
 <a href="#pub-slots">Public Slots</a> &#124;
 <a href="#signals">Signals</a> &#124;
-<a href="#pub-methods">Public Member Functions</a>  </div>
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a>  </div>
   <div class="headertitle">
 <div class="title">LeftHandMenu Class Reference</div>  </div>
 </div><!--header-->
@@ -116,6 +117,25 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_left_hand_menu.html#a1f3a027a1e126959e239c412b26924fc">updateLights</a> ()</td></tr>
 <tr class="memdesc:a1f3a027a1e126959e239c412b26924fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">update the lights in the room widgets <br /></td></tr>
 <tr class="separator:a1f3a027a1e126959e239c412b26924fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47b97a0509537ad0759712e42941e4a8"><td class="memItemLeft" align="right" valign="top"><a id="a47b97a0509537ad0759712e42941e4a8"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_left_hand_menu.html#a47b97a0509537ad0759712e42941e4a8">isMoving</a> () const noexcept</td></tr>
+<tr class="memdesc:a47b97a0509537ad0759712e42941e4a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if the menu is currently moving <br /></td></tr>
+<tr class="separator:a47b97a0509537ad0759712e42941e4a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca7e6ba23ce8dc7dc27a808ffc340f80"><td class="memItemLeft" align="right" valign="top"><a id="aca7e6ba23ce8dc7dc27a808ffc340f80"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_left_hand_menu.html#aca7e6ba23ce8dc7dc27a808ffc340f80">isMoving</a> (bool moving)</td></tr>
+<tr class="memdesc:aca7e6ba23ce8dc7dc27a808ffc340f80"><td class="mdescLeft">&#160;</td><td class="mdescRight">sets the flag for whether or not the menu is moving <br /></td></tr>
+<tr class="separator:aca7e6ba23ce8dc7dc27a808ffc340f80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab66cf7ae781dff7f42080f87e2e2c02f"><td class="memItemLeft" align="right" valign="top"><a id="ab66cf7ae781dff7f42080f87e2e2c02f"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_left_hand_menu.html#ab66cf7ae781dff7f42080f87e2e2c02f">showingWidth</a> ()</td></tr>
+<tr class="memdesc:ab66cf7ae781dff7f42080f87e2e2c02f"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for how many pixels of the menu are currently showing <br /></td></tr>
+<tr class="separator:ab66cf7ae781dff7f42080f87e2e2c02f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:a4bb0cff9ab5daa324f899801df23ab99"><td class="memItemLeft" align="right" valign="top"><a id="a4bb0cff9ab5daa324f899801df23ab99"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_left_hand_menu.html#a4bb0cff9ab5daa324f899801df23ab99">mouseReleaseEvent</a> (QMouseEvent *) override</td></tr>
+<tr class="memdesc:a4bb0cff9ab5daa324f899801df23ab99"><td class="mdescLeft">&#160;</td><td class="mdescRight">handles when the mouse releases from the <a class="el" href="class_left_hand_menu.html" title="The LeftHandMenu class is a left hand drawer that can either be pulled in or out when the app has a p...">LeftHandMenu</a>. <br /></td></tr>
+<tr class="separator:a4bb0cff9ab5daa324f899801df23ab99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>

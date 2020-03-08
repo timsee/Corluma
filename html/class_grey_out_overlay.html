@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.18.8</span>
+   &#160;<span id="projectnumber">v0.19.0</span>
    </div>
   </td>
  </tr>
@@ -66,13 +66,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aab6d18cd191ffc0c8ba19833ced28c49"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_grey_out_overlay.html#aab6d18cd191ffc0c8ba19833ced28c49">GreyOutOverlay</a> (QWidget *parent)</td></tr>
-<tr class="memdesc:aab6d18cd191ffc0c8ba19833ced28c49"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#aab6d18cd191ffc0c8ba19833ced28c49">More...</a><br /></td></tr>
-<tr class="separator:aab6d18cd191ffc0c8ba19833ced28c49"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0fa6ffc3c28b14c730d1c3d09459b443"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_grey_out_overlay.html#a0fa6ffc3c28b14c730d1c3d09459b443">GreyOutOverlay</a> (bool startAsGreyedOut, QWidget *parent)</td></tr>
+<tr class="memdesc:a0fa6ffc3c28b14c730d1c3d09459b443"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#a0fa6ffc3c28b14c730d1c3d09459b443">More...</a><br /></td></tr>
+<tr class="separator:a0fa6ffc3c28b14c730d1c3d09459b443"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a401d936d1675ab678dbac71db8efd9e1"><td class="memItemLeft" align="right" valign="top"><a id="a401d936d1675ab678dbac71db8efd9e1"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_grey_out_overlay.html#a401d936d1675ab678dbac71db8efd9e1">greyOut</a> (bool shouldGrey)</td></tr>
 <tr class="memdesc:a401d936d1675ab678dbac71db8efd9e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">fades in and out the greyout <br /></td></tr>
 <tr class="separator:a401d936d1675ab678dbac71db8efd9e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac626f6ac50764d1abed443ef033ea92b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_grey_out_overlay.html#ac626f6ac50764d1abed443ef033ea92b">partialGreyOut</a> (std::uint32_t value)</td></tr>
+<tr class="separator:ac626f6ac50764d1abed443ef033ea92b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3a2389a5292ba4e6acd14c67268ee3f"><td class="memItemLeft" align="right" valign="top"><a id="ae3a2389a5292ba4e6acd14c67268ee3f"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_grey_out_overlay.html#ae3a2389a5292ba4e6acd14c67268ee3f">resize</a> ()</td></tr>
 <tr class="memdesc:ae3a2389a5292ba4e6acd14c67268ee3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">resize resize the grey out overlay. should be called on the resizeEvent of whatever the parent of this overlay is. <br /></td></tr>
@@ -92,8 +94,8 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="aab6d18cd191ffc0c8ba19833ced28c49"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aab6d18cd191ffc0c8ba19833ced28c49">&#9670;&nbsp;</a></span>GreyOutOverlay()</h2>
+<a id="a0fa6ffc3c28b14c730d1c3d09459b443"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0fa6ffc3c28b14c730d1c3d09459b443">&#9670;&nbsp;</a></span>GreyOutOverlay()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -104,9 +106,19 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
         <tr>
           <td class="memname">GreyOutOverlay::GreyOutOverlay </td>
           <td>(</td>
-          <td class="paramtype">QWidget *&#160;</td>
-          <td class="paramname"><em>parent</em></td><td>)</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>startAsGreyedOut</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">QWidget *&#160;</td>
+          <td class="paramname"><em>parent</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -116,6 +128,26 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 </table>
 </div><div class="memdoc">
 <dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="ac626f6ac50764d1abed443ef033ea92b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac626f6ac50764d1abed443ef033ea92b">&#9670;&nbsp;</a></span>partialGreyOut()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void GreyOutOverlay::partialGreyOut </td>
+          <td>(</td>
+          <td class="paramtype">std::uint32_t&#160;</td>
+          <td class="paramname"><em>value</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>set the grey out to a value between 0 and 100, without transition. 100 is fully greyed out, 0 is no greyout. </p>
 
 </div>
 </div>

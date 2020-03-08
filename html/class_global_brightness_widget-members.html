@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.18.8</span>
+   &#160;<span id="projectnumber">v0.19.0</span>
    </div>
   </td>
  </tr>
@@ -49,15 +49,16 @@ $(function() {
 <table class="directory">
   <tr class="even"><td class="entry"><a class="el" href="class_global_brightness_widget.html#ab89b2c033edcbbbacf0652ba55f01fac">brightness</a>()</td><td class="entry"><a class="el" href="class_global_brightness_widget.html">GlobalBrightnessWidget</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_global_brightness_widget.html#a0fe15921711fb9839a332a89985e8763">brightnessChanged</a>(std::uint32_t newValue)</td><td class="entry"><a class="el" href="class_global_brightness_widget.html">GlobalBrightnessWidget</a></td><td class="entry"><span class="mlabel">signal</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_global_brightness_widget.html#ae20fac7d00637c1a36e81f95acff5516">GlobalBrightnessWidget</a>(const QSize &amp;size, bool isLeftAlwaysOpen, QWidget *parent)</td><td class="entry"><a class="el" href="class_global_brightness_widget.html">GlobalBrightnessWidget</a></td><td class="entry"><span class="mlabel">explicit</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_global_brightness_widget.html#a5de5775a021e63d4215aa7ea3f7d08aa">GlobalBrightnessWidget</a>(const QSize &amp;size, bool isLeftAlwaysOpen, CommLayer *comm, cor::LightList *data, QWidget *parent)</td><td class="entry"><a class="el" href="class_global_brightness_widget.html">GlobalBrightnessWidget</a></td><td class="entry"><span class="mlabel">explicit</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_global_brightness_widget.html#a9af5e2e1a8386cab8865085641681fc8">isIn</a>() const noexcept</td><td class="entry"><a class="el" href="class_global_brightness_widget.html">GlobalBrightnessWidget</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_global_brightness_widget.html#a146b8895e22e24f1b01f7f8abb61c1eb">isOnUpdate</a>(bool isOn)</td><td class="entry"><a class="el" href="class_global_brightness_widget.html">GlobalBrightnessWidget</a></td><td class="entry"><span class="mlabel">signal</span></td></tr>
-  <tr><td class="entry"><a class="el" href="class_global_brightness_widget.html#a38f82460633508bd3fc3d577c1cd4c41">lightCountChanged</a>(bool isOn, const QColor &amp;color, std::uint32_t brightness, std::size_t count)</td><td class="entry"><a class="el" href="class_global_brightness_widget.html">GlobalBrightnessWidget</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_global_brightness_widget.html#adbdebdecfa445618ae160b7717c080c6">pushIn</a>()</td><td class="entry"><a class="el" href="class_global_brightness_widget.html">GlobalBrightnessWidget</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="class_global_brightness_widget.html#a5e1b03d1014bb4b4084e696c7d6f8334">pushOut</a>()</td><td class="entry"><a class="el" href="class_global_brightness_widget.html">GlobalBrightnessWidget</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_global_brightness_widget.html#a60034b654ec03da7ffede8c0952a21b9">resize</a>()</td><td class="entry"><a class="el" href="class_global_brightness_widget.html">GlobalBrightnessWidget</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="class_global_brightness_widget.html#a844a3b9ab39278ff860ac9dea793ef49">updateBrightness</a>(int brightness)</td><td class="entry"><a class="el" href="class_global_brightness_widget.html">GlobalBrightnessWidget</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_global_brightness_widget.html#a361fae0664dae23a3e1fb1b981a5655e">updateColor</a>(const QColor &amp;color)</td><td class="entry"><a class="el" href="class_global_brightness_widget.html">GlobalBrightnessWidget</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_global_brightness_widget.html#a271767594e093b9af7fac2ff1f1449af">isOn</a>(bool)</td><td class="entry"><a class="el" href="class_global_brightness_widget.html">GlobalBrightnessWidget</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_global_brightness_widget.html#a146b8895e22e24f1b01f7f8abb61c1eb">isOnUpdate</a>(bool isOn)</td><td class="entry"><a class="el" href="class_global_brightness_widget.html">GlobalBrightnessWidget</a></td><td class="entry"><span class="mlabel">signal</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_global_brightness_widget.html#a38f82460633508bd3fc3d577c1cd4c41">lightCountChanged</a>(bool isOn, const QColor &amp;color, std::uint32_t brightness, std::size_t count)</td><td class="entry"><a class="el" href="class_global_brightness_widget.html">GlobalBrightnessWidget</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_global_brightness_widget.html#adbdebdecfa445618ae160b7717c080c6">pushIn</a>()</td><td class="entry"><a class="el" href="class_global_brightness_widget.html">GlobalBrightnessWidget</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_global_brightness_widget.html#a5e1b03d1014bb4b4084e696c7d6f8334">pushOut</a>()</td><td class="entry"><a class="el" href="class_global_brightness_widget.html">GlobalBrightnessWidget</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_global_brightness_widget.html#a60034b654ec03da7ffede8c0952a21b9">resize</a>()</td><td class="entry"><a class="el" href="class_global_brightness_widget.html">GlobalBrightnessWidget</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_global_brightness_widget.html#a844a3b9ab39278ff860ac9dea793ef49">updateBrightness</a>(int brightness)</td><td class="entry"><a class="el" href="class_global_brightness_widget.html">GlobalBrightnessWidget</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_global_brightness_widget.html#a361fae0664dae23a3e1fb1b981a5655e">updateColor</a>(const QColor &amp;color)</td><td class="entry"><a class="el" href="class_global_brightness_widget.html">GlobalBrightnessWidget</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
 
 <hr>
