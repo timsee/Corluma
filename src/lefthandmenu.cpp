@@ -510,7 +510,7 @@ QWidget* LeftHandMenu::selectedButton() {
 }
 
 void LeftHandMenu::mouseReleaseEvent(QMouseEvent* event) {
-    if (!isMoving()) {
+    if (!cor::leftHandMenuMoving()) {
         event->accept();
     } else {
         event->ignore();

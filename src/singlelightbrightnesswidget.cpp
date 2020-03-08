@@ -28,8 +28,8 @@ SingleLightBrightnessWidget::SingleLightBrightnessWidget(const QSize& size,
     // setup the slider that controls the LED's brightness
     mBrightnessSlider = new cor::Slider(this);
     mBrightnessSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mBrightnessSlider->slider()->setRange(2, 100);
-    mBrightnessSlider->slider()->setValue(2);
+    mBrightnessSlider->setRange(2, 100);
+    mBrightnessSlider->setValue(2);
     mBrightnessSlider->setFixedHeight(size.height() / 2);
     mBrightnessSlider->setHeightPercentage(0.8f);
     mBrightnessSlider->setColor(QColor(255, 255, 255));
@@ -51,9 +51,9 @@ void SingleLightBrightnessWidget::updateColor(const QColor& color) {
         rerender = true;
         mBrightnessSlider->setColor(color);
         auto brightness = color.valueF() * 100.0;
-        if (int(brightness) != mBrightnessSlider->slider()->value()) {
+        if (int(brightness) != mBrightnessSlider->value()) {
             mBrightnessSlider->blockSignals(true);
-            mBrightnessSlider->slider()->setValue(int(brightness));
+            mBrightnessSlider->setValue(int(brightness));
             mBrightnessSlider->blockSignals(false);
         }
     }

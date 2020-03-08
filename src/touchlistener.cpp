@@ -29,6 +29,14 @@ void TouchListener::moveEvent(QMouseEvent* event) {
     // only care about moves when greyout is not open and lefthand menu isn't forced open
     if (!mLeftHandMenu->alwaysOpen()) {
         auto pos = event->pos();
+
+        // if the pointer ever goes beyond the LeftHandMenu's width, make the start point the edge
+        // of the LeftHandMenu
+        if (pos.x() > mLeftHandMenu->width()) {
+            mStartPoint = QPoint(mLeftHandMenu->width(), pos.y());
+        }
+
+
         if (mHandleAsMenuSpace && pos.x() > mLeftHandMenu->width()) {
             // if a touch started in the lefthand menu space, it can move the menu. But if it
             // didn't, don't mess with it!

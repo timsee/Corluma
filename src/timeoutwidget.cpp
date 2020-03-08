@@ -27,11 +27,11 @@ TimeoutWidget::TimeoutWidget(QWidget* parent,
     //-----------
     mSlider = new cor::Slider(this);
     mSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mSlider->slider()->setRange(0, 300);
-    mSlider->slider()->setTickInterval(100);
-    mSlider->slider()->setValue(defaultTimeoutValue);
+    mSlider->setRange(0, 300);
+    mSlider->setTickInterval(100);
+    mSlider->setValue(defaultTimeoutValue);
     mSlider->setHeightPercentage(0.5f);
-    mSlider->slider()->setTickPosition(QSlider::TicksBelow);
+    mSlider->setTickPosition(QSlider::TicksBelow);
     mSlider->setColor(QColor(255, 127, 0));
     mSlider->setShouldDrawTickLabels(true);
     connect(mSlider, SIGNAL(valueChanged(int)), parentWidget(), SLOT(timeoutChanged(int)));
@@ -85,15 +85,15 @@ void TimeoutWidget::handleMode(ETimeoutMode newMode) {
     if (mMode != newMode) {
         mMode = newMode;
         if (mMode == ETimeoutMode::hours) {
-            mSlider->slider()->setRange(0, 300);
-            mSlider->slider()->setTickInterval(100);
+            mSlider->setRange(0, 300);
+            mSlider->setTickInterval(100);
         } else if (mMode == ETimeoutMode::minutes) {
-            auto currentValue = mSlider->slider()->value();
+            auto currentValue = mSlider->value();
             if (currentValue > 60) {
-                mSlider->slider()->setValue(60);
+                mSlider->setValue(60);
             }
-            mSlider->slider()->setRange(0, 60);
-            mSlider->slider()->setTickInterval(20);
+            mSlider->setRange(0, 60);
+            mSlider->setTickInterval(20);
         }
         mSlider->resize();
     }
@@ -104,7 +104,7 @@ void TimeoutWidget::changeTimeoutLabel(const QString& title) {
 }
 
 int TimeoutWidget::timeoutValue() {
-    return mSlider->slider()->value();
+    return mSlider->value();
 }
 
 void TimeoutWidget::show(bool shouldShow) {

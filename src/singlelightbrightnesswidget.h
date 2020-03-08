@@ -29,7 +29,7 @@ public:
     void updateBrightness(std::uint32_t brightness);
 
     /// getter for brightness
-    int brightness() { return mBrightnessSlider->slider()->value(); }
+    int brightness() { return mBrightnessSlider->value(); }
 
     /// true if in, false otherwise
     bool isIn() { return mIsIn; }

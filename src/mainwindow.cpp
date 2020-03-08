@@ -501,7 +501,7 @@ void MainWindow::resize() {
             xPos += mLeftHandMenu->width();
             width -= mLeftHandMenu->width();
         }
-        QRect rect(xPos, mTopMenu->height(), width, height() - mTopMenu->height());
+        QRect rect(xPos, mTopMenu->height(), width, (height() - mTopMenu->height()) * 0.95);
         mMainViewport->resize(rect);
     }
 

@@ -15,7 +15,7 @@
 
 namespace cor {
 
-Slider::Slider(QWidget* parent) : QWidget(parent) {
+Slider::Slider(QWidget* parent) : QSlider(Qt::Horizontal, parent) {
     mHeightScaleFactor = 1.0f;
     mShouldDrawTickLabels = false;
     mShouldSnap = false;
@@ -23,17 +23,10 @@ Slider::Slider(QWidget* parent) : QWidget(parent) {
     mMinimumPossible = 0;
 
     setAutoFillBackground(true);
-    mSlider = new QSlider(Qt::Horizontal, this);
-    mSlider->setAutoFillBackground(true);
-    setMinimumPossible(false, 0);
     setSnapToNearestTick(false);
-    connect(mSlider, SIGNAL(valueChanged(int)), this, SLOT(receivedValue(int)));
-    connect(mSlider, SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
-
-    mLayout = new QVBoxLayout;
-    mLayout->setContentsMargins(0, 0, 0, 0);
-    mLayout->addWidget(mSlider);
-    setLayout(mLayout);
+    connect(this, SIGNAL(valueChanged(int)), this, SLOT(receivedValue(int)));
+    connect(this, SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
+    connect(this, SIGNAL(sliderMoved(int)), this, SLOT(movedSlider(int)));
 
     mType = ESliderType::vanilla;
 
@@ -43,7 +36,7 @@ Slider::Slider(QWidget* parent) : QWidget(parent) {
 }
 
 void Slider::resize() {
-    mSlider->setFixedSize(rect().width(), int(rect().height() * mHeightScaleFactor));
+    // mSlider->setFixedSize(rect().width(), int(rect().height() * mHeightScaleFactor));
     switch (mType) {
         case ESliderType::color:
             setColor(mSliderColor);
@@ -97,6 +90,7 @@ void Slider::setGradient(const QColor& leftColor, const QColor& rightColor) {
 
 void Slider::adjustStylesheet() {
     QString stylesheet;
+    auto margin = (height() * (1.0f - mHeightScaleFactor)) / 2.0f;
     switch (mType) {
         case ESliderType::vanilla:
             stylesheet = QString("QSlider::handle:horizontal {"
@@ -108,11 +102,14 @@ void Slider::adjustStylesheet() {
             QColor darkColor = QColor(int(mSliderColor.red() / 4),
                                       int(mSliderColor.green() / 4),
                                       int(mSliderColor.blue() / 4));
-            stylesheet = QString("QSlider::sub-page:horizontal{ "
-                                 " background:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 "
+            stylesheet = QString("QSlider::groove:horizontal{ "
+                                 " background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 "
                                  "rgb(%1, %2, %3), stop: 1 rgb(%4, %5, %6));"
-                                 " background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1, stop: "
-                                 "0 rgb(%1, %2, %3), stop: 1 rgb(%4, %5, %6));"
+                                 "margin-top: %8px;"
+                                 "margin-bottom: %8px;"
+                                 "margin-left: 0px;"
+                                 "margin-right: 0px;"
+                                 "border-radius: 2px;"
                                  "}"
                                  "QSlider::handle:horizontal {"
                                  "width: %7px;"
@@ -123,13 +120,19 @@ void Slider::adjustStylesheet() {
                                   QString::number(mSliderColor.red()),
                                   QString::number(mSliderColor.green()),
                                   QString::number(mSliderColor.blue()),
-                                  QString::number(mHandleSize));
+                                  QString::number(mHandleSize),
+                                  QString::number(margin));
             break;
         }
-        case ESliderType::gradient:
+        case ESliderType::gradient: {
             stylesheet = QString("QSlider::groove:horizontal{ "
                                  " background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 "
                                  "rgb(%1, %2, %3), stop: 1 rgb(%4, %5, %6));"
+                                 "margin-top: %8px;"
+                                 "margin-bottom: %8px;"
+                                 "margin-left: 0px;"
+                                 "margin-right: 0px;"
+                                 "border-radius: 2px;"
                                  "}"
                                  "QSlider::handle:horizontal {"
                                  "width: %7px;"
@@ -140,70 +143,38 @@ void Slider::adjustStylesheet() {
                                   QString::number(mColorGradient.red()),
                                   QString::number(mColorGradient.green()),
                                   QString::number(mColorGradient.blue()),
-                                  QString::number(mHandleSize));
+                                  QString::number(mHandleSize),
+                                  QString::number(margin));
             break;
+        }
         case ESliderType::image:
             stylesheet = QString("QSlider::sub-page:horizontal{ "
                                  " background-color:rgba(0,0,0,0);"
                                  "}"
                                  "QSlider::groove:horizontal{ "
                                  " border-image: url(%1) 0 0 0 0 stretch stretch;"
+                                 " margin-top: %3px;"
+                                 " margin-bottom: %3px;"
+                                 " margin-left: 0px;"
+                                 " margin-right: 0px;"
+                                 " border-radius: 2px;"
                                  "}"
                                  "QSlider::handle:horizontal {"
                                  "width: %2px;"
                                  "}")
-                             .arg(mPath, QString::number(mHandleSize));
+                             .arg(mPath, QString::number(mHandleSize), QString::number(margin));
             break;
     }
-    mSlider->setStyleSheet(stylesheet);
+    setStyleSheet(stylesheet);
 }
 
 void Slider::receivedValue(int value) {
     if (isEnabled()) {
-        value = jumpSliderToPosition(mSlider, value);
-
-        mSlider->blockSignals(true);
-        mSlider->setValue(value);
-        emit valueChanged(value);
-
-        mSlider->blockSignals(false);
+        blockSignals(true);
+        setValue(value);
+        blockSignals(false);
     }
 }
-
-/*!
- * solution based on this stack overflow response:
- * http://stackoverflow.com/a/15321654
- */
-int Slider::jumpSliderToPosition(QSlider* slider, int newPos) {
-    Qt::MouseButtons btns = QApplication::mouseButtons();
-    QPoint localMousePos = slider->mapFromGlobal(QCursor::pos());
-    // check if a click happens directly on the slider
-    bool clickOnSlider = (btns & Qt::LeftButton) && (localMousePos.x() >= 0)
-                         && (localMousePos.y() >= 0) && (localMousePos.x() < slider->size().width())
-                         && (localMousePos.y() < slider->size().height());
-
-    // if its a click on the slider, use our custom logic.
-    if (clickOnSlider) {
-        // calculate how far from the left the click on the slider is.
-        double posRatio = localMousePos.x() / double(slider->size().width());
-        double sliderRange = slider->maximum() - slider->minimum();
-
-        // update newPos to our new value
-        newPos = int(slider->minimum() + sliderRange * posRatio);
-    }
-
-    // check if snapping is enabled, and snap if necessary
-    if (mShouldSnap) {
-        newPos = snapSliderToNearestTick(slider, newPos);
-    }
-
-    // check if minimum possible is enabled, and update if necessary
-    if (mUseMinimumPossible && (newPos < mMinimumPossible)) {
-        newPos = mMinimumPossible;
-    }
-    return newPos;
-}
-
 
 int Slider::snapSliderToNearestTick(QSlider* slider, int pos) {
     if (slider->tickPosition() != QSlider::NoTicks) {
@@ -219,22 +190,30 @@ int Slider::snapSliderToNearestTick(QSlider* slider, int pos) {
     return pos;
 }
 
+void Slider::mousePressEvent(QMouseEvent* event) {
+    QStyleOptionSlider opt;
+    initStyleOption(&opt);
+    QRect sr = style()->subControlRect(QStyle::CC_Slider, &opt, QStyle::SC_SliderHandle, this);
 
-void Slider::setMinimumPossible(bool useMinimumPossible, int minimumPossible) {
-    mUseMinimumPossible = useMinimumPossible;
-    mMinimumPossible = minimumPossible;
-    if (mUseMinimumPossible && (mSlider->value() < mMinimumPossible)) {
-        jumpSliderToPosition(mSlider, mMinimumPossible);
+    if (event->button() == Qt::LeftButton && sr.contains(event->pos()) == false) {
+        int value = minimum() + ((maximum() - minimum()) * event->x()) / width();
+
+        blockSignals(true);
+        setValue(value);
+        blockSignals(false);
+        emit valueChanged(value);
+        event->accept();
     }
-}
 
+    QSlider::mousePressEvent(event);
+}
 
 void Slider::resizeEvent(QResizeEvent*) {
     resize();
 }
 
-void Slider::paintEvent(QPaintEvent*) {
-    if (mSlider->tickPosition() != QSlider::NoTicks) {
+void Slider::paintEvent(QPaintEvent* event) {
+    if (tickPosition() != QSlider::NoTicks) {
         QStyleOption opt;
         opt.init(this);
         QPainter painter(this);
@@ -250,24 +229,24 @@ void Slider::paintEvent(QPaintEvent*) {
 
         // draw tick marks
         // do this manually because they are very badly behaved with style sheets
-        int interval = mSlider->tickInterval();
+        int interval = tickInterval();
         if (interval == 0) {
-            interval = mSlider->pageStep();
+            interval = pageStep();
         }
 
         // get tick count
         QFontMetrics fontMetrics(painter.font());
-        int currentStep = mSlider->minimum();
-        int pixelsPerStep = mSlider->width() / interval;
-        bool shouldSubtractOne = (mSlider->minimum() == 1);
+        int currentStep = minimum();
+        int pixelsPerStep = width() / interval;
+        bool shouldSubtractOne = (minimum() == 1);
         bool isFirstLabel = true;
 
-        int maximum = mSlider->maximum();
+        int maximum = this->maximum();
         if (shouldSubtractOne) {
             maximum += 1;
         }
-        for (int i = mSlider->minimum(); i <= maximum; i += interval) {
-            int x = i * interval / mSlider->maximum() * pixelsPerStep;
+        for (int i = minimum(); i <= maximum; i += interval) {
+            int x = i * interval / this->maximum() * pixelsPerStep;
             x = x + contentsMargins().left();
 
             if (mShouldDrawTickLabels) {
@@ -289,13 +268,13 @@ void Slider::paintEvent(QPaintEvent*) {
                     painter.drawText(x - labelOffset / 2, y, label);
                 }
             } else {
-                if (mSlider->tickPosition() == QSlider::TicksBothSides
-                    || mSlider->tickPosition() == QSlider::TicksAbove) {
-                    int y = mSlider->rect().top();
+                if (tickPosition() == QSlider::TicksBothSides
+                    || tickPosition() == QSlider::TicksAbove) {
+                    int y = rect().top();
                     painter.drawLine(x, y, x, y * 4 / 5);
                 }
-                if (mSlider->tickPosition() == QSlider::TicksBothSides
-                    || mSlider->tickPosition() == QSlider::TicksBelow) {
+                if (tickPosition() == QSlider::TicksBothSides
+                    || tickPosition() == QSlider::TicksBelow) {
                     int y = rect().bottom();
                     painter.drawLine(x, y, x, y * 4 / 5);
                 }
@@ -303,18 +282,13 @@ void Slider::paintEvent(QPaintEvent*) {
             currentStep += interval;
         }
     }
+    QSlider::paintEvent(event);
 }
 
 
 void Slider::setHeightPercentage(float percent) {
     mHeightScaleFactor = percent;
-    int newY = int(rect().height() * (1.0f - mHeightScaleFactor) / 2.0f);
-
-    mSlider->setGeometry(mSlider->rect().x(),
-                         newY,
-                         rect().width(),
-                         int(rect().height() * mHeightScaleFactor));
-    resizeEvent(nullptr);
+    adjustStylesheet();
 }
 
 
@@ -324,7 +298,11 @@ void Slider::setSnapToNearestTick(bool shouldSnap) {
 
 
 void Slider::releasedSlider() {
-    emit valueChanged(mSlider->value());
+    emit valueChanged(value());
+}
+
+void Slider::movedSlider(int value) {
+    emit valueChanged(value);
 }
 
 void Slider::setShouldDrawTickLabels(bool shouldDraw) {
@@ -336,14 +314,14 @@ void Slider::setShouldDrawTickLabels(bool shouldDraw) {
 
 void Slider::enable(bool shouldEnable) {
     if (shouldEnable) {
-        auto effect = new QGraphicsOpacityEffect(mSlider);
+        auto effect = new QGraphicsOpacityEffect(this);
         effect->setOpacity(1.0);
-        mSlider->setGraphicsEffect(effect);
+        setGraphicsEffect(effect);
         setEnabled(true);
     } else {
-        auto effect = new QGraphicsOpacityEffect(mSlider);
+        auto effect = new QGraphicsOpacityEffect(this);
         effect->setOpacity(0.5);
-        mSlider->setGraphicsEffect(effect);
+        setGraphicsEffect(effect);
         setEnabled(false);
     }
 }

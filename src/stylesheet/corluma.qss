@@ -81,15 +81,6 @@ QPushButton:pressed {
  * ---------------
  */
 
-QSlider::groove:horizontal {
-    border: 1px solid #3A3939;
-    background: #201F1F;
-    margin-top: 2px;
-    margin-bottom: 2px;
-    margin-left: 0px;
-    margin-right: 15px;
-    border-radius: 2px;
-}
 
 QSlider::handle:horizontal {
     background: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1,
@@ -98,23 +89,6 @@ QSlider::handle:horizontal {
     border-radius: 2px;
     margin-top: -10px;
     margin-bottom: -10px;
-}
-
-QSlider::groove:vertical {
-    border: 1px solid #3A3939;
-    background: #201F1F;
-    margin: 0 0px;
-    border-radius: 2px;
-}
-
-QSlider::handle:vertical {
-    background: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0.0 silver,
-      stop: 0.2 #a8a8a8, stop: 1 #727272);
-    border: 1px solid #3A3939;
-    border-radius: 2px;
-    margin-top: -10px;
-    margin-bottom: -10px;
-    width:30px;
 }
 
 /* ---------------

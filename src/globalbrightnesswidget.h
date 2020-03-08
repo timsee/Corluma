@@ -38,7 +38,7 @@ public:
     void updateBrightness(int brightness);
 
     /// getter for brightness
-    int brightness() { return mBrightnessSlider->slider()->value(); }
+    int brightness() { return mBrightnessSlider->value(); }
 
     /// resize the widget programmatically
     void resize();

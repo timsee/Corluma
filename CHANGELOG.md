@@ -783,3 +783,10 @@ ___
 - Fixed a crash when sharing files from android.
 
 
+### **v0.19.1**
+#### Bug Fixes
+- Simplified `cor::Slider`.
+- Fixed bugs with `TouchListener`.
+
+
+

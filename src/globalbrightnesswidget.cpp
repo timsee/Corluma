@@ -26,8 +26,8 @@ GlobalBrightnessWidget::GlobalBrightnessWidget(const QSize& size,
     // setup the slider that controls the LED's brightness
     mBrightnessSlider = new cor::Slider(this);
     mBrightnessSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mBrightnessSlider->slider()->setRange(2, 100);
-    mBrightnessSlider->slider()->setValue(2);
+    mBrightnessSlider->setRange(2, 100);
+    mBrightnessSlider->setValue(2);
     mBrightnessSlider->setFixedHeight(size.height() / 2);
     mBrightnessSlider->setHeightPercentage(0.8f);
     mBrightnessSlider->setColor(QColor(255, 255, 255));
@@ -65,9 +65,9 @@ void GlobalBrightnessWidget::updateColor(const QColor& color) {
 }
 
 void GlobalBrightnessWidget::updateBrightness(int brightness) {
-    if (brightness != mBrightnessSlider->slider()->value()) {
+    if (brightness != mBrightnessSlider->value()) {
         mBrightnessSlider->blockSignals(true);
-        mBrightnessSlider->slider()->setValue(brightness);
+        mBrightnessSlider->setValue(brightness);
         mBrightnessSlider->blockSignals(false);
     }
 }
@@ -91,7 +91,7 @@ void GlobalBrightnessWidget::lightCountChanged(bool isOn,
     } else {
         pushOut();
         mBrightnessSlider->enable(false);
-        mBrightnessSlider->slider()->setValue(0);
+        mBrightnessSlider->setValue(0);
         mOnOffSwitch->setSwitchState(ESwitchState::disabled);
     }
 }

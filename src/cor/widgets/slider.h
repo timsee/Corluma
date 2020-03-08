@@ -36,7 +36,7 @@ static QColor kSliderBackgroundColor(32, 31, 31);
  * in order to prevent users from choosing less than 2 colors for the array routines.
  *
  */
-class Slider : public QWidget {
+class Slider : public QSlider {
     Q_OBJECT
 
 public:
@@ -74,15 +74,6 @@ public:
     void setSnapToNearestTick(bool shouldSnap);
 
     /*!
-     * \brief setMinimumPossible allows the user to set a value other than the minimum as the
-     * minimum possible value the slider can hit.
-     *
-     * \param useMinimumPossible tue if you want to use this new minimum, false otherwise.
-     * \param minimumPossible the value that you want to be a minimum.
-     */
-    void setMinimumPossible(bool useMinimumPossible, int minimumPossible);
-
-    /*!
      * \brief setSliderHeight By default sliders take up all of the of the widget, but this covers
      * ticks and leaves no room inbewtween sliders that are stacked. This function takes a value
      * between 0.0 and 1.0 to  scale the slider down, while keeping it centered in the widget.
@@ -102,9 +93,6 @@ public:
 
     /// set to true to draw ticks, set to false to hide them
     void setShouldDrawTickLabels(bool shouldDraw);
-
-    /// pointer to internal QSlider
-    QSlider* slider() { return mSlider; }
 
     /// resizes programmatically
     void resize();
@@ -134,6 +122,8 @@ private slots:
      */
     void releasedSlider();
 
+    /// slider moved
+    void movedSlider(int);
 
 protected:
     /*!
@@ -148,22 +138,15 @@ protected:
      */
     void paintEvent(QPaintEvent*);
 
-private:
-    /*!
-     * \brief slider The actual and factual QSlider in this slider class
-     */
-    QSlider* mSlider;
+    /// picks up when a mouse is pressed down, which changes the value.z
+    void mousePressEvent(QMouseEvent* event);
 
+private:
     /*!
      * \brief mHeightScaleFactor used to scale the slider inside of its qwidget so it takes up
      *        less than 100% of the widget
      */
     float mHeightScaleFactor;
-
-    /*!
-     * \brief mLayout layout of a lights slider
-     */
-    QVBoxLayout* mLayout;
 
     /*!
      * \brief mShouldSnap true if the slider should snap to the nearest ticks, false
@@ -185,20 +168,6 @@ private:
 
     /// adjusts the stylesheet used by the slider
     void adjustStylesheet();
-
-    /*!
-     * \brief Makes it so that by default, the slider jumps to the position the user
-     *        clicks instead of jumping up by a page value. This gives the slider a more
-     *        "mobile like" experience than the standard QSlider.
-     *
-     *        solution based on this stack overflow response:
-     *        http://stackoverflow.com/a/15321654
-     *
-     * \param slider the slider that was clicked
-     * \param newPos the position that user clicked.
-     * \return the new position of the slider.
-     */
-    int jumpSliderToPosition(QSlider* slider, int newPos);
 
     /*!
      * \brief snapSliderToNearestTick checks the value that the slider is
