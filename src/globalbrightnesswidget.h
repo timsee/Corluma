@@ -1,6 +1,8 @@
 #ifndef GLOBALBRIGHTNESSWIDGET_H
 #define GLOBALBRIGHTNESSWIDGET_H
 
+#include "comm/commlayer.h"
+#include "cor/lightlist.h"
 #include "cor/widgets/slider.h"
 #include "cor/widgets/switch.h"
 
@@ -20,7 +22,14 @@ class GlobalBrightnessWidget : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit GlobalBrightnessWidget(const QSize& size, bool isLeftAlwaysOpen, QWidget* parent);
+    explicit GlobalBrightnessWidget(const QSize& size,
+                                    bool isLeftAlwaysOpen,
+                                    CommLayer* comm,
+                                    cor::LightList* data,
+                                    QWidget* parent);
+
+    /// programmatically set if on
+    bool isOn(bool);
 
     /// update the state of the widget
     void updateColor(const QColor& color);
@@ -69,6 +78,9 @@ private slots:
      */
     void changedSwitchState(bool state);
 
+    /// called from a timer to check whether or not the all lights are currently on.
+    void checkifOn();
+
 private:
     /// true if in, false if out
     bool mIsIn;
@@ -95,6 +107,22 @@ private:
 
     /// switch for turning all selected lights on and off.
     cor::Switch* mOnOffSwitch;
+
+    /// tracks how long its been since an update
+    QElapsedTimer mElapsedTime;
+
+    /// set whenever there is any interaction with the on/off switch, acts as a cooldown for
+    /// updates.
+    bool mAnyInteraction;
+
+    /// pointer to CommLayer to check on/off state
+    CommLayer* mComm;
+
+    /// pointer to currently selected lights for checking on/off state
+    cor::LightList* mData;
+
+    /// timer for checking whether or not the widget is on or off
+    QTimer* mOnOffCheckTimer;
 };
 
 #endif // GLOBALBRIGHTNESSWIDGET_H

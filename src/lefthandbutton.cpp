@@ -105,19 +105,10 @@ void LeftHandButton::mousePressEvent(QMouseEvent* event) {
 
 void LeftHandButton::mouseReleaseEvent(QMouseEvent* event) {
     if (cor::isMouseEventTouchUpInside(event, this, true) && mMenu->geometry().x() == 0) {
-        // turn back to standard color
-        if (mIsHighlighted) {
-            event->ignore();
-        } else if (!mIsHighlighted) {
-            event->accept();
-        } else {
-            mIsHighlighted = true;
-        }
         update();
         emit pressed(mPage);
-    } else {
-        event->ignore();
     }
+    event->ignore();
 }
 
 void LeftHandButton::resizeEvent(QResizeEvent*) {

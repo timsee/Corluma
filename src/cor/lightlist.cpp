@@ -156,6 +156,13 @@ bool LightList::isOn() {
     return false;
 }
 
+void LightList::isOn(bool on) {
+    for (auto&& light : mLights) {
+        auto state = light.state();
+        state.isOn(on);
+        light.state(state);
+    }
+}
 
 void LightList::updateColorScheme(std::vector<QColor> colors) {
     auto i = 0u;

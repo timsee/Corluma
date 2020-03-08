@@ -21,7 +21,7 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer* comm, QWidget* parent)
       mIPWidget(new cor::TextInputWidget(parentWidget()->parentWidget(),
                                          "Add an IP Address for a Bridge:",
                                          "192.168.0.100")),
-      mGreyout{new GreyOutOverlay(parentWidget()->parentWidget())},
+      mGreyout{new GreyOutOverlay(true, parentWidget()->parentWidget())},
       mHueDiscoveryState{EHueDiscoveryState::findingIpAddress} {
     mScale = 0.4f;
 

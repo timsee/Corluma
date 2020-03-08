@@ -215,7 +215,8 @@ SOURCES += main.cpp \
     singlecolorstatewidget.cpp \
     multicolorstatewidget.cpp \
     timeoutwidget.cpp \
-    lightinfoscrollarea.cpp
+    lightinfoscrollarea.cpp \
+    touchlistener.cpp
 
 HEADERS  +=  comm/arducor/arducordiscovery.h \
     comm/arducor/arducormetadata.h \
@@ -333,7 +334,8 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     multicolorstatewidget.h \
     utils/cormath.h \
     timeoutwidget.h \
-    lightinfoscrollarea.h
+    lightinfoscrollarea.h \
+    touchlistener.h
 
 
 HEADERS  += cor/objects/light.h \

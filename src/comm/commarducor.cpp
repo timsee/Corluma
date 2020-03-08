@@ -69,6 +69,16 @@ CommArduCor::CommArduCor(QObject* parent) : QObject(parent) {
 #endif
 }
 
+
+bool CommArduCor::isActive()
+{
+    return mUDP->isActive()
+#ifndef MOBILE_BUILD
+        && mSerial->isActive()
+#endif
+        && mHTTP->isActive();
+}
+
 bool CommArduCor::preparePacketForTransmission(const cor::Controller& controller, QString& packet) {
     bool shouldReset = false;
     // check if state update
@@ -141,7 +151,6 @@ void CommArduCor::resetStateUpdates() {
     mSerial->resetStateUpdateTimeout();
 #endif
 }
-
 
 std::vector<cor::Light> CommArduCor::lights() {
     std::vector<cor::Light> lights;

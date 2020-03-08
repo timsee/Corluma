@@ -26,6 +26,7 @@
 #include "routinebuttonswidget.h"
 #include "settingspage.h"
 #include "shareutils/shareutils.hpp"
+#include "touchlistener.h"
 
 namespace cor {
 class StateObserver;
@@ -68,6 +69,19 @@ public:
 
     /// getter for the routine widget
     RoutineButtonsWidget* routineWidget() { return mRoutineWidget; }
+
+    /// getter for the greyout overlay
+    GreyOutOverlay* greyOut() { return mGreyOut; }
+
+    /// true if any widget is showing above the main window (such as the SettingsPage)
+    bool isAnyWidgetAbove();
+
+    /// pushes the LeftHandMenu in
+    void pushInLeftHandMenu();
+
+    /// pushes the LeftHandMenu out
+    void pushOutLeftHandMenu();
+
 
 public slots:
 
@@ -153,7 +167,7 @@ protected:
      * \brief resizeEvent called whenever the window resizes. This is used to override
      * the resizing of the icons of the menu bar.
      */
-    virtual void resizeEvent(QResizeEvent*);
+    virtual void resizeEvent(QResizeEvent*) override;
 
     /*!
      * \brief changeEvent called whenever an event occurs. Currently used to off communication
@@ -161,26 +175,35 @@ protected:
      *
      * \param event the event that has ocurred.
      */
-    void changeEvent(QEvent* event);
+    void changeEvent(QEvent* event) override;
 
     /// picks up key praesses, works for picking up things like android back buttons
-    void keyPressEvent(QKeyEvent* event);
+    void keyPressEvent(QKeyEvent* event) override;
 
-    /// picks up mouse presses
-    virtual void mousePressEvent(QMouseEvent*);
+    /// picks up mouse presses and sends them to TouchListener
+    void mousePressEvent(QMouseEvent* event) override {
+        if (mPagesLoaded) {
+            mTouchListener->pressEvent(event);
+        }
+    }
 
-    /// picks up mouse moves
-    virtual void mouseMoveEvent(QMouseEvent*);
+    /// picks up mouse moves and sends them to TouchListener
+    void mouseMoveEvent(QMouseEvent* event) override {
+        if (mPagesLoaded) {
+            mTouchListener->moveEvent(event);
+        }
+    }
 
-    /// picks up mouse releases
-    virtual void mouseReleaseEvent(QMouseEvent*);
+    /// picks up mouse releases and sends them to TouchListener
+    void mouseReleaseEvent(QMouseEvent* event) override {
+        if (mPagesLoaded) {
+            mTouchListener->releaseEvent(event);
+        }
+    }
 
 private:
-    /// start point for a mouse move event
-    QPoint mStartPoint;
-
-    /// true if left hand menu is being moved, false otherwise
-    bool mMovingMenu;
+    /// resets the state update flags for every communication time
+    void resetStateUpdates();
 
     /// handles when the android back button is pressed
     void backButtonPressed();
@@ -313,6 +336,10 @@ private:
 
     /// routine widget, for choosing the routine of lights with multiple addressable LEDs.
     RoutineButtonsWidget* mRoutineWidget;
+
+    /// listens to mouse and touch events on the MainWindow and handles moving widgets around and
+    /// spawning events.
+    TouchListener* mTouchListener;
 
     /*!
      * \brief mStateObserver listens to signals from other widgets and determins the state that the

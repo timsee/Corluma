@@ -88,22 +88,18 @@ CommNanoleaf::CommNanoleaf() : CommType(ECommType::nanoleaf), mUPnP{nullptr} {
 }
 
 void CommNanoleaf::getSchedules() {
-    if (mLastBackgroundTime.elapsed() > 15000) {
-        stopBackgroundTimers();
-    } else {
-        if (shouldContinueStateUpdate()) {
-            for (const auto& light : mDiscovery->foundLights().items()) {
-                QNetworkRequest request = networkRequest(light, "schedules");
+    if (shouldContinueStateUpdate()) {
+        for (const auto& light : mDiscovery->foundLights().items()) {
+            QNetworkRequest request = networkRequest(light, "schedules");
 #ifdef DEBUG_LEAF_SCHEDULES
-                qDebug() << __func__ << " get schedule for " << light.name();
+            qDebug() << __func__ << " get schedule for " << light.name();
 #endif
-                mNetworkManager->get(request);
-            }
-        } else {
-#ifdef DEBUG_LEAF_SCHEDULES
-            qDebug() << __func__ << " skipping!";
-#endif
+            mNetworkManager->get(request);
         }
+    } else {
+#ifdef DEBUG_LEAF_SCHEDULES
+        qDebug() << __func__ << " skipping!";
+#endif
     }
 }
 

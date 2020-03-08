@@ -50,6 +50,9 @@ public:
     /// restart state updates
     void resetStateUpdates();
 
+    /// true if this is currently active, false if its not.
+    bool isActive();
+
     /// deletes light from device table and triggers deleting it from discovery data
     void deleteLight(const cor::Light& light);
 

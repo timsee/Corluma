@@ -101,5 +101,8 @@ void ListMoodPreviewWidget::paintEvent(QPaintEvent*) {
 void ListMoodPreviewWidget::mouseReleaseEvent(QMouseEvent* event) {
     if (cor::isMouseEventTouchUpInside(event, this, true)) {
         emit moodSelected(mMood.uniqueID());
+        event->accept();
+    } else {
+        event->ignore();
     }
 }

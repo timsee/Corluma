@@ -40,9 +40,9 @@ The backend handles communicating with the lights, storing data about the sessio
 
 \copydoc CommLayer
 
-\section sec_8 LightList
+\section sec_8 cor::LightList
 
-\copydoc LightList
+\copydoc cor::LightList
 
 \section sec_9 DataSync
 

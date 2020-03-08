@@ -55,6 +55,9 @@ public:
      */
     bool isOn();
 
+    /// programmatically turns all selected lights either on or off
+    void isOn(bool on);
+
     /// computes the brightness, based off of the single and multi color routines. If lights are in
     /// varying states, this will give back an average brightness.
     std::uint32_t brightness();

@@ -140,8 +140,9 @@ void ListMoodGroupWidget::resizeEvent(QResizeEvent*) {
     resize();
 }
 
-void ListMoodGroupWidget::mouseReleaseEvent(QMouseEvent*) {
+void ListMoodGroupWidget::mouseReleaseEvent(QMouseEvent* event) {
     setShowButtons(!mDropdownTopWidget->showButtons());
+    event->ignore();
 }
 
 

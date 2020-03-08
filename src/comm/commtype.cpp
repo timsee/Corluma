@@ -63,6 +63,10 @@ void CommType::resetStateUpdateTimeout() {
     mLastSendTime = QTime::currentTime();
 }
 
+bool CommType::isActive() {
+    return mStateUpdateTimer->isActive();
+}
+
 void CommType::stopStateUpdates() {
     if (mStateUpdateTimer->isActive()) {
         // qDebug() << "INFO: Turning off state updates" << commTypeToString(mType);
@@ -71,9 +75,6 @@ void CommType::stopStateUpdates() {
 }
 
 bool CommType::shouldContinueStateUpdate() const noexcept {
-    if (mLastSendTime.elapsed() > 15000) {
-        return false;
-    }
     // if device table is empty, stop updates, otherwise, continue
     return !mLightDict.empty();
 }

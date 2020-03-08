@@ -55,9 +55,12 @@ inline void debugWhyWidgetIsNotShowing(QWidget* widget) {
 
 
 /// moves a widge from startPoint to endPoint, resizing to given size if necessary.
-inline void moveWidget(QWidget* widget, const QPoint& startPoint, const QPoint& endPoint) {
+inline void moveWidget(QWidget* widget,
+                       const QPoint& startPoint,
+                       const QPoint& endPoint,
+                       int transTime = TRANSITION_TIME_MSEC) {
     QPropertyAnimation* animation = new QPropertyAnimation(widget, "pos");
-    animation->setDuration(TRANSITION_TIME_MSEC);
+    animation->setDuration(transTime);
     animation->setStartValue(startPoint);
     animation->setEndValue(endPoint);
     animation->start();

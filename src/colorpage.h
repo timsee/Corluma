@@ -16,9 +16,8 @@
  * \brief The ColorPage provides a way to change the color of the lights selected in the app.
  *
  * The page contains a ColorPicker that allows the user to choose colors. The color picker has
- * three main modes: an HSV mode, which requires the user to use a slider to change the brightness,
- * an RGB mode which has brightness tied into the color picker's wheel, and an ambient mode, which
- * allows the user to choose between different temperatures of white.
+ * two main modes: an HSV mode, which requires the user to use a slider to change the brightness
+ * and an ambient mode, which allows the user to choose between different temperatures of white.
  *
  * While the user is on this page, there is also a pop up menu on the bottom that allows the user to
  * choose routines for lights that can be individually indexed, such as arduinos and nanoleafs.

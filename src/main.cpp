@@ -29,7 +29,8 @@
 //#define DISABLE_SPLASH_SCREEN 1
 /// uncomment to disable the style sheet.
 //#define DISABLE_STYLE_SHEET 1
-
+/// uncomment to force portrait on desktop
+//#define FORCE_PORTRAIT 1
 
 const static QString kFirstTimeOpenKey = QString("Corluma_FirstTimeOpen");
 
@@ -141,6 +142,9 @@ int main(int argc, char* argv[]) {
     QSize size = screen->size();
     QSize startingSize(size);
     QSize minimumSize(size);
+#elif FORCE_PORTRAIT
+    QSize startingSize(400, 600);
+    QSize minimumSize(400, 600);
 #else
     QSize startingSize(700, 600);
     QSize minimumSize(700, 600);

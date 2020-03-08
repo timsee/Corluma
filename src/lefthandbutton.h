@@ -41,6 +41,9 @@ public:
     /// returns the title of the button
     QString text() { return mTitle->text(); }
 
+    /// true if currently highlighted
+    bool highlighted() { return mIsHighlighted; }
+
     /*!
      * \brief shouldHightlght highlights or unhiglights the button.
      *

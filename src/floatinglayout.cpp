@@ -114,9 +114,9 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
         state.isOn(true);
 
         bool foundMatch = false;
-        if (mNames[i] == "RGB" || mNames[i] == "HSV" || mNames[i] == "Temperature"
-            || mNames[i] == "Settings" || mNames[i] == "Group_Lights"
-            || mNames[i] == "Group_Details" || mNames[i] == "Group_Edit" || mNames[i] == "Discovery"
+        if (mNames[i] == "HSV" || mNames[i] == "Temperature" || mNames[i] == "Settings"
+            || mNames[i] == "Group_Lights" || mNames[i] == "Group_Details"
+            || mNames[i] == "Group_Edit" || mNames[i] == "Discovery"
             || mNames[i] == "Select_Devices" || mNames[i] == "HueLightSearch"
             || mNames[i] == "New_Group" || mNames[i] == "Plus") {
             foundMatch = true;

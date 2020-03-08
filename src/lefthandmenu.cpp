@@ -169,21 +169,23 @@ void LeftHandMenu::resize() {
 }
 
 void LeftHandMenu::pushIn() {
-    if (!mIsIn) {
-        mIsIn = true;
-        resize();
-        updateLights();
-        raise();
-        cor::moveWidget(this, pos(), QPoint(0u, 0u));
+    mIsIn = true;
+    updateLights();
+    raise();
+    auto transTime =
+        int(((this->width() - showingWidth()) / double(this->width())) * TRANSITION_TIME_MSEC);
+    cor::moveWidget(this, pos(), QPoint(0u, 0u), transTime);
+    if (!mRenderThread->isActive()) {
         mRenderThread->start(333);
     }
 }
 
 void LeftHandMenu::pushOut() {
-    if (!mAlwaysOpen && mIsIn) {
+    if (!mAlwaysOpen) {
         QPoint endPoint = pos();
         endPoint.setX(size().width() * -1);
-        cor::moveWidget(this, pos(), endPoint);
+        auto transTime = int((showingWidth() / double(this->width())) * TRANSITION_TIME_MSEC);
+        cor::moveWidget(this, pos(), endPoint, transTime);
         mRenderThread->stop();
         mIsIn = false;
     }
@@ -489,6 +491,41 @@ void LeftHandMenu::clearWidgets() {
     }
     mRoomWidgets.clear();
     resize();
+}
+
+QWidget* LeftHandMenu::selectedButton() {
+    if (mSingleColorButton->highlighted()) {
+        return mSingleColorButton;
+    }
+    if (mMultiColorButton->highlighted()) {
+        return mMultiColorButton;
+    }
+    if (mMoodButton->highlighted()) {
+        return mMoodButton;
+    }
+    if (mSettingsButton->highlighted()) {
+        return mSettingsButton;
+    }
+    return nullptr;
+}
+
+void LeftHandMenu::mouseReleaseEvent(QMouseEvent* event) {
+    if (!isMoving()) {
+        event->accept();
+    } else {
+        event->ignore();
+    }
+}
+
+int LeftHandMenu::showingWidth() {
+    auto width = this->width() + geometry().x();
+    if (width < 0) {
+        width = 0u;
+    }
+    if (width > this->width()) {
+        width = this->width();
+    }
+    return width;
 }
 
 cor::Room LeftHandMenu::makeMiscellaneousGroup(const std::vector<cor::Room>& roomList) {

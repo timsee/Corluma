@@ -30,7 +30,7 @@ StateObserver::StateObserver(cor::LightList* data,
 
 
 void StateObserver::globalBrightnessChanged(std::uint32_t brightness) {
-    mIsOn = (brightness > 0);
+    mData->isOn((brightness > 0));
     // NOTE: in most cases, a computeState() call here would be sufficient. However, if all lights
     // are showing different colors, computeStae would override their colors with either the
     // selection from the color page or palette page. This is bad for moods, or for just dimming the
@@ -74,31 +74,34 @@ void StateObserver::singleLightBrightnessChanged(std::uint32_t brightness) {
 void StateObserver::ambientColorChanged(std::uint32_t temperature, std::uint32_t brightness) {
     mBrightness = brightness;
     mTemperature = temperature;
-    mIsOn = true;
+    mData->isOn(true);
+
     computeState();
 }
 
 void StateObserver::colorChanged(QColor color) {
-    mIsOn = true;
     computeState();
+    mData->isOn(true);
 
     // UI update
     mMainWindow->routineWidget()->singleRoutineColorChanged(color);
 }
 
 void StateObserver::routineChanged(ERoutine) {
-    mIsOn = true;
+    mData->isOn(true);
+
     computeState();
 }
 
 void StateObserver::isOnChanged(bool isOn) {
-    mIsOn = isOn;
+    mData->isOn(isOn);
     computeState();
 }
 
 
 void StateObserver::paletteChanged(EPalette) {
-    mIsOn = true;
+    mData->isOn(true);
+
     computeState();
 }
 
@@ -113,7 +116,8 @@ void StateObserver::multiColorSelectionChange(std::uint32_t, const QColor& color
 }
 
 void StateObserver::updateScheme(const std::vector<QColor>& colors, std::uint32_t index) {
-    mIsOn = true;
+    mData->isOn(true);
+
     mData->updateColorScheme(colors);
     mTopMenu->updateScheme(colors, index);
 }
@@ -169,7 +173,7 @@ void StateObserver::computeState() {
     switch (mMainViewport->currentPage()) {
         case EPage::colorPage: {
             cor::LightState state;
-            state.isOn(mIsOn);
+            state.isOn(mData->isOn());
             if (mData->supportsRoutines()) {
                 state.routine(mMainWindow->routineWidget()->singleRoutine());
             } else {
@@ -194,7 +198,7 @@ void StateObserver::computeState() {
         }
         case EPage::palettePage: {
             cor::LightState state;
-            state.isOn(mIsOn);
+            state.isOn(mData->isOn());
             state.speed(mSpeed);
             state.routine(mMainWindow->routineWidget()->multiRoutine());
 

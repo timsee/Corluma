@@ -39,8 +39,11 @@ TopMenu::TopMenu(QWidget* parent,
       mRenderTimer{new QTimer(this)},
       mMainPalette{new cor::LightVectorWidget(6, 2, true, this)},
       mMenuButton{new QPushButton(this)},
-      mGlobalBrightness{
-          new GlobalBrightnessWidget(mSize, mMainWindow->leftHandMenu()->alwaysOpen(), this)},
+      mGlobalBrightness{new GlobalBrightnessWidget(mSize,
+                                                   mMainWindow->leftHandMenu()->alwaysOpen(),
+                                                   mComm,
+                                                   mData,
+                                                   this)},
       mSingleLightBrightness{
           new SingleLightBrightnessWidget(mSize, mMainWindow->leftHandMenu()->alwaysOpen(), this)},
       mPaletteFloatingLayout{new FloatingLayout(false, mMainWindow)},
@@ -71,6 +74,7 @@ TopMenu::TopMenu(QWidget* parent,
     // Setup Main Palette
     // -------------
     mMainPalette->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mMainPalette->enableButtonInteraction(false);
 
     // --------------
     // Routine Floating Layout
@@ -109,7 +113,7 @@ TopMenu::TopMenu(QWidget* parent,
             SIGNAL(buttonPressed(QString)),
             this,
             SLOT(floatingLayoutButtonPressed(QString)));
-    mColorFloatingLayout->setupButtons({QString("HSV"), QString("RGB"), QString("Temperature")},
+    mColorFloatingLayout->setupButtons({QString("HSV"), QString("Temperature")},
                                        EButtonSize::small);
     mColorFloatingLayout->highlightButton("HSV");
 
@@ -272,11 +276,6 @@ void TopMenu::floatingLayoutButtonPressed(const QString& button) {
         mPalettePage->setMode(EGroupMode::presets);
         showRoutineWidget(false);
         handleBrightnessSliders();
-    } else if (button == "RGB") {
-        if (mColorPage->isOpen()) {
-            mLastColorButtonKey = button;
-            mColorPage->changePageType(ESingleColorPickerMode::RGB);
-        }
     } else if (button == "HSV") {
         if (mColorPage->isOpen()) {
             mLastColorButtonKey = button;
@@ -579,7 +578,10 @@ void TopMenu::updateState(const cor::LightState& state) {
     }
 
     if (mGlobalBrightness->isIn()) {
+        // set slider color
         mGlobalBrightness->updateColor(mData->mainColor());
+        // set slider position
+        mGlobalBrightness->updateBrightness(mData->mainColor().valueF() * 100.0);
     }
 }
 

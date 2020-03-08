@@ -56,6 +56,15 @@ public:
     /// update the lights in the room widgets
     void updateLights();
 
+    /// true if the menu is currently moving
+    bool isMoving() const noexcept { return mIsMoving; }
+
+    /// sets the flag for whether or not the menu is moving
+    void isMoving(bool moving) { mIsMoving = moving; }
+
+    /// getter for how many pixels of the menu are currently showing
+    int showingWidth();
+
 signals:
     /// signals when a page button is pressed
     void pressedButton(EPage);
@@ -94,6 +103,10 @@ private slots:
     /// handles when the new group button is pressed
     void newGroupButtonPressed();
 
+protected:
+    /// handles when the mouse releases from the LeftHandMenu.
+    void mouseReleaseEvent(QMouseEvent*) override;
+
 private:
     /// true if menu should be always open for landscape orientation, false otherwise
     bool mAlwaysOpen;
@@ -125,6 +138,9 @@ private:
 
     /// creates a miscellaneous group for all groups not stated in standard rooms
     cor::Room makeMiscellaneousGroup(const std::vector<cor::Room>& roomList);
+
+    /// returns a pointer to the currently selected button
+    QWidget* selectedButton();
 
     /// true if menu is in, false otherwise
     bool mIsIn;
@@ -194,6 +210,9 @@ private:
 
     /// used to skip rendering while scrolling
     int mLastScrollValue;
+
+    /// true if moving, false otherwise
+    bool mIsMoving;
 };
 
 #endif // LEFTHANDMENU_H

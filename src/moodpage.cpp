@@ -18,7 +18,7 @@ MoodPage::MoodPage(QWidget* parent, GroupData* groups, CommLayer* comm)
     : QWidget(parent),
       mGroups(groups),
       mComm{comm},
-      mGreyOut{new GreyOutOverlay(parentWidget())},
+      mGreyOut{new GreyOutOverlay(false, parentWidget())},
       mCurrentMood{0} {
     mMoodsListWidget = new cor::ListWidget(this, cor::EListType::linear);
     mMoodsListWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -35,7 +35,6 @@ MoodPage::MoodPage(QWidget* parent, GroupData* groups, CommLayer* comm)
     mMoodDetailedWidget->setGeometry(0, -1 * height(), width(), height());
     mMoodDetailedWidget->setVisible(false);
 
-    mGreyOut->setVisible(false);
     connect(mGreyOut, SIGNAL(clicked()), this, SLOT(greyoutClicked()));
 
     connect(mGroups, SIGNAL(newMoodAdded(QString)), this, SLOT(newMoodAdded(QString)));

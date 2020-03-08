@@ -144,9 +144,6 @@ private:
 
     /// speed for routines.
     std::uint32_t mSpeed;
-
-    /// stored isOn flag
-    bool mIsOn;
 };
 
 } // namespace cor

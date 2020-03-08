@@ -24,6 +24,9 @@ void IconData::setRoutine(const cor::LightState& state) {
     ERoutine routine = state.routine();
     std::vector<QColor> colors = state.palette().colors();
     QColor color = state.color();
+    auto brightness = color.valueF() / 2.0;
+    color.setHsvF(color.hueF(), color.saturationF(), 0.5 + brightness);
+
     int param = state.param();
 
     // catch edge case where off lights display funny

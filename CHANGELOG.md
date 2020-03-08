@@ -772,3 +772,14 @@ ___
 - Moved `Palette` into `cor` namespace.
 
 
+### **v0.19.0**
+#### The Interaction Update
+- Fixed bugs with the global on/off switch.
+- Added the `TouchListener` for handling top-level mouse and touch events.
+- Fixed bugs with mouse events.
+- Adjusted how the `LeftHandMenu` drags in and out.
+- Made light state icons brighter.
+- Added an experimental feature where light updates no longer idle out while the app is still active.
+- Fixed a crash when sharing files from android.
+
+

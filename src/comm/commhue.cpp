@@ -910,13 +910,9 @@ void CommHue::updateLightStates() {
 //---------------
 
 void CommHue::getGroups() {
-    if (mLastBackgroundTime.elapsed() > 15000) {
-        stopBackgroundTimers();
-    } else {
-        for (const auto& bridge : mDiscovery->bridges().items()) {
-            QString urlString = urlStart(bridge) + "/groups";
-            mNetworkManager->get(QNetworkRequest(QUrl(urlString)));
-        }
+    for (const auto& bridge : mDiscovery->bridges().items()) {
+        QString urlString = urlStart(bridge) + "/groups";
+        mNetworkManager->get(QNetworkRequest(QUrl(urlString)));
     }
 }
 
@@ -925,13 +921,9 @@ void CommHue::getGroups() {
 //---------------
 
 void CommHue::getSchedules() {
-    if (mLastBackgroundTime.elapsed() > 15000) {
-        stopBackgroundTimers();
-    } else {
-        for (const auto& bridge : mDiscovery->bridges().items()) {
-            QString urlString = urlStart(bridge) + "/schedules";
-            mNetworkManager->get(QNetworkRequest(QUrl(urlString)));
-        }
+    for (const auto& bridge : mDiscovery->bridges().items()) {
+        QString urlString = urlStart(bridge) + "/schedules";
+        mNetworkManager->get(QNetworkRequest(QUrl(urlString)));
     }
 }
 

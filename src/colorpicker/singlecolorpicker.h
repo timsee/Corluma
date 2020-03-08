@@ -24,11 +24,6 @@
 enum class ESingleColorPickerMode {
     /*!
      * The color wheel is displayed on top of
-     * the sliders, with RGB sliders
-     */
-    RGB,
-    /*!
-     * The color wheel is displayed on top of
      * the sliders, with HSV sliders
      */
     HSV,

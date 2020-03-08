@@ -10,11 +10,16 @@
 
 GlobalBrightnessWidget::GlobalBrightnessWidget(const QSize& size,
                                                bool isLeftAlwaysOpen,
+                                               CommLayer* comm,
+                                               cor::LightList* data,
                                                QWidget* parent)
     : QWidget(parent),
       mIsIn{false},
       mSize{size},
-      mIsLeftAlwaysOpen{isLeftAlwaysOpen} {
+      mIsLeftAlwaysOpen{isLeftAlwaysOpen},
+      mAnyInteraction{false},
+      mComm{comm},
+      mData{data} {
     // --------------
     // Setup Brightness Slider
     // --------------
@@ -37,6 +42,13 @@ GlobalBrightnessWidget::GlobalBrightnessWidget(const QSize& size,
     mOnOffSwitch->setFixedSize(QSize(size.width(), size.height() / 2));
     connect(mOnOffSwitch, SIGNAL(switchChanged(bool)), this, SLOT(changedSwitchState(bool)));
     mOnOffSwitch->setSwitchState(ESwitchState::disabled);
+
+
+    mOnOffCheckTimer = new QTimer;
+    connect(mOnOffCheckTimer, SIGNAL(timeout()), this, SLOT(checkifOn()));
+    mOnOffCheckTimer->start(500);
+
+    mElapsedTime.restart();
 
     if (isLeftAlwaysOpen) {
         mPositionX = int(mSize.width() * 0.1);
@@ -136,13 +148,36 @@ void GlobalBrightnessWidget::resize() {
 
 
 void GlobalBrightnessWidget::brightnessSliderChanged(int newBrightness) {
+    mElapsedTime.restart();
+    mAnyInteraction = true;
     auto color = mBrightnessSlider->color();
     color.setHsvF(color.hueF(), color.saturationF(), newBrightness / 100.0);
     updateColor(color);
     emit brightnessChanged(std::uint32_t(newBrightness));
 }
 
+void GlobalBrightnessWidget::checkifOn() {
+    if (mElapsedTime.elapsed() > 5000 || !mAnyInteraction) {
+        // get comm representation of lights
+        auto commLights = mComm->commLightsFromVector(mData->lights());
+
+        bool isAnyOn = false;
+        for (const auto& light : commLights) {
+            if (light.state().isOn()) {
+                isAnyOn = true;
+                break;
+            }
+        }
+        if (isAnyOn) {
+            mOnOffSwitch->switchOn();
+        } else {
+            mOnOffSwitch->switchOff();
+        }
+    }
+}
 
 void GlobalBrightnessWidget::changedSwitchState(bool state) {
+    mElapsedTime.restart();
+    mAnyInteraction = true;
     emit isOnUpdate(state);
 }

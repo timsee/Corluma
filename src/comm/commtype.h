@@ -68,6 +68,9 @@ public:
      */
     void stopStateUpdates();
 
+    /// true if this CommType is currently active, false if its not.
+    bool isActive();
+
     // ----------------------------
     // Controller and Device Management
     // ----------------------------

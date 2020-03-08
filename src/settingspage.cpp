@@ -28,7 +28,7 @@ SettingsPage::SettingsPage(QWidget* parent,
       mGroups(parser),
       mShareUtils(shareUtils),
       mComm{comm},
-      mGreyOut{new GreyOutOverlay(parentWidget())},
+      mGreyOut{new GreyOutOverlay(false, parentWidget())},
       mLightInfoWidget{new LightInfoListWidget(parentWidget(), appSettings)} {
     mShowingDebug = true;
 
@@ -131,7 +131,6 @@ SettingsPage::SettingsPage(QWidget* parent,
     mGlobalWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mScrollLayout->addWidget(mGlobalWidget);
 
-    mGreyOut->setVisible(false);
     connect(mGreyOut, SIGNAL(clicked()), this, SLOT(greyOutClicked()));
 
     //------------
@@ -315,6 +314,7 @@ void SettingsPage::hideCurrentWebView() {
 
 
 void SettingsPage::lightInfoWidgetClicked() {
+    mGreyOut->resize();
     mGreyOut->greyOut(true);
 
     mLightInfoWidget->isOpen();
