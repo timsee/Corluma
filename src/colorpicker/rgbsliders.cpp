@@ -14,7 +14,7 @@ RGBSliders::RGBSliders(QWidget* parent) : QWidget(parent) {
     mRedSlider->setColor(QColor(255, 0, 0));
     mRedSlider->setRange(0, 255);
     mRedSlider->setSnapToNearestTick(true);
-    mRedSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mRedSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mRedSlider, SIGNAL(valueChanged(int)), this, SLOT(redSliderChanged(int)));
     connect(mRedSlider, SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
 
@@ -22,7 +22,7 @@ RGBSliders::RGBSliders(QWidget* parent) : QWidget(parent) {
     mGreenSlider->setColor(QColor(0, 255, 0));
     mGreenSlider->setRange(0, 255);
     mGreenSlider->setSnapToNearestTick(true);
-    mGreenSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mGreenSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mGreenSlider, SIGNAL(valueChanged(int)), this, SLOT(greenSliderChanged(int)));
     connect(mGreenSlider, SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
 
@@ -30,7 +30,7 @@ RGBSliders::RGBSliders(QWidget* parent) : QWidget(parent) {
     mBlueSlider->setRange(0, 255);
     mBlueSlider->setColor(QColor(0, 0, 255));
     mBlueSlider->setSnapToNearestTick(true);
-    mBlueSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mBlueSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mBlueSlider, SIGNAL(valueChanged(int)), this, SLOT(blueSliderChanged(int)));
     connect(mBlueSlider, SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
 
@@ -40,24 +40,15 @@ RGBSliders::RGBSliders(QWidget* parent) : QWidget(parent) {
 
     mRLabel = new QLabel(this);
     mRLabel->setText("R");
-    mRLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    mRLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     mGLabel = new QLabel(this);
     mGLabel->setText("G");
-    mGLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    mGLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     mBLabel = new QLabel(this);
     mBLabel->setText("B");
-    mBLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-
-    mLayout = new QGridLayout;
-    mLayout->addWidget(mRLabel, 1, 0);
-    mLayout->addWidget(mRedSlider, 1, 1);
-    mLayout->addWidget(mGLabel, 2, 0);
-    mLayout->addWidget(mGreenSlider, 2, 1);
-    mLayout->addWidget(mBLabel, 3, 0);
-    mLayout->addWidget(mBlueSlider, 3, 1);
-    setLayout(mLayout);
+    mBLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
 void RGBSliders::changeColor(const QColor& color) {
@@ -91,6 +82,25 @@ void RGBSliders::enable(bool enable) {
     }
     setEnabled(enable);
 }
+
+
+void RGBSliders::resizeEvent(QResizeEvent*) {
+    auto labelSize = width() / 20;
+    auto sliderSize = width() - labelSize;
+    auto sliderHeight = height() / 3;
+    auto yPos = 0;
+    mRLabel->setGeometry(0, yPos, labelSize, sliderHeight);
+    mRedSlider->setGeometry(labelSize, yPos, sliderSize, sliderHeight);
+    yPos += sliderHeight;
+
+    mGLabel->setGeometry(0, yPos, labelSize, sliderHeight);
+    mGreenSlider->setGeometry(labelSize, yPos, sliderSize, sliderHeight);
+    yPos += sliderHeight;
+
+    mBLabel->setGeometry(0, yPos, labelSize, sliderHeight);
+    mBlueSlider->setGeometry(labelSize, yPos, sliderSize, sliderHeight);
+}
+
 
 void RGBSliders::redSliderChanged(int newValue) {
     emit colorChanged(QColor(newValue, color().green(), color().blue()));

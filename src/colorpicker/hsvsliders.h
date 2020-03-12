@@ -71,6 +71,10 @@ private slots:
      */
     void releasedSlider();
 
+protected:
+    /// called when the widget resizes, handles sizing the labels and sliders
+    void resizeEvent(QResizeEvent*);
+
 private:
     /// helper to generate a color off of HSV.
     QColor generateColor(int hue, int saturation, int value);
@@ -91,22 +95,17 @@ private:
     cor::Slider* mValueSlider;
 
     /*!
-     * \brief mHLabel puts that little "R" in front of the slider.
+     * \brief mHLabel puts that little "H" in front of the slider.
      */
     QLabel* mHLabel;
     /*!
-     * \brief mSLabel puts that little "G" in front of the slider.
+     * \brief mSLabel puts that little "S" in front of the slider.
      */
     QLabel* mSLabel;
     /*!
-     * \brief mVLabel puts that little "B" in front of the slider.
+     * \brief mVLabel puts that little "V" in front of the slider.
      */
     QLabel* mVLabel;
-
-    /*!
-     * \brief mLayout layout used to arrange the RGB sliders.
-     */
-    QGridLayout* mLayout;
 };
 
 #endif // HSVSLIDERS_H

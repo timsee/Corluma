@@ -67,15 +67,10 @@ void TouchListener::moveEvent(QMouseEvent* event) {
                                        mLeftHandMenu->width(),
                                        mLeftHandMenu->height());
 
-
             // partial greyout should be 100 when menu is fully out, and 0 when its fully in
             const auto greyLevel = std::uint32_t(mLeftHandMenu->showingWidth()
                                                  / double(mLeftHandMenu->width()) * 100.0);
             mMainWindow->greyOut()->partialGreyOut(greyLevel);
-        }
-
-        if (pos.x() == mLeftHandMenu->width()) {
-            mMainWindow->pushInLeftHandMenu();
         }
     }
 }

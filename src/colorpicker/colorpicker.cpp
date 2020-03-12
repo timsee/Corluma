@@ -53,10 +53,8 @@ void ColorPicker::resizeWheel() {
 
     int yPos = 0;
     mColorWheel->setGeometry(0, yPos, width(), height() * 14 / 20);
+
     yPos += mColorWheel->height();
     mPlaceholder->setGeometry(0, yPos, width(), height() * 6 / 20);
-
-    const auto& size = QSize(width(), (height() - mPlaceholder->height()));
-    mColorWheel->setMinimumSize(size);
     mColorWheel->resize();
 }

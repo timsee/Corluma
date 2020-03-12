@@ -52,6 +52,10 @@ signals:
      */
     void temperatureAndBrightnessChanged(std::uint32_t temperature, std::uint32_t brightness);
 
+protected:
+    /// called when the widget resizes, handles sizing the labels and sliders
+    void resizeEvent(QResizeEvent*);
+
 private slots:
 
     /*!
@@ -91,17 +95,6 @@ private:
 
     /// currently unused, but in place so that slider sizes match other layouts
     QLabel* mMidLabel;
-
-    /*!
-     * \brief mPlaceholder unused label that is instead used to keep the layout of the slider
-     *        consistent wtih the other bottom layouts of the ColorPicker.
-     */
-    QLabel* mPlaceholder;
-
-    /*!
-     * \brief mLayout layout used to arrange the sliders.
-     */
-    QGridLayout* mLayout;
 };
 
 #endif // TEMPBRIGHTSLIDERS_H

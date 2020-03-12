@@ -362,19 +362,28 @@ void BridgeDiscovery::handleInitialDiscoveryPacket(const QString& fullIP,
 #endif
 
     if (!id.isEmpty()) {
+        // TODO: more elegant solution for bridgeToMove?
         hue::Bridge bridgeToMove;
         bool bridgeFound = false;
+        std::vector<hue::Bridge> bridgesToDelete;
         for (auto bridge : mNotFoundBridges) {
-            if ((bridge.id() == id) || (bridge.IP() == IP && bridge.username() == username)) {
+            if ((bridge.id() == id) || (bridge.IP() == IP)) {
+                bridgesToDelete.push_back(bridge);
                 bridgeFound = true;
                 bridgeToMove = bridge;
-                bridgeToMove.id(id);
-                auto it = std::find(mNotFoundBridges.begin(), mNotFoundBridges.end(), bridge);
-                mNotFoundBridges.erase(it);
-                break;
             }
         }
+
         if (bridgeFound) {
+            // add the proper bridge
+            bridgeToMove.id(id);
+            bridgeToMove.username(username);
+
+            // remove the examples from not found
+            for (auto bridge : bridgesToDelete) {
+                auto it = std::find(mNotFoundBridges.begin(), mNotFoundBridges.end(), bridge);
+                mNotFoundBridges.erase(it);
+            }
 #ifdef DEBUG_BRIDGE_DISCOVERY
             qDebug() << __func__
                      << "found bridge in not found bridges, removing and updating found bridges";
@@ -383,8 +392,7 @@ void BridgeDiscovery::handleInitialDiscoveryPacket(const QString& fullIP,
             updateJSON(bridge);
         } else {
 #ifdef DEBUG_BRIDGE_DISCOVERY
-            qDebug() << __func__ << "did not find bridge in list of not found bridges"
-                     << jsonResponse;
+            qDebug() << __func__ << "did not find bridge in list of not found bridges" << object;
 #endif
         }
     } else {

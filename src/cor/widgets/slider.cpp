@@ -5,6 +5,7 @@
  */
 
 #include "cor/widgets/slider.h"
+#include "utils/qt.h"
 
 #include <QApplication>
 #include <QFontMetrics>
@@ -14,6 +15,13 @@
 #include <QtGui>
 
 namespace cor {
+
+int handleSize() {
+    // slider handle is only controllable via stylesheets but the values needed for style sheets
+    // breaks in some environments (such as high pixel density android screens). to get around this,
+    // we always set the handle size programmatically whenever we udpate the stylesheet.
+    return int(cor::applicationSize().width() / 15.0);
+}
 
 Slider::Slider(QWidget* parent) : QSlider(Qt::Horizontal, parent) {
     mHeightScaleFactor = 1.0f;
@@ -30,18 +38,15 @@ Slider::Slider(QWidget* parent) : QSlider(Qt::Horizontal, parent) {
 
     mType = ESliderType::vanilla;
 
-    mHandleSize = int(width() / 15.0);
-
     adjustStylesheet();
 }
 
 void Slider::resize() {
-    // mSlider->setFixedSize(rect().width(), int(rect().height() * mHeightScaleFactor));
     switch (mType) {
-        case ESliderType::color:
+        case ESliderType::colorLeftBlackRight:
             setColor(mSliderColor);
             break;
-        case ESliderType::gradient:
+        case ESliderType::fullBarGradient:
             setGradient(mSliderColor, mColorGradient);
             break;
         case ESliderType::image:
@@ -55,12 +60,7 @@ void Slider::resize() {
 
 void Slider::setColor(const QColor& color) {
     mSliderColor = color;
-    mType = ESliderType::color;
-
-    // slider handle is only controllable via stylesheets but the values needed for style sheets
-    // breaks in some environments (such as high pixel density android screens). to get around this,
-    // we always set the handle size programmatically whenever we udpate the stylesheet.
-    mHandleSize = int(width() / 15.0);
+    mType = ESliderType::colorLeftBlackRight;
 
     // generate a stylesheet based off of the color with a gradient
     adjustStylesheet();
@@ -69,20 +69,13 @@ void Slider::setColor(const QColor& color) {
 void Slider::setImage(const QString& path) {
     mType = ESliderType::image;
     mPath = path;
-    mHandleSize = int(width() / 15.0);
-
     adjustStylesheet();
 }
 
 void Slider::setGradient(const QColor& leftColor, const QColor& rightColor) {
     mSliderColor = leftColor;
     mColorGradient = rightColor;
-    mType = ESliderType::gradient;
-
-    // slider handle is only controllable via stylesheets but the values needed for style sheets
-    // breaks in some environments (such as high pixel density android screens). to get around this,
-    // we always set the handle size programmatically whenever we udpate the stylesheet.
-    mHandleSize = int(width() / 15.0);
+    mType = ESliderType::fullBarGradient;
 
     // generate a stylesheet based off of the color with a gradient
     adjustStylesheet();
@@ -96,20 +89,27 @@ void Slider::adjustStylesheet() {
             stylesheet = QString("QSlider::handle:horizontal {"
                                  "width: %1px;"
                                  "}")
-                             .arg(QString::number(mHandleSize));
+                             .arg(QString::number(handleSize()));
             break;
-        case ESliderType::color: {
+        case ESliderType::colorLeftBlackRight: {
             QColor darkColor = QColor(int(mSliderColor.red() / 4),
                                       int(mSliderColor.green() / 4),
                                       int(mSliderColor.blue() / 4));
             stylesheet = QString("QSlider::groove:horizontal{ "
-                                 " background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 "
-                                 "rgb(%1, %2, %3), stop: 1 rgb(%4, %5, %6));"
+                                 " background: rgb(32, 31, 31);"
                                  "margin-top: %8px;"
                                  "margin-bottom: %8px;"
                                  "margin-left: 0px;"
                                  "margin-right: 0px;"
                                  "border-radius: 2px;"
+                                 "}"
+                                 "QSlider::sub-page:horizontal{ "
+                                 " background:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 "
+                                 "rgb(%1, %2, %3), stop: 1 rgb(%4, %5, %6));"
+                                 " background: qlineargradient(x1: 0, y1: 0.2, x2: 1, y2: 1, stop: "
+                                 "0 rgb(%1, %2, %3), stop: 1 rgb(%4, %5, %6));"
+                                 "margin-top: %8px;"
+                                 "margin-bottom: %8px;"
                                  "}"
                                  "QSlider::handle:horizontal {"
                                  "width: %7px;"
@@ -120,11 +120,11 @@ void Slider::adjustStylesheet() {
                                   QString::number(mSliderColor.red()),
                                   QString::number(mSliderColor.green()),
                                   QString::number(mSliderColor.blue()),
-                                  QString::number(mHandleSize),
+                                  QString::number(handleSize()),
                                   QString::number(margin));
             break;
         }
-        case ESliderType::gradient: {
+        case ESliderType::fullBarGradient: {
             stylesheet = QString("QSlider::groove:horizontal{ "
                                  " background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 "
                                  "rgb(%1, %2, %3), stop: 1 rgb(%4, %5, %6));"
@@ -143,7 +143,7 @@ void Slider::adjustStylesheet() {
                                   QString::number(mColorGradient.red()),
                                   QString::number(mColorGradient.green()),
                                   QString::number(mColorGradient.blue()),
-                                  QString::number(mHandleSize),
+                                  QString::number(handleSize()),
                                   QString::number(margin));
             break;
         }
@@ -162,7 +162,7 @@ void Slider::adjustStylesheet() {
                                  "QSlider::handle:horizontal {"
                                  "width: %2px;"
                                  "}")
-                             .arg(mPath, QString::number(mHandleSize), QString::number(margin));
+                             .arg(mPath, QString::number(handleSize()), QString::number(margin));
             break;
     }
     setStyleSheet(stylesheet);

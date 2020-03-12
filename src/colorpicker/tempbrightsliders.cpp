@@ -24,7 +24,7 @@ TempBrightSliders::TempBrightSliders(QWidget* parent) : QWidget(parent) {
     mBrightnessSlider->setValue(brightness);
     mBrightnessSlider->blockSignals(false);
     mBrightnessSlider->setSnapToNearestTick(true);
-    mBrightnessSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mBrightnessSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mBrightnessSlider->setHeightPercentage(0.8f);
     connect(mBrightnessSlider, SIGNAL(valueChanged(int)), this, SLOT(brightnessSliderChanged(int)));
     connect(mBrightnessSlider, SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
@@ -37,7 +37,7 @@ TempBrightSliders::TempBrightSliders(QWidget* parent) : QWidget(parent) {
     mTemperatureSlider->setValue(temperature);
     mTemperatureSlider->blockSignals(false);
     mTemperatureSlider->setSnapToNearestTick(true);
-    mTemperatureSlider->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mTemperatureSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mTemperatureSlider->setHeightPercentage(0.8f);
     connect(mTemperatureSlider,
             SIGNAL(valueChanged(int)),
@@ -51,21 +51,10 @@ TempBrightSliders::TempBrightSliders(QWidget* parent) : QWidget(parent) {
     // --------------
 
     mTopLabel = new QLabel(this);
-    mTopLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    mTopLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     mMidLabel = new QLabel(this);
-    mMidLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-
-    mPlaceholder = new QLabel(this);
-    mPlaceholder->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-    mLayout = new QGridLayout;
-    mLayout->addWidget(mTopLabel, 1, 0);
-    mLayout->addWidget(mTemperatureSlider, 1, 1);
-    mLayout->addWidget(mMidLabel, 2, 0);
-    mLayout->addWidget(mBrightnessSlider, 2, 1);
-    mLayout->addWidget(mPlaceholder, 3, 1);
-    setLayout(mLayout);
+    mMidLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
 void TempBrightSliders::changeTemperatureAndBrightness(std::uint32_t temperature,
@@ -82,10 +71,22 @@ void TempBrightSliders::changeTemperatureAndBrightness(std::uint32_t temperature
 void TempBrightSliders::changeBrightness(std::uint32_t brightness) {
     mBrightnessSlider->blockSignals(true);
     mBrightnessSlider->setValue(int(brightness));
-    mBrightnessSlider->setGradient(
-        QColor(0, 0, 0),
-        cor::colorTemperatureToRGB(mTemperatureSlider->value()));
+    mBrightnessSlider->setGradient(QColor(0, 0, 0),
+                                   cor::colorTemperatureToRGB(mTemperatureSlider->value()));
     mBrightnessSlider->blockSignals(false);
+}
+
+void TempBrightSliders::resizeEvent(QResizeEvent*) {
+    auto labelSize = width() / 20;
+    auto sliderSize = width() - labelSize;
+    auto sliderHeight = height() / 3;
+    auto yPos = 0;
+    mTopLabel->setGeometry(0, yPos, labelSize, sliderHeight);
+    mBrightnessSlider->setGeometry(labelSize, yPos, sliderSize, sliderHeight);
+    yPos += sliderHeight;
+
+    mMidLabel->setGeometry(0, yPos, labelSize, sliderHeight);
+    mTemperatureSlider->setGeometry(labelSize, yPos, sliderSize, sliderHeight);
 }
 
 
@@ -109,13 +110,11 @@ void TempBrightSliders::enable(bool enable) {
 }
 
 void TempBrightSliders::temperatureSliderChanged(int newValue) {
-    emit temperatureAndBrightnessChanged(newValue,
-                                         std::uint32_t(mBrightnessSlider->value()));
+    emit temperatureAndBrightnessChanged(newValue, std::uint32_t(mBrightnessSlider->value()));
 }
 
 void TempBrightSliders::brightnessSliderChanged(int newValue) {
-    emit temperatureAndBrightnessChanged(mTemperatureSlider->value(),
-                                         std::uint32_t(newValue));
+    emit temperatureAndBrightnessChanged(mTemperatureSlider->value(), std::uint32_t(newValue));
 }
 
 void TempBrightSliders::releasedSlider() {

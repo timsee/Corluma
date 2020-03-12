@@ -789,4 +789,11 @@ ___
 - Fixed bugs with `TouchListener`.
 
 
+### **v0.19.2**
+#### Bug Fixes
+- Fixed a discovery bug when Hue Bridges change IP addresses.
+- Fixed a layout bug with sliders in the `ColorPicker`.
+- Fixed lag when moving the `LeftHandMenu` in android.
+
+
 

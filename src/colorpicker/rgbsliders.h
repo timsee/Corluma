@@ -42,6 +42,10 @@ signals:
      */
     void colorChanged(QColor color);
 
+protected:
+    /// called when the widget resizes, handles sizing the labels and sliders
+    void resizeEvent(QResizeEvent*);
+
 private slots:
 
     /*!
@@ -96,11 +100,6 @@ private:
      * \brief mBLabel puts that little "B" in front of the slider.
      */
     QLabel* mBLabel;
-
-    /*!
-     * \brief mLayout layout used to arrange the RGB sliders.
-     */
-    QGridLayout* mLayout;
 };
 
 #endif // RGBSLIDERS_H

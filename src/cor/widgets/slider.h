@@ -10,7 +10,7 @@
 namespace cor {
 
 /// mode for slider
-enum class ESliderType { vanilla, color, image, gradient };
+enum class ESliderType { vanilla, colorLeftBlackRight, image, fullBarGradient };
 
 /// standard background color of groove of slider
 static QColor kSliderBackgroundColor(32, 31, 31);

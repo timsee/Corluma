@@ -45,24 +45,15 @@ HSVSliders::HSVSliders(QWidget* parent) : QWidget(parent) {
 
     mHLabel = new QLabel(this);
     mHLabel->setText("H");
-    mHLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    mHLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     mSLabel = new QLabel(this);
     mSLabel->setText("S");
-    mSLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    mSLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     mVLabel = new QLabel(this);
     mVLabel->setText("V");
-    mVLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-
-    mLayout = new QGridLayout;
-    mLayout->addWidget(mHLabel, 1, 0);
-    mLayout->addWidget(mHueSlider, 1, 1);
-    mLayout->addWidget(mSLabel, 2, 0);
-    mLayout->addWidget(mSaturationSlider, 2, 1);
-    mLayout->addWidget(mVLabel, 3, 0);
-    mLayout->addWidget(mValueSlider, 3, 1);
-    setLayout(mLayout);
+    mVLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
 void HSVSliders::changeColor(const QColor& mColor, std::uint32_t brightness) {
@@ -141,6 +132,23 @@ QColor HSVSliders::generateColor(int hue, int saturation, int value) {
         newColor.setHsvF(hue / 359.0, saturation / 255.0, value / 100.0);
     }
     return newColor;
+}
+
+void HSVSliders::resizeEvent(QResizeEvent*) {
+    auto labelSize = width() / 20;
+    auto sliderSize = width() - labelSize;
+    auto sliderHeight = height() / 3;
+    auto yPos = 0;
+    mHLabel->setGeometry(0, yPos, labelSize, sliderHeight);
+    mHueSlider->setGeometry(labelSize, yPos, sliderSize, sliderHeight);
+    yPos += sliderHeight;
+
+    mSLabel->setGeometry(0, yPos, labelSize, sliderHeight);
+    mSaturationSlider->setGeometry(labelSize, yPos, sliderSize, sliderHeight);
+    yPos += sliderHeight;
+
+    mVLabel->setGeometry(0, yPos, labelSize, sliderHeight);
+    mValueSlider->setGeometry(labelSize, yPos, sliderSize, sliderHeight);
 }
 
 std::uint32_t HSVSliders::brightness() {
