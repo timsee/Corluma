@@ -796,4 +796,11 @@ ___
 - Fixed lag when moving the `LeftHandMenu` in android.
 
 
+### **v0.19.3**
+#### Bug Fixes
+- Fixed bugs with handle sizes of `cor::Slider` in certain environments.
+- Fix bugs in layouts with overlapping widgets.
+- Fixed a bug where `GreyoutOverlay` wasn't showing properly.
+
+
 

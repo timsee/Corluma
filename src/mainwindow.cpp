@@ -244,9 +244,6 @@ void MainWindow::loadPages() {
                 this,
                 SLOT(topMenuButtonPressed(QString)));
 
-        // push the greyout and lefthand menu up
-        mLeftHandMenu->raise();
-        mGreyOut->raise();
         mGreyOut->resize();
 
         // --------------
@@ -275,6 +272,7 @@ void MainWindow::loadPages() {
 
         // mark pages as loaded
         mPagesLoaded = true;
+        reorderWidgets();
         resize();
 
         setupStateObserver();
@@ -342,8 +340,7 @@ void MainWindow::resetStateUpdates() {
 
 void MainWindow::pushOutDiscovery() {
     if (mFirstLoad) {
-        mTopMenu->showMenu();
-        mGreyOut->raise();
+        reorderWidgets();
         mFirstLoad = false;
         mMainViewport->pageChanged(EPage::colorPage, true);
         if (!mLeftHandMenu->alwaysOpen()) {
@@ -387,9 +384,7 @@ void MainWindow::switchToColorPage() {
     mLeftHandMenu->buttonPressed(EPage::colorPage);
     pushOutDiscovery();
     if (!mSettingsPage->isOpen()) {
-        mTopMenu->showMenu();
-        mGreyOut->raise();
-        mDiscoveryPage->raise();
+        reorderWidgets();
         mMainViewport->pageChanged(EPage::colorPage);
     }
 }
@@ -409,8 +404,7 @@ void MainWindow::closeDiscoveryWithoutTransition() {
     loadPages();
     mFirstLoad = false;
 
-    mTopMenu->showMenu();
-    mGreyOut->raise();
+    reorderWidgets();
     mDiscoveryPage->setGeometry(QRect(-mDiscoveryPage->width(),
                                       0,
                                       mDiscoveryPage->geometry().width(),
@@ -430,6 +424,8 @@ void MainWindow::editButtonClicked(bool isMood) {
         mEditMoodPage->resize();
         mEditMoodPage->pushIn();
         mEditMoodPage->isOpen(true);
+        mGreyOut->greyOut(true);
+        mEditMoodPage->raise();
 
         auto result = mGroups->moods().item(
             QString::number(mMainViewport->moodPage()->currentMood()).toStdString());
@@ -733,6 +729,14 @@ bool MainWindow::isAnyWidgetAbove() {
 
 void MainWindow::openNewGroupMenu() {
     editButtonClicked(false);
+}
+
+void MainWindow::reorderWidgets() {
+    if (mPagesLoaded) {
+        mTopMenu->showMenu();
+        mLeftHandMenu->raise();
+    }
+    mGreyOut->raise();
 }
 
 void MainWindow::setupStateObserver() {

@@ -129,7 +129,6 @@ QSize applicationSize();
  */
 bool leftHandMenuMoving();
 
-
 } // namespace cor
 
 #endif // COR_UTILS_QT_H

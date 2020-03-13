@@ -211,6 +211,10 @@ private:
     /// programmatically trigger moving the floating layout
     void moveFloatingLayout();
 
+    /// runs raise on the widgets in order.
+    /// TODO: can I get rid of this completely?
+    void reorderWidgets();
+
     /// resize
     void resize();
 

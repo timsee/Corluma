@@ -32,4 +32,16 @@ bool leftHandMenuMoving() {
     return false;
 }
 
+bool leftHandMenuAlwaysOpen() {
+    for (auto widget : QApplication::topLevelWidgets()) {
+        if (QString(widget->metaObject()->className()) == "MainWindow") {
+            // cast to mainwindow
+            auto mainWindow = qobject_cast<MainWindow*>(widget);
+            return mainWindow->leftHandMenu()->alwaysOpen();
+        }
+    }
+    return false;
+}
+
+
 } // namespace cor

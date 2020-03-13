@@ -201,8 +201,8 @@ private:
     /// second color for the grident option
     QColor mColorGradient;
 
-    /// size of the handle of the slider
-    int mHandleSize;
+    /// size of the slider
+    QSize mHandleSize;
 
     /// type of the slider
     ESliderType mType;
