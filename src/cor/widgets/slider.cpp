@@ -88,8 +88,8 @@ void Slider::setGradient(const QColor& leftColor, const QColor& rightColor) {
 
 void Slider::adjustStylesheet() {
     QString stylesheet;
-    auto margin = (height() * (1.0f - mHeightScaleFactor)) / 2.0f;
-    auto handleMargin = (height() - mHandleSize.height()) / 2.0f;
+    auto margin = int((height() * (1.0f - mHeightScaleFactor)) / 2.0f);
+    auto handleMargin = int((height() - mHandleSize.height()) / 2.0f);
     switch (mType) {
         case ESliderType::vanilla:
             stylesheet = QString("QSlider::handle:horizontal {"

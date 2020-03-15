@@ -803,4 +803,11 @@ ___
 - Fixed a bug where `GreyoutOverlay` wasn't showing properly.
 
 
+### **v0.19.4**
+#### The GroupButtonsWidget Update
+_This is the first of a series of updates to address design issues in the `ListRoomWidget`. In this update, the main focus was simplifying the relationship between `ListRoomWidget` and `GroupButtonsWidget`._
+- Simplified `GroupButtonsWidget` and `cor::GroupButton`.
+- Simplified the relationship between `ListRoomWidget` and `GroupButtonsWidget`.
+- Added a system to query the last time any `CommType` received an update.
+
 

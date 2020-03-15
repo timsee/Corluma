@@ -71,6 +71,9 @@ public:
     /// true if this CommType is currently active, false if its not.
     bool isActive();
 
+    /// stores the last time a message was sent to the CommType
+    const QTime& lastUpdateTime() const noexcept { return mLastSendTime; }
+
     // ----------------------------
     // Controller and Device Management
     // ----------------------------

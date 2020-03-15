@@ -70,13 +70,25 @@ CommArduCor::CommArduCor(QObject* parent) : QObject(parent) {
 }
 
 
-bool CommArduCor::isActive()
-{
+bool CommArduCor::isActive() {
     return mUDP->isActive()
 #ifndef MOBILE_BUILD
-        && mSerial->isActive()
+           && mSerial->isActive()
 #endif
-        && mHTTP->isActive();
+           && mHTTP->isActive();
+}
+
+QTime CommArduCor::lastUpdateTime() {
+    auto time = mUDP->lastUpdateTime();
+#ifndef MOBILE_BUILD
+    if (time < mSerial->lastUpdateTime()) {
+        time = mSerial->lastUpdateTime();
+    }
+#endif
+    if (time < mHTTP->lastUpdateTime()) {
+        time = mHTTP->lastUpdateTime();
+    }
+    return time;
 }
 
 bool CommArduCor::preparePacketForTransmission(const cor::Controller& controller, QString& packet) {

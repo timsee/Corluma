@@ -200,7 +200,10 @@ private:
     void updateSingleColorButton();
 
     /// stored values for last devices to prevent unnecessary renders
-    std::vector<cor::Light> mLastDevices;
+    std::vector<cor::Light> mLastDataLights;
+
+    /// last time lights were rendered.
+    QTime mLastRenderTime;
 
     /// stores number of rooms to check if resize is needed
     std::size_t mNumberOfRooms;

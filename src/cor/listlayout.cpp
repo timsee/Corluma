@@ -13,7 +13,11 @@ ListLayout::ListLayout(EListType type) : mType(type) {}
 
 void ListLayout::insertWidget(cor::ListItemWidget* widget) {
     auto result = mWidgetDictionary.insert(widget->key().toStdString(), widget);
-    GUARD_EXCEPTION(result, "Widget insertion failed");
+    if (!result) {
+        std::string errorString = "Widget insertion failed: ";
+        errorString.append(widget->key().toStdString().c_str());
+        THROW_EXCEPTION(errorString);
+    }
     mWidgets.push_back(widget);
 }
 

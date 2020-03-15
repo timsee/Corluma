@@ -77,6 +77,10 @@ public:
     /// hides the group buttons widget (if it has one) and all the listdevicewidgets
     void closeWidget();
 
+    /// true if the widget is currently in an open state (and showing groups or lights) or closed
+    /// (showing just its name)
+    bool isOpen() const noexcept { return mIsOpen; }
+
     /// getter for the room data.
     const cor::Room& room() { return mRoom; }
 
@@ -88,9 +92,6 @@ public:
 
     /// show the devices provided
     void showDevices(const std::vector<cor::Light>& devices);
-
-    /// update the top widget
-    void updateTopWidget();
 
     /// returns the number of widgets shown.
     std::size_t numberOfWidgetsShown();
@@ -158,6 +159,12 @@ private slots:
     void handleToggledSwitch(QString key, bool isOn) { emit deviceSwitchToggled(key, isOn); }
 
 private:
+    /// update the top widget
+    void updateTopWidget();
+
+    /// true if the room has subgroups, false if it doesn't
+    bool hasSubgroups() const noexcept { return !mRoom.subgroups().empty(); }
+
     /// type of widget
     cor::EWidgetType mType;
 
@@ -194,6 +201,9 @@ private:
 
     /// checks if a group with no subgroups should show widgets
     bool checkIfShowWidgets();
+
+    /// true if showing lights and groups, false if just showing name.
+    bool mIsOpen;
 
     /// helper to count the checked and reachable devices.
     std::pair<uint32_t, uint32_t> countCheckedAndReachableDevices(const cor::Group& group);

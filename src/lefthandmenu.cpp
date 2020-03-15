@@ -31,10 +31,14 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     mData = lights;
     mGroups = groups;
     mParentSize = parent->size();
+    mLastRenderTime = QTime::currentTime();
 
     auto width = int(mParentSize.width() * 0.66f);
     setGeometry(width * -1, 0, width, parent->height());
     mIsIn = false;
+    if (mAlwaysOpen) {
+        mIsIn = true;
+    }
     mNumberOfRooms = 0;
 
     mSpacer = new QWidget(this);
@@ -170,7 +174,6 @@ void LeftHandMenu::resize() {
 
 void LeftHandMenu::pushIn() {
     mIsIn = true;
-    updateLights();
     raise();
     auto transTime =
         int(((this->width() - showingWidth()) / double(this->width())) * TRANSITION_TIME_MSEC);
@@ -247,6 +250,8 @@ void LeftHandMenu::updateDataGroupInUI(const cor::Room& dataGroup,
 }
 
 void LeftHandMenu::updateLights() {
+    mLastRenderTime = QTime::currentTime();
+
     // get all rooms
     auto roomList = mGroups->rooms().items();
     // attempt to make a miscellaneous group
@@ -267,7 +272,6 @@ void LeftHandMenu::updateLights() {
     for (const auto& room : mRoomWidgets) {
         numberOfLightsShown += room->numberOfWidgetsShown();
         room->setCheckedDevices(mSelectedLights->lights());
-        room->updateTopWidget();
     }
 
 
@@ -277,12 +281,12 @@ void LeftHandMenu::updateLights() {
         resize();
     }
 
-    if (mData->lights() != mLastDevices) {
+    auto filledDataLights = mComm->commLightsFromVector(mData->lights());
+    if (filledDataLights != mLastDataLights) {
         // take the lights being used as the app's expectation, and get their current state by
         // polling the CommLayer for its understanding of these lights
-        auto commLights = mComm->commLightsFromVector(mData->lights());
-        mLastDevices = commLights;
-        mMainPalette->updateLights(commLights);
+        mLastDataLights = filledDataLights;
+        mMainPalette->updateLights(filledDataLights);
     }
 }
 
@@ -380,15 +384,36 @@ ListRoomWidget* LeftHandMenu::initRoomsWidget(const cor::Room& room, const QStri
 
 int LeftHandMenu::resizeRoomsWidgets() {
     int yPos = 0u;
+    // check if any is open
+    bool isAnyOpen = false;
+    for (auto widget : mRoomWidgets) {
+        if (widget->isOpen()) {
+            isAnyOpen = true;
+        }
+    }
     std::sort(mRoomWidgets.begin(), mRoomWidgets.end(), [](ListRoomWidget* a, ListRoomWidget* b) {
         return a->key() < b->key();
     });
-    for (auto widget : mRoomWidgets) {
-        widget->setVisible(true);
-        widget->setFixedWidth(width());
-        widget->setGeometry(0, yPos, width(), widget->height());
-        widget->resize();
-        yPos += widget->height();
+    if (!isAnyOpen) {
+        for (auto widget : mRoomWidgets) {
+            widget->setVisible(true);
+            widget->setFixedWidth(width());
+            widget->setGeometry(0, yPos, width(), widget->height());
+            widget->resize();
+            yPos += widget->height();
+        }
+    } else {
+        for (auto widget : mRoomWidgets) {
+            if (widget->isOpen()) {
+                widget->setVisible(true);
+                widget->setFixedWidth(width());
+                widget->setGeometry(0, yPos, width(), widget->height());
+                widget->resize();
+                yPos += widget->height();
+            } else {
+                widget->setVisible(false);
+            }
+        }
     }
     return yPos;
 }
@@ -445,7 +470,6 @@ void LeftHandMenu::groupSelected(const QString& key, bool shouldSelect) {
 
         for (const auto& widget : mRoomWidgets) {
             widget->setCheckedDevices(mSelectedLights->lights());
-            widget->updateTopWidget();
         }
 
         emit changedDeviceCount();
@@ -470,7 +494,7 @@ void LeftHandMenu::changedGroup(const QString&) {
 
 void LeftHandMenu::renderUI() {
     auto scrollValue = mScrollArea->verticalScrollBar()->value();
-    if ((mIsIn || mAlwaysOpen) && (scrollValue == mLastScrollValue)) {
+    if (mIsIn && (mLastRenderTime < mComm->lastUpdateTime()) && (scrollValue == mLastScrollValue)) {
         updateLights();
     } else {
         mLastScrollValue = scrollValue;

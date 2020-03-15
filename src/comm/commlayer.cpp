@@ -344,6 +344,17 @@ void CommLayer::lightNameChange(const QString& key, const QString& name) {
     }
 }
 
+QTime CommLayer::lastUpdateTime() {
+    QTime time = mArduCor->lastUpdateTime();
+    if (time < mHue->lastUpdateTime()) {
+        time = mHue->lastUpdateTime();
+    }
+    if (time < mNanoleaf->lastUpdateTime()) {
+        time = mNanoleaf->lastUpdateTime();
+    }
+    return time;
+}
+
 void CommLayer::resetStateUpdates(EProtocolType type) {
     if (type == EProtocolType::arduCor) {
         mArduCor->resetStateUpdates();
@@ -397,7 +408,6 @@ void CommLayer::startDiscovery(EProtocolType type) {
         mNanoleaf->discovery()->startDiscovery();
     }
 }
-
 
 void CommLayer::stopDiscovery(EProtocolType type) {
     if (type == EProtocolType::arduCor) {

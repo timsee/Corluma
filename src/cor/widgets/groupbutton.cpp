@@ -20,35 +20,30 @@ namespace cor {
 
 GroupButton::GroupButton(QWidget* parent, const QString& text)
     : QWidget(parent),
+      mButtonState{EGroupButtonState::clearAll},
       mIsSelected{false},
       mReachableCount{0},
-      mCheckedCount{0} {
+      mCheckedCount{0},
+      mTitle{new QLabel(text, this)},
+      mButton{new QLabel(this)}
+{
     const QString transparentStyleSheet = "background-color: rgba(0,0,0,0);";
 
-    mTitle = new QLabel(text, this);
-    mTitle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    mTitle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mTitle->setStyleSheet(transparentStyleSheet);
     mTitle->setAlignment(Qt::AlignVCenter);
 
-    mButtonState = EGroupButtonState::clearAll;
-
-    mButton = new QLabel(this);
-    mButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-    resize();
-
-    mLayout = new QHBoxLayout;
-    mLayout->addWidget(mTitle);
-    mLayout->addWidget(mButton);
-    setLayout(mLayout);
-
-    setMinimumHeight(mTitle->height());
+    mButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     handleSelectAllButton(0u, 0u);
 }
 
 
 void GroupButton::resize() {
-    QSize size = preferredButtonSize();
+    const auto& size = iconSize();
+    // spacer is going to be applied twice, but adds 10% of the space overall.
+    auto spaceWidth = (width() / 20);
+    auto titleWidth = width() - size.width() - spaceWidth * 2;
     mClearAllPixmap = QPixmap(":/images/selectAllIcon.png");
     mClearAllPixmap = mClearAllPixmap.scaled(size.width(),
                                              size.height(),
@@ -67,8 +62,9 @@ void GroupButton::resize() {
                                              Qt::IgnoreAspectRatio,
                                              Qt::SmoothTransformation);
 
-    mTitle->setFixedWidth(width() - preferredButtonSize().width());
-    mButton->setFixedWidth(preferredButtonSize().width());
+    mTitle->setGeometry(spaceWidth, 0, titleWidth, height());
+    mButton->setGeometry(titleWidth + spaceWidth, 0, size.width(), height());
+    mButton->setPixmap(currentPixmap());
 
     if (handleSelectAllButton(mCheckedCount, mReachableCount)) {
         update();
@@ -142,7 +138,6 @@ QColor GroupButton::computeHighlightColor(std::uint32_t checkedDeviceCount,
 
 void GroupButton::resizeEvent(QResizeEvent*) {
     resize();
-    mButton->setPixmap(currentPixmap());
 }
 
 void GroupButton::paintEvent(QPaintEvent*) {
@@ -197,8 +192,8 @@ const QPixmap& GroupButton::currentPixmap() {
     THROW_EXCEPTION("Do not recognize pixmap");
 }
 
-QSize GroupButton::preferredButtonSize() {
-    return {int(mTitle->height() * 0.9), int(mTitle->height() * 0.9)};
+QSize GroupButton::iconSize() {
+    return {int(height() * 0.75), int(height() * 0.75)};
 }
 
 } // namespace cor

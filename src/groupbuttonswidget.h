@@ -46,8 +46,8 @@ public:
     /// key of the currently selected group
     const QString& currentKey() const { return mCurrentKey; }
 
-    /// resizes prorgrammatically
-    void resize(const QSize& topWidgetSize, const QRect& spacerGeometry);
+    /// deselect current group
+    void deselectGroup();
 
     /// update the checked devices of the group that matches the key
     void updateCheckedLights(const QString& key,
@@ -73,6 +73,10 @@ signals:
     /// of its displayed group name.
     void groupSelectAllToggled(QString key, bool selectAll);
 
+protected:
+    /// resizes interal widgets when a resize event is triggered
+    void resizeEvent(QResizeEvent*);
+
 private slots:
 
     /// picks up when a group button is pressed.
@@ -84,6 +88,9 @@ private slots:
     }
 
 private:
+    /// resizes prorgrammatically
+    void resize();
+
     /// ttype of widget
     cor::EWidgetType mType;
 
@@ -107,9 +114,6 @@ private:
 
     /// stores the map of the relabeled named
     cor::Dictionary<std::string> mRelabeledNames;
-
-    /// spacer for the condensed layout
-    QWidget* mSpacer;
 
     /// number of buttons displayed in row
     int mGroupCount;

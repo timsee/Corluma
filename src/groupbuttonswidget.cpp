@@ -15,9 +15,6 @@ GroupButtonsWidget::GroupButtonsWidget(QWidget* parent,
         mGroupCount = 3;
     }
 
-    mSpacer = new QWidget(this);
-    mSpacer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
     for (const auto& group : groups) {
         addGroup(group);
     }
@@ -81,13 +78,7 @@ void GroupButtonsWidget::updateCheckedLights(const QString& key,
 
 void GroupButtonsWidget::buttonPressed(const QString& key) {
     if (key == mCurrentKey) {
-        for (const auto& widget : mButtons) {
-            if (widget->key() == key) {
-                widget->setSelectAll(false);
-            }
-        }
-        emit groupButtonPressed("NO_GROUP");
-        mCurrentKey = "";
+        deselectGroup();
     } else {
         mCurrentKey = key;
         for (const auto& widget : mButtons) {
@@ -105,32 +96,58 @@ std::vector<QString> GroupButtonsWidget::groupNames() {
     return groupList;
 }
 
-void GroupButtonsWidget::resize(const QSize& topWidgetSize, const QRect& spacerGeometry) {
-    setFixedHeight(expectedHeight(topWidgetSize.height()) + spacerGeometry.height());
-    setFixedWidth(topWidgetSize.width());
+void GroupButtonsWidget::resizeEvent(QResizeEvent*) {
+    resize();
+}
 
-    // handle the width for the widgets
-    for (int i = 0; i < int(mButtons.size()); ++i) {
-        int column = i % mGroupCount;
-        int row = i / mGroupCount;
-        int yPos = row * topWidgetSize.height();
-        if ((yPos + topWidgetSize.height()) >= spacerGeometry.y()) {
-            yPos += spacerGeometry.height();
+void GroupButtonsWidget::resize() {
+    if (mCurrentKey == "") {
+        // if no group is selected, display all groups
+        int buttonHeight = int(float(height()) / mButtons.size());
+        for (std::size_t i = 0; i < mButtons.size(); ++i) {
+            int column = i % mGroupCount;
+            int row = i / mGroupCount;
+            int yPos = row * buttonHeight;
+            mButtons[i]->setGeometry(int(column * (width() / mGroupCount)),
+                                     yPos,
+                                     width() / mGroupCount,
+                                     buttonHeight);
+            mButtons[i]->setVisible(true);
         }
-        mButtons[i]->setGeometry(int(column * (topWidgetSize.width() / mGroupCount)),
-                                 yPos,
-                                 topWidgetSize.width() / mGroupCount,
-                                 topWidgetSize.height());
-        mButtons[i]->setVisible(true);
+    } else {
+        // if any group is selected, hide all other groups
+        for (std::size_t i = 0; i < mButtons.size(); ++i) {
+            if (mButtons[i]->key() == mCurrentKey) {
+                mButtons[i]->setGeometry(0, 0, width(), height());
+                mButtons[i]->setVisible(true);
+            } else {
+                mButtons[i]->setVisible(false);
+            }
+        }
     }
-    mSpacer->setGeometry(spacerGeometry);
+}
+
+void GroupButtonsWidget::deselectGroup() {
+    // first deselect the group before setting the key
+    for (const auto& widget : mButtons) {
+        if (widget->key() == mCurrentKey) {
+            widget->setSelectAll(false);
+        }
+    }
+    // now deselect the key
+    mCurrentKey = "";
+    emit groupButtonPressed("NO_GROUP");
 }
 
 int GroupButtonsWidget::expectedHeight(int topWidgetHeight) {
-    if ((mButtons.size() % mGroupCount) == 0) {
-        return int(mButtons.size() / mGroupCount) * topWidgetHeight;
+    if (mCurrentKey == "") {
+        if ((mButtons.size() % mGroupCount) == 0) {
+            return int(mButtons.size() / mGroupCount) * topWidgetHeight;
+        }
+        return int(mButtons.size() / mGroupCount) * topWidgetHeight + topWidgetHeight;
+    } else {
+        return topWidgetHeight;
     }
-    return int(mButtons.size() / mGroupCount) * topWidgetHeight + topWidgetHeight;
 }
 
 int GroupButtonsWidget::groupEndPointY(int topWidgetHeight, const QString& key) {

@@ -82,8 +82,8 @@ private:
      */
     void resizeRightHandIcon(QPixmap pixmap, QPushButton* button);
 
-    /// preferred size of button
-    QSize preferredButtonSize();
+    /// preferred size of icon
+    QSize iconSize();
 
     /// getter for current pixmap
     const QPixmap& currentPixmap();
@@ -94,14 +94,14 @@ private:
     /// true if widget is selected, false otherwise
     bool mIsSelected;
 
-    /// label for checkbox
-    QLabel* mTitle;
-
     /// count of reachable devices
     uint32_t mReachableCount;
 
     /// count of checked devices
     uint32_t mCheckedCount;
+
+    /// label for checkbox
+    QLabel* mTitle;
 
     /*!
      * \brief mButton button that selects all devices when pushed and adds them to the data layer.
@@ -116,9 +116,6 @@ private:
 
     /// pixmap for disabled button
     QPixmap mDisabledPixmap;
-
-    /// layout for widget
-    QHBoxLayout* mLayout;
 };
 
 } // namespace cor

@@ -100,13 +100,6 @@ public:
     /// getter for slider color
     const QColor& color() const noexcept { return mSliderColor; }
 
-signals:
-    /*!
-     * \brief Sends out the value that the slider has been set to after all the processing of
-     * snapping it to a tick or accounting for its minium value or any of that.
-     */
-    void valueChanged(int);
-
 private slots:
     /*!
      * \brief receivedValue called whenever the QSlider signals valueChanged().
