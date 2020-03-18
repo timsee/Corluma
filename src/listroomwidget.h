@@ -43,29 +43,16 @@ public:
                    QWidget* parent);
 
     /*!
-     * \brief setCheckedDevices takes a list of devices and compares it against all devices in the
+     * \brief setCheckedLights takes a list of devices and compares it against all devices in the
      * widget. If the device exists in both the widgets and the devices, it is set as checked.
      * Otherwise, the widget is set to unchecked.
      *
-     * \param devices list of devices to compare to the widget.
+     * \param lights list of lights to compare to the widget.
      */
-    void setCheckedDevices(std::vector<cor::Light> devices);
+    void setCheckedLights(const std::vector<QString>& lights);
 
     /// update the room with new information.
     void updateRoom(const cor::Room& room);
-
-    /*!
-     * \brief devices getter for all devices being displayed by the widget.
-     *
-     * \return all devices being displayed by the widget.
-     */
-    const std::vector<QString>& devices() { return mRoom.lights(); }
-
-    /// getter for just the reachable devices in the group.
-    std::vector<cor::Light> reachableDevices();
-
-    /// getter for checked devices
-    std::vector<cor::Light> checkedDevices();
 
     /*!
      * \brief setShowButtons shows and hides all buttons on the widget
@@ -87,18 +74,6 @@ public:
     /// getter for the desired height of the widget
     int widgetHeightSum();
 
-    /// moves widgets into their proper location on a grid.
-    void moveWidgets(QSize size, QPoint offset);
-
-    /// show the devices provided
-    void showDevices(const std::vector<cor::Light>& devices);
-
-    /// returns the number of widgets shown.
-    std::size_t numberOfWidgetsShown();
-
-    /// resize the widget
-    void resize();
-
 signals:
 
     /*!
@@ -106,9 +81,6 @@ signals:
      * widget key and the device key.
      */
     void deviceClicked(QString, QString);
-
-    /// emits the key and state when on/off switch for a device toggled.
-    void deviceSwitchToggled(QString, bool);
 
     /*!
      * \brief selectAllClicked emitted when select all is clicked. Should add all devices to data
@@ -155,10 +127,19 @@ private slots:
      */
     void handleClicked(const QString& key);
 
-    /// handles when an on/off switch switch for any given device is toggled
-    void handleToggledSwitch(QString key, bool isOn) { emit deviceSwitchToggled(key, isOn); }
-
 private:
+    /// returns the number of widgets shown.
+    std::size_t numberOfWidgetsShown();
+
+    /// resize the widget
+    void resize();
+
+    /// moves widgets into their proper location on a grid.
+    void moveWidgets(QSize size, QPoint offset);
+
+    /// show the devices provided
+    void showLights(const std::vector<cor::Light>& lights);
+
     /// update the top widget
     void updateTopWidget();
 
@@ -186,27 +167,31 @@ private:
     /// widget for showing/hiding and selecting/deselecting
     DropdownTopWidget* mDropdownTopWidget;
 
-    /*!
-     * \brief computeHighlightColor computes the top of the widgets highlight color
-     * based on how many devices are selected. When all devices are selected, it is the
-     * same color as a device's highlight. when only some of the devices are selected,
-     * it is slightly darker.
-     *
-     * \return the QColor that should be used to higlight the widget.
-     */
-    QColor computeHighlightColor();
-
     /// stored data for the group.
     cor::Room mRoom;
 
     /// checks if a group with no subgroups should show widgets
     bool checkIfShowWidgets();
 
+    /*!
+     * \brief updateLightWidgets updates the light widgets with the provided lights
+     * \param lights lights that should run updates
+     * \param updateOnlyVisible true if only the visible lights should update, false if all lights
+     * should update
+     */
+    void updateLightWidgets(const std::vector<cor::Light>& lights, bool updateOnlyVisible);
+
+    /// updates the group names in the GroupButtonsWidget
+    void updateGroupNames(const cor::Room& room);
+
+    /// removes any lights that are not found during an update call.
+    void removeLightsIfNotFound(const cor::Room& room);
+
     /// true if showing lights and groups, false if just showing name.
     bool mIsOpen;
 
-    /// helper to count the checked and reachable devices.
-    std::pair<uint32_t, uint32_t> countCheckedAndReachableDevices(const cor::Group& group);
+    /// helper to count the checked and reachable lights.
+    std::pair<std::uint32_t, std::uint32_t> countCheckedAndReachableLights(const cor::Group& group);
 };
 
 #endif // LISTROOMWIDGET_H

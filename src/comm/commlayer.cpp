@@ -57,7 +57,7 @@ bool CommLayer::discoveryErrorsExist(EProtocolType type) {
     return true;
 }
 
-CommType* CommLayer::commByType(ECommType type) {
+CommType* CommLayer::commByType(ECommType type) const {
     CommType* ptr;
     switch (type) {
 #ifndef MOBILE_BUILD
@@ -277,7 +277,7 @@ std::vector<cor::Light> CommLayer::hueLightsToDevices(std::vector<HueMetadata> h
     return list;
 }
 
-cor::Light CommLayer::lightByID(const QString& ID) {
+cor::Light CommLayer::lightByID(const QString& ID) const {
     const auto& stringID = ID.toStdString();
     for (auto i = 0; i < int(ECommType::MAX); ++i) {
         const auto& result = lightDict(ECommType(i)).item(stringID);

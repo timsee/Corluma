@@ -203,6 +203,17 @@ private:
     bool mIsReachable;
 };
 
+
+/// converts a vector of lights to a vector of IDs that represent the lights
+inline std::vector<QString> lightVectorToIDs(const std::vector<cor::Light>& lightVector) {
+    std::vector<QString> retVector;
+    retVector.reserve(lightVector.size());
+    for (const auto& light : lightVector) {
+        retVector.emplace_back(light.uniqueID());
+    }
+    return retVector;
+}
+
 } // namespace cor
 
 namespace std {

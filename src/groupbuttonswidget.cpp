@@ -45,6 +45,10 @@ void GroupButtonsWidget::addGroup(const QString& group) {
 
 
 void GroupButtonsWidget::removeGroup(const QString& group) {
+    // cancel early if trying to remove "All" group
+    if (group == "All") {
+        return;
+    }
     // get relabeled name
     auto adjustedName = renamedGroup(group);
     auto successful = mRelabeledNames.remove(adjustedName.toStdString());

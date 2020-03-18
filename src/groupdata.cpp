@@ -487,6 +487,23 @@ std::uint64_t GroupData::generateNewUniqueKey() {
     return maxKey + 1;
 }
 
+std::vector<QString> GroupData::groupNamesFromIDs(std::vector<std::uint64_t> IDs) {
+    std::vector<QString> nameVector;
+    nameVector.reserve(IDs.size());
+    for (const auto& subGroupID : IDs) {
+        auto groupResult = groups().item(QString::number(subGroupID).toStdString());
+        // check if group is already in this list
+        if (groupResult.second) {
+            // check if its already in the sub group names
+            auto widgetResult =
+                std::find(nameVector.begin(), nameVector.end(), groupResult.first.name());
+            if (widgetResult == nameVector.end()) {
+                nameVector.emplace_back(groupResult.first.name());
+            }
+        }
+    }
+    return nameVector;
+}
 
 QString GroupData::nameFromID(std::uint64_t ID) {
     auto key = QString::number(ID).toStdString();
@@ -506,4 +523,20 @@ QString GroupData::nameFromID(std::uint64_t ID) {
     }
 
     return {};
+}
+
+std::uint64_t GroupData::groupNameToID(const QString name) {
+    for (const auto& room : mRoomDict.items()) {
+        if (name == room.name()) {
+            return room.uniqueID();
+        }
+    }
+
+    for (const auto& group : mGroupDict.items()) {
+        if (name == group.name()) {
+            return group.uniqueID();
+        }
+    }
+
+    return std::numeric_limits<std::uint64_t>::max();
 }

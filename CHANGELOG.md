@@ -811,3 +811,9 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Added a system to query the last time any `CommType` received an update.
 
 
+### **v0.19.5**
+#### The ListRoomWidget Update
+- Simplified the logic in the `ListRoomWidget`.
+- Fixed miscellaneous bugs.
+
+

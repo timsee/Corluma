@@ -65,8 +65,14 @@ public:
     /// returns a vector of names for the groups.
     std::vector<QString> groupNames();
 
+    /// returns a vector of names for the group IDs that are provided
+    std::vector<QString> groupNamesFromIDs(std::vector<std::uint64_t> IDs);
+
     /// getter for name from ID
     QString nameFromID(std::uint64_t ID);
+
+    /// converts a group name to a ID, WARNING: this is not fast.
+    std::uint64_t groupNameToID(const QString name);
 
     /// true if a group is a room, false if its a group
     bool isGroupARoom(const cor::Group& group);

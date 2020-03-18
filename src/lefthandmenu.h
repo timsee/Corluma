@@ -205,12 +205,6 @@ private:
     /// last time lights were rendered.
     QTime mLastRenderTime;
 
-    /// stores number of rooms to check if resize is needed
-    std::size_t mNumberOfRooms;
-
-    /// stores the number of shown lights to check if resize is needed
-    std::size_t mNumberOfShownLights;
-
     /// used to skip rendering while scrolling
     int mLastScrollValue;
 

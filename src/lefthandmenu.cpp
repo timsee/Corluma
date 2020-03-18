@@ -23,7 +23,6 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
                            GroupData* groups,
                            QWidget* parent)
     : QWidget(parent) {
-    mNumberOfShownLights = 0;
     mLastScrollValue = 0;
     mAlwaysOpen = alwaysOpen;
     mSelectedLights = devices;
@@ -39,7 +38,6 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     if (mAlwaysOpen) {
         mIsIn = true;
     }
-    mNumberOfRooms = 0;
 
     mSpacer = new QWidget(this);
     mSpacer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -268,17 +266,9 @@ void LeftHandMenu::updateLights() {
     }
 
     // get the number of lights shown
-    std::uint32_t numberOfLightsShown = 0;
+    auto lightIDs = cor::lightVectorToIDs(mSelectedLights->lights());
     for (const auto& room : mRoomWidgets) {
-        numberOfLightsShown += room->numberOfWidgetsShown();
-        room->setCheckedDevices(mSelectedLights->lights());
-    }
-
-
-    if (roomList.size() != mNumberOfRooms || numberOfLightsShown != mNumberOfShownLights) {
-        mNumberOfShownLights = numberOfLightsShown;
-        mNumberOfRooms = roomList.size();
-        resize();
+        room->setCheckedLights(lightIDs);
     }
 
     auto filledDataLights = mComm->commLightsFromVector(mData->lights());
@@ -399,7 +389,6 @@ int LeftHandMenu::resizeRoomsWidgets() {
             widget->setVisible(true);
             widget->setFixedWidth(width());
             widget->setGeometry(0, yPos, width(), widget->height());
-            widget->resize();
             yPos += widget->height();
         }
     } else {
@@ -408,7 +397,6 @@ int LeftHandMenu::resizeRoomsWidgets() {
                 widget->setVisible(true);
                 widget->setFixedWidth(width());
                 widget->setGeometry(0, yPos, width(), widget->height());
-                widget->resize();
                 yPos += widget->height();
             } else {
                 widget->setVisible(false);
@@ -436,43 +424,29 @@ void LeftHandMenu::lightClicked(const QString&, const QString& deviceKey) {
 }
 
 void LeftHandMenu::groupSelected(const QString& key, bool shouldSelect) {
-    bool isValid = false;
-    std::vector<cor::Light> lights;
-    // loop through all groups and subgroups, adding or removing lists only if a group is found
-    for (const auto& widget : mRoomWidgets) {
-        // check if group is the room itself
-        if (widget->key() == key) {
-            isValid = true;
-            lights = widget->reachableDevices();
-        }
-
-        // check if group is a subgroup of a room
-        for (const auto& groupID : widget->room().subgroups()) {
-            const auto& group = mGroups->groups().item(QString::number(groupID).toStdString());
-            if (group.second) {
-                if (group.first.name() == key) {
-                    isValid = true;
-                    lights = mComm->lightListFromGroup(group.first);
-                }
+    // convert the group name to an ID
+    // TODO: remove the need for this call
+    auto ID = mGroups->groupNameToID(key);
+    if (ID != std::numeric_limits<std::uint64_t>::max()) {
+        // get the full group from the name
+        auto group = mGroups->groups().item(QString::number(ID).toStdString());
+        if (group.second) {
+            auto lightIDs = group.first.lights();
+            auto lights = mComm->lightsByIDs(group.first.lights());
+            // if the group selected is found, either select or deselect it
+            if (shouldSelect) {
+                mSelectedLights->addLights(lights);
+            } else {
+                mSelectedLights->removeLights(lights);
             }
+            updateLights();
+
+            auto selectedLightIDs = cor::lightVectorToIDs(mSelectedLights->lights());
+            for (const auto& widget : mRoomWidgets) {
+                widget->setCheckedLights(selectedLightIDs);
+            }
+            emit changedDeviceCount();
         }
-    }
-
-    // if the group selected is found, either select or deselect it
-    if (isValid) {
-        if (shouldSelect) {
-            mSelectedLights->addLights(lights);
-        } else {
-            mSelectedLights->removeLights(lights);
-        }
-
-        updateLights();
-
-        for (const auto& widget : mRoomWidgets) {
-            widget->setCheckedDevices(mSelectedLights->lights());
-        }
-
-        emit changedDeviceCount();
     }
 }
 

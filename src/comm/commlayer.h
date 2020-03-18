@@ -114,12 +114,21 @@ public:
      * \param type the communication type to request.
      * \return a hash table of all connected devices of the given type.
      */
-    const cor::Dictionary<cor::Light>& lightDict(ECommType type) {
+    const cor::Dictionary<cor::Light>& lightDict(ECommType type) const {
         return commByType(type)->lightDict();
     }
 
     /// looks up a light by its unique ID and returns its metadata and current state
-    cor::Light lightByID(const QString& ID);
+    cor::Light lightByID(const QString& ID) const;
+
+    /// converts a vector of unique IDs to a vector cor::Lights
+    std::vector<cor::Light> lightsByIDs(const std::vector<QString> IDs) const {
+        std::vector<cor::Light> lights;
+        for (const auto& ID : IDs) {
+            lights.push_back(lightByID(ID));
+        }
+        return lights;
+    }
 
     /// takes the unique ID's of the lights provided, and returns their state according to comm
     /// updates
@@ -239,7 +248,7 @@ private:
      * \param type the comm type to get a point two
      * \return the raw CommType ptr based off the given commType
      */
-    CommType* commByType(ECommType type);
+    CommType* commByType(ECommType type) const;
 };
 
 #endif // COMMLAYER_H
