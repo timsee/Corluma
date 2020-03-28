@@ -9,7 +9,7 @@
 #include "appsettings.h"
 #include "cor/widgets/checkbox.h"
 #include "cor/widgets/slider.h"
-#include "groupdata.h"
+#include "data/groupdata.h"
 #include "timeoutwidget.h"
 
 /*!

@@ -30,16 +30,41 @@ CommLayer::CommLayer(QObject* parent, GroupData* parser) : QObject(parent), mGro
             SIGNAL(updateReceived(ECommType)),
             this,
             SLOT(receivedUpdate(ECommType)));
+    connect(mArduCor.get(),
+            SIGNAL(newLightFound(ECommType, QString)),
+            this,
+            SLOT(lightFound(ECommType, QString)));
+    connect(mArduCor.get(),
+            SIGNAL(lightDeleted(ECommType, QString)),
+            this,
+            SLOT(deletedLight(ECommType, QString)));
 
     mNanoleaf = std::make_shared<CommNanoleaf>();
     connect(mNanoleaf.get(),
             SIGNAL(updateReceived(ECommType)),
             this,
             SLOT(receivedUpdate(ECommType)));
+    connect(mNanoleaf.get(),
+            SIGNAL(newLightFound(ECommType, QString)),
+            this,
+            SLOT(lightFound(ECommType, QString)));
+    connect(mNanoleaf.get(),
+            SIGNAL(lightDeleted(ECommType, QString)),
+            this,
+            SLOT(deletedLight(ECommType, QString)));
+
     mNanoleaf->discovery()->connectUPnP(mUPnP);
 
     mHue = std::make_shared<CommHue>(mUPnP, parser);
     connect(mHue.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
+    connect(mHue.get(),
+            SIGNAL(newLightFound(ECommType, QString)),
+            this,
+            SLOT(lightFound(ECommType, QString)));
+    connect(mHue.get(),
+            SIGNAL(lightDeleted(ECommType, QString)),
+            this,
+            SLOT(deletedLight(ECommType, QString)));
 }
 
 bool CommLayer::discoveryErrorsExist(EProtocolType type) {
@@ -55,6 +80,14 @@ bool CommLayer::discoveryErrorsExist(EProtocolType type) {
         );
     }
     return true;
+}
+
+void CommLayer::lightFound(ECommType type, QString uniqueID) {
+    emit newLightFound(type, uniqueID);
+}
+
+void CommLayer::deletedLight(ECommType type, QString uniqueID) {
+    emit lightDeleted(type, uniqueID);
 }
 
 CommType* CommLayer::commByType(ECommType type) const {
@@ -83,8 +116,8 @@ bool CommLayer::removeLight(const cor::Light& light) {
     return commByType(light.commType())->removeLight(light);
 }
 
-bool CommLayer::fillDevice(cor::Light& device) {
-    return commByType(device.commType())->fillDevice(device);
+bool CommLayer::fillLight(cor::Light& light) {
+    return commByType(light.commType())->fillLight(light);
 }
 
 std::vector<cor::Light> CommLayer::allLights() {
@@ -122,7 +155,7 @@ bool sortListByGroupName(const std::pair<cor::Group, cor::LightState>& lhs,
 
 cor::Light CommLayer::addLightMetaData(cor::Light light) {
     auto deviceCopy = light;
-    fillDevice(deviceCopy);
+    fillLight(deviceCopy);
     light.copyMetadata(deviceCopy);
     return light;
 }

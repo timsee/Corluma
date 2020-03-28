@@ -4,33 +4,35 @@
  * Released under the GNU General Public License.
  */
 
-#include "listroomwidget.h"
+#include "parentgroupwidget.h"
 
 #include <QPainter>
 #include <QStyleOption>
 
-ListRoomWidget::ListRoomWidget(const cor::Room& room,
-                               CommLayer* comm,
-                               GroupData* groups,
-                               const QString& key,
-                               cor::EListType listType,
-                               cor::EWidgetType type,
-                               QWidget* parent)
+ParentGroupWidget::ParentGroupWidget(const cor::Group& group,
+                                     const std::vector<std::uint64_t>& subgroups,
+                                     CommLayer* comm,
+                                     GroupData* groups,
+                                     const QString& key,
+                                     cor::EListType listType,
+                                     cor::EWidgetType type,
+                                     QWidget* parent)
     : cor::ListItemWidget(key, parent),
       mType{type},
       mComm{comm},
       mGroupData{groups},
       mLastSubGroupName{"NO_GROUP"},
       mListLayout(listType),
-      mDropdownTopWidget{new DropdownTopWidget(room.name(), type, true, this)},
-      mRoom{room},
+      mDropdownTopWidget{new DropdownTopWidget(group.name(), type, true, this)},
+      mGroup{group},
+      mSubgroups{subgroups},
       mIsOpen{false} {
     connect(mDropdownTopWidget, SIGNAL(pressed()), this, SLOT(dropdownTopWidgetPressed()));
     mDropdownTopWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     if (hasSubgroups()) {
-        auto subgroupNames = mGroupData->groupNamesFromIDs(room.subgroups());
-        mGroupsButtonWidget = new GroupButtonsWidget(this, type, mRoom.name(), subgroupNames);
+        auto subgroupNames = mGroupData->groupNamesFromIDs(subgroups);
+        mGroupsButtonWidget = new GroupButtonsWidget(this, type, group.name(), subgroupNames);
         connect(mGroupsButtonWidget,
                 SIGNAL(groupButtonPressed(QString)),
                 this,
@@ -44,19 +46,19 @@ ListRoomWidget::ListRoomWidget(const cor::Room& room,
         mGroupsButtonWidget->setVisible(false);
     }
 
-    updateRoom(mRoom);
+    updateState(mGroup, mSubgroups);
 }
 
-void ListRoomWidget::updateTopWidget() {
+void ParentGroupWidget::updateTopWidget() {
     GUARD_EXCEPTION(mGroupsButtonWidget != nullptr,
                     "Top widget not initialized for " + mKey.toStdString());
-    auto result = countCheckedAndReachableLights(mRoom);
+    auto result = countCheckedAndReachableLights(mGroup);
     auto checkedCount = result.first;
     auto reachableCount = result.second;
 
     mGroupsButtonWidget->updateCheckedLights("All", checkedCount, reachableCount);
 
-    for (const auto& groupID : mRoom.subgroups()) {
+    for (const auto& groupID : mSubgroups) {
         auto groupResult = mGroupData->groups().item(QString::number(groupID).toStdString());
         if (groupResult.second) {
             const auto& group = groupResult.first;
@@ -68,10 +70,10 @@ void ListRoomWidget::updateTopWidget() {
     }
 }
 
-void ListRoomWidget::updateGroupNames(const cor::Room& room) {
+void ParentGroupWidget::updateGroupNames(const std::vector<std::uint64_t>& subgroups) {
     GUARD_EXCEPTION(mGroupsButtonWidget != nullptr,
                     "Top widget not initialized for " + mKey.toStdString());
-    auto subgroupNames = mGroupData->groupNamesFromIDs(room.subgroups());
+    auto subgroupNames = mGroupData->groupNamesFromIDs(subgroups);
     auto groupButtonNames = mGroupsButtonWidget->groupNames();
 
     // loop through the subgroup names and verify that all can be found in the groupButtonNames
@@ -96,8 +98,8 @@ void ListRoomWidget::updateGroupNames(const cor::Room& room) {
     }
 }
 
-void ListRoomWidget::updateLightWidgets(const std::vector<cor::Light>& lights,
-                                        bool updateOnlyVisible) {
+void ParentGroupWidget::updateLightWidgets(const std::vector<cor::Light>& lights,
+                                           bool updateOnlyVisible) {
     for (const auto& light : lights) {
         if (light.isValid()) {
             bool foundLight = false;
@@ -127,7 +129,7 @@ void ListRoomWidget::updateLightWidgets(const std::vector<cor::Light>& lights,
     }
 }
 
-void ListRoomWidget::removeLightsIfNotFound(const cor::Room& room) {
+void ParentGroupWidget::removeLightsIfNotFound(const cor::Group& room) {
     std::vector<ListLightWidget*> widgetsToRemove;
     // look for lights that don't exist, and remove if necessary
     for (const auto& widget : mListLayout.widgets()) {
@@ -145,28 +147,30 @@ void ListRoomWidget::removeLightsIfNotFound(const cor::Room& room) {
     }
 }
 
-void ListRoomWidget::updateRoom(const cor::Room& room) {
+void ParentGroupWidget::updateState(const cor::Group& group,
+                                    const std::vector<std::uint64_t>& subgroups) {
     // update the subgroups, if they exist and any have been added/removed/renamed
     if (hasSubgroups()) {
-        updateGroupNames(room);
+        updateGroupNames(subgroups);
     }
 
     // update only the visible lights
     constexpr bool updateOnlyVisible = true;
-    const auto& commLights = mComm->lightListFromGroup(room);
+    const auto& commLights = mComm->lightListFromGroup(group);
     updateLightWidgets(commLights, updateOnlyVisible);
 
     // remove any lights that can no longer be found from the layout
-    removeLightsIfNotFound(room);
+    removeLightsIfNotFound(group);
 
-    mRoom = room;
+    mGroup = group;
+    mSubgroups = subgroups;
 
     mListLayout.sortDeviceWidgets();
     setFixedHeight(widgetHeightSum());
 }
 
 
-int ListRoomWidget::widgetHeightSum() {
+int ParentGroupWidget::widgetHeightSum() {
     int height = 0;
     height += mDropdownTopWidget->height();
     if (hasSubgroups()) {
@@ -181,7 +185,7 @@ int ListRoomWidget::widgetHeightSum() {
     return height;
 }
 
-void ListRoomWidget::setShowButtons(bool show) {
+void ParentGroupWidget::setShowButtons(bool show) {
     mDropdownTopWidget->showButtons(show);
     bool subGroupOpen = false;
     if (hasSubgroups()) {
@@ -198,7 +202,7 @@ void ListRoomWidget::setShowButtons(bool show) {
             }
         }
     } else {
-        showLights(mComm->lightListFromGroup(mRoom));
+        showLights(mComm->lightListFromGroup(mGroup));
     }
 
     if (!subGroupOpen) {
@@ -215,14 +219,14 @@ void ListRoomWidget::setShowButtons(bool show) {
     emit buttonsShown(mKey, mDropdownTopWidget->showButtons());
 }
 
-void ListRoomWidget::handleClicked(const QString& key) {
+void ParentGroupWidget::handleClicked(const QString& key) {
     emit deviceClicked(mKey, key);
     if (hasSubgroups()) {
         updateTopWidget();
     }
 }
 
-void ListRoomWidget::closeWidget() {
+void ParentGroupWidget::closeWidget() {
     mDropdownTopWidget->showButtons(false);
     if (hasSubgroups()) {
         mGroupsButtonWidget->setVisible(false);
@@ -233,7 +237,7 @@ void ListRoomWidget::closeWidget() {
     setFixedHeight(widgetHeightSum());
 }
 
-void ListRoomWidget::setCheckedLights(const std::vector<QString>& lights) {
+void ParentGroupWidget::setCheckedLights(const std::vector<QString>& lights) {
     for (const auto& existingWidget : mListLayout.widgets()) {
         auto widget = qobject_cast<ListLightWidget*>(existingWidget);
         Q_ASSERT(widget);
@@ -274,14 +278,14 @@ QColor computeHighlightColor(std::uint32_t checkedCount, std::uint32_t reachable
 
 } // namespace
 
-void ListRoomWidget::paintEvent(QPaintEvent*) {
+void ParentGroupWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     QRect topRect = mDropdownTopWidget->rect();
 
-    auto result = countCheckedAndReachableLights(mRoom);
+    auto result = countCheckedAndReachableLights(mGroup);
     auto checkedCount = result.first;
     auto reachableCount = result.second;
 
@@ -292,12 +296,12 @@ void ListRoomWidget::paintEvent(QPaintEvent*) {
     }
 }
 
-void ListRoomWidget::resizeEvent(QResizeEvent*) {
+void ParentGroupWidget::resizeEvent(QResizeEvent*) {
     resize();
 }
 
 
-void ListRoomWidget::resize() {
+void ParentGroupWidget::resize() {
     mDropdownTopWidget->setFixedWidth(parentWidget()->width());
 
     // get the y position to start drawing widgets
@@ -315,10 +319,10 @@ void ListRoomWidget::resize() {
     moveWidgets(QSize(parentWidget()->width(), mDropdownTopWidget->height()), QPoint(0, yPos));
 }
 
-void ListRoomWidget::groupPressed(const QString& name) {
+void ParentGroupWidget::groupPressed(const QString& name) {
     mLastSubGroupName = name;
     if (name == "All") {
-        showLights(mComm->lightListFromGroup(mRoom));
+        showLights(mComm->lightListFromGroup(mGroup));
     } else if (name == "NO_GROUP") {
         showLights({});
     } else {
@@ -332,15 +336,15 @@ void ListRoomWidget::groupPressed(const QString& name) {
     emit groupChanged(name);
 }
 
-void ListRoomWidget::selectAllToggled(const QString& key, bool selectAll) {
+void ParentGroupWidget::selectAllToggled(const QString& key, bool selectAll) {
     if (key == "All") {
-        emit allButtonPressed(mRoom.name(), selectAll);
+        emit allButtonPressed(mGroup.name(), selectAll);
     } else {
         emit allButtonPressed(key, selectAll);
     }
 }
 
-void ListRoomWidget::moveWidgets(QSize size, QPoint offset) {
+void ParentGroupWidget::moveWidgets(QSize size, QPoint offset) {
     size = mListLayout.widgetSize(size);
     for (std::size_t i = 0u; i < mListLayout.widgets().size(); ++i) {
         if (mListLayout.widgets()[i]->isVisible()) {
@@ -354,7 +358,7 @@ void ListRoomWidget::moveWidgets(QSize size, QPoint offset) {
     }
 }
 
-void ListRoomWidget::showLights(const std::vector<cor::Light>& lights) {
+void ParentGroupWidget::showLights(const std::vector<cor::Light>& lights) {
     constexpr bool updateOnlyVisible = false;
     updateLightWidgets(lights, updateOnlyVisible);
 
@@ -376,14 +380,14 @@ void ListRoomWidget::showLights(const std::vector<cor::Light>& lights) {
     resize();
 }
 
-std::size_t ListRoomWidget::numberOfWidgetsShown() {
+std::size_t ParentGroupWidget::numberOfWidgetsShown() {
     if (mDropdownTopWidget->showButtons()) {
         return mListLayout.count();
     }
     return 0u;
 }
 
-void ListRoomWidget::dropdownTopWidgetPressed() {
+void ParentGroupWidget::dropdownTopWidgetPressed() {
     // deselect the subgroup if subgroups exists
     if (mIsOpen && hasSubgroups()) {
         mGroupsButtonWidget->deselectGroup();
@@ -394,7 +398,7 @@ void ListRoomWidget::dropdownTopWidgetPressed() {
     setShowButtons(mIsOpen);
 }
 
-bool ListRoomWidget::checkIfShowWidgets() {
+bool ParentGroupWidget::checkIfShowWidgets() {
     bool showWidgets = true;
     if (hasSubgroups()) {
         showWidgets = (mLastSubGroupName != "NO_GROUP");
@@ -402,7 +406,7 @@ bool ListRoomWidget::checkIfShowWidgets() {
     return showWidgets;
 }
 
-std::pair<uint32_t, uint32_t> ListRoomWidget::countCheckedAndReachableLights(
+std::pair<uint32_t, uint32_t> ParentGroupWidget::countCheckedAndReachableLights(
     const cor::Group& group) {
     std::uint32_t reachableCount = 0;
     std::uint32_t checkedCount = 0;

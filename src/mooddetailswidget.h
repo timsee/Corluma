@@ -6,7 +6,7 @@
 #include <QWidget>
 
 #include "cor/objects/mood.h"
-#include "groupdata.h"
+#include "data/groupdata.h"
 #include "listsimplegroupwidget.h"
 
 /*!

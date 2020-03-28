@@ -817,3 +817,15 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed miscellaneous bugs.
 
 
+### **v0.19.6**
+#### The Orphans, Subgroups, and Parents Update
+- Removed `subgroups` from rooms.
+- Added `SubgroupData` to track the relationship between groups and rooms.
+- Added `OrphanData` to track lights that belong to no group or room.
+- Added `ParentData` to track groups that are either a room, or are no subgroup of any other group or room.
+- Refactored `ListRoomWidget` to be a `ParentGroupWidget` instead.
+- Each `CommType` now signals when a light is either added or deleted.
+
+
+
+

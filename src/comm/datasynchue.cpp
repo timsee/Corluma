@@ -66,7 +66,7 @@ void DataSyncHue::syncData() {
         int countOutOfSync = 0;
         for (const auto& device : mData->lights()) {
             cor::Light commLayerDevice = device;
-            if (mComm->fillDevice(commLayerDevice)) {
+            if (mComm->fillLight(commLayerDevice)) {
                 if (device.commType() == ECommType::hue) {
                     if (!sync(device, commLayerDevice)) {
                         countOutOfSync++;

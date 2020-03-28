@@ -81,7 +81,7 @@ void DataSyncNanoLeaf::syncData() {
         int countOutOfSync = 0;
         for (const auto& device : mData->lights()) {
             cor::Light commLayerDevice = device;
-            if (mComm->fillDevice(commLayerDevice)) {
+            if (mComm->fillLight(commLayerDevice)) {
                 if (device.protocol() == EProtocolType::nanoleaf) {
                     if (checkThrottle(device.uniqueID(), device.commType())) {
                         if (!sync(device, commLayerDevice)) {

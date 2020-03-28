@@ -89,19 +89,19 @@ public:
     void addLight(const cor::Light& light);
 
     /*!
-     * \brief updateDevice update all the data in the light device that matches the same controller
+     * \brief updateLight update all the data in the light device that matches the same controller
      * and index. if a light device doesn't exist with these properties, then it creates a new one.
-     * \param device the new data for the light device.
+     * \param light the new data for the light device.
      */
-    void updateLight(const cor::Light& device);
+    void updateLight(const cor::Light& light);
 
     /*!
-     * \brief fillDevice takes the controller and index of the referenced cor::Light and overwrites
+     * \brief fillLight takes the controller and index of the referenced cor::Light and overwrites
      * all other values with the values stored in the device table.
      * \param device a cor::Light struct that has its index and controller filled in.
      * \return true if device is found and filled, false otherwise.
      */
-    bool fillDevice(cor::Light& device);
+    bool fillLight(cor::Light& light);
 
     /*!
      * \brief deviceList list of the light devices
@@ -109,7 +109,7 @@ public:
      */
     const cor::Dictionary<cor::Light>& lightDict() const noexcept { return mLightDict; }
 
-    /// slot for timer that periodically checks if any lights not reachable
+    /// checks programmatically if there are any lights that are not responding to packets
     void checkReachability();
 signals:
 
@@ -117,6 +117,12 @@ signals:
      * \brief updateReceived an update packet was received from any controller.
      */
     void updateReceived(ECommType);
+
+    /// signals when a new light is added
+    void newLightFound(ECommType, QString);
+
+    /// signals when an existing light is deleted
+    void lightDeleted(ECommType, QString);
 
 protected:
     /*!

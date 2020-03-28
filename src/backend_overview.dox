@@ -32,27 +32,43 @@ The backend handles communicating with the lights, storing data about the sessio
 
 \copydoc cor::Mood
 
+<h1>Group Data</h1>
 
+\section sec_7 GroupData
+
+\copydoc GroupData
+
+\section sec_8 SubgroupData
+
+\copydoc SubgroupData
+
+\section sec_9 ParentData
+
+\copydoc ParentData
+
+\section sec_10 OrphanData
+
+\copydoc OrphanData
 
 <h1>Main Backend Classes</h1>
 
-\section sec_7 CommLayer
+\section sec_11 CommLayer
 
 \copydoc CommLayer
 
-\section sec_8 cor::LightList
+\section sec_12 cor::LightList
 
 \copydoc cor::LightList
 
-\section sec_9 DataSync
+\section sec_13 DataSync
 
 \copydoc DataSync
 
-\section sec_10 cor::StateObserver
+\section sec_14 cor::StateObserver
 
 \copydoc cor::StateObserver
 
-\section sec_11 IconData
+\section sec_15 IconData
 
 \copydoc IconData
 

@@ -21,6 +21,14 @@ CommArduCor::CommArduCor(QObject* parent) : QObject(parent) {
             this,
             SLOT(parsePacket(QString, QString, ECommType)));
     connect(mUDP.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
+    connect(mUDP.get(),
+            SIGNAL(newLightFound(ECommType, QString)),
+            this,
+            SLOT(lightFound(ECommType, QString)));
+    connect(mUDP.get(),
+            SIGNAL(lightDeleted(ECommType, QString)),
+            this,
+            SLOT(deletedLight(ECommType, QString)));
 
     mHTTP = std::make_shared<CommHTTP>();
     connect(mHTTP.get(),
@@ -28,7 +36,14 @@ CommArduCor::CommArduCor(QObject* parent) : QObject(parent) {
             this,
             SLOT(parsePacket(QString, QString, ECommType)));
     connect(mHTTP.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
-
+    connect(mHTTP.get(),
+            SIGNAL(newLightFound(ECommType, QString)),
+            this,
+            SLOT(lightFound(ECommType, QString)));
+    connect(mHTTP.get(),
+            SIGNAL(lightDeleted(ECommType, QString)),
+            this,
+            SLOT(deletedLight(ECommType, QString)));
 
 #ifndef MOBILE_BUILD
     mSerial = std::make_shared<CommSerial>();
@@ -40,6 +55,14 @@ CommArduCor::CommArduCor(QObject* parent) : QObject(parent) {
             SIGNAL(updateReceived(ECommType)),
             this,
             SLOT(receivedUpdate(ECommType)));
+    connect(mSerial.get(),
+            SIGNAL(newLightFound(ECommType, QString)),
+            this,
+            SLOT(lightFound(ECommType, QString)));
+    connect(mSerial.get(),
+            SIGNAL(lightDeleted(ECommType, QString)),
+            this,
+            SLOT(deletedLight(ECommType, QString)));
 #endif // MOBILE_BUILD
 
     mDiscovery = new ArduCorDiscovery(this,
@@ -263,7 +286,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                             auto metadata =
                                 ArduCorMetadata(controller.names()[index - 1], controller, index);
                             ArduCorLight light(metadata);
-                            commByType(type)->fillDevice(light);
+                            commByType(type)->fillLight(light);
                             metadataVector.push_back(metadata);
                             lightVector.push_back(light);
                         } else {
@@ -273,7 +296,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                 if (arduCor.controller() == sender) {
                                     metadataVector.push_back(arduCor);
                                     auto light = ArduCorLight(arduCor);
-                                    commByType(type)->fillDevice(light);
+                                    commByType(type)->fillLight(light);
                                     lightVector.push_back(light);
                                 }
                             }

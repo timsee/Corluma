@@ -4,7 +4,7 @@
  * Released under the GNU General Public License.
  */
 
-#include "groupdata.h"
+#include "data/groupdata.h"
 
 #include <QDir>
 #include <QFileInfo>
@@ -12,6 +12,7 @@
 
 GroupData::GroupData(QObject* parent) : QObject(parent), cor::JSONSaveData("save") {
     loadJSON();
+    mSubgroups.updateGroupAndRoomDict(mGroupDict.items(), mRoomDict.items());
 }
 
 bool GroupData::removeAppData() {
@@ -54,26 +55,24 @@ bool GroupData::isGroupARoom(const cor::Group& group) {
     return false;
 }
 
-void GroupData::addSubGroupsToRooms() {
-    // convert to dictionary updates intead of on a copy
-    for (auto room : mRoomDict.items()) {
-        for (const auto& group : mGroupDict.items()) {
-            // update the dictionaries
-            bool allGroupLightsInRoom = true;
-            for (const auto& groupLight : group.lights()) {
-                auto result = std::find(room.lights().begin(), room.lights().end(), groupLight);
-                if (result == room.lights().end()) {
-                    allGroupLightsInRoom = false;
-                }
-            }
-            if (allGroupLightsInRoom) {
-                auto subgroups = room.subgroups();
-                subgroups.push_back(group.uniqueID());
-                room.subgroups(subgroups);
-                mRoomDict.update(QString::number(room.uniqueID()).toStdString(), room);
-            }
-        }
+void GroupData::updateSubgroups() {
+    auto groups = mGroupDict.items();
+    auto rooms = mRoomDict.items();
+    mSubgroups.updateGroupAndRoomDict(groups, rooms);
+    mOrphans.generateOrphans(groups, rooms);
+
+    std::vector<std::uint64_t> groupIDs;
+    groupIDs.reserve(groups.size());
+    for (const auto& group : groups) {
+        groupIDs.emplace_back(group.uniqueID());
     }
+
+    std::vector<std::uint64_t> roomIDs;
+    roomIDs.reserve(groups.size());
+    for (const auto& room : rooms) {
+        roomIDs.emplace_back(room.uniqueID());
+    }
+    mParents.updateParentGroups(groupIDs, roomIDs, mSubgroups.subgroups());
 }
 
 //-------------------
@@ -129,7 +128,7 @@ void GroupData::saveNewGroup(const cor::Group& group) {
 
             // save file
             saveJSON();
-            addSubGroupsToRooms();
+            updateSubgroups();
             // hues use their bridge to store their data for collections instead of the JSON
             emit newCollectionAdded(group.name());
         }
@@ -157,7 +156,7 @@ void GroupData::saveNewRoom(const cor::Room& room) {
 
             // save file
             saveJSON();
-            addSubGroupsToRooms();
+            updateSubgroups();
             // hues use their bridge to store their data for collections instead of the JSON
             emit newCollectionAdded(room.name());
         }
@@ -213,7 +212,7 @@ void GroupData::updateExternallyStoredRooms(const std::vector<cor::Room>& extern
             }
         }
     }
-    addSubGroupsToRooms();
+    updateSubgroups();
 }
 
 void GroupData::updateExternallyStoredGroups(const std::vector<cor::Group>& externalGroups) {
@@ -246,7 +245,7 @@ void GroupData::updateExternallyStoredGroups(const std::vector<cor::Group>& exte
             }
         }
     }
-    addSubGroupsToRooms();
+    updateSubgroups();
 }
 
 void GroupData::lightDeleted(const QString& uniqueID) {
@@ -344,6 +343,7 @@ bool GroupData::removeGroup(std::uint64_t groupID) {
     return false;
 }
 
+
 //-------------------
 // Parsing JSON
 //-------------------
@@ -435,7 +435,7 @@ bool GroupData::loadJSON() {
                     }
                 }
             }
-            addSubGroupsToRooms();
+            updateSubgroups();
             return true;
         }
     } else {
@@ -460,9 +460,15 @@ bool GroupData::save(const QString& filePath) {
     return true;
 }
 
-//-------------------
-// Helpers
-//-------------------
+
+void GroupData::addLightToGroups(ECommType, const QString& uniqueID) {
+    qDebug() << " add light to groups " << uniqueID;
+    mOrphans.addNewLight(uniqueID, mGroupDict.items(), mRoomDict.items());
+}
+
+void GroupData::removeLightFromGroups(ECommType, const QString& uniqueID) {
+    qDebug() << " remove light from groups" << uniqueID;
+}
 
 std::uint64_t GroupData::generateNewUniqueKey() {
     std::uint64_t maxKey = 0u;
@@ -503,6 +509,30 @@ std::vector<QString> GroupData::groupNamesFromIDs(std::vector<std::uint64_t> IDs
         }
     }
     return nameVector;
+}
+
+
+std::vector<cor::Group> GroupData::groupsFromIDs(std::vector<std::uint64_t> IDs) {
+    std::vector<cor::Group> retVector;
+    retVector.reserve(IDs.size());
+    for (const auto& subGroupID : IDs) {
+        bool found = false;
+        auto roomResult = rooms().item(QString::number(subGroupID).toStdString());
+        // check if group is already in this list
+        if (roomResult.second) {
+            found = true;
+            retVector.emplace_back(roomResult.first);
+        }
+
+        if (!found) {
+            auto groupResult = groups().item(QString::number(subGroupID).toStdString());
+            // check if group is already in this list
+            if (groupResult.second) {
+                retVector.emplace_back(groupResult.first);
+            }
+        }
+    }
+    return retVector;
 }
 
 QString GroupData::nameFromID(std::uint64_t ID) {

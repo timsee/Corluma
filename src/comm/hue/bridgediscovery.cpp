@@ -11,7 +11,7 @@
 #include <QStandardPaths>
 
 #include "comm/commhue.h"
-#include "groupdata.h"
+#include "data/groupdata.h"
 
 //#define DEBUG_BRIDGE_DISCOVERY
 

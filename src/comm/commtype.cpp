@@ -25,27 +25,31 @@ void CommType::addLight(const cor::Light& light) {
 
     resetStateUpdateTimeout();
     emit updateReceived(mType);
+    emit newLightFound(mType, light.uniqueID());
 }
 
 bool CommType::removeLight(const QString& uniqueID) {
     auto result = mLightDict.removeKey(uniqueID.toStdString());
+    if (result) {
+        emit lightDeleted(mType, uniqueID);
+    }
     return result;
 }
 
-void CommType::updateLight(const cor::Light& device) {
-    auto dictResult = mLightDict.item(device.uniqueID().toStdString());
+void CommType::updateLight(const cor::Light& light) {
+    auto dictResult = mLightDict.item(light.uniqueID().toStdString());
     if (dictResult.second) {
-        mUpdateTime.update(device.uniqueID().toStdString(), mElapsedTimer.elapsed());
-        mLightDict.update(device.uniqueID().toStdString(), device);
+        mUpdateTime.update(light.uniqueID().toStdString(), mElapsedTimer.elapsed());
+        mLightDict.update(light.uniqueID().toStdString(), light);
         emit updateReceived(mType);
     }
 }
 
 
-bool CommType::fillDevice(cor::Light& device) {
-    auto deviceResult = mLightDict.item(device.uniqueID().toStdString());
-    if (deviceResult.second) {
-        device = deviceResult.first;
+bool CommType::fillLight(cor::Light& light) {
+    auto lightResult = mLightDict.item(light.uniqueID().toStdString());
+    if (lightResult.second) {
+        light = lightResult.first;
         return true;
     }
     return false;
@@ -82,14 +86,13 @@ bool CommType::shouldContinueStateUpdate() const noexcept {
 void CommType::checkReachability() {
     auto elapsedTime = mElapsedTimer.elapsed();
     const int kThreshold = 15000;
-    for (const auto& light : mLightDict.items()) {
-        auto device = light;
+    for (auto light : mLightDict.items()) {
         auto updateTime = mUpdateTime.item(light.uniqueID().toStdString());
         auto state = light.state();
-        if (device.isReachable() && (updateTime.first < (elapsedTime - kThreshold))) {
-            device.isReachable(false);
-            device.state(state);
-            mLightDict.update(device.uniqueID().toStdString(), device);
+        if (light.isReachable() && (updateTime.first < (elapsedTime - kThreshold))) {
+            light.isReachable(false);
+            light.state(state);
+            mLightDict.update(light.uniqueID().toStdString(), light);
         }
     }
 }

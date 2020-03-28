@@ -15,7 +15,7 @@
  *
  *
  * \brief The GroupButtonsWidget class is a widget that displays a grid of groups buttons. This is
- * used in ListRoomWidgets to show subgroups of a room, such as the lights around a desk in a
+ * used in ParentGroupWidget to show subgroups of a room, such as the lights around a desk in a
  * bedroom. This widget does a bit of magic to shorten names of widgets if the subgroups have
  * matching words at the start of the widget as the Room. For example, if the room is named "John's
  * Bedroom" and the group is called "John's Bedroom Desk" the group's name would be shortened to

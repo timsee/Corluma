@@ -620,7 +620,7 @@ void CommNanoleaf::parseCommandRequestUpdatePacket(const nano::LeafMetadata& lea
         auto colors = nanoleafPaletteToVector(requestPacket["palette"].toArray());
 
         auto light = nano::LeafLight(leafLight);
-        fillDevice(light);
+        fillLight(light);
         // NOTE: because nanoleaf, it requires two separate updates to get full data about the
         // light. This update runs after stateUpdate, so this one marks the light as reachable but
         // state update does not.
@@ -696,7 +696,7 @@ void CommNanoleaf::parseStateUpdatePacket(const nano::LeafMetadata& nanoLight,
             && stateObject["hue"].isObject() && stateObject["sat"].isObject()
             && stateObject["ct"].isObject() && stateObject["colorMode"].isString()) {
             auto light = nano::LeafLight(leafLight);
-            fillDevice(light);
+            fillLight(light);
 
             auto state = light.state();
 

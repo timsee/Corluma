@@ -1,5 +1,5 @@
-#ifndef LISTROOMWIDGET_H
-#define LISTROOMWIDGET_H
+#ifndef PARENTGROUPWIDGET_H
+#define PARENTGROUPWIDGET_H
 
 #include <QLabel>
 #include <QObject>
@@ -20,27 +20,25 @@
  * Copyright (C) 2015 - 2020.
  * Released under the GNU General Public License.
  *
- * \brief The ListDevicesGroupWidget class is a subclassed ListCollectionWidget that
- * displays all the devices in a collection. It contains a widget at the top that
- * gives info on the collection and the ability to edit it. It also contains an array
- * of ListDeviceWidgets, which can be shown or hidden by clicking the top widget.
+ *
+ * @brief The ParentGroupWidget class is a widget that displays all the subgroups and lights
+ * associated with a parent. subgroups only go one level deep, so if a parent is "First Floor
+ * Lights" and this parent contains "Living Room" as a subgroup, and "Living Room" contains
+ * "Computer Desk" of a subgroup of it, then "Computer Desk" is treated as a subgroup of "First
+ * Floor Lights", not "Living Room"
  */
-class ListRoomWidget : public cor::ListItemWidget {
+class ParentGroupWidget : public cor::ListItemWidget {
     Q_OBJECT
 public:
-    /*!
-     * \brief ListDevicesGroupWidget constructor
-     *
-     * \param group group of lights
-     * \param key unique key for collection
-     */
-    ListRoomWidget(const cor::Room& room,
-                   CommLayer* comm,
-                   GroupData* groups,
-                   const QString& key,
-                   cor::EListType listType,
-                   cor::EWidgetType type,
-                   QWidget* parent);
+    /// constructor
+    ParentGroupWidget(const cor::Group& room,
+                      const std::vector<std::uint64_t>& subgroups,
+                      CommLayer* comm,
+                      GroupData* groups,
+                      const QString& key,
+                      cor::EListType listType,
+                      cor::EWidgetType type,
+                      QWidget* parent);
 
     /*!
      * \brief setCheckedLights takes a list of devices and compares it against all devices in the
@@ -51,8 +49,8 @@ public:
      */
     void setCheckedLights(const std::vector<QString>& lights);
 
-    /// update the room with new information.
-    void updateRoom(const cor::Room& room);
+    /// update the widget with new information.
+    void updateState(const cor::Group& group, const std::vector<std::uint64_t>& subgroups);
 
     /*!
      * \brief setShowButtons shows and hides all buttons on the widget
@@ -69,7 +67,7 @@ public:
     bool isOpen() const noexcept { return mIsOpen; }
 
     /// getter for the room data.
-    const cor::Room& room() { return mRoom; }
+    const cor::Group& group() { return mGroup; }
 
     /// getter for the desired height of the widget
     int widgetHeightSum();
@@ -144,7 +142,7 @@ private:
     void updateTopWidget();
 
     /// true if the room has subgroups, false if it doesn't
-    bool hasSubgroups() const noexcept { return !mRoom.subgroups().empty(); }
+    bool hasSubgroups() const noexcept { return !mSubgroups.empty(); }
 
     /// type of widget
     cor::EWidgetType mType;
@@ -168,7 +166,9 @@ private:
     DropdownTopWidget* mDropdownTopWidget;
 
     /// stored data for the group.
-    cor::Room mRoom;
+    cor::Group mGroup;
+
+    std::vector<std::uint64_t> mSubgroups;
 
     /// checks if a group with no subgroups should show widgets
     bool checkIfShowWidgets();
@@ -182,10 +182,10 @@ private:
     void updateLightWidgets(const std::vector<cor::Light>& lights, bool updateOnlyVisible);
 
     /// updates the group names in the GroupButtonsWidget
-    void updateGroupNames(const cor::Room& room);
+    void updateGroupNames(const std::vector<std::uint64_t>& subgroups);
 
     /// removes any lights that are not found during an update call.
-    void removeLightsIfNotFound(const cor::Room& room);
+    void removeLightsIfNotFound(const cor::Group& group);
 
     /// true if showing lights and groups, false if just showing name.
     bool mIsOpen;
@@ -194,4 +194,4 @@ private:
     std::pair<std::uint32_t, std::uint32_t> countCheckedAndReachableLights(const cor::Group& group);
 };
 
-#endif // LISTROOMWIDGET_H
+#endif // PARENTGROUPWIDGET_H

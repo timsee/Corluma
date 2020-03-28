@@ -9,9 +9,9 @@
 #include "comm/commlayer.h"
 #include "cor/lightlist.h"
 #include "cor/widgets/lightvectorwidget.h"
-#include "groupdata.h"
+#include "data/groupdata.h"
 #include "lefthandbutton.h"
-#include "listroomwidget.h"
+#include "parentgroupwidget.h"
 
 /*!
  * \copyright
@@ -50,10 +50,13 @@ public:
     /// true if menu is always open due to the app being in landscape, false otherwise
     bool alwaysOpen() { return mAlwaysOpen; }
 
+    /// removes parent group from the menu.
+    void removeParentGroup(const QString& name);
+
     /// used during complete reloads, this deletes all existing widgets
     void clearWidgets();
 
-    /// update the lights in the room widgets
+    /// update the lights in the scroll area
     void updateLights();
 
     /// true if the menu is currently moving
@@ -122,31 +125,25 @@ private:
      * \param dataGroup the group to update in the UI
      * \param uiGroups all UI groups
      */
-    void updateDataGroupInUI(const cor::Room& dataGroup, const std::vector<cor::Group>& uiGroups);
+    void updateDataGroupInUI(const cor::Group& dataGroup, const std::vector<cor::Group>& uiGroups);
 
     /*!
-     * \brief initRoomsWidget constructor helper for making a ListRoomWidget
+     * \brief initRoomsWidget constructor helper for making a ParentGroupWidget
      *
      * \param group group of lights for collection
      * \param key key for collection
      * \return pointer to the newly created ListDevicesGroupWidget
      */
-    ListRoomWidget* initRoomsWidget(const cor::Room& room, const QString& key);
+    ParentGroupWidget* initParentGroupWidget(const cor::Group& group, const QString& key);
 
-    /// resize the room widgets
-    int resizeRoomsWidgets();
-
-    /// creates a miscellaneous group for all groups not stated in standard rooms
-    cor::Room makeMiscellaneousGroup(const std::vector<cor::Room>& roomList);
+    /// resize the group widgets
+    int resizeGroupWidgets();
 
     /// returns a pointer to the currently selected button
     QWidget* selectedButton();
 
     /// true if menu is in, false otherwise
     bool mIsIn;
-
-    /// size of the parent
-    QSize mParentSize;
 
     /// point to start the widget at
     QPoint mStartPoint;
@@ -169,8 +166,8 @@ private:
     /// palette that shows the currently selected devices
     cor::LightVectorWidget* mMainPalette;
 
-    /// vector room widgets
-    std::vector<ListRoomWidget*> mRoomWidgets;
+    /// vector of parent group widgets
+    std::vector<ParentGroupWidget*> mParentGroupWidgets;
 
     /// pointer to comm layer
     CommLayer* mComm;

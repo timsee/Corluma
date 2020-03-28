@@ -176,7 +176,7 @@ bool EditGroupPage::saveChanges() {
 
     // make a group to save into app data that isn't hue
     if (mIsRoom) {
-        cor::Room nonHueRoom(mGroups->generateNewUniqueKey(), mNewName, nonHueLights, {});
+        cor::Room nonHueRoom(mGroups->generateNewUniqueKey(), mNewName, nonHueLights);
         mGroups->saveNewRoom(nonHueRoom);
     } else {
         cor::Group nonHueGroup(mGroups->generateNewUniqueKey(), mNewName, nonHueLights);

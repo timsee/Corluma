@@ -7,7 +7,7 @@
 
 #include "cor/lightlist.h"
 #include "datasync.h"
-#include "groupdata.h"
+#include "data/groupdata.h"
 
 /*!
  * \copyright

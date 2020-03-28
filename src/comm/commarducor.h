@@ -98,10 +98,22 @@ signals:
      */
     void updateReceived(ECommType);
 
+    /// signals when a new light is found
+    void newLightFound(ECommType, QString);
+
+    /// signals when an existing light is deleted
+    void lightDeleted(ECommType, QString);
+
 private slots:
 
     /// forwards the update packets from individual commtypes to commlayer
     void receivedUpdate(ECommType type) { emit updateReceived(type); }
+
+    /// emits a signal when a light is found from any commtype
+    void lightFound(ECommType type, QString uniqueID) { emit newLightFound(type, uniqueID); }
+
+    /// emits a signal when a ligh tis deleted from any commtype
+    void deletedLight(ECommType type, QString uniqueID) { emit lightDeleted(type, uniqueID); }
 
     /*!
      * \brief parsePacket parses any packets sent from any of the commtypes. The

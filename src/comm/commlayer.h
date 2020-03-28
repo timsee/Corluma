@@ -14,7 +14,7 @@
 #include "cor/objects/light.h"
 #include "cor/presetpalettes.h"
 #include "cor/protocols.h"
-#include "groupdata.h"
+#include "data/groupdata.h"
 
 #include "colorpicker/colorpicker.h"
 
@@ -88,12 +88,12 @@ public:
     bool removeLight(const cor::Light& light);
 
     /*!
-     * \brief fillDevice use the controller name, type, and index to fill in the rest
+     * \brief fillLight use the controller name, type, and index to fill in the rest
      *        of the devices data.
      * \param device the device with a defined name, type, and index
      * \return true if controller is found and filled, false otherwise.
      */
-    bool fillDevice(cor::Light& device);
+    bool fillLight(cor::Light& light);
 
     /*!
      * \brief startDiscovery put given comm type into discovery mode.
@@ -200,6 +200,11 @@ signals:
      */
     void updateReceived(ECommType);
 
+    /// signals when a new light is found
+    void newLightFound(ECommType, QString);
+
+    /// signals when an existing light is deleted
+    void lightDeleted(ECommType, QString);
 
 private slots:
 
@@ -217,6 +222,12 @@ private slots:
      * \brief hueStateChanged sent by hue whenever a packet is received that changes it state.
      */
     void hueStateChanged() { emit packetReceived(EProtocolType::hue); }
+
+    /// handles when new light is found
+    void lightFound(ECommType, QString);
+
+    /// handles when existing light is deleted
+    void deletedLight(ECommType, QString);
 
 private:
     /// adds meta data to a light, used when creating moods.

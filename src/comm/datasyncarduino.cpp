@@ -70,7 +70,7 @@ void DataSyncArduino::syncData() {
         for (const auto& device : mData->lights()) {
             cor::Light commLayerDevice = device;
             if (device.protocol() == EProtocolType::arduCor) {
-                if (mComm->fillDevice(commLayerDevice)) {
+                if (mComm->fillLight(commLayerDevice)) {
                     if (checkThrottle(device.name(), device.commType())) {
                         if (!sync(device, commLayerDevice)) {
                             countOutOfSync++;

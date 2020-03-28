@@ -14,7 +14,7 @@
 #include <QTimer>
 
 #include "appsettings.h"
-#include "groupdata.h"
+#include "data/groupdata.h"
 #include "mainwindow.h"
 #include "utils/exception.h"
 #include "utils/qt.h"

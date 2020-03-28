@@ -13,34 +13,18 @@ namespace cor {
  *
  *
  * \brief The Room class is a derived class of a group and is a special case. No single light can
- * belong to more than one room. It may also contain a list of subgroups, referencable by their
- * unique ID. A subgroup points to the unique ID of another valid group, where all lights within the
- * subgroup are also part of the main group.
+ * belong to more than one room.
  */
 class Room : public Group {
 public:
     Room() : Group() {}
 
     /// constructor
-    Room(std::uint64_t uniqueID,
-         const QString& name,
-         const std::vector<QString>& lights,
-         const std::vector<std::uint64_t> subgroups)
-        : Group(uniqueID, name, lights),
-          mSubgroups{subgroups} {}
+    Room(std::uint64_t uniqueID, const QString& name, const std::vector<QString>& lights)
+        : Group(uniqueID, name, lights) {}
 
     /// json constructor
     Room(const QJsonObject& object) : Group(object) {}
-
-    /// if a group has subgroups. this contains a list of all groups that are subgroups.
-    const std::vector<std::uint64_t>& subgroups() const noexcept { return mSubgroups; }
-
-    /// setter for subgroups
-    void subgroups(const std::vector<std::uint64_t>& subgroups) { mSubgroups = subgroups; }
-
-private:
-    /// storage of subgroups for rooms
-    std::vector<std::uint64_t> mSubgroups;
 };
 
 } // namespace cor

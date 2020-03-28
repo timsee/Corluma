@@ -7,7 +7,7 @@
 #include "colorpage.h"
 #include "comm/commlayer.h"
 #include "cor/lightlist.h"
-#include "groupdata.h"
+#include "data/groupdata.h"
 #include "moodpage.h"
 #include "palettepage.h"
 

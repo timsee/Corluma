@@ -157,7 +157,9 @@ SOURCES += main.cpp \
     cor/widgets/lightvectorwidget.cpp \
     cor/listlayout.cpp \
     cor/widgets/groupbutton.cpp \
+    parentgroupwidget.cpp \
     stateobserver.cpp \
+    data/subgroupdata.cpp \
     utils/qt.cpp \
     comm/hue/bridgeinfowidget.cpp \
     comm/hue/lightdiscovery.cpp \
@@ -197,12 +199,11 @@ SOURCES += main.cpp \
     appsettings.cpp \
     listsimplegroupwidget.cpp \
     dropdowntopwidget.cpp \
-    listroomwidget.cpp \
     groupbuttonswidget.cpp \
     nowifiwidget.cpp \
     listmooddetailedwidget.cpp \
     listmoodpreviewwidget.cpp \
-    groupdata.cpp \
+    data/groupdata.cpp \
     mooddetailswidget.cpp \
     lefthandmenu.cpp \
     selectlightsbutton.cpp \
@@ -269,8 +270,12 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     editgrouppage.h \
     editpage.h \
     globalbrightnesswidget.h \
+    data/orphandata.h \
+    data/parentdata.h \
+    parentgroupwidget.h \
     singlelightbrightnesswidget.h \
     stateobserver.h \
+    data/subgroupdata.h \
     utils/exception.h \
     comm/hue/lightdiscovery.h \
     comm/hue/bridgediscovery.h \
@@ -312,12 +317,11 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     appsettings.h \
     listsimplegroupwidget.h \
     dropdowntopwidget.h \
-    listroomwidget.h \
     groupbuttonswidget.h \
     nowifiwidget.h \
     listmooddetailedwidget.h \
     listmoodpreviewwidget.h \
-    groupdata.h \
+    data/groupdata.h \
     mooddetailswidget.h \
     utils/reachability.h \
     utils/color.h \

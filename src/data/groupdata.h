@@ -8,6 +8,9 @@
 #include "cor/objects/group.h"
 #include "cor/objects/mood.h"
 #include "cor/objects/room.h"
+#include "orphandata.h"
+#include "parentdata.h"
+#include "subgroupdata.h"
 
 /*!
  * \copyright
@@ -68,6 +71,23 @@ public:
     /// returns a vector of names for the group IDs that are provided
     std::vector<QString> groupNamesFromIDs(std::vector<std::uint64_t> IDs);
 
+    /// returns a vector of groups from a vector of IDs
+    std::vector<cor::Group> groupsFromIDs(std::vector<std::uint64_t> IDs);
+
+    /// getter for the subgroups
+    const SubgroupData& subgroups() const { return mSubgroups; }
+
+    /// getter for the lights not associated with any group
+    const std::vector<QString>& orphanLights() const { return mOrphans.orphans(); }
+
+    /// getter for the "Orphan Group" which is a made-up group that contains only oprhans. Now the
+    /// orphans have a home!
+    cor::Group orphanGroup() const { return mOrphans.orphanGroup(); }
+
+    /// getter for the "Parent" groups, which are either rooms, or groups that are not a subgroup of
+    /// any other group
+    const std::vector<std::uint64_t>& parents() const { return mParents.parents(); }
+
     /// getter for name from ID
     QString nameFromID(std::uint64_t ID);
 
@@ -78,7 +98,7 @@ public:
     bool isGroupARoom(const cor::Group& group);
 
     /// adds subgroups to rooms
-    void addSubGroupsToRooms();
+    void updateSubgroups();
 
     /*!
      * \brief updateExternallyStoredGroups update the information stored from external sources, such
@@ -172,6 +192,12 @@ public:
     /// saves JSON data to the given filepath
     bool save(const QString& filePath);
 
+public slots:
+
+    void addLightToGroups(ECommType, const QString& uniqueID);
+
+    void removeLightFromGroups(ECommType, const QString& uniqueID);
+
 signals:
 
     /*!
@@ -227,6 +253,16 @@ private:
      * \brief mRoomDict dictionary of all known rooms
      */
     cor::Dictionary<cor::Room> mRoomDict;
+
+    /// generates knowledge of relationships between groups by storing all subgroups
+    SubgroupData mSubgroups;
+
+    /// stores all lights that are not associated with any group
+    OrphanData mOrphans;
+
+    /// stores all parent groups, which are either rooms, or groups that are not a subgroup of any
+    /// other group.
+    ParentData mParents;
 };
 
 #endif // GROUPS_DATA_H

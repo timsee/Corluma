@@ -10,7 +10,7 @@
 #include "cor/widgets/button.h"
 #include "floatinglayout.h"
 #include "globalbrightnesswidget.h"
-#include "groupdata.h"
+#include "data/groupdata.h"
 #include "moodpage.h"
 #include "multicolorstatewidget.h"
 #include "palettepage.h"

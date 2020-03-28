@@ -315,7 +315,9 @@ private:
      * \param name name of new group
      * \return  a unique ID for the group with the given name
      */
-    std::uint64_t generateUniqueID(const std::vector<cor::Group>& groupList, const QString& name);
+    std::uint64_t generateUniqueID(const std::vector<cor::Group>& groupList,
+                                   const std::vector<cor::Group>& roomList,
+                                   const QString& name);
 
     /*!
      * \brief resetBackgroundTimers reset the background timers that sync things such as groups
@@ -437,7 +439,8 @@ private:
      * \return true if successful, false if failed.
      */
     std::pair<cor::Group, bool> jsonToGroup(QJsonObject object,
-                                            const std::vector<cor::Group>& groupList);
+                                            const std::vector<cor::Group>& groupList,
+                                            const std::vector<cor::Group>& roomList);
 
 
     /*!
@@ -447,7 +450,8 @@ private:
      * \return true if successful, false if failed.
      */
     std::pair<cor::Room, bool> jsonToRoom(QJsonObject object,
-                                          const std::vector<cor::Group>& groupList);
+                                          const std::vector<cor::Group>& groupList,
+                                          const std::vector<cor::Group>& roomList);
 
     /*!
      * \brief checkTypeOfUpdate checks the JSON object received from the hue bridge and figures out
