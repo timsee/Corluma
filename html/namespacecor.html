@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.19.0</span>
+   &#160;<span id="projectnumber">v0.19.6</span>
    </div>
   </td>
  </tr>
@@ -110,7 +110,7 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">class The <a class="el" href="classcor_1_1_range.html" title="class The Range class is a basic templatted class that creates a range, and validates if a value give...">Range</a> class is a basic templatted class that creates a range, and validates if a value given to it is within the range.  <a href="classcor_1_1_range.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_room.html">Room</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="classcor_1_1_room.html" title="The Room class is a derived class of a group and is a special case. No single light can belong to mor...">Room</a> class is a derived class of a group and is a special case. No single light can belong to more than one room. It may also contain a list of subgroups, referencable by their unique ID. A subgroup points to the unique ID of another valid group, where all lights within the subgroup are also part of the main group.  <a href="classcor_1_1_room.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="classcor_1_1_room.html" title="The Room class is a derived class of a group and is a special case. No single light can belong to mor...">Room</a> class is a derived class of a group and is a special case. No single light can belong to more than one room.  <a href="classcor_1_1_room.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_slider.html">Slider</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="classcor_1_1_slider.html" title="The Slider class provides a slider with behaviors similiar to sliders on mobile devices. Clicking on the slider jumps the slider&#39;s value to the location you clicked instead of the QSlider default of jumping by the page value. There is also the option to use a gradient instead of a solid color as the background color for the slider. ">Slider</a> class provides a slider with behaviors similiar to sliders on mobile devices. Clicking on the slider jumps the slider's value to the location you clicked instead of the QSlider default of jumping by the page value. There is also the option to use a gradient instead of a solid color as the background color for the slider.  <a href="classcor_1_1_slider.html#details">More...</a><br /></td></tr>
@@ -163,6 +163,10 @@ EHueType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 <tr class="memitem:acef0ea733a8b049205b9f203640c641a"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecor.html#acef0ea733a8b049205b9f203640c641a">hueTypeToString</a> (EHueType type)</td></tr>
 <tr class="memdesc:acef0ea733a8b049205b9f203640c641a"><td class="mdescLeft">&#160;</td><td class="mdescRight">hueTypeToString helper that takes a EHueType and converts it to a string.  <a href="#acef0ea733a8b049205b9f203640c641a">More...</a><br /></td></tr>
 <tr class="separator:acef0ea733a8b049205b9f203640c641a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a270cacd03f81b988c3a8739af8bfb162"><td class="memItemLeft" align="right" valign="top"><a id="a270cacd03f81b988c3a8739af8bfb162"></a>
+std::vector&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecor.html#a270cacd03f81b988c3a8739af8bfb162">lightVectorToIDs</a> (const std::vector&lt; <a class="el" href="classcor_1_1_light.html">cor::Light</a> &gt; &amp;lightVector)</td></tr>
+<tr class="memdesc:a270cacd03f81b988c3a8739af8bfb162"><td class="mdescLeft">&#160;</td><td class="mdescRight">converts a vector of lights to a vector of IDs that represent the lights <br /></td></tr>
+<tr class="separator:a270cacd03f81b988c3a8739af8bfb162"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9cf59e3c8e7effcbc7831a23eb7a4f4a"><td class="memItemLeft" align="right" valign="top"><a id="a9cf59e3c8e7effcbc7831a23eb7a4f4a"></a>
 ELightHardwareType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacecor.html#a9cf59e3c8e7effcbc7831a23eb7a4f4a">convertArduinoTypeToLightType</a> (EArduinoHardwareType type)</td></tr>
 <tr class="memdesc:a9cf59e3c8e7effcbc7831a23eb7a4f4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">converts the enum for an arduio hardware type to a more generalized corluma type <br /></td></tr>

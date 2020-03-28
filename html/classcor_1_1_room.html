@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.19.0</span>
+   &#160;<span id="projectnumber">v0.19.6</span>
    </div>
   </td>
  </tr>
@@ -52,7 +52,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="classcor_1_1_room.html" title="The Room class is a derived class of a group and is a special case. No single light can belong to mor...">Room</a> class is a derived class of a group and is a special case. No single light can belong to more than one room. It may also contain a list of subgroups, referencable by their unique ID. A subgroup points to the unique ID of another valid group, where all lights within the subgroup are also part of the main group.  
+<p>The <a class="el" href="classcor_1_1_room.html" title="The Room class is a derived class of a group and is a special case. No single light can belong to mor...">Room</a> class is a derived class of a group and is a special case. No single light can belong to more than one room.  
  <a href="classcor_1_1_room.html#details">More...</a></p>
 
 <p><code>#include &quot;<a class="el" href="room_8h_source.html">room.h</a>&quot;</code></p>
@@ -61,22 +61,14 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a207a3b7ccf356df6f195d56b392c04da"><td class="memItemLeft" align="right" valign="top"><a id="a207a3b7ccf356df6f195d56b392c04da"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_room.html#a207a3b7ccf356df6f195d56b392c04da">Room</a> (std::uint64_t <a class="el" href="classcor_1_1_group.html#a4fc37e0650c9a9710080946df29f9f85">uniqueID</a>, const QString &amp;<a class="el" href="classcor_1_1_group.html#a06cb02334acba93d5c0ffd8fe1cc1556">name</a>, const std::vector&lt; QString &gt; &amp;<a class="el" href="classcor_1_1_group.html#adc050580fb97320f734573228f654e91">lights</a>, const std::vector&lt; std::uint64_t &gt; <a class="el" href="classcor_1_1_room.html#a62b8d6f26097aaaf4f8840111f25a1e1">subgroups</a>)</td></tr>
-<tr class="memdesc:a207a3b7ccf356df6f195d56b392c04da"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor <br /></td></tr>
-<tr class="separator:a207a3b7ccf356df6f195d56b392c04da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af9f12868dd0a033ead1c31ec79b51f21"><td class="memItemLeft" align="right" valign="top"><a id="af9f12868dd0a033ead1c31ec79b51f21"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_room.html#af9f12868dd0a033ead1c31ec79b51f21">Room</a> (std::uint64_t <a class="el" href="classcor_1_1_group.html#a4fc37e0650c9a9710080946df29f9f85">uniqueID</a>, const QString &amp;<a class="el" href="classcor_1_1_group.html#a06cb02334acba93d5c0ffd8fe1cc1556">name</a>, const std::vector&lt; QString &gt; &amp;<a class="el" href="classcor_1_1_group.html#adc050580fb97320f734573228f654e91">lights</a>)</td></tr>
+<tr class="memdesc:af9f12868dd0a033ead1c31ec79b51f21"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor <br /></td></tr>
+<tr class="separator:af9f12868dd0a033ead1c31ec79b51f21"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e96c0efb646ace454a03ee11e155782"><td class="memItemLeft" align="right" valign="top"><a id="a1e96c0efb646ace454a03ee11e155782"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_room.html#a1e96c0efb646ace454a03ee11e155782">Room</a> (const QJsonObject &amp;object)</td></tr>
 <tr class="memdesc:a1e96c0efb646ace454a03ee11e155782"><td class="mdescLeft">&#160;</td><td class="mdescRight">json constructor <br /></td></tr>
 <tr class="separator:a1e96c0efb646ace454a03ee11e155782"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62b8d6f26097aaaf4f8840111f25a1e1"><td class="memItemLeft" align="right" valign="top"><a id="a62b8d6f26097aaaf4f8840111f25a1e1"></a>
-const std::vector&lt; std::uint64_t &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_room.html#a62b8d6f26097aaaf4f8840111f25a1e1">subgroups</a> () const noexcept</td></tr>
-<tr class="memdesc:a62b8d6f26097aaaf4f8840111f25a1e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">if a group has subgroups. this contains a list of all groups that are subgroups. <br /></td></tr>
-<tr class="separator:a62b8d6f26097aaaf4f8840111f25a1e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a462a1fadce90fbf989773e4ec1bf9233"><td class="memItemLeft" align="right" valign="top"><a id="a462a1fadce90fbf989773e4ec1bf9233"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_room.html#a462a1fadce90fbf989773e4ec1bf9233">subgroups</a> (const std::vector&lt; std::uint64_t &gt; &amp;subgroups)</td></tr>
-<tr class="memdesc:a462a1fadce90fbf989773e4ec1bf9233"><td class="mdescLeft">&#160;</td><td class="mdescRight">setter for subgroups <br /></td></tr>
-<tr class="separator:a462a1fadce90fbf989773e4ec1bf9233"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classcor_1_1_group"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classcor_1_1_group')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classcor_1_1_group.html">cor::Group</a></td></tr>
 <tr class="memitem:a4b23a3897dacc1afce4c940d0b65408a inherit pub_methods_classcor_1_1_group"><td class="memItemLeft" align="right" valign="top"><a id="a4b23a3897dacc1afce4c940d0b65408a"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_group.html#a4b23a3897dacc1afce4c940d0b65408a">Group</a> ()</td></tr>

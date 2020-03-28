@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.19.0</span>
+   &#160;<span id="projectnumber">v0.19.6</span>
    </div>
   </td>
  </tr>
@@ -43,13 +43,14 @@ $(function() {
   <div class="summary">
 <a href="class_group_buttons_widget-members.html">List of all members</a> &#124;
 <a href="#signals">Signals</a> &#124;
-<a href="#pub-methods">Public Member Functions</a>  </div>
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a>  </div>
   <div class="headertitle">
 <div class="title">GroupButtonsWidget Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="class_group_buttons_widget.html" title="The GroupButtonsWidget class is a widget that displays a grid of groups buttons. This is used in List...">GroupButtonsWidget</a> class is a widget that displays a grid of groups buttons. This is used in ListRoomWidgets to show subgroups of a room, such as the lights around a desk in a bedroom. This widget does a bit of magic to shorten names of widgets if the subgroups have matching words at the start of the widget as the Room. For example, if the room is named "John's
+<p>The <a class="el" href="class_group_buttons_widget.html" title="The GroupButtonsWidget class is a widget that displays a grid of groups buttons. This is used in Pare...">GroupButtonsWidget</a> class is a widget that displays a grid of groups buttons. This is used in <a class="el" href="class_parent_group_widget.html" title="The ParentGroupWidget class is a widget that displays all the subgroups and lights associated with a ...">ParentGroupWidget</a> to show subgroups of a room, such as the lights around a desk in a bedroom. This widget does a bit of magic to shorten names of widgets if the subgroups have matching words at the start of the widget as the Room. For example, if the room is named "John's
 Bedroom" and the group is called "John's Bedroom Desk" the group's name would be shortened to "Desk".  
  <a href="class_group_buttons_widget.html#details">More...</a></p>
 
@@ -90,10 +91,10 @@ std::vector&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom">
 const QString &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_buttons_widget.html#a8c2fafb125f3fd1635b893814a8f7847">currentKey</a> () const</td></tr>
 <tr class="memdesc:a8c2fafb125f3fd1635b893814a8f7847"><td class="mdescLeft">&#160;</td><td class="mdescRight">key of the currently selected group <br /></td></tr>
 <tr class="separator:a8c2fafb125f3fd1635b893814a8f7847"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e4c49c13d0aba321b62f074f4e4e7ef"><td class="memItemLeft" align="right" valign="top"><a id="a1e4c49c13d0aba321b62f074f4e4e7ef"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_buttons_widget.html#a1e4c49c13d0aba321b62f074f4e4e7ef">resize</a> (const QSize &amp;topWidgetSize, const QRect &amp;spacerGeometry)</td></tr>
-<tr class="memdesc:a1e4c49c13d0aba321b62f074f4e4e7ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">resizes prorgrammatically <br /></td></tr>
-<tr class="separator:a1e4c49c13d0aba321b62f074f4e4e7ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ba3cdc94bf38f38fbbaa3899f3bd83f"><td class="memItemLeft" align="right" valign="top"><a id="a6ba3cdc94bf38f38fbbaa3899f3bd83f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_buttons_widget.html#a6ba3cdc94bf38f38fbbaa3899f3bd83f">deselectGroup</a> ()</td></tr>
+<tr class="memdesc:a6ba3cdc94bf38f38fbbaa3899f3bd83f"><td class="mdescLeft">&#160;</td><td class="mdescRight">deselect current group <br /></td></tr>
+<tr class="separator:a6ba3cdc94bf38f38fbbaa3899f3bd83f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a34454d6cf70d7b1261021c26573c9cbb"><td class="memItemLeft" align="right" valign="top"><a id="a34454d6cf70d7b1261021c26573c9cbb"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_buttons_widget.html#a34454d6cf70d7b1261021c26573c9cbb">updateCheckedLights</a> (const QString &amp;key, std::uint32_t checkedLightCount, std::uint32_t reachableLightCount)</td></tr>
 <tr class="memdesc:a34454d6cf70d7b1261021c26573c9cbb"><td class="mdescLeft">&#160;</td><td class="mdescRight">update the checked devices of the group that matches the key <br /></td></tr>
@@ -110,6 +111,13 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_buttons_widget.html#af621303798e70293f906eb9b3c600e35">groupEndPointY</a> (int topWidgetHeight, const QString &amp;key)</td></tr>
 <tr class="memdesc:af621303798e70293f906eb9b3c600e35"><td class="mdescLeft">&#160;</td><td class="mdescRight">the end point in the y dimension of a group given a key <br /></td></tr>
 <tr class="separator:af621303798e70293f906eb9b3c600e35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:a4a91e6699cf0ef6bd99f1780130cfea8"><td class="memItemLeft" align="right" valign="top"><a id="a4a91e6699cf0ef6bd99f1780130cfea8"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_buttons_widget.html#a4a91e6699cf0ef6bd99f1780130cfea8">resizeEvent</a> (QResizeEvent *)</td></tr>
+<tr class="memdesc:a4a91e6699cf0ef6bd99f1780130cfea8"><td class="mdescLeft">&#160;</td><td class="mdescRight">resizes interal widgets when a resize event is triggered <br /></td></tr>
+<tr class="separator:a4a91e6699cf0ef6bd99f1780130cfea8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>

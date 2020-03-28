@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.19.0</span>
+   &#160;<span id="projectnumber">v0.19.6</span>
    </div>
   </td>
  </tr>
@@ -65,6 +65,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a92c7b37bf51d4e8592d0eba768a39655"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a92c7b37bf51d4e8592d0eba768a39655">updateReceived</a> (ECommType)</td></tr>
 <tr class="memdesc:a92c7b37bf51d4e8592d0eba768a39655"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateReceived a notification that a packet was received by one of the commtypes.  <a href="#a92c7b37bf51d4e8592d0eba768a39655">More...</a><br /></td></tr>
 <tr class="separator:a92c7b37bf51d4e8592d0eba768a39655"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7ae613423c97209166e481764344b63"><td class="memItemLeft" align="right" valign="top"><a id="ae7ae613423c97209166e481764344b63"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ae7ae613423c97209166e481764344b63">newLightFound</a> (ECommType, QString)</td></tr>
+<tr class="memdesc:ae7ae613423c97209166e481764344b63"><td class="mdescLeft">&#160;</td><td class="mdescRight">signals when a new light is found <br /></td></tr>
+<tr class="separator:ae7ae613423c97209166e481764344b63"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a189f19a0bd7d0e66f5444becfb702a1d"><td class="memItemLeft" align="right" valign="top"><a id="a189f19a0bd7d0e66f5444becfb702a1d"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a189f19a0bd7d0e66f5444becfb702a1d">lightDeleted</a> (ECommType, QString)</td></tr>
+<tr class="memdesc:a189f19a0bd7d0e66f5444becfb702a1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">signals when an existing light is deleted <br /></td></tr>
+<tr class="separator:a189f19a0bd7d0e66f5444becfb702a1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -89,9 +97,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#aec814f462e86f38e8c24e14ab5115407">removeLight</a> (const <a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;light)</td></tr>
 <tr class="memdesc:aec814f462e86f38e8c24e14ab5115407"><td class="mdescLeft">&#160;</td><td class="mdescRight">removes light from saved data, returns true if successful <br /></td></tr>
 <tr class="separator:aec814f462e86f38e8c24e14ab5115407"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62b21d48e62cbcba64b1dd249b26af15"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a62b21d48e62cbcba64b1dd249b26af15">fillDevice</a> (<a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;device)</td></tr>
-<tr class="memdesc:a62b21d48e62cbcba64b1dd249b26af15"><td class="mdescLeft">&#160;</td><td class="mdescRight">fillDevice use the controller name, type, and index to fill in the rest of the devices data.  <a href="#a62b21d48e62cbcba64b1dd249b26af15">More...</a><br /></td></tr>
-<tr class="separator:a62b21d48e62cbcba64b1dd249b26af15"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7545cb1601f977d128aad856fa5a3bfa"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a7545cb1601f977d128aad856fa5a3bfa">fillLight</a> (<a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;light)</td></tr>
+<tr class="memdesc:a7545cb1601f977d128aad856fa5a3bfa"><td class="mdescLeft">&#160;</td><td class="mdescRight">fillLight use the controller name, type, and index to fill in the rest of the devices data.  <a href="#a7545cb1601f977d128aad856fa5a3bfa">More...</a><br /></td></tr>
+<tr class="separator:a7545cb1601f977d128aad856fa5a3bfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a66ab15d3f8c31727bc4f6fed6004dc71"><td class="memItemLeft" align="right" valign="top"><a id="a66ab15d3f8c31727bc4f6fed6004dc71"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a66ab15d3f8c31727bc4f6fed6004dc71">startDiscovery</a> (EProtocolType type)</td></tr>
 <tr class="memdesc:a66ab15d3f8c31727bc4f6fed6004dc71"><td class="mdescLeft">&#160;</td><td class="mdescRight">startDiscovery put given comm type into discovery mode. <br /></td></tr>
@@ -104,13 +112,17 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a14d204c12ecc658add4e4e32b570d8e4">discoveryErrorsExist</a> (EProtocolType type)</td></tr>
 <tr class="memdesc:a14d204c12ecc658add4e4e32b570d8e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns true if theres any known errors for the commtype. <br /></td></tr>
 <tr class="separator:a14d204c12ecc658add4e4e32b570d8e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a95f4ab1af1379b8674664b081421f221"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classcor_1_1_dictionary.html">cor::Dictionary</a>&lt; <a class="el" href="classcor_1_1_light.html">cor::Light</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a95f4ab1af1379b8674664b081421f221">lightDict</a> (ECommType type)</td></tr>
-<tr class="memdesc:a95f4ab1af1379b8674664b081421f221"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceTable dictionary of all connected devices of a certain connection type. The light names are used as keys.  <a href="#a95f4ab1af1379b8674664b081421f221">More...</a><br /></td></tr>
-<tr class="separator:a95f4ab1af1379b8674664b081421f221"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a59643a2f827ddfc3bc45dd2b4c796c56"><td class="memItemLeft" align="right" valign="top"><a id="a59643a2f827ddfc3bc45dd2b4c796c56"></a>
-<a class="el" href="classcor_1_1_light.html">cor::Light</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a59643a2f827ddfc3bc45dd2b4c796c56">lightByID</a> (const QString &amp;ID)</td></tr>
-<tr class="memdesc:a59643a2f827ddfc3bc45dd2b4c796c56"><td class="mdescLeft">&#160;</td><td class="mdescRight">looks up a light by its unique ID and returns its metadata and current state <br /></td></tr>
-<tr class="separator:a59643a2f827ddfc3bc45dd2b4c796c56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd37f6d99781cb303c243446d8a50d70"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classcor_1_1_dictionary.html">cor::Dictionary</a>&lt; <a class="el" href="classcor_1_1_light.html">cor::Light</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#acd37f6d99781cb303c243446d8a50d70">lightDict</a> (ECommType type) const</td></tr>
+<tr class="memdesc:acd37f6d99781cb303c243446d8a50d70"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceTable dictionary of all connected devices of a certain connection type. The light names are used as keys.  <a href="#acd37f6d99781cb303c243446d8a50d70">More...</a><br /></td></tr>
+<tr class="separator:acd37f6d99781cb303c243446d8a50d70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae34ef82ec008e84d9ccaa788e47da645"><td class="memItemLeft" align="right" valign="top"><a id="ae34ef82ec008e84d9ccaa788e47da645"></a>
+<a class="el" href="classcor_1_1_light.html">cor::Light</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#ae34ef82ec008e84d9ccaa788e47da645">lightByID</a> (const QString &amp;ID) const</td></tr>
+<tr class="memdesc:ae34ef82ec008e84d9ccaa788e47da645"><td class="mdescLeft">&#160;</td><td class="mdescRight">looks up a light by its unique ID and returns its metadata and current state <br /></td></tr>
+<tr class="separator:ae34ef82ec008e84d9ccaa788e47da645"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9fab56332314145ad6688ef69b1e7447"><td class="memItemLeft" align="right" valign="top"><a id="a9fab56332314145ad6688ef69b1e7447"></a>
+std::vector&lt; <a class="el" href="classcor_1_1_light.html">cor::Light</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a9fab56332314145ad6688ef69b1e7447">lightsByIDs</a> (const std::vector&lt; QString &gt; IDs) const</td></tr>
+<tr class="memdesc:a9fab56332314145ad6688ef69b1e7447"><td class="mdescLeft">&#160;</td><td class="mdescRight">converts a vector of unique IDs to a vector cor::Lights <br /></td></tr>
+<tr class="separator:a9fab56332314145ad6688ef69b1e7447"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0a7ff47d86dd08aba90e278d1336818b"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classcor_1_1_light.html">cor::Light</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a0a7ff47d86dd08aba90e278d1336818b">commLightsFromVector</a> (const std::vector&lt; <a class="el" href="classcor_1_1_light.html">cor::Light</a> &gt; &amp;lights)</td></tr>
 <tr class="separator:a0a7ff47d86dd08aba90e278d1336818b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad5fbc9d358708a3a8b82c26ce91cd906"><td class="memItemLeft" align="right" valign="top"><a id="ad5fbc9d358708a3a8b82c26ce91cd906"></a>
@@ -157,6 +169,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#a407b233655df53a34ca5237a65fd34f1">deleteLight</a> (const QString &amp;uniqueID)</td></tr>
 <tr class="memdesc:a407b233655df53a34ca5237a65fd34f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">delete a light by unique ID. This deletes the light from memory. <br /></td></tr>
 <tr class="separator:a407b233655df53a34ca5237a65fd34f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aee585ec934281692c2632ccb13bcfc49"><td class="memItemLeft" align="right" valign="top"><a id="aee585ec934281692c2632ccb13bcfc49"></a>
+QTime&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_layer.html#aee585ec934281692c2632ccb13bcfc49">lastUpdateTime</a> ()</td></tr>
+<tr class="memdesc:aee585ec934281692c2632ccb13bcfc49"><td class="mdescLeft">&#160;</td><td class="mdescRight">gives the last time any specific <a class="el" href="class_comm_type.html" title="inherited by comm types, provides a general interface that can be used to do connections and sending ...">CommType</a> last received an update <br /></td></tr>
+<tr class="separator:aee585ec934281692c2632ccb13bcfc49"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License.</dd></dl>
@@ -232,17 +248,17 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a id="a62b21d48e62cbcba64b1dd249b26af15"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a62b21d48e62cbcba64b1dd249b26af15">&#9670;&nbsp;</a></span>fillDevice()</h2>
+<a id="a7545cb1601f977d128aad856fa5a3bfa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7545cb1601f977d128aad856fa5a3bfa">&#9670;&nbsp;</a></span>fillLight()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool CommLayer::fillDevice </td>
+          <td class="memname">bool CommLayer::fillLight </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;&#160;</td>
-          <td class="paramname"><em>device</em></td><td>)</td>
+          <td class="paramname"><em>light</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -282,8 +298,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 </div>
 </div>
-<a id="a95f4ab1af1379b8674664b081421f221"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a95f4ab1af1379b8674664b081421f221">&#9670;&nbsp;</a></span>lightDict()</h2>
+<a id="acd37f6d99781cb303c243446d8a50d70"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acd37f6d99781cb303c243446d8a50d70">&#9670;&nbsp;</a></span>lightDict()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -296,7 +312,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
           <td>(</td>
           <td class="paramtype">ECommType&#160;</td>
           <td class="paramname"><em>type</em></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
   </td>

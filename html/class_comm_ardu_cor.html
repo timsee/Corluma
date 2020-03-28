@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.19.0</span>
+   &#160;<span id="projectnumber">v0.19.6</span>
    </div>
   </td>
  </tr>
@@ -66,6 +66,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_ardu_cor.html#a284678401737934dbdaf295170f002cc">updateReceived</a> (ECommType)</td></tr>
 <tr class="memdesc:a284678401737934dbdaf295170f002cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateReceived an update packet was received from any controller. <br /></td></tr>
 <tr class="separator:a284678401737934dbdaf295170f002cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09268fcffe0ff6b4dfca7143bb3a8958"><td class="memItemLeft" align="right" valign="top"><a id="a09268fcffe0ff6b4dfca7143bb3a8958"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_ardu_cor.html#a09268fcffe0ff6b4dfca7143bb3a8958">newLightFound</a> (ECommType, QString)</td></tr>
+<tr class="memdesc:a09268fcffe0ff6b4dfca7143bb3a8958"><td class="mdescLeft">&#160;</td><td class="mdescRight">signals when a new light is found <br /></td></tr>
+<tr class="separator:a09268fcffe0ff6b4dfca7143bb3a8958"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d1ba4ede760d76650190d3cd41686d8"><td class="memItemLeft" align="right" valign="top"><a id="a9d1ba4ede760d76650190d3cd41686d8"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_ardu_cor.html#a9d1ba4ede760d76650190d3cd41686d8">lightDeleted</a> (ECommType, QString)</td></tr>
+<tr class="memdesc:a9d1ba4ede760d76650190d3cd41686d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">signals when an existing light is deleted <br /></td></tr>
+<tr class="separator:a9d1ba4ede760d76650190d3cd41686d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -126,6 +134,10 @@ std::vector&lt; <a class="el" href="class_ardu_cor_metadata.html">ArduCorMetadat
 <a class="el" href="class_ardu_cor_metadata.html">ArduCorMetadata</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_ardu_cor.html#a281f1d30ee21bdd7eb09c69ddfd75255">arduCorLightFromLight</a> (const <a class="el" href="classcor_1_1_light.html">cor::Light</a> &amp;light)</td></tr>
 <tr class="memdesc:a281f1d30ee21bdd7eb09c69ddfd75255"><td class="mdescLeft">&#160;</td><td class="mdescRight">converts a <a class="el" href="classcor_1_1_light.html" title="The Light class is the base datatype used for working with lights in Corluma. At a minimum...">cor::Light</a> into a arducor light <br /></td></tr>
 <tr class="separator:a281f1d30ee21bdd7eb09c69ddfd75255"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa24e6b6d29e3dcbf3833d3caf4a6a49b"><td class="memItemLeft" align="right" valign="top"><a id="aa24e6b6d29e3dcbf3833d3caf4a6a49b"></a>
+QTime&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_comm_ardu_cor.html#aa24e6b6d29e3dcbf3833d3caf4a6a49b">lastUpdateTime</a> ()</td></tr>
+<tr class="memdesc:aa24e6b6d29e3dcbf3833d3caf4a6a49b"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the last time any <a class="el" href="class_comm_type.html" title="inherited by comm types, provides a general interface that can be used to do connections and sending ...">CommType</a> owned by <a class="el" href="class_comm_ardu_cor.html" title="The CommArduCor class wraps CommHTTP, CommUDP, and CommSerial into one object designed for communicat...">CommArduCor</a> received an update. <br /></td></tr>
+<tr class="separator:aa24e6b6d29e3dcbf3833d3caf4a6a49b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
