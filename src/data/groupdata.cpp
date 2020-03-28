@@ -12,7 +12,7 @@
 
 GroupData::GroupData(QObject* parent) : QObject(parent), cor::JSONSaveData("save") {
     loadJSON();
-    mSubgroups.updateGroupAndRoomDict(mGroupDict.items(), mRoomDict.items());
+    mSubgroups.updateGroupAndRoomData(mGroupDict.items(), mRoomDict.items());
 }
 
 bool GroupData::removeAppData() {
@@ -58,7 +58,7 @@ bool GroupData::isGroupARoom(const cor::Group& group) {
 void GroupData::updateSubgroups() {
     auto groups = mGroupDict.items();
     auto rooms = mRoomDict.items();
-    mSubgroups.updateGroupAndRoomDict(groups, rooms);
+    mSubgroups.updateGroupAndRoomData(groups, rooms);
     mOrphans.generateOrphans(groups, rooms);
 
     std::vector<std::uint64_t> groupIDs;
@@ -462,12 +462,12 @@ bool GroupData::save(const QString& filePath) {
 
 
 void GroupData::addLightToGroups(ECommType, const QString& uniqueID) {
-    qDebug() << " add light to groups " << uniqueID;
+    // qDebug() << " add light to groups " << uniqueID;
     mOrphans.addNewLight(uniqueID, mGroupDict.items(), mRoomDict.items());
 }
 
 void GroupData::removeLightFromGroups(ECommType, const QString& uniqueID) {
-    qDebug() << " remove light from groups" << uniqueID;
+    // qDebug() << " remove light from groups" << uniqueID;
 }
 
 std::uint64_t GroupData::generateNewUniqueKey() {

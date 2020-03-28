@@ -432,10 +432,19 @@ void LeftHandMenu::groupSelected(const QString& key, bool shouldSelect) {
     auto ID = mGroups->groupNameToID(key);
     if (ID != std::numeric_limits<std::uint64_t>::max()) {
         // get the full group from the name
-        auto group = mGroups->groups().item(QString::number(ID).toStdString());
-        if (group.second) {
-            auto lightIDs = group.first.lights();
-            auto lights = mComm->lightsByIDs(group.first.lights());
+        auto groupResult = mGroups->groups().item(QString::number(ID).toStdString());
+        bool groupFound = groupResult.second;
+        cor::Group group = groupResult.first;
+        if (!groupFound) {
+            auto room = mGroups->rooms().item(QString::number(ID).toStdString());
+            if (room.second) {
+                group = room.first;
+                groupFound = true;
+            }
+        }
+        if (groupFound) {
+            auto lightIDs = group.lights();
+            auto lights = mComm->lightsByIDs(group.lights());
             // if the group selected is found, either select or deselect it
             if (shouldSelect) {
                 mSelectedLights->addLights(lights);
