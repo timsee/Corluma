@@ -4,7 +4,6 @@
 #include <QString>
 #include <unordered_map>
 #include "cor/objects/group.h"
-#include "cor/objects/room.h"
 
 /**
  * @brief The SubgroupData class stores the relationship between groups. Group A is a subgroup of
@@ -31,13 +30,11 @@ public:
     }
 
     /// updates the data for subgroups by parsing all groups and rooms
-    void updateGroupAndRoomData(const std::vector<cor::Group>& groups,
-                                const std::vector<cor::Room>& rooms);
+    void updateGroupAndRoomData(const std::vector<cor::Group>& groups);
 
 private:
     /// creates the subgroup map
-    SubgroupMap generateSubgroupMap(const std::vector<cor::Group>& groupDict,
-                                    const std::vector<cor::Room>& roomDict);
+    SubgroupMap generateSubgroupMap(const std::vector<cor::Group>& groupDict);
 
     /// stores all subgroup data
     SubgroupMap mSubgroupMap;

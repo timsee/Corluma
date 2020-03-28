@@ -88,17 +88,17 @@ public slots:
 
 private slots:
 
-    /// called when a light is clicked
-    void lightClicked(const QString&, const QString&);
+    /// called when a light is clicked, signals the group ID and the light ID
+    void lightClicked(std::uint64_t groupID, const QString& lightID);
 
     /// called when a group is selected or deselected
-    void groupSelected(const QString& key, bool shouldSelect);
+    void groupSelected(std::uint64_t key, bool shouldSelect);
 
     /// called when buttons should be shown or hidden
-    void shouldShowButtons(const QString&, bool);
+    void shouldShowButtons(std::uint64_t, bool);
 
     /// called when a group is changed
-    void changedGroup(const QString&);
+    void changedGroup(std::uint64_t);
 
     /// used to render UI updates
     void renderUI();

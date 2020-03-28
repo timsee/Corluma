@@ -38,16 +38,7 @@ void insertIntoSubgroupMap(std::unordered_map<std::uint64_t, std::vector<std::ui
 void checkAgainstAllGroupsAndRooms(
     std::unordered_map<std::uint64_t, std::vector<std::uint64_t>>& map,
     const cor::Group& currentGroup,
-    const std::vector<cor::Room>& rooms,
     const std::vector<cor::Group>& groups) {
-    for (const auto& room : rooms) {
-        if (room.uniqueID() != currentGroup.uniqueID()) {
-            if (checkIfAisSubsetOfB(currentGroup.lights(), room.lights())) {
-                insertIntoSubgroupMap(map, room.uniqueID(), currentGroup.uniqueID());
-            }
-        }
-    }
-
     for (const auto& group : groups) {
         if (group.uniqueID() != currentGroup.uniqueID()) {
             if (checkIfAisSubsetOfB(currentGroup.lights(), group.lights())) {
@@ -60,25 +51,18 @@ void checkAgainstAllGroupsAndRooms(
 } // namespace
 
 
-void SubgroupData::updateGroupAndRoomData(const std::vector<cor::Group>& groups,
-                                          const std::vector<cor::Room>& rooms) {
+void SubgroupData::updateGroupAndRoomData(const std::vector<cor::Group>& groups) {
     // make a new version of the subgroup map
-    mSubgroupMap = generateSubgroupMap(groups, rooms);
+    mSubgroupMap = generateSubgroupMap(groups);
 }
 
 
-SubgroupData::SubgroupMap SubgroupData::generateSubgroupMap(const std::vector<cor::Group>& groups,
-                                                            const std::vector<cor::Room>& rooms) {
+SubgroupData::SubgroupMap SubgroupData::generateSubgroupMap(const std::vector<cor::Group>& groups) {
     SubgroupMap subgroupMap;
 
     // first loop through each group and generate its subgroups
     for (const auto& currentGroup : groups) {
-        checkAgainstAllGroupsAndRooms(subgroupMap, currentGroup, rooms, groups);
-    }
-
-    // now loop through each group and generate its subgroups
-    for (const auto& currentRoom : rooms) {
-        checkAgainstAllGroupsAndRooms(subgroupMap, currentRoom, rooms, groups);
+        checkAgainstAllGroupsAndRooms(subgroupMap, currentGroup, groups);
     }
 
     return subgroupMap;

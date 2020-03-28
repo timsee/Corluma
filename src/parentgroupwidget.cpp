@@ -59,7 +59,7 @@ void ParentGroupWidget::updateTopWidget() {
     mGroupsButtonWidget->updateCheckedLights("All", checkedCount, reachableCount);
 
     for (const auto& groupID : mSubgroups) {
-        auto groupResult = mGroupData->groups().item(QString::number(groupID).toStdString());
+        auto groupResult = mGroupData->groupDict().item(QString::number(groupID).toStdString());
         if (groupResult.second) {
             const auto& group = groupResult.first;
             auto result = countCheckedAndReachableLights(group);
@@ -195,7 +195,7 @@ void ParentGroupWidget::setShowButtons(bool show) {
             mGroupsButtonWidget->setVisible(false);
         }
 
-        for (const auto& group : mGroupData->groups().items()) {
+        for (const auto& group : mGroupData->groups()) {
             if (group.name() == mLastSubGroupName) {
                 subGroupOpen = true;
                 showLights(mComm->lightListFromGroup(group));
@@ -216,11 +216,11 @@ void ParentGroupWidget::setShowButtons(bool show) {
     }
 
     setFixedHeight(widgetHeightSum());
-    emit buttonsShown(mKey, mDropdownTopWidget->showButtons());
+    emit buttonsShown(mGroup.uniqueID(), mDropdownTopWidget->showButtons());
 }
 
 void ParentGroupWidget::handleClicked(const QString& key) {
-    emit deviceClicked(mKey, key);
+    emit deviceClicked(mGroup.uniqueID(), key);
     if (hasSubgroups()) {
         updateTopWidget();
     }
@@ -321,26 +321,28 @@ void ParentGroupWidget::resize() {
 
 void ParentGroupWidget::groupPressed(const QString& name) {
     mLastSubGroupName = name;
+    auto groupID = mGroupData->groupNameToID(name);
     if (name == "All") {
         showLights(mComm->lightListFromGroup(mGroup));
     } else if (name == "NO_GROUP") {
         showLights({});
     } else {
-        for (const auto& group : mGroupData->groups().items()) {
-            if (group.name() == name) {
-                showLights(mComm->lightListFromGroup(group));
-            }
+        auto groupResult = mGroupData->groupDict().item(QString::number(groupID).toStdString());
+        if (groupResult.second) {
+            showLights(mComm->lightListFromGroup(groupResult.first));
+        } else {
+            qDebug() << " could not find group with name " << name << " and ID " << groupID;
         }
     }
     setFixedHeight(widgetHeightSum());
-    emit groupChanged(name);
+    emit groupChanged(mGroupData->groupNameToID(name));
 }
 
 void ParentGroupWidget::selectAllToggled(const QString& key, bool selectAll) {
     if (key == "All") {
-        emit allButtonPressed(mGroup.name(), selectAll);
+        emit allButtonPressed(mGroup.uniqueID(), selectAll);
     } else {
-        emit allButtonPressed(key, selectAll);
+        emit allButtonPressed(mGroupData->groupNameToID(key), selectAll);
     }
 }
 

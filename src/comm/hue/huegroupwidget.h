@@ -6,7 +6,6 @@
 #include <QWidget>
 
 #include "cor/objects/group.h"
-#include "cor/objects/room.h"
 
 namespace hue {
 /*!
@@ -24,9 +23,6 @@ class HueGroupWidget : public QWidget {
 public:
     /// constructor
     explicit HueGroupWidget(QWidget* parent, std::uint32_t index, const cor::Group& lightGroup);
-
-    /// constructor
-    explicit HueGroupWidget(QWidget* parent, std::uint32_t index, const cor::Room& lightGroup);
 
 protected:
     /// paints the background on the widget

@@ -827,5 +827,13 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Each `CommType` now signals when a light is either added or deleted.
 
 
+### **v0.19.63**
+#### Bug Fixes
+- Removed `cor::Room` and replaced it with a `cor::EGroupType` in `cor::Group`.
+- Removed separate dictionaries for rooms in `GroupData` and `hue::Bridge`.
+- Refactored `ParentGroupWidget` to signal with unique IDs instead of group names.
+- Added a `keysAndItems()` function to `cor::Dictionary`.
+
+
 
 

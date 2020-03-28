@@ -12,7 +12,7 @@
 
 GroupData::GroupData(QObject* parent) : QObject(parent), cor::JSONSaveData("save") {
     loadJSON();
-    mSubgroups.updateGroupAndRoomData(mGroupDict.items(), mRoomDict.items());
+    mSubgroups.updateGroupAndRoomData(mGroupDict.items());
 }
 
 bool GroupData::removeAppData() {
@@ -46,33 +46,17 @@ std::vector<QString> GroupData::groupNames() {
     return retVector;
 }
 
-bool GroupData::isGroupARoom(const cor::Group& group) {
-    for (const auto& room : rooms().items()) {
-        if (room.uniqueID() == group.uniqueID()) {
-            return true;
-        }
-    }
-    return false;
-}
-
 void GroupData::updateSubgroups() {
     auto groups = mGroupDict.items();
-    auto rooms = mRoomDict.items();
-    mSubgroups.updateGroupAndRoomData(groups, rooms);
-    mOrphans.generateOrphans(groups, rooms);
+    mSubgroups.updateGroupAndRoomData(mGroupDict.items());
+    mOrphans.generateOrphans(mGroupDict.items());
 
     std::vector<std::uint64_t> groupIDs;
     groupIDs.reserve(groups.size());
     for (const auto& group : groups) {
         groupIDs.emplace_back(group.uniqueID());
     }
-
-    std::vector<std::uint64_t> roomIDs;
-    roomIDs.reserve(groups.size());
-    for (const auto& room : rooms) {
-        roomIDs.emplace_back(room.uniqueID());
-    }
-    mParents.updateParentGroups(groupIDs, roomIDs, mSubgroups.subgroups());
+    mParents.updateParentGroups(groupIDs, mSubgroups.subgroups());
 }
 
 //-------------------
@@ -135,34 +119,6 @@ void GroupData::saveNewGroup(const cor::Group& group) {
     }
 }
 
-void GroupData::saveNewRoom(const cor::Room& room) {
-    QJsonObject groupObject = room.toJson();
-    groupObject["isRoom"] = true;
-    if (!mJsonData.isNull() && !room.lights().empty()) {
-        if (mJsonData.isArray()) {
-            auto array = mJsonData.array();
-            mJsonData.array().push_front(groupObject);
-            array.push_front(groupObject);
-            mJsonData.setArray(array);
-
-            const auto& key = QString::number(room.uniqueID()).toStdString();
-            // check that it doesn't already exist, if it does, replace the old version
-            auto dictResult = mRoomDict.item(key);
-            if (dictResult.second) {
-                mRoomDict.update(key, room);
-            } else {
-                mRoomDict.insert(key, room);
-            }
-
-            // save file
-            saveJSON();
-            updateSubgroups();
-            // hues use their bridge to store their data for collections instead of the JSON
-            emit newCollectionAdded(room.name());
-        }
-    }
-}
-
 namespace {
 
 void updateGroup(cor::Group& group, const cor::Group& externalGroup) {
@@ -180,40 +136,6 @@ void updateGroup(cor::Group& group, const cor::Group& externalGroup) {
 }
 
 } // namespace
-
-
-void GroupData::updateExternallyStoredRooms(const std::vector<cor::Room>& externalRooms) {
-    // fill in subgroups for each room
-    for (const auto& externalRoom : externalRooms) {
-        const auto& key = QString::number(externalRoom.uniqueID()).toStdString();
-        // check if it exists in group already
-        auto lookupResult = mRoomDict.item(key);
-        if (lookupResult.second) {
-            // get existing group
-            auto groupCopy = lookupResult.first;
-            updateGroup(groupCopy, externalRoom);
-            mRoomDict.update(key, groupCopy);
-        } else {
-            bool foundGroup = false;
-            for (const auto& internalGroup : mRoomDict.items()) {
-                if (internalGroup.name() == externalRoom.name()) {
-                    auto groupCopy = internalGroup;
-                    updateGroup(groupCopy, externalRoom);
-                    mRoomDict.update(QString::number(internalGroup.uniqueID()).toStdString(),
-                                     groupCopy);
-                    foundGroup = true;
-                }
-            }
-            if (!foundGroup) {
-                auto result = mRoomDict.insert(key, externalRoom);
-                if (!result) {
-                    qDebug() << " insert failed" << externalRoom.name();
-                }
-            }
-        }
-    }
-    updateSubgroups();
-}
 
 void GroupData::updateExternallyStoredGroups(const std::vector<cor::Group>& externalGroups) {
     // fill in subgroups for each room
@@ -326,14 +248,6 @@ bool GroupData::removeGroup(std::uint64_t groupID) {
                                 return true;
                             }
                         }
-
-                        for (const auto& group : mRoomDict.items()) {
-                            if (group.uniqueID() == groupID) {
-                                mRoomDict.remove(group);
-                                emit groupDeleted(group.name());
-                                return true;
-                            }
-                        }
                     }
                 }
                 i++;
@@ -349,14 +263,9 @@ bool GroupData::removeGroup(std::uint64_t groupID) {
 //-------------------
 
 void GroupData::parseGroup(const QJsonObject& object) {
-    if (cor::Group::isValidJson(object) && object["isRoom"].isBool()) {
-        if (object["isRoom"].toBool()) {
-            cor::Room room(object);
-            mRoomDict.insert(QString::number(room.uniqueID()).toStdString(), room);
-        } else {
-            cor::Group group(object);
-            mGroupDict.insert(QString::number(group.uniqueID()).toStdString(), group);
-        }
+    if (cor::Group::isValidJson(object)) {
+        cor::Group group(object);
+        mGroupDict.insert(QString::number(group.uniqueID()).toStdString(), group);
     } else {
         qDebug() << __func__ << " not recognized";
     }
@@ -463,7 +372,7 @@ bool GroupData::save(const QString& filePath) {
 
 void GroupData::addLightToGroups(ECommType, const QString& uniqueID) {
     // qDebug() << " add light to groups " << uniqueID;
-    mOrphans.addNewLight(uniqueID, mGroupDict.items(), mRoomDict.items());
+    mOrphans.addNewLight(uniqueID, mGroupDict.items());
 }
 
 void GroupData::removeLightFromGroups(ECommType, const QString& uniqueID) {
@@ -483,13 +392,6 @@ std::uint64_t GroupData::generateNewUniqueKey() {
             maxKey = group.uniqueID();
         }
     }
-
-    for (const auto& room : mRoomDict.items()) {
-        if (room.uniqueID() > maxKey
-            && (room.uniqueID() < std::numeric_limits<unsigned long>::max() / 2)) {
-            maxKey = room.uniqueID();
-        }
-    }
     return maxKey + 1;
 }
 
@@ -497,7 +399,7 @@ std::vector<QString> GroupData::groupNamesFromIDs(std::vector<std::uint64_t> IDs
     std::vector<QString> nameVector;
     nameVector.reserve(IDs.size());
     for (const auto& subGroupID : IDs) {
-        auto groupResult = groups().item(QString::number(subGroupID).toStdString());
+        auto groupResult = mGroupDict.item(QString::number(subGroupID).toStdString());
         // check if group is already in this list
         if (groupResult.second) {
             // check if its already in the sub group names
@@ -516,20 +418,10 @@ std::vector<cor::Group> GroupData::groupsFromIDs(std::vector<std::uint64_t> IDs)
     std::vector<cor::Group> retVector;
     retVector.reserve(IDs.size());
     for (const auto& subGroupID : IDs) {
-        bool found = false;
-        auto roomResult = rooms().item(QString::number(subGroupID).toStdString());
+        auto groupResult = mGroupDict.item(QString::number(subGroupID).toStdString());
         // check if group is already in this list
-        if (roomResult.second) {
-            found = true;
-            retVector.emplace_back(roomResult.first);
-        }
-
-        if (!found) {
-            auto groupResult = groups().item(QString::number(subGroupID).toStdString());
-            // check if group is already in this list
-            if (groupResult.second) {
-                retVector.emplace_back(groupResult.first);
-            }
+        if (groupResult.second) {
+            retVector.emplace_back(groupResult.first);
         }
     }
     return retVector;
@@ -538,11 +430,6 @@ std::vector<cor::Group> GroupData::groupsFromIDs(std::vector<std::uint64_t> IDs)
 QString GroupData::nameFromID(std::uint64_t ID) {
     auto key = QString::number(ID).toStdString();
     auto result = mGroupDict.item(key);
-    if (result.second) {
-        return result.first.name();
-    }
-
-    result = mRoomDict.item(key);
     if (result.second) {
         return result.first.name();
     }
@@ -556,12 +443,6 @@ QString GroupData::nameFromID(std::uint64_t ID) {
 }
 
 std::uint64_t GroupData::groupNameToID(const QString name) {
-    for (const auto& room : mRoomDict.items()) {
-        if (name == room.name()) {
-            return room.uniqueID();
-        }
-    }
-
     for (const auto& group : mGroupDict.items()) {
         if (name == group.name()) {
             return group.uniqueID();

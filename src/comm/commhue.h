@@ -13,7 +13,6 @@
 #include "comm/hue/hueprotocols.h"
 #include "commtype.h"
 #include "cor/objects/group.h"
-#include "cor/objects/room.h"
 
 /*!
  * \copyright
@@ -315,9 +314,7 @@ private:
      * \param name name of new group
      * \return  a unique ID for the group with the given name
      */
-    std::uint64_t generateUniqueID(const std::vector<cor::Group>& groupList,
-                                   const std::vector<cor::Group>& roomList,
-                                   const QString& name);
+    std::uint64_t generateUniqueID(const std::vector<cor::Group>& groupList, const QString& name);
 
     /*!
      * \brief resetBackgroundTimers reset the background timers that sync things such as groups
@@ -439,19 +436,7 @@ private:
      * \return true if successful, false if failed.
      */
     std::pair<cor::Group, bool> jsonToGroup(QJsonObject object,
-                                            const std::vector<cor::Group>& groupList,
-                                            const std::vector<cor::Group>& roomList);
-
-
-    /*!
-     * \brief jsonToGroup read an incoming packet from the hue bridge and update the internal
-     * representation of the hue's known groups.
-     * \param object json representationof a group
-     * \return true if successful, false if failed.
-     */
-    std::pair<cor::Room, bool> jsonToRoom(QJsonObject object,
-                                          const std::vector<cor::Group>& groupList,
-                                          const std::vector<cor::Group>& roomList);
+                                            const std::vector<cor::Group>& groupList);
 
     /*!
      * \brief checkTypeOfUpdate checks the JSON object received from the hue bridge and figures out

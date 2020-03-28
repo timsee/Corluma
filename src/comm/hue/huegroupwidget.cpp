@@ -40,35 +40,6 @@ HueGroupWidget::HueGroupWidget(QWidget* parent, std::uint32_t index, const cor::
     mLayout->addWidget(mGroupDescription, 1);
 }
 
-HueGroupWidget::HueGroupWidget(QWidget* parent, std::uint32_t index, const cor::Room& room)
-    : QWidget(parent) {
-    const QString styleSheet = "background-color: rgba(0,0,0,0);";
-    setStyleSheet(styleSheet);
-
-    mName = new QLabel("<b>" + room.name() + "</b>", this);
-    auto font = mName->font();
-    auto fontSize = int(font.pointSize() * 1.33);
-    font.setPointSize(fontSize);
-    mName->setFont(font);
-    mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mName->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-
-
-    mIndex = new QLabel("<b>Index:</b> " + QString::number(index), this);
-    mIndex->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mIndex->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-
-    mGroupDescription = new QLabel(generateDescription(room.lights().size(), true), this);
-    mGroupDescription->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mGroupDescription->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-
-    mLayout = new QVBoxLayout(this);
-    mLayout->addWidget(mName, 1);
-    mLayout->addWidget(mIndex, 1);
-    mLayout->addWidget(mGroupDescription, 1);
-}
-
-
 QString HueGroupWidget::generateDescription(std::size_t lightCount, bool isRoom) {
     QString returnString;
     if (isRoom) {

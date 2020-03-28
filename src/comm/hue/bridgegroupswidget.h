@@ -28,7 +28,7 @@ public:
     explicit BridgeGroupsWidget(QWidget* parent);
 
     /// update the groups in the widget
-    void updateGroups(BridgeGroupVector groups, BridgeRoomVector rooms);
+    void updateGroups(BridgeGroupVector groups, BridgeGroupVector rooms);
 
     /*!
      * \brief resize size the widget programmatically

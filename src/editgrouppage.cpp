@@ -137,7 +137,7 @@ bool EditGroupPage::saveChanges() {
     if (mIsRoom) {
         for (const auto& device : newDevices) {
             // loop through all collections
-            for (const auto& collection : mGroups->rooms().items()) {
+            for (const auto& collection : mGroups->rooms()) {
                 // ignore the existing room and non-rooms
                 if (collection.name() != mNewName) {
                     for (const auto& lightID : collection.lights()) {
@@ -176,10 +176,16 @@ bool EditGroupPage::saveChanges() {
 
     // make a group to save into app data that isn't hue
     if (mIsRoom) {
-        cor::Room nonHueRoom(mGroups->generateNewUniqueKey(), mNewName, nonHueLights);
-        mGroups->saveNewRoom(nonHueRoom);
+        cor::Group nonHueRoom(mGroups->generateNewUniqueKey(),
+                              mNewName,
+                              cor::EGroupType::room,
+                              nonHueLights);
+        mGroups->saveNewGroup(nonHueRoom);
     } else {
-        cor::Group nonHueGroup(mGroups->generateNewUniqueKey(), mNewName, nonHueLights);
+        cor::Group nonHueGroup(mGroups->generateNewUniqueKey(),
+                               mNewName,
+                               cor::EGroupType::group,
+                               nonHueLights);
         mGroups->saveNewGroup(nonHueGroup);
     }
 

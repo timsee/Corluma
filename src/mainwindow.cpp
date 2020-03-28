@@ -454,8 +454,8 @@ void MainWindow::editButtonClicked(bool isMood) {
         mGreyOut->greyOut(true);
         mEditGroupPage->raise();
 
-        auto group = mData->findCurrentGroup(mGroups->groupsAndRooms());
-        auto isRoom = mGroups->isGroupARoom(group);
+        auto group = mData->findCurrentGroup(mGroups->groups());
+        auto isRoom = (group.type() == cor::EGroupType::room);
         if (group.isValid()) {
             mEditGroupPage->showGroup(group,
                                       mComm->lightListFromGroup(group),
@@ -466,7 +466,10 @@ void MainWindow::editButtonClicked(bool isMood) {
             for (const auto& light : mData->lights()) {
                 lights.push_back(light.uniqueID());
             }
-            cor::Group group(mGroups->generateNewUniqueKey(), "New Group", lights);
+            cor::Group group(mGroups->generateNewUniqueKey(),
+                             "New Group",
+                             cor::EGroupType::group,
+                             lights);
             mEditGroupPage->showGroup(group, mData->lights(), mComm->allLights(), false);
         }
     }

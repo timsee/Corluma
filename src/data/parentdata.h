@@ -5,7 +5,6 @@
 #include <unordered_map>
 
 #include "cor/objects/group.h"
-#include "cor/objects/room.h"
 
 /**
  * @brief The ParentData class stores a vector of parent groups. A "parent group" is defined as
@@ -27,21 +26,12 @@ public:
      * @brief updateParentGroups looks at all groups, all rooms, and all subgroups, and determines
      * the parent groups
      * @param groups all groups currently stored in the app data
-     * @param rooms all rooms currently store din the app data
      * @param subgroups an unorded_map of all groups and their associated subgroups.
      */
     void updateParentGroups(
         const std::vector<std::uint64_t>& groups,
-        const std::vector<std::uint64_t>& rooms,
         const std::unordered_map<std::uint64_t, std::vector<std::uint64_t>>& subgroups) {
         std::vector<std::uint64_t> parentGroups;
-
-        parentGroups.reserve(rooms.size());
-
-        // all rooms count as having no parents, so loop through them and add them all to vector
-        for (const auto& roomID : rooms) {
-            parentGroups.emplace_back(roomID);
-        }
 
         // now loop through groups, and check every subgroup map entry. if any entry marks this
         // group as a subgroup, then it has a parent and is not parentless.

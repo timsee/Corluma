@@ -78,22 +78,22 @@ signals:
      * \brief deviceClicked emitted whenever a device is clicked on the widget. Emits both the
      * widget key and the device key.
      */
-    void deviceClicked(QString, QString);
+    void deviceClicked(std::uint64_t, QString);
 
     /*!
      * \brief selectAllClicked emitted when select all is clicked. Should add all devices to data
      * layer.
      */
-    void allButtonPressed(QString, bool);
+    void allButtonPressed(std::uint64_t, bool);
 
     /*!
      * \brief buttonsShown emitted when the buttons are shown or hidden. emits the key and a boolean
      * representing whether the buttons are shown.
      */
-    void buttonsShown(QString, bool);
+    void buttonsShown(std::uint64_t, bool);
 
     /// signals that the group has changed and the size of the widget has potentially changed.
-    void groupChanged(QString);
+    void groupChanged(std::uint64_t);
 
 protected:
     /// resizes interal widgets when a resize event is triggered
@@ -168,6 +168,7 @@ private:
     /// stored data for the group.
     cor::Group mGroup;
 
+    /// stored data for the subgroups
     std::vector<std::uint64_t> mSubgroups;
 
     /// checks if a group with no subgroups should show widgets

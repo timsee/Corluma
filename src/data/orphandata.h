@@ -4,7 +4,6 @@
 #include <QString>
 
 #include "cor/objects/group.h"
-#include "cor/objects/room.h"
 
 /*!
  * \brief The OrphanData class stores all the lights that don't belong to any group or room. These
@@ -19,10 +18,8 @@ public:
      * @brief generateOrphans looks at all groups and rooms and checks for the existence of any
      * oprhans.
      * @param groups the groups that store lights
-     * @param rooms the rooms that store lights
      */
-    void generateOrphans(const std::vector<cor::Group>& groups,
-                         const std::vector<cor::Room>& rooms) {
+    void generateOrphans(const std::vector<cor::Group>& groups) {
         std::vector<QString> orphans;
         for (const auto& uniqueID : mAllLights) {
             bool lightFound = false;
@@ -36,16 +33,6 @@ public:
             }
 
             if (!lightFound) {
-                for (const auto& room : rooms) {
-                    const auto& lights = room.lights();
-                    auto result = std::find(lights.begin(), lights.end(), uniqueID);
-                    if (result != lights.end()) {
-                        lightFound = true;
-                        continue;
-                    }
-                }
-            }
-            if (!lightFound) {
                 // the light wasn't caught in any groups or room, its an orphan
                 orphans.push_back(uniqueID);
             }
@@ -57,15 +44,12 @@ public:
      * @brief addNewLight adds a new light to the list of all lights in the system
      * @param uniqueID the unique ID of the light
      * @param groups all the groups currently stored
-     * @param rooms all the rooms currently stored
      */
-    void addNewLight(QString uniqueID,
-                     const std::vector<cor::Group>& groups,
-                     const std::vector<cor::Room>& rooms) {
+    void addNewLight(QString uniqueID, const std::vector<cor::Group>& groups) {
         if (std::find(mAllLights.begin(), mAllLights.end(), uniqueID) == mAllLights.end()) {
             mAllLights.push_back(uniqueID);
         }
-        generateOrphans(groups, rooms);
+        generateOrphans(groups);
     }
 
     /**
@@ -90,7 +74,9 @@ public:
     const std::vector<QString>& orphans() const noexcept { return mOrphans; }
 
     /// autogenerates a group that stores all orpans.
-    cor::Group orphanGroup() const noexcept { return {0u, "Miscellaneous", mOrphans}; }
+    cor::Group orphanGroup() const noexcept {
+        return {0u, "Miscellaneous", cor::EGroupType::group, mOrphans};
+    }
 
 private:
     /// stores all known lights

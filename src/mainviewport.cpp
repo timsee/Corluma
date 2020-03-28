@@ -141,9 +141,7 @@ void MainViewport::showMainPage(EPage page, bool skipTransition) {
 }
 
 void MainViewport::loadMoodPage() {
-    mMoodPage->show(mData->findCurrentMood(mGroups->moods()),
-                    mGroups->moods(),
-                    mGroups->rooms().items());
+    mMoodPage->show(mData->findCurrentMood(mGroups->moods()), mGroups->moods(), mGroups->rooms());
 }
 
 void MainViewport::hideMainPage(EPage page) {

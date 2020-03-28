@@ -40,7 +40,7 @@ BridgeGroupsWidget::BridgeGroupsWidget(QWidget* parent) : QWidget(parent) {
     mMainLayout->addWidget(mScrollArea, 15);
 }
 
-void BridgeGroupsWidget::updateGroups(BridgeGroupVector groups, BridgeRoomVector rooms) {
+void BridgeGroupsWidget::updateGroups(BridgeGroupVector groups, BridgeGroupVector rooms) {
     // remove old widgets
     for (auto widget : mWidgets) {
         mScrollLayout->removeWidget(widget);

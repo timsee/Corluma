@@ -7,7 +7,6 @@
 #include "cor/dictionary.h"
 #include "cor/objects/group.h"
 #include "cor/objects/mood.h"
-#include "cor/objects/room.h"
 #include "orphandata.h"
 #include "parentdata.h"
 #include "subgroupdata.h"
@@ -51,19 +50,32 @@ public:
      */
     const cor::Dictionary<cor::Mood>& moods() const noexcept { return mMoodDict; }
 
-    /// getter for groups
-    const cor::Dictionary<cor::Group>& groups() const noexcept { return mGroupDict; }
-
-    /// getter for rooms
-    const cor::Dictionary<cor::Room>& rooms() const noexcept { return mRoomDict; }
-
-    /// creates a vector of groups and rooms
-    std::vector<cor::Group> groupsAndRooms() const {
-        auto groupVect = mGroupDict.items();
-        auto roomVect = mRoomDict.items();
-        groupVect.insert(groupVect.end(), roomVect.begin(), roomVect.end());
-        return groupVect;
+    /// creates a vector of all groups without rooms
+    std::vector<cor::Group> groups() const noexcept {
+        std::vector<cor::Group> groupVector;
+        auto groups = mGroupDict.items();
+        for (const auto& group : groups) {
+            if (group.type() == cor::EGroupType::group) {
+                groupVector.push_back(group);
+            }
+        }
+        return groupVector;
     }
+
+    /// creates a vector of all rooms
+    std::vector<cor::Group> rooms() const noexcept {
+        auto groups = mGroupDict.items();
+        std::vector<cor::Group> roomVector;
+        for (const auto& group : groups) {
+            if (group.type() == cor::EGroupType::room) {
+                roomVector.push_back(group);
+            }
+        }
+        return roomVector;
+    }
+
+    /// getter for the dictionary of all groups and rooms
+    const cor::Dictionary<cor::Group>& groupDict() const noexcept { return mGroupDict; }
 
     /// returns a vector of names for the groups.
     std::vector<QString> groupNames();
@@ -94,9 +106,6 @@ public:
     /// converts a group name to a ID, WARNING: this is not fast.
     std::uint64_t groupNameToID(const QString name);
 
-    /// true if a group is a room, false if its a group
-    bool isGroupARoom(const cor::Group& group);
-
     /// adds subgroups to rooms
     void updateSubgroups();
 
@@ -107,14 +116,6 @@ public:
      * \param externalGroups groups that are stored in an external location
      */
     void updateExternallyStoredGroups(const std::vector<cor::Group>& externalGroups);
-
-    /*!
-     * \brief updateExternallyStoredRooms update the information stored from external sources, such
-     * as Philips Bridges. This data gets added to the group info but does not get saved locally.
-     *
-     * \param externalRooms room that are stored in an external location
-     */
-    void updateExternallyStoredRooms(const std::vector<cor::Room>& externalRooms);
 
     /*!
      * \brief saveNewMood save a new mood
@@ -128,15 +129,6 @@ public:
      * \param group new group to save
      */
     void saveNewGroup(const cor::Group& group);
-
-    /*!
-     * \brief saveNewRoom save a new room of devices to JSON data, which then gets saved to file
-     * in AppData.
-     *
-     * \param room new room to save
-     */
-    void saveNewRoom(const cor::Room& room);
-
 
     /*!
      * \brief removeGroup remove the group of devices associated with the name provided. If no group
@@ -194,8 +186,10 @@ public:
 
 public slots:
 
+    /// adds a light to group metadata
     void addLightToGroups(ECommType, const QString& uniqueID);
 
+    /// removes a light from group metadata
     void removeLightFromGroups(ECommType, const QString& uniqueID);
 
 signals:
@@ -248,11 +242,6 @@ private:
      * is easy to pull all possible collections without having to re-parse the JSON data each time.
      */
     cor::Dictionary<cor::Group> mGroupDict;
-
-    /*!
-     * \brief mRoomDict dictionary of all known rooms
-     */
-    cor::Dictionary<cor::Room> mRoomDict;
 
     /// generates knowledge of relationships between groups by storing all subgroups
     SubgroupData mSubgroups;

@@ -11,6 +11,19 @@
 
 namespace cor {
 
+/// type of group
+enum class EGroupType { group, room };
+
+/// detects if a group is a room type, or returns that its a standard group
+inline EGroupType jsonToGroupType(const QJsonObject object) {
+    if (object["isRoom"].isBool()) {
+        if (object["isRoom"].toBool()) {
+            return EGroupType::room;
+        }
+    }
+    return EGroupType::group;
+}
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2020.
@@ -23,17 +36,24 @@ namespace cor {
 class Group {
 public:
     /// default constructor
-    Group() : mName{"Error"}, mUniqueID(0u) {}
+    Group() : mName{"Error"}, mUniqueID(0u), mType{EGroupType::group} {}
 
     /// contructor
-    Group(std::uint64_t uniqueID, const QString& name, const std::vector<QString>& lights)
+    Group(std::uint64_t uniqueID,
+          const QString& name,
+          EGroupType type,
+          const std::vector<QString>& lights)
         : mName{name},
           mUniqueID{uniqueID},
+          mType{type},
           mLights{lights} {}
 
     /// json constructor
     Group(const QJsonObject& object)
-        : Group(std::uint64_t(object["uniqueID"].toDouble()), object["name"].toString(), {}) {
+        : Group(std::uint64_t(object["uniqueID"].toDouble()),
+                object["name"].toString(),
+                jsonToGroupType(object),
+                {}) {
         QJsonArray deviceArray = object["devices"].toArray();
         std::vector<QString> lightList;
         foreach (const QJsonValue& value, deviceArray) {
@@ -51,6 +71,9 @@ public:
 
     /// getter for name
     const QString& name() const noexcept { return mName; }
+
+    /// getter for group type
+    EGroupType type() const noexcept { return mType; }
 
     /// setter for name
     void name(const QString& name) noexcept { mName = name; }
@@ -87,7 +110,11 @@ public:
         QJsonObject object;
         object["name"] = name();
         object["isMood"] = false;
-        object["isRoom"] = false;
+        if (type() == EGroupType::group) {
+            object["isRoom"] = false;
+        } else if (type() == EGroupType::room) {
+            object["isRoom"] = true;
+        }
         object["uniqueID"] = double(uniqueID());
 
         // create string of jsondata to add to file
@@ -145,6 +172,9 @@ private:
 
     /// unique ID
     std::uint64_t mUniqueID;
+
+    /// type of group (currently, is it a room or not)
+    EGroupType mType;
 
     /// storage of uniqueIDs of lights in the group
     std::vector<QString> mLights;

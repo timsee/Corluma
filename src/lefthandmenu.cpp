@@ -16,6 +16,8 @@
 #include "cor/presetpalettes.h"
 #include "utils/qt.h"
 
+const QString kMiscKey = "zzzzMiscellaneous";
+
 LeftHandMenu::LeftHandMenu(bool alwaysOpen,
                            cor::LightList* devices,
                            CommLayer* comm,
@@ -239,7 +241,7 @@ void LeftHandMenu::updateDataGroupInUI(const cor::Group& dataGroup,
     if (!existsInUIGroups) {
         // qDebug() << "this group does not exist" << dataGroup.name();
         if (dataGroup.name() == "Miscellaneous") {
-            initParentGroupWidget(dataGroup, "zzzzMiscellaneous");
+            initParentGroupWidget(dataGroup, kMiscKey);
         } else {
             initParentGroupWidget(dataGroup, dataGroup.name());
         }
@@ -357,18 +359,18 @@ ParentGroupWidget* LeftHandMenu::initParentGroupWidget(const cor::Group& group,
 
     QScroller::grabGesture(widget, QScroller::LeftMouseButtonGesture);
     connect(widget,
-            SIGNAL(deviceClicked(QString, QString)),
+            SIGNAL(deviceClicked(std::uint64_t, QString)),
             this,
-            SLOT(lightClicked(QString, QString)));
+            SLOT(lightClicked(std::uint64_t, QString)));
     connect(widget,
-            SIGNAL(allButtonPressed(QString, bool)),
+            SIGNAL(allButtonPressed(std::uint64_t, bool)),
             this,
-            SLOT(groupSelected(QString, bool)));
+            SLOT(groupSelected(std::uint64_t, bool)));
     connect(widget,
-            SIGNAL(buttonsShown(QString, bool)),
+            SIGNAL(buttonsShown(std::uint64_t, bool)),
             this,
-            SLOT(shouldShowButtons(QString, bool)));
-    connect(widget, SIGNAL(groupChanged(QString)), this, SLOT(changedGroup(QString)));
+            SLOT(shouldShowButtons(std::uint64_t, bool)));
+    connect(widget, SIGNAL(groupChanged(std::uint64_t)), this, SLOT(changedGroup(std::uint64_t)));
 
     mParentGroupWidgets.push_back(widget);
     resizeGroupWidgets();
@@ -409,7 +411,7 @@ int LeftHandMenu::resizeGroupWidgets() {
     return yPos;
 }
 
-void LeftHandMenu::lightClicked(const QString&, const QString& deviceKey) {
+void LeftHandMenu::lightClicked(std::uint64_t, const QString& deviceKey) {
     //    qDebug() << "collection key:" << collectionKey
     //             << "device key:" << deviceKey;
 
@@ -426,45 +428,38 @@ void LeftHandMenu::lightClicked(const QString&, const QString& deviceKey) {
     }
 }
 
-void LeftHandMenu::groupSelected(const QString& key, bool shouldSelect) {
-    // convert the group name to an ID
-    // TODO: remove the need for this call
-    auto ID = mGroups->groupNameToID(key);
-    if (ID != std::numeric_limits<std::uint64_t>::max()) {
-        // get the full group from the name
-        auto groupResult = mGroups->groups().item(QString::number(ID).toStdString());
-        bool groupFound = groupResult.second;
-        cor::Group group = groupResult.first;
-        if (!groupFound) {
-            auto room = mGroups->rooms().item(QString::number(ID).toStdString());
-            if (room.second) {
-                group = room.first;
-                groupFound = true;
-            }
+void LeftHandMenu::groupSelected(std::uint64_t ID, bool shouldSelect) {
+    // convert the group ID to a group
+    auto groupResult = mGroups->groupDict().item(QString::number(ID).toStdString());
+    bool groupFound = groupResult.second;
+    cor::Group group = groupResult.first;
+    if (groupFound) {
+        auto lightIDs = group.lights();
+        auto lights = mComm->lightsByIDs(group.lights());
+        // if the group selected is found, either select or deselect it
+        if (shouldSelect) {
+            mSelectedLights->addLights(lights);
+        } else {
+            mSelectedLights->removeLights(lights);
         }
-        if (groupFound) {
-            auto lightIDs = group.lights();
-            auto lights = mComm->lightsByIDs(group.lights());
-            // if the group selected is found, either select or deselect it
-            if (shouldSelect) {
-                mSelectedLights->addLights(lights);
-            } else {
-                mSelectedLights->removeLights(lights);
-            }
-            updateLights();
+        updateLights();
 
-            auto selectedLightIDs = cor::lightVectorToIDs(mSelectedLights->lights());
-            for (const auto& widget : mParentGroupWidgets) {
-                widget->setCheckedLights(selectedLightIDs);
-            }
-            emit changedDeviceCount();
+        auto selectedLightIDs = cor::lightVectorToIDs(mSelectedLights->lights());
+        for (const auto& widget : mParentGroupWidgets) {
+            widget->setCheckedLights(selectedLightIDs);
         }
+        emit changedDeviceCount();
     }
 }
 
-void LeftHandMenu::shouldShowButtons(const QString& key, bool) {
+void LeftHandMenu::shouldShowButtons(std::uint64_t key, bool) {
+    auto name = mGroups->nameFromID(key);
+    // miscellaneous group isn't part of GroupData so its key can't be converted properly.
+    if (key == 0u) {
+        name = kMiscKey;
+    }
     for (const auto& widget : mParentGroupWidgets) {
-        if (widget->key() != key) {
+        if (widget->key() != name) {
             auto groupWidget = qobject_cast<ParentGroupWidget*>(widget);
             Q_ASSERT(groupWidget);
             groupWidget->closeWidget();
@@ -474,7 +469,7 @@ void LeftHandMenu::shouldShowButtons(const QString& key, bool) {
 }
 
 
-void LeftHandMenu::changedGroup(const QString&) {
+void LeftHandMenu::changedGroup(std::uint64_t) {
     resize();
 }
 

@@ -55,30 +55,36 @@ void MoodDetailsWidget::display(const cor::Mood& mood, const QSize& size) {
     std::vector<cor::Light> groupStates;
     for (const auto& defaultPair : mood.defaults()) {
         // look up group
-        auto groupResult = mGroups->groups().item(QString::number(defaultPair.first).toStdString());
+        auto groupResult =
+            mGroups->groupDict().item(QString::number(defaultPair.first).toStdString());
         if (groupResult.second) {
-            auto defaultState = defaultPair.second;
-            auto name = mGroups->nameFromID(defaultPair.first);
-            cor::Light light(name, ECommType::hue);
-            light.isReachable(true);
-            light.name(name);
-            light.state(defaultState);
-            groupStates.push_back(light);
+            if (groupResult.first.type() == cor::EGroupType::group) {
+                auto defaultState = defaultPair.second;
+                auto name = mGroups->nameFromID(defaultPair.first);
+                cor::Light light(name, ECommType::hue);
+                light.isReachable(true);
+                light.name(name);
+                light.state(defaultState);
+                groupStates.push_back(light);
+            }
         }
     }
 
     std::vector<cor::Light> roomStates;
     for (const auto& defaultPair : mood.defaults()) {
         // look up group
-        auto groupResult = mGroups->rooms().item(QString::number(defaultPair.first).toStdString());
+        auto groupResult =
+            mGroups->groupDict().item(QString::number(defaultPair.first).toStdString());
         if (groupResult.second) {
-            auto defaultState = defaultPair.second;
-            auto name = mGroups->nameFromID(defaultPair.first);
-            cor::Light light(name, ECommType::hue);
-            light.isReachable(true);
-            light.name(name);
-            light.state(defaultState);
-            roomStates.push_back(light);
+            if (groupResult.first.type() == cor::EGroupType::room) {
+                auto defaultState = defaultPair.second;
+                auto name = mGroups->nameFromID(defaultPair.first);
+                cor::Light light(name, ECommType::hue);
+                light.isReachable(true);
+                light.name(name);
+                light.state(defaultState);
+                roomStates.push_back(light);
+            }
         }
     }
 

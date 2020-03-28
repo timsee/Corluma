@@ -255,7 +255,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     colorpicker/multicolorpicker.h \
     colorpicker/schemegenerator.h \
     cor/lightlist.h \
-    cor/objects/room.h \
     discovery/discoverywidget.h \
     discovery/discoveryhuewidget.h \
     discovery/discoverynanoleafwidget.h \

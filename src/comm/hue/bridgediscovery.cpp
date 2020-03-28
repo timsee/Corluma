@@ -98,23 +98,21 @@ void BridgeDiscovery::updateSchedules(const hue::Bridge& bridge,
 }
 
 void BridgeDiscovery::updateGroupsAndRooms(const hue::Bridge& bridge,
-                                           const BridgeGroupVector& groups,
-                                           const BridgeRoomVector& rooms) {
+                                           const BridgeGroupVector& groups) {
     const auto& bridgeResult = mFoundBridges.item(bridge.id().toStdString());
     if (bridgeResult.second) {
         auto foundBridge = bridgeResult.first;
         foundBridge.groupsWithIDs(groups);
-        foundBridge.roomsWithIDs(rooms);
         mFoundBridges.update(foundBridge.id().toStdString(), foundBridge);
         mGroups->updateExternallyStoredGroups(foundBridge.groups());
-        mGroups->updateExternallyStoredRooms(foundBridge.rooms());
+        mGroups->updateExternallyStoredGroups(foundBridge.rooms());
     }
 }
 
 void BridgeDiscovery::reloadGroupData() {
     for (const auto& bridge : mFoundBridges.items()) {
         mGroups->updateExternallyStoredGroups(bridge.groups());
-        mGroups->updateExternallyStoredRooms(bridge.rooms());
+        mGroups->updateExternallyStoredGroups(bridge.rooms());
     }
 }
 
@@ -830,7 +828,7 @@ void BridgeDiscovery::deleteBridge(const hue::Bridge& bridge) {
 
 std::uint64_t BridgeDiscovery::keyFromGroupName(const QString& name) {
     // check for ID in GroupsParser in case they get merged
-    for (const auto& group : mGroups->groups().items()) {
+    for (const auto& group : mGroups->groupDict().items()) {
         if (group.name() == name) {
             return group.uniqueID();
         }

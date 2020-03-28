@@ -188,7 +188,7 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
     std::vector<std::pair<cor::Group, cor::LightState>> rooms;
     std::vector<std::pair<cor::Group, cor::LightState>> groups;
     for (const auto& defaultState : mood.defaults()) {
-        for (const auto& collection : mGroups->groups().items()) {
+        for (const auto& collection : mGroups->groups()) {
             if (defaultState.first == collection.uniqueID()) {
                 groups.emplace_back(collection, defaultState.second);
             }
@@ -196,7 +196,7 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
     }
 
     for (const auto& defaultState : mood.defaults()) {
-        for (const auto& collection : mGroups->rooms().items()) {
+        for (const auto& collection : mGroups->rooms()) {
             if (defaultState.first == collection.uniqueID()) {
                 rooms.emplace_back(collection, defaultState.second);
             }

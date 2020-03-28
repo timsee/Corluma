@@ -192,6 +192,21 @@ public:
         return items;
     }
 
+    /*!
+     * \brief keysAndItems Getter for a vector of pairs of all items stored in the dictionary along
+     * with their associated keys
+     *
+     * \return a pair where the first value is the key and the second value is the item.
+     */
+    std::vector<std::pair<std::string, T>> keysAndItems() const {
+        std::vector<std::pair<std::string, T>> keysAndItems;
+        keysAndItems.reserve(mKeyToItemMap.size());
+        for (const auto& keyPair : mKeyToItemMap) {
+            keysAndItems.emplace_back(keyPair.first, keyPair.second);
+        }
+        return keysAndItems;
+    }
+
     /// returns true if empty, false if it has any values
     bool empty() const noexcept { return mKeyToItemMap.empty(); }
 
