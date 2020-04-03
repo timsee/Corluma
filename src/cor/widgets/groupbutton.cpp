@@ -20,13 +20,12 @@ namespace cor {
 
 GroupButton::GroupButton(QWidget* parent, const QString& text)
     : QWidget(parent),
-      mButtonState{EGroupButtonState::clearAll},
+      mButtonState{EGroupButtonState::selectAll},
       mIsSelected{false},
       mReachableCount{0},
       mCheckedCount{0},
       mTitle{new QLabel(text, this)},
-      mButton{new QLabel(this)}
-{
+      mButton{new QLabel(this)} {
     const QString transparentStyleSheet = "background-color: rgba(0,0,0,0);";
 
     mTitle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -77,7 +76,7 @@ bool GroupButton::handleSelectAllButton(std::uint32_t checkedDevicesCount,
     EGroupButtonState state;
     if (reachableDevicesCount == 0) {
         state = EGroupButtonState::disabled;
-    } else if (mCheckedCount > 0) {
+    } else if (checkedDevicesCount > 0) {
         state = EGroupButtonState::clearAll;
     } else {
         state = EGroupButtonState::selectAll;
@@ -155,10 +154,6 @@ void GroupButton::paintEvent(QPaintEvent*) {
     } else {
         painter.fillPath(path, QBrush(QColor(32, 31, 31, 255)));
     }
-
-    if (mIsSelected) {
-        painter.drawPath(path);
-    }
 }
 
 
@@ -166,9 +161,11 @@ void GroupButton::mouseReleaseEvent(QMouseEvent* event) {
     if (cor::isMouseEventTouchUpInside(event, this, true)) {
         if (cor::isMouseEventTouchUpInside(event, mButton, false)) {
             auto groupButtonsWidget = qobject_cast<GroupButtonsWidget*>(parentWidget());
-            if (groupButtonsWidget->type() == cor::EWidgetType::condensed) {
-                if (cor::leftHandMenuMoving()) {
-                    return;
+            if (groupButtonsWidget != nullptr) {
+                if (groupButtonsWidget->type() == cor::EWidgetType::condensed) {
+                    if (cor::leftHandMenuMoving()) {
+                        return;
+                    }
                 }
             }
             buttonPressed(true);

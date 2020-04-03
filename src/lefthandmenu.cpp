@@ -50,7 +50,7 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
 
     mScrollArea = new QScrollArea(this);
     mScrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    QScroller::grabGesture(mScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
+    // QScroller::grabGesture(mScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
     mScrollArea->setWidget(mWidget);
     mScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     mScrollArea->horizontalScrollBar()->setEnabled(false);
@@ -393,7 +393,7 @@ int LeftHandMenu::resizeGroupWidgets() {
         for (auto widget : mParentGroupWidgets) {
             widget->setVisible(true);
             widget->setFixedWidth(width());
-            widget->setGeometry(0, yPos, width(), widget->height());
+            widget->setGeometry(0, yPos, width(), widget->widgetHeightSum());
             yPos += widget->height();
         }
     } else {
@@ -401,7 +401,15 @@ int LeftHandMenu::resizeGroupWidgets() {
             if (widget->isOpen()) {
                 widget->setVisible(true);
                 widget->setFixedWidth(width());
-                widget->setGeometry(0, yPos, width(), widget->height());
+                if (mScrollArea->height() < widget->widgetHeightSum()) {
+                    widget->setGeometry(0, yPos, width(), mScrollArea->height());
+                    mScrollArea->verticalScrollBar()->setEnabled(false);
+                    mScrollArea->horizontalScrollBar()->setEnabled(false);
+                } else {
+                    widget->setGeometry(0, yPos, width(), widget->widgetHeightSum());
+                    mScrollArea->verticalScrollBar()->setEnabled(true);
+                    mScrollArea->horizontalScrollBar()->setEnabled(true);
+                }
                 yPos += widget->height();
             } else {
                 widget->setVisible(false);

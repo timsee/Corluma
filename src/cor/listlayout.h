@@ -59,7 +59,7 @@ public:
      * \return pointer to ListCollectionWidget with matching key, if one exists
      *         otherwise, it returns a nullptr.
      */
-    cor::ListItemWidget* widget(const QString& key);
+    std::pair<cor::ListItemWidget*, bool> widget(const QString& key);
 
     /*!
      * \brief widgetPosition gives the widget position based off of the given widget. Position is

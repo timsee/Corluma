@@ -835,5 +835,9 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Added a `keysAndItems()` function to `cor::Dictionary`.
 
 
+### **v0.19.67**
+#### Bug Fixes
+- Refactored the relationship between the `LeftHandMenu` and `ParentGroupWidget`.
+- Fixed miscellaneous bugs.
 
 

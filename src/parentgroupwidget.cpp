@@ -7,7 +7,10 @@
 #include "parentgroupwidget.h"
 
 #include <QPainter>
+#include <QScroller>
 #include <QStyleOption>
+
+const QString kNoGroupKey = "NO_GROUP";
 
 ParentGroupWidget::ParentGroupWidget(const cor::Group& group,
                                      const std::vector<std::uint64_t>& subgroups,
@@ -21,18 +24,26 @@ ParentGroupWidget::ParentGroupWidget(const cor::Group& group,
       mType{type},
       mComm{comm},
       mGroupData{groups},
-      mLastSubGroupName{"NO_GROUP"},
+      mLastSubGroupName{kNoGroupKey},
       mListLayout(listType),
       mDropdownTopWidget{new DropdownTopWidget(group.name(), type, true, this)},
       mGroup{group},
       mSubgroups{subgroups},
-      mIsOpen{false} {
+      mState{EParentGroupWidgetState::closed},
+      mScrollArea{new QScrollArea(this)},
+      mContentWidget{new QWidget(mScrollArea)} {
     connect(mDropdownTopWidget, SIGNAL(pressed()), this, SLOT(dropdownTopWidgetPressed()));
     mDropdownTopWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
+    mContentWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mScrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mScrollArea->setWidget(mContentWidget);
+    QScroller::grabGesture(mScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
+
     if (hasSubgroups()) {
         auto subgroupNames = mGroupData->groupNamesFromIDs(subgroups);
-        mGroupsButtonWidget = new GroupButtonsWidget(this, type, group.name(), subgroupNames);
+        mGroupsButtonWidget =
+            new GroupButtonsWidget(mContentWidget, type, group.name(), subgroupNames);
         connect(mGroupsButtonWidget,
                 SIGNAL(groupButtonPressed(QString)),
                 this,
@@ -44,6 +55,19 @@ ParentGroupWidget::ParentGroupWidget(const cor::Group& group,
 
         mGroupsButtonWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         mGroupsButtonWidget->setVisible(false);
+
+        // make a group button that shows only when both a parent group and a subgroup are open.
+        mTopGroupButton = new cor::GroupButton(this, "subgroup");
+        connect(mTopGroupButton,
+                SIGNAL(groupButtonPressed(QString)),
+                this,
+                SLOT(topGroupPressed(QString)));
+        connect(mTopGroupButton,
+                SIGNAL(groupSelectAllToggled(QString, bool)),
+                this,
+                SLOT(topSelectAllToggled(QString, bool)));
+        mTopGroupButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        mTopGroupButton->setVisible(false);
     }
 
     updateState(mGroup, mSubgroups);
@@ -55,7 +79,6 @@ void ParentGroupWidget::updateTopWidget() {
     auto result = countCheckedAndReachableLights(mGroup);
     auto checkedCount = result.first;
     auto reachableCount = result.second;
-
     mGroupsButtonWidget->updateCheckedLights("All", checkedCount, reachableCount);
 
     for (const auto& groupID : mSubgroups) {
@@ -67,6 +90,25 @@ void ParentGroupWidget::updateTopWidget() {
             auto reachableCount = result.second;
             mGroupsButtonWidget->updateCheckedLights(group.name(), checkedCount, reachableCount);
         }
+    }
+
+    bool groupFound = false;
+    cor::Group group;
+    if (mTopGroupButton->key() == "All") {
+        groupFound = true;
+        group = mGroup;
+    } else {
+        auto groupName = mGroupsButtonWidget->originalGroup(mTopGroupButton->key());
+        auto ID = mGroupData->groupNameToID(groupName);
+        auto groupResult = mGroupData->groupDict().item(QString::number(ID).toStdString());
+        groupFound = groupResult.second;
+        group = groupResult.first;
+    }
+    if (groupFound) {
+        auto result = countCheckedAndReachableLights(group);
+        auto checkedCount = result.first;
+        auto reachableCount = result.second;
+        mTopGroupButton->handleSelectAllButton(checkedCount, reachableCount);
     }
 }
 
@@ -98,33 +140,20 @@ void ParentGroupWidget::updateGroupNames(const std::vector<std::uint64_t>& subgr
     }
 }
 
-void ParentGroupWidget::updateLightWidgets(const std::vector<cor::Light>& lights,
-                                           bool updateOnlyVisible) {
+void ParentGroupWidget::updateLightWidgets(const std::vector<cor::Light>& lights) {
     for (const auto& light : lights) {
-        if (light.isValid()) {
-            bool foundLight = false;
-            // check if light widget exists
-            std::uint32_t x = 0;
-            for (const auto& widget : mListLayout.widgets()) {
-                // Update Widget, if it already exists
-                if ((light.uniqueID() == widget->key())) {
-                    auto existingWidget = qobject_cast<ListLightWidget*>(widget);
-                    Q_ASSERT(existingWidget);
-                    foundLight = true;
-                    if (existingWidget->isVisible() || !updateOnlyVisible) {
-                        existingWidget->updateWidget(light);
-                    }
-                }
+        auto widgetResult = mListLayout.widget(light.uniqueID());
+        if (widgetResult.second) {
+            auto existingWidget = qobject_cast<ListLightWidget*>(widgetResult.first);
+            Q_ASSERT(existingWidget);
+            if (existingWidget->isVisible()) {
+                existingWidget->updateWidget(light);
             }
-            ++x;
-
-            // Create Widget, if not found
-            if (!foundLight) {
-                auto widget = new ListLightWidget(light, true, mType, this);
-                connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
-                widget->setVisible(false);
-                mListLayout.insertWidget(widget);
-            }
+        } else {
+            auto widget = new ListLightWidget(light, true, mType, mContentWidget);
+            connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
+            widget->setVisible(false);
+            mListLayout.insertWidget(widget);
         }
     }
 }
@@ -155,9 +184,8 @@ void ParentGroupWidget::updateState(const cor::Group& group,
     }
 
     // update only the visible lights
-    constexpr bool updateOnlyVisible = true;
     const auto& commLights = mComm->lightListFromGroup(group);
-    updateLightWidgets(commLights, updateOnlyVisible);
+    updateLightWidgets(commLights);
 
     // remove any lights that can no longer be found from the layout
     removeLightsIfNotFound(group);
@@ -166,57 +194,27 @@ void ParentGroupWidget::updateState(const cor::Group& group,
     mSubgroups = subgroups;
 
     mListLayout.sortDeviceWidgets();
-    setFixedHeight(widgetHeightSum());
 }
 
-
 int ParentGroupWidget::widgetHeightSum() {
-    int height = 0;
-    height += mDropdownTopWidget->height();
+    int height = mDropdownTopWidget->height();
+    // handle the additional widgets that show when subgroups are available
     if (hasSubgroups()) {
-        if (mGroupsButtonWidget->isVisible()) {
+        if (mState == EParentGroupWidgetState::subgroups) {
+            // when its showing subgrups, we should use the entire height of the groupsbutton widget
+            // as part of this widgets height
             height += mGroupsButtonWidget->expectedHeight(mDropdownTopWidget->height());
+        } else if (mState == EParentGroupWidgetState::lights) {
+            // when its showing lights, only the top group button needs to be shown.
+            height += mDropdownTopWidget->height();
         }
     }
 
-    if (mDropdownTopWidget->showButtons() && checkIfShowWidgets()) {
+    // if lights are being shown, add them to the height.
+    if (mState == EParentGroupWidgetState::lights) {
         height += mListLayout.overallSize().height();
     }
     return height;
-}
-
-void ParentGroupWidget::setShowButtons(bool show) {
-    mDropdownTopWidget->showButtons(show);
-    bool subGroupOpen = false;
-    if (hasSubgroups()) {
-        if (mDropdownTopWidget->showButtons()) {
-            mGroupsButtonWidget->setVisible(true);
-        } else {
-            mGroupsButtonWidget->setVisible(false);
-        }
-
-        for (const auto& group : mGroupData->groups()) {
-            if (group.name() == mLastSubGroupName) {
-                subGroupOpen = true;
-                showLights(mComm->lightListFromGroup(group));
-            }
-        }
-    } else {
-        showLights(mComm->lightListFromGroup(mGroup));
-    }
-
-    if (!subGroupOpen) {
-        for (auto light : mListLayout.widgets()) {
-            if (mDropdownTopWidget->showButtons() && checkIfShowWidgets()) {
-                light->setVisible(true);
-            } else {
-                light->setVisible(false);
-            }
-        }
-    }
-
-    setFixedHeight(widgetHeightSum());
-    emit buttonsShown(mGroup.uniqueID(), mDropdownTopWidget->showButtons());
 }
 
 void ParentGroupWidget::handleClicked(const QString& key) {
@@ -224,6 +222,8 @@ void ParentGroupWidget::handleClicked(const QString& key) {
     if (hasSubgroups()) {
         updateTopWidget();
     }
+    // this explicitly repaints the widget, to show selected lights better
+    update();
 }
 
 void ParentGroupWidget::closeWidget() {
@@ -234,7 +234,6 @@ void ParentGroupWidget::closeWidget() {
     for (auto widget : mListLayout.widgets()) {
         widget->setVisible(false);
     }
-    setFixedHeight(widgetHeightSum());
 }
 
 void ParentGroupWidget::setCheckedLights(const std::vector<QString>& lights) {
@@ -306,36 +305,31 @@ void ParentGroupWidget::resize() {
 
     // get the y position to start drawing widgets
     auto yPos = mDropdownTopWidget->height();
-    if (hasSubgroups()) {
+    if (mState == EParentGroupWidgetState::closed) {
+        // do nothing, subgroups are closed
+    } else if (mState == EParentGroupWidgetState::subgroups && hasSubgroups()) {
         // group buttons have an expected height based off of how many widgets are
         // displayed. get this number for setting the geometry programmatically
         auto groupButtonsHeight = mGroupsButtonWidget->expectedHeight(mDropdownTopWidget->height());
         // draw the groups button
-        mGroupsButtonWidget->setGeometry(0, yPos, width(), groupButtonsHeight);
+        mGroupsButtonWidget->setGeometry(0, 0, width(), groupButtonsHeight);
+        mContentWidget->setGeometry(0, 0, width(), groupButtonsHeight);
+        mScrollArea->setGeometry(0, yPos, int(this->width() * 1.2), height() - yPos);
         // start the lights widgets below where the subgroups widget has been drawn
         yPos += mGroupsButtonWidget->height();
+    } else if (mState == EParentGroupWidgetState::lights) {
+        if (hasSubgroups()) {
+            mTopGroupButton->setGeometry(0, yPos, width(), mDropdownTopWidget->height());
+            yPos += mTopGroupButton->height();
+        }
+        mContentWidget->setGeometry(0, 0, width(), mListLayout.overallSize().height());
+        mScrollArea->setGeometry(0, yPos, int(this->width() * 1.2), height() - yPos);
+        moveWidgets(QSize(parentWidget()->width(), mDropdownTopWidget->height()), QPoint(0, 0));
     }
-
-    moveWidgets(QSize(parentWidget()->width(), mDropdownTopWidget->height()), QPoint(0, yPos));
 }
 
-void ParentGroupWidget::groupPressed(const QString& name) {
-    mLastSubGroupName = name;
-    auto groupID = mGroupData->groupNameToID(name);
-    if (name == "All") {
-        showLights(mComm->lightListFromGroup(mGroup));
-    } else if (name == "NO_GROUP") {
-        showLights({});
-    } else {
-        auto groupResult = mGroupData->groupDict().item(QString::number(groupID).toStdString());
-        if (groupResult.second) {
-            showLights(mComm->lightListFromGroup(groupResult.first));
-        } else {
-            qDebug() << " could not find group with name " << name << " and ID " << groupID;
-        }
-    }
-    setFixedHeight(widgetHeightSum());
-    emit groupChanged(mGroupData->groupNameToID(name));
+void ParentGroupWidget::topSelectAllToggled(const QString& key, bool selectAll) {
+    selectAllToggled(mGroupsButtonWidget->originalGroup(key), selectAll);
 }
 
 void ParentGroupWidget::selectAllToggled(const QString& key, bool selectAll) {
@@ -361,9 +355,6 @@ void ParentGroupWidget::moveWidgets(QSize size, QPoint offset) {
 }
 
 void ParentGroupWidget::showLights(const std::vector<cor::Light>& lights) {
-    constexpr bool updateOnlyVisible = false;
-    updateLightWidgets(lights, updateOnlyVisible);
-
     for (const auto& widget : mListLayout.widgets()) {
         auto layoutWidget = qobject_cast<ListLightWidget*>(widget);
         bool lightFound = false;
@@ -377,9 +368,8 @@ void ParentGroupWidget::showLights(const std::vector<cor::Light>& lights) {
             widget->setVisible(false);
         }
     }
-
-    setFixedHeight(widgetHeightSum());
-    resize();
+    updateLightWidgets(lights);
+    moveWidgets(QSize(parentWidget()->width(), mDropdownTopWidget->height()), QPoint(0, 0));
 }
 
 std::size_t ParentGroupWidget::numberOfWidgetsShown() {
@@ -390,41 +380,110 @@ std::size_t ParentGroupWidget::numberOfWidgetsShown() {
 }
 
 void ParentGroupWidget::dropdownTopWidgetPressed() {
-    // deselect the subgroup if subgroups exists
-    if (mIsOpen && hasSubgroups()) {
-        mGroupsButtonWidget->deselectGroup();
-    }
-    // set the flag that determines if a room is open or not
-    mIsOpen = !mDropdownTopWidget->showButtons();
-    // show buttons based off of the open state
-    setShowButtons(mIsOpen);
-}
+    // pressing the top widget can do one of three things: if its open already, it will always close
+    // everything. If its not open and it has subgroups, then it will open the subgroups. If its not
+    // open and doesn't have subgroups, then it will open all lights of the group.
 
-bool ParentGroupWidget::checkIfShowWidgets() {
-    bool showWidgets = true;
+    bool isOpen = (mState != EParentGroupWidgetState::closed);
+    // first programmatically update the dropdowntopwidget and the groupsbuttonwidget based to be
+    // the opposite state of open or closed.
+    mDropdownTopWidget->showButtons(!isOpen);
     if (hasSubgroups()) {
-        showWidgets = (mLastSubGroupName != "NO_GROUP");
+        mGroupsButtonWidget->setVisible(!isOpen);
     }
-    return showWidgets;
+
+    // now handle specifics for each state.
+    if (isOpen && hasSubgroups()) {
+        // subgroups or lights are open, but we want to close the whole parentgroupwidget, go to
+        // closed
+        mState = EParentGroupWidgetState::closed;
+        mGroupsButtonWidget->setVisible(false);
+        mTopGroupButton->setVisible(false);
+        for (auto light : mListLayout.widgets()) {
+            light->setVisible(false);
+        }
+    } else if (isOpen && !hasSubgroups()) {
+        // lights are open, but subgroups don't exist, close all lights
+        mState = EParentGroupWidgetState::closed;
+        for (auto light : mListLayout.widgets()) {
+            light->setVisible(false);
+        }
+    } else if (!isOpen && hasSubgroups()) {
+        // widget is closed, but subgroups exist, so open up the subgroups
+        mState = EParentGroupWidgetState::subgroups;
+        mGroupsButtonWidget->setVisible(true);
+    } else if (!isOpen && !hasSubgroups()) {
+        // widgets is closed and subgrousp don't exist, open up all lights for this group
+        mState = EParentGroupWidgetState::lights;
+        showLights(mComm->lightListFromGroup(mGroup));
+    }
+
+    // emit the changes
+    emit buttonsShown(mGroup.uniqueID(), mDropdownTopWidget->showButtons());
 }
 
-std::pair<uint32_t, uint32_t> ParentGroupWidget::countCheckedAndReachableLights(
+
+void ParentGroupWidget::topGroupPressed(const QString& name) {
+    groupPressed(mGroupsButtonWidget->originalGroup(name));
+}
+
+void ParentGroupWidget::groupPressed(QString name) {
+    // pressing a subgroup can do one of two things. If lights are open when a subgroup is pressed,
+    // this signals that we should close lights and display subgroups again. Conversly, if lights
+    // are not open when a subgroup is pressed, this signals we should open up the lights for the
+    // specific subgroup.
+
+    if (mLastSubGroupName == name) {
+        name = kNoGroupKey;
+    }
+    mLastSubGroupName = name;
+    auto groupID = mGroupData->groupNameToID(name);
+    if (name == "All") {
+        mState = EParentGroupWidgetState::lights;
+        showLights(mComm->lightListFromGroup(mGroup));
+    } else if (name == kNoGroupKey) {
+        mState = EParentGroupWidgetState::subgroups;
+        for (auto widget : mListLayout.widgets()) {
+            widget->setVisible(false);
+        }
+    } else {
+        mState = EParentGroupWidgetState::lights;
+        auto groupResult = mGroupData->groupDict().item(QString::number(groupID).toStdString());
+        if (groupResult.second) {
+            showLights(mComm->lightListFromGroup(groupResult.first));
+        } else {
+            qDebug() << " could not find group with name " << name << " and ID " << groupID;
+        }
+    }
+
+    if (hasSubgroups() && mState == EParentGroupWidgetState::lights) {
+        mTopGroupButton->changeText(mGroupsButtonWidget->renamedGroup(name));
+        updateTopWidget();
+        mTopGroupButton->setVisible(true);
+    } else if (hasSubgroups() && (mState != EParentGroupWidgetState::lights)) {
+        mTopGroupButton->setVisible(false);
+    }
+
+    // emit the changes
+    emit groupChanged(groupID);
+}
+
+std::pair<std::uint32_t, std::uint32_t> ParentGroupWidget::countCheckedAndReachableLights(
     const cor::Group& group) {
     std::uint32_t reachableCount = 0;
     std::uint32_t checkedCount = 0;
     auto lights = mComm->lightsByIDs(group.lights());
     for (const auto& light : lights) {
-        if (light.isValid()) {
-            if (light.isReachable()) {
-                reachableCount++;
-            }
+        if (light.isReachable()) {
+            reachableCount++;
+        }
 
-            for (const auto& existingWidget : mListLayout.widgets()) {
-                auto widget = qobject_cast<ListLightWidget*>(existingWidget);
-                Q_ASSERT(widget);
-                if (widget->checked() && (widget->key() == light.uniqueID())) {
-                    checkedCount++;
-                }
+        auto widgetResult = mListLayout.widget(light.uniqueID());
+        if (widgetResult.second) {
+            auto widget = qobject_cast<ListLightWidget*>(widgetResult.first);
+            Q_ASSERT(widget);
+            if (widget->checked() && (widget->key() == light.uniqueID())) {
+                checkedCount++;
             }
         }
     }

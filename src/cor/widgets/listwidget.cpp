@@ -76,8 +76,6 @@ void ListWidget::resizeWidgets() {
             if (position.x() == 0) {
                 newHeight += widget->height();
             }
-            //   qDebug() << "this is the widget position of " << i << position << "and geometry" <<
-            //   mListLayout.widgets()[i]->geometry();
         }
     }
     // qDebug() << " new height is " << newHeight << " yPos " << yPos   << " vs " <<

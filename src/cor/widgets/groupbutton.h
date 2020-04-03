@@ -28,6 +28,13 @@ public:
     /// handle the state of the select all button
     bool handleSelectAllButton(std::uint32_t checkedDevicesCount, uint32_t reachableDevicesCount);
 
+    /*!
+     * \brief changeText this changes the text of a GroupButton. Warning: if the text is used as a
+     * unique key, this may break systems.
+     * \param newText new text to display with the group button
+     */
+    void changeText(const QString& newText) { mTitle->setText(newText); }
+
     /// key for group
     QString key() const { return mTitle->text(); }
 

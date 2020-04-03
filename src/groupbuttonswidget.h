@@ -46,9 +46,6 @@ public:
     /// key of the currently selected group
     const QString& currentKey() const { return mCurrentKey; }
 
-    /// deselect current group
-    void deselectGroup();
-
     /// update the checked devices of the group that matches the key
     void updateCheckedLights(const QString& key,
                              std::uint32_t checkedLightCount,
@@ -62,6 +59,12 @@ public:
 
     /// the end point in the y dimension of a group given a key
     int groupEndPointY(int topWidgetHeight, const QString& key);
+
+    /// returns the renamed version of a group when given an actual group name
+    QString renamedGroup(const QString& group);
+
+    /// returns the original group name when given a renamed group
+    QString originalGroup(const QString& group);
 
 signals:
 
@@ -93,12 +96,6 @@ private:
 
     /// ttype of widget
     cor::EWidgetType mType;
-
-    /// returns the renamed version of a group when given an actual group name
-    QString renamedGroup(const QString& group);
-
-    /// returns the original group name when given a renamed group
-    QString originalGroup(const QString& group);
 
     /// creates a converted group name, when given a room and group name.
     QString convertGroupName(const QString& room, const QString& group);

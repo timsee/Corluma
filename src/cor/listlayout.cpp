@@ -81,8 +81,8 @@ cor::ListItemWidget* ListLayout::widget(std::uint32_t index) {
     return nullptr;
 }
 
-cor::ListItemWidget* ListLayout::widget(const QString& key) {
-    return mWidgetDictionary.item(key.toStdString()).first;
+std::pair<cor::ListItemWidget*, bool> ListLayout::widget(const QString& key) {
+    return mWidgetDictionary.item(key.toStdString());
 }
 
 

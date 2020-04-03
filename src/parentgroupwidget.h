@@ -4,6 +4,7 @@
 #include <QLabel>
 #include <QObject>
 #include <QPushButton>
+#include <QScrollArea>
 #include <QWidget>
 
 #include "comm/commlayer.h"
@@ -14,6 +15,10 @@
 #include "dropdowntopwidget.h"
 #include "groupbuttonswidget.h"
 #include "listlightwidget.h"
+
+
+/// enum for state of the group widget
+enum class EParentGroupWidgetState { closed, subgroups, lights };
 
 /*!
  * \copyright
@@ -52,19 +57,12 @@ public:
     /// update the widget with new information.
     void updateState(const cor::Group& group, const std::vector<std::uint64_t>& subgroups);
 
-    /*!
-     * \brief setShowButtons shows and hides all buttons on the widget
-     *
-     * \param show true to show, false otherwise.
-     */
-    void setShowButtons(bool show);
-
     /// hides the group buttons widget (if it has one) and all the listdevicewidgets
     void closeWidget();
 
-    /// true if the widget is currently in an open state (and showing groups or lights) or closed
+    /// true if the widget is currently in an open state (and showing subgroups or lights) or closed
     /// (showing just its name)
-    bool isOpen() const noexcept { return mIsOpen; }
+    bool isOpen() const noexcept { return mState != EParentGroupWidgetState::closed; }
 
     /// getter for the room data.
     const cor::Group& group() { return mGroup; }
@@ -111,11 +109,19 @@ private slots:
 
     /// a group button was pressed. This switches the shown devices to be just the devices in that
     /// group
-    void groupPressed(const QString& key);
+    void groupPressed(QString key);
+
+    /// a group button was pressed. This switches the shown devices to be just the devices in that
+    /// group
+    void topGroupPressed(const QString& key);
 
     /// select all toggled for a given group. true if selecting all of that group, false if
     /// deselecting all for that group
     void selectAllToggled(const QString& key, bool selectAll);
+
+    /// select all toggled for a given group. true if selecting all of that group, false if
+    /// deselecting all for that group
+    void topSelectAllToggled(const QString& key, bool selectAll);
 
     /*!
      * \brief handleClicked hangles a ListDeviceWidget getting clicked, emits a the collection's key
@@ -159,6 +165,9 @@ private:
     /// top widget that holds the groups, if any are available.
     GroupButtonsWidget* mGroupsButtonWidget;
 
+    /// group button for displaying the currently opened subgroup
+    cor::GroupButton* mTopGroupButton;
+
     /// layout of all widgets except the dropdownwidget
     cor::ListLayout mListLayout;
 
@@ -171,16 +180,11 @@ private:
     /// stored data for the subgroups
     std::vector<std::uint64_t> mSubgroups;
 
-    /// checks if a group with no subgroups should show widgets
-    bool checkIfShowWidgets();
-
     /*!
      * \brief updateLightWidgets updates the light widgets with the provided lights
      * \param lights lights that should run updates
-     * \param updateOnlyVisible true if only the visible lights should update, false if all lights
-     * should update
      */
-    void updateLightWidgets(const std::vector<cor::Light>& lights, bool updateOnlyVisible);
+    void updateLightWidgets(const std::vector<cor::Light>& lights);
 
     /// updates the group names in the GroupButtonsWidget
     void updateGroupNames(const std::vector<std::uint64_t>& subgroups);
@@ -188,8 +192,14 @@ private:
     /// removes any lights that are not found during an update call.
     void removeLightsIfNotFound(const cor::Group& group);
 
-    /// true if showing lights and groups, false if just showing name.
-    bool mIsOpen;
+    /// state of the parent group widget
+    EParentGroupWidgetState mState;
+
+    /// scroll area, to be removed in next update
+    QScrollArea* mScrollArea;
+
+    /// content widget, to be removed in next update
+    QWidget* mContentWidget;
 
     /// helper to count the checked and reachable lights.
     std::pair<std::uint32_t, std::uint32_t> countCheckedAndReachableLights(const cor::Group& group);
