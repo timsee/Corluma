@@ -5,13 +5,13 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-#include "addnewgroupbutton.h"
 #include "comm/commlayer.h"
 #include "cor/lightlist.h"
 #include "cor/widgets/lightvectorwidget.h"
 #include "data/groupdata.h"
 #include "lefthandbutton.h"
-#include "parentgroupwidget.h"
+#include "lefthandmenuscrollarea.h"
+#include "lefthandmenutoplightwidget.h"
 
 /*!
  * \copyright
@@ -50,9 +50,6 @@ public:
     /// true if menu is always open due to the app being in landscape, false otherwise
     bool alwaysOpen() { return mAlwaysOpen; }
 
-    /// removes parent group from the menu.
-    void removeParentGroup(const QString& name);
-
     /// used during complete reloads, this deletes all existing widgets
     void clearWidgets();
 
@@ -68,28 +65,37 @@ public:
     /// getter for how many pixels of the menu are currently showing
     int showingWidth();
 
+    /// called when the number of lights selected changed
+    void lightCountChanged();
+
 signals:
     /// signals when a page button is pressed
     void pressedButton(EPage);
 
     /// called when the number of lights selected changes
-    void changedDeviceCount();
+    void changedLightCount();
 
     /// signals to create a new group from the left hand menu
     void createNewGroup();
 
 public slots:
 
-    /// called when the number of lights selected changed
-    void deviceCountChanged();
-
     /// called when a button is pressed
     void buttonPressed(EPage);
 
 private slots:
 
-    /// called when a light is clicked, signals the group ID and the light ID
-    void lightClicked(std::uint64_t groupID, const QString& lightID);
+    /// changes the state of the LeftHandMenu to showing parent groups
+    void changeStateToParentGroups();
+
+    /// changes the state of the LeftHandMenu to showing subgroups
+    void changeStateToSubgroups();
+
+    /// select all lights is toggled from a group
+    void selectAllToggled(QString, bool);
+
+    /// a light is clicked from the LeftHandMenuScrollArea
+    void lightClicked(const QString& lightID);
 
     /// called when a group is selected or deselected
     void groupSelected(std::uint64_t key, bool shouldSelect);
@@ -97,8 +103,11 @@ private slots:
     /// called when buttons should be shown or hidden
     void shouldShowButtons(std::uint64_t, bool);
 
-    /// called when a group is changed
-    void changedGroup(std::uint64_t);
+    /// called when a parent group is changed
+    void parentGroupClicked(std::uint64_t ID);
+
+    /// transition from the subgroups to the lights, by showing the lights for a specific group
+    void showSubgroupLights(std::uint64_t);
 
     /// used to render UI updates
     void renderUI();
@@ -114,33 +123,11 @@ private:
     /// true if menu should be always open for landscape orientation, false otherwise
     bool mAlwaysOpen;
 
-    /// gathers all light groups, as displayed in the UI
-    std::vector<cor::Group> gatherAllUIGroups();
-
-    /*!
-     * \brief updateDataGroupInUI using the new cor::LightGroup, update the UI assets with
-     * up-to-date light info. This function matches the dataGroup group to all UI groups that match
-     * it, then takes the up to date version from the allDevices list to display that info
-     *
-     * \param dataGroup the group to update in the UI
-     * \param uiGroups all UI groups
-     */
-    void updateDataGroupInUI(const cor::Group& dataGroup, const std::vector<cor::Group>& uiGroups);
-
-    /*!
-     * \brief initRoomsWidget constructor helper for making a ParentGroupWidget
-     *
-     * \param group group of lights for collection
-     * \param key key for collection
-     * \return pointer to the newly created ListDevicesGroupWidget
-     */
-    ParentGroupWidget* initParentGroupWidget(const cor::Group& group, const QString& key);
-
-    /// resize the group widgets
-    int resizeGroupWidgets();
-
     /// returns a pointer to the currently selected button
     QWidget* selectedButton();
+
+    /// highlights the lights and groups
+    void highlightLightsAndGroups();
 
     /// true if menu is in, false otherwise
     bool mIsIn;
@@ -149,10 +136,10 @@ private:
     QPoint mStartPoint;
 
     /// scroll area for the widget
-    QScrollArea* mScrollArea;
+    LeftHandMenuScrollArea* mScrollArea;
 
-    /// main widget
-    QWidget* mWidget;
+    /// top widget that shows the parent group and subgroup, if either is necessary
+    LeftHandMenuTopLightWidget* mScrollTopWidget;
 
     /// spacer for top of widget
     QWidget* mSpacer;
@@ -165,9 +152,6 @@ private:
 
     /// palette that shows the currently selected devices
     cor::LightVectorWidget* mMainPalette;
-
-    /// vector of parent group widgets
-    std::vector<ParentGroupWidget*> mParentGroupWidgets;
 
     /// pointer to comm layer
     CommLayer* mComm;
@@ -189,9 +173,6 @@ private:
 
     /// settings button
     LeftHandButton* mSettingsButton;
-
-    /// button to add a new group
-    AddNewGroupButton* mNewGroupButton;
 
     /// update the single color button based off of what is selected
     void updateSingleColorButton();

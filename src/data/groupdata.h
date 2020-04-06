@@ -86,6 +86,9 @@ public:
     /// returns a vector of groups from a vector of IDs
     std::vector<cor::Group> groupsFromIDs(std::vector<std::uint64_t> IDs);
 
+    /// converts a group into an ID, returning an invalid group if the ID is invalid.
+    cor::Group groupFromID(std::uint64_t ID);
+
     /// getter for the subgroups
     const SubgroupData& subgroups() const { return mSubgroups; }
 

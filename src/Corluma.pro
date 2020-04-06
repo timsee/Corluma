@@ -157,7 +157,7 @@ SOURCES += main.cpp \
     cor/widgets/lightvectorwidget.cpp \
     cor/listlayout.cpp \
     cor/widgets/groupbutton.cpp \
-    parentgroupwidget.cpp \
+    lefthandmenutoplightwidget.cpp \
     stateobserver.cpp \
     data/subgroupdata.cpp \
     utils/qt.cpp \
@@ -206,6 +206,7 @@ SOURCES += main.cpp \
     data/groupdata.cpp \
     mooddetailswidget.cpp \
     lefthandmenu.cpp \
+    lefthandmenuscrollarea.cpp \
     selectlightsbutton.cpp \
     mainviewport.cpp \
     lefthandbutton.cpp \
@@ -271,7 +272,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     globalbrightnesswidget.h \
     data/orphandata.h \
     data/parentdata.h \
-    parentgroupwidget.h \
+    lefthandmenutoplightwidget.h \
     singlelightbrightnesswidget.h \
     stateobserver.h \
     data/subgroupdata.h \
@@ -326,6 +327,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     utils/color.h \
     utils/qt.h \
     lefthandmenu.h \
+    lefthandmenuscrollarea.h \
     selectlightsbutton.h \
     mainviewport.h \
     lefthandbutton.h \

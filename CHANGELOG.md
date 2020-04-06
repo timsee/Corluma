@@ -841,3 +841,11 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed miscellaneous bugs.
 
 
+### **v0.19.7**
+#### The LeftHandMenuScrollArea Update
+- Added `LeftHandMenuScrollArea` and `LeftHandMenuScrollTopWidget`.
+- Removed `ParentGroupWidget` in favor of the new widgets.
+- `SubgroupData` now stores a vector of alternative names for each subgroup in the context of its parent group.
+- Fixed bugs with the `LeftHandMenu`.
+
+

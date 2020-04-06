@@ -5,14 +5,16 @@
 #include <unordered_map>
 #include "cor/objects/group.h"
 
+using SubgroupMap = std::unordered_map<std::uint64_t, std::vector<std::uint64_t>>;
+
+using SubgroupNameMap =
+    std::unordered_map<std::uint64_t, std::vector<std::pair<QString, std::uint64_t>>>;
 /**
  * @brief The SubgroupData class stores the relationship between groups. Group A is a subgroup of
  * Group B if all lights within A are also within B. It contains an unordered_map which utilizes
  * group IDs as keys, and for its values is a vector of associated subgroups.
  */
 class SubgroupData {
-    using SubgroupMap = std::unordered_map<std::uint64_t, std::vector<std::uint64_t>>;
-
 public:
     SubgroupData() = default;
 
@@ -20,7 +22,7 @@ public:
     const SubgroupMap subgroups() const noexcept { return mSubgroupMap; }
 
     /// returns the subgroups for a specfic group.
-    std::vector<std::uint64_t> subgroupsForGroup(std::uint64_t uniqueID) const {
+    std::vector<std::uint64_t> subgroupIDsForGroup(std::uint64_t uniqueID) const {
         const auto result = mSubgroupMap.find(uniqueID);
         if (result != mSubgroupMap.end()) {
             return result->second;
@@ -29,15 +31,62 @@ public:
         }
     }
 
+    /// returns a vector of all alternative names for the subgroups of a parent group.
+    std::vector<QString> subgroupNamesForGroup(std::uint64_t uniqueID) const {
+        const auto result = mSubgroupNameMap.find(uniqueID);
+        if (result != mSubgroupNameMap.end()) {
+            std::vector<QString> names;
+            names.reserve(result->second.size());
+            for (const auto& name : result->second) {
+                names.emplace_back(name.first);
+            }
+            return names;
+        } else {
+            return {};
+        }
+    }
+
+    /// returns the subgroup ID when provided a parent group ID and the renamed group.
+    std::uint64_t subgroupIDFromRenamedGroup(std::uint64_t parentGroup,
+                                             const QString& renamedName) const {
+        const auto result = mSubgroupNameMap.find(parentGroup);
+        if (result != mSubgroupNameMap.end()) {
+            for (const auto& namePair : result->second) {
+                if (namePair.first == renamedName) {
+                    return namePair.second;
+                }
+            }
+        }
+        return std::numeric_limits<std::uint64_t>::max();
+    }
+
+    /// queries a parent group and subgroup pair for its alternative name for the subgroup. Returns
+    /// the subgroup's actual name if no alternative name exists, and returns an empty string if the
+    /// parent group ID/subgroup ID pair is invalid.
+    QString renamedSubgroupFromParentAndGroupID(std::uint64_t parentGroupID,
+                                                std::uint64_t subgroupID) const {
+        const auto result = mSubgroupNameMap.find(parentGroupID);
+        if (result != mSubgroupNameMap.end()) {
+            for (const auto& namePair : result->second) {
+                if (namePair.second == subgroupID) {
+                    return namePair.first;
+                }
+            }
+        }
+        return {};
+    }
+
     /// updates the data for subgroups by parsing all groups and rooms
     void updateGroupAndRoomData(const std::vector<cor::Group>& groups);
 
 private:
-    /// creates the subgroup map
-    SubgroupMap generateSubgroupMap(const std::vector<cor::Group>& groupDict);
-
     /// stores all subgroup data
     SubgroupMap mSubgroupMap;
+
+    /// stores all subgroup data. Each subgroup is stored with an alternative name to use in the
+    /// context of its parent group. IE, if "John's Desk" is a subgroup of "John's Room" , its
+    /// alternative name is "Desk".
+    SubgroupNameMap mSubgroupNameMap;
 };
 
 #endif // SUBGROUPDATA_H

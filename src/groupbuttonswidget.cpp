@@ -2,40 +2,38 @@
 
 #include <QDebug>
 
-GroupButtonsWidget::GroupButtonsWidget(QWidget* parent,
-                                       cor::EWidgetType type,
-                                       const QString& roomName,
-                                       const std::vector<QString>& groups)
+GroupButtonsWidget::GroupButtonsWidget(QWidget* parent, cor::EWidgetType type)
     : QWidget(parent),
-      mType{type},
-      mRoomName(roomName) {
+      mType{type} {
     if (mType == cor::EWidgetType::condensed) {
         mGroupCount = 1;
     } else {
         mGroupCount = 3;
     }
+}
 
+void GroupButtonsWidget::showGroups(std::vector<QString> groups) {
+    // remove any existing groups
+    for (auto widget : mButtons) {
+        delete widget;
+    }
+    mButtons.clear();
+
+    addGroup("All");
     for (const auto& group : groups) {
         addGroup(group);
     }
-
-    addGroup("All");
 }
 
+
 void GroupButtonsWidget::addGroup(const QString& group) {
-    QString adjustedName = convertGroupName(mRoomName, group);
-    auto groupButton = new cor::GroupButton(this, adjustedName);
+    auto groupButton = new cor::GroupButton(this, group);
     connect(groupButton, SIGNAL(groupButtonPressed(QString)), this, SLOT(buttonPressed(QString)));
     connect(groupButton,
             SIGNAL(groupSelectAllToggled(QString, bool)),
             this,
             SLOT(buttonToggled(QString, bool)));
     mButtons.push_back(groupButton);
-    bool sucessful = mRelabeledNames.insert(group.toStdString(), adjustedName.toStdString());
-    GUARD_EXCEPTION(sucessful,
-                    "insert into cor::Dictionary failed: " + group.toStdString()
-                        + " adjusted: " + adjustedName.toStdString());
-
     groupButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     std::sort(mButtons.begin(), mButtons.end(), [](cor::GroupButton* a, cor::GroupButton* b) {
@@ -44,39 +42,13 @@ void GroupButtonsWidget::addGroup(const QString& group) {
 }
 
 
-void GroupButtonsWidget::removeGroup(const QString& group) {
-    // cancel early if trying to remove "All" group
-    if (group == "All") {
-        return;
-    }
-    // get relabeled name
-    auto adjustedName = renamedGroup(group);
-    auto successful = mRelabeledNames.remove(adjustedName.toStdString());
-    GUARD_EXCEPTION(successful, "removing group from relabeled names failed");
-
-    // remove from relabeled name
-    for (auto groupButton : mButtons) {
-        if (groupButton->key() == adjustedName) {
-            auto it = std::find(mButtons.begin(), mButtons.end(), groupButton);
-            mButtons.erase(it);
-            delete groupButton;
-        }
-    }
-}
-
 void GroupButtonsWidget::updateCheckedLights(const QString& key,
                                              std::uint32_t checkedLightCount,
                                              std::uint32_t reachableLightCount) {
-    bool renderAny = false;
     for (const auto& widget : mButtons) {
-        if (widget->key() == renamedGroup(key)) {
-            if (widget->handleSelectAllButton(checkedLightCount, reachableLightCount)) {
-                renderAny = true;
-            }
+        if (widget->key() == key) {
+            widget->handleSelectAllButton(checkedLightCount, reachableLightCount);
         }
-    }
-    if (renderAny) {
-        update();
     }
 }
 
@@ -85,15 +57,7 @@ void GroupButtonsWidget::buttonPressed(const QString& key) {
     for (const auto& widget : mButtons) {
         widget->setSelectAll(widget->key() == key);
     }
-    emit groupButtonPressed(originalGroup(key));
-}
-
-std::vector<QString> GroupButtonsWidget::groupNames() {
-    std::vector<QString> groupList;
-    for (const auto& key : mRelabeledNames.keys()) {
-        groupList.emplace_back(QString(key.c_str()));
-    }
-    return groupList;
+    emit groupButtonPressed(key);
 }
 
 void GroupButtonsWidget::resizeEvent(QResizeEvent*) {
@@ -126,33 +90,10 @@ int GroupButtonsWidget::groupEndPointY(int topWidgetHeight, const QString& key) 
     int height = topWidgetHeight;
     int i = 1;
     for (const auto& widget : mButtons) {
-        if (widget->key() == renamedGroup(key)) {
+        if (widget->key() == key) {
             return height * i;
         }
         ++i;
     }
     return height * i;
-}
-
-QString GroupButtonsWidget::renamedGroup(const QString& group) {
-    return QString(mRelabeledNames.item(group.toStdString()).first.c_str());
-}
-
-QString GroupButtonsWidget::originalGroup(const QString& renamedGroup) {
-    return QString(mRelabeledNames.key(renamedGroup.toStdString()).first.c_str());
-}
-
-
-QString GroupButtonsWidget::convertGroupName(const QString& room, const QString& group) {
-    // split the room name by spaces
-    QStringList roomStringList = room.split(QRegExp("\\s+"), QString::SkipEmptyParts);
-    QStringList groupStringList = group.split(QRegExp("\\s+"), QString::SkipEmptyParts);
-    int charactersToSkip = 0;
-    int smallestWordCount = std::min(roomStringList.size(), groupStringList.size());
-    for (int i = 0; i < smallestWordCount; ++i) {
-        if (roomStringList[i] == groupStringList[i]) {
-            charactersToSkip += roomStringList[i].size() + 1;
-        }
-    }
-    return group.mid(charactersToSkip, group.size());
 }

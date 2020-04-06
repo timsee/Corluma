@@ -7,11 +7,37 @@
 #include "dropdowntopwidget.h"
 
 #include <QDebug>
+#include <QGraphicsEffect>
+#include <QGraphicsScene>
 #include <QMouseEvent>
+#include <QPainter>
+#include <QStyleOption>
 
 #include "utils/qt.h"
 
+namespace {
+
+QColor computeHighlightColor(std::uint32_t checkedCount, std::uint32_t reachableCount) {
+    QColor pureBlue(61, 142, 201);
+    QColor pureBlack(33, 32, 32);
+    QColor difference(pureBlue.red() - pureBlack.red(),
+                      pureBlue.green() - pureBlack.green(),
+                      pureBlue.blue() - pureBlack.blue());
+
+    if (reachableCount == 0u) {
+        return pureBlack;
+    } else {
+        double amountOfBlue = double(checkedCount) / double(reachableCount);
+        return {int(amountOfBlue * difference.red() + pureBlack.red()),
+                int(amountOfBlue * difference.green() + pureBlack.green()),
+                int(amountOfBlue * difference.blue() + pureBlack.blue())};
+    }
+}
+
+} // namespace
+
 DropdownTopWidget::DropdownTopWidget(const QString& key,
+                                     const QString& name,
                                      cor::EWidgetType type,
                                      bool hideEdit,
                                      QWidget* parent)
@@ -20,12 +46,13 @@ DropdownTopWidget::DropdownTopWidget(const QString& key,
     mType = type;
     mShowButtons = false;
     mHideEdit = hideEdit;
+    connect(this, SIGNAL(pressed()), this, SLOT(widgetPressed()));
 
     mName = new QLabel(this);
     mName->setWordWrap(true);
-    mName->setText(key);
+    mName->setText(name);
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    mName->setStyleSheet("font: bold;");
+    mName->setStyleSheet("font: bold; background-color: rgba(0,0,0,0);");
     mName->setAlignment(Qt::AlignVCenter);
 
     if (mType == cor::EWidgetType::condensed) {
@@ -38,7 +65,7 @@ DropdownTopWidget::DropdownTopWidget(const QString& key,
     mName->setFixedHeight(mMinimumHeight);
 
     mEditButton = new QPushButton(this);
-    mEditButton->setStyleSheet("border: none;");
+    mEditButton->setStyleSheet("border: none; background-color: rgba(0,0,0,0);");
     mEditButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mEditButton, SIGNAL(clicked(bool)), this, SLOT(editButtonClicked(bool)));
     mEditIcon = QPixmap(":/images/editIcon.png");
@@ -65,6 +92,7 @@ DropdownTopWidget::DropdownTopWidget(const QString& key,
     mHiddenStateIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mHiddenStateIcon->setAlignment(Qt::AlignCenter);
     mHiddenStateIcon->setFixedHeight(mMinimumHeight);
+    mHiddenStateIcon->setStyleSheet("background-color: rgba(0,0,0,0);");
 
     mLayout = new QHBoxLayout;
     mLayout->addWidget(mName);
@@ -96,4 +124,24 @@ void DropdownTopWidget::showButtons(bool showButtons) {
     } else {
         mHiddenStateIcon->setPixmap(mClosedPixmap);
     }
+}
+
+void DropdownTopWidget::updateCheckedLights(std::uint32_t checkedLightCount,
+                                            std::uint32_t reachableLightCount) {
+    mCheckedCount = checkedLightCount;
+    mReachableCount = reachableLightCount;
+    update();
+}
+
+void DropdownTopWidget::paintEvent(QPaintEvent*) {
+    QStyleOption opt;
+    opt.init(this);
+    QPainter painter(this);
+    QPen pen(Qt::white, 5);
+    painter.setPen(pen);
+
+    QPainterPath path;
+    path.addRect(rect());
+
+    painter.fillPath(path, QBrush(computeHighlightColor(mCheckedCount, mReachableCount)));
 }

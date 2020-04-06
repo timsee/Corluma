@@ -6,6 +6,7 @@
 #include <QPushButton>
 #include <QWidget>
 
+#include "cor/objects/group.h"
 #include "cor/protocols.h"
 
 /*!
@@ -24,9 +25,13 @@ class DropdownTopWidget : public QWidget {
 public:
     /// constuctor
     explicit DropdownTopWidget(const QString& key,
+                               const QString& name,
                                cor::EWidgetType type,
                                bool hideEdit,
                                QWidget* parent);
+
+    /// chang the text of the dropdownwidget
+    void changeText(const QString& text) { mName->setText(text); }
 
     /*!
      * \brief showButtons getter that checks if buttons are showing
@@ -36,6 +41,12 @@ public:
 
     /// set to true to show all widgets, false to just show the dropdown widget.
     void showButtons(bool showButtons);
+
+    /// getter for key
+    const QString& key() const noexcept { return mKey; }
+
+    /// update the checked devices of the group that matches the key
+    void updateCheckedLights(std::uint32_t checkedLightCount, std::uint32_t reachableLightCount);
 
 signals:
 
@@ -53,6 +64,9 @@ signals:
     /// emits when the widget is pressed
     void pressed();
 
+    /// signals when the widget is pressed. sends its current text
+    void dropdownPressed(QString);
+
 private slots:
 
     /*!
@@ -60,11 +74,17 @@ private slots:
      */
     void editButtonClicked(bool) { emit editClicked(mKey); }
 
+    /// sends the widgets current text when the widget is pressed
+    void widgetPressed() { emit dropdownPressed(mName->text()); }
+
 protected:
     /*!
      * \brief mouseReleaseEvent picks up when a click (or a tap on mobile) is released.
      */
     virtual void mouseReleaseEvent(QMouseEvent*);
+
+    /// renders the widget
+    virtual void paintEvent(QPaintEvent*);
 
 private:
     /// the type of dropdowntopwidget
@@ -128,6 +148,12 @@ private:
      * \brief mIconRatio
      */
     float mIconRatio;
+
+    /// count of reachable devices
+    std::uint32_t mReachableCount;
+
+    /// count of checked devices
+    std::uint32_t mCheckedCount;
 };
 
 #endif // DROPDOWNTOPWIDGET_H

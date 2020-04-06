@@ -34,10 +34,12 @@ ListLightWidget::ListLightWidget(const cor::Light& light,
       mController{new QLabel(this)},
       mTypeIcon{new QLabel(this)} {
     mTypeIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mTypeIcon->setStyleSheet("background-color:rgba(0,0,0,0);");
 
     mController->setText(createName(light.name()));
     mController->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mController->setAlignment(Qt::AlignVCenter);
+    mController->setStyleSheet("background-color:rgba(0,0,0,0);");
 
     mKey = light.uniqueID();
     updateWidget(light);

@@ -19,7 +19,7 @@ ListMoodGroupWidget::ListMoodGroupWidget(const QString& name,
     mWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     mMoods = moods;
-    mDropdownTopWidget = new DropdownTopWidget(name, cor::EWidgetType::full, hideEdit, this);
+    mDropdownTopWidget = new DropdownTopWidget(name, name, cor::EWidgetType::full, hideEdit, this);
     mDropdownTopWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     updateMoods(moods, false);

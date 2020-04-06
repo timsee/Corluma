@@ -413,6 +413,15 @@ std::vector<QString> GroupData::groupNamesFromIDs(std::vector<std::uint64_t> IDs
     return nameVector;
 }
 
+cor::Group GroupData::groupFromID(std::uint64_t ID) {
+    auto groupResult = mGroupDict.item(QString::number(ID).toStdString());
+    // check if group is already in this list
+    if (groupResult.second) {
+        return groupResult.first;
+    }
+    return {};
+}
+
 
 std::vector<cor::Group> GroupData::groupsFromIDs(std::vector<std::uint64_t> IDs) {
     std::vector<cor::Group> retVector;

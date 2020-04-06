@@ -19,30 +19,58 @@ bool checkIfAisSubsetOfB(const std::vector<QString>& a, const std::vector<QStrin
 
 /// inserts a group in the subgroup map, by either creating a new key, or filling the vector of
 /// subgroups with an additional entry.
-void insertIntoSubgroupMap(std::unordered_map<std::uint64_t, std::vector<std::uint64_t>>& map,
-                           std::uint64_t parentGroup,
-                           std::uint64_t subgroup) {
+void insertIntoSubgroupMaps(SubgroupMap& map,
+                            SubgroupNameMap& nameMap,
+                            std::uint64_t parentGroup,
+                            std::uint64_t subgroup,
+                            QString name) {
     // check if value exists
     auto result = map.find(parentGroup);
+    auto nameResult = nameMap.find(parentGroup);
     if (result == map.end()) {
         // if it doesn't exist, make it exist
         map.insert({parentGroup, {subgroup}});
+        nameMap.insert({parentGroup, {{name, subgroup}}});
     } else {
         auto currentSubgroupSet = result->second;
         currentSubgroupSet.push_back(subgroup);
         result->second = currentSubgroupSet;
+
+        auto currentSubgroupNameSet = nameResult->second;
+        currentSubgroupNameSet.push_back({name, subgroup});
+        nameResult->second = currentSubgroupNameSet;
     }
 }
 
 
-void checkAgainstAllGroupsAndRooms(
-    std::unordered_map<std::uint64_t, std::vector<std::uint64_t>>& map,
-    const cor::Group& currentGroup,
-    const std::vector<cor::Group>& groups) {
-    for (const auto& group : groups) {
-        if (group.uniqueID() != currentGroup.uniqueID()) {
-            if (checkIfAisSubsetOfB(currentGroup.lights(), group.lights())) {
-                insertIntoSubgroupMap(map, group.uniqueID(), currentGroup.uniqueID());
+QString makeSimplifiedGroupName(const QString& parent, const QString& group) {
+    // split the room name by spaces
+    QStringList roomStringList = parent.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+    QStringList groupStringList = group.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+    int charactersToSkip = 0;
+    int smallestWordCount = std::min(roomStringList.size(), groupStringList.size());
+    for (int i = 0; i < smallestWordCount; ++i) {
+        if (roomStringList[i] == groupStringList[i]) {
+            charactersToSkip += roomStringList[i].size() + 1;
+        }
+    }
+    return group.mid(charactersToSkip, group.size());
+}
+
+
+void checkAgainstAllGroupsAndRooms(SubgroupMap& map,
+                                   SubgroupNameMap& nameMap,
+                                   const cor::Group& subgroup,
+                                   const std::vector<cor::Group>& parentGroups) {
+    for (const auto& parentGroup : parentGroups) {
+        if (parentGroup.uniqueID() != subgroup.uniqueID()) {
+            if (checkIfAisSubsetOfB(subgroup.lights(), parentGroup.lights())) {
+                auto simplifiedName = makeSimplifiedGroupName(parentGroup.name(), subgroup.name());
+                insertIntoSubgroupMaps(map,
+                                       nameMap,
+                                       parentGroup.uniqueID(),
+                                       subgroup.uniqueID(),
+                                       std::move(simplifiedName));
             }
         }
     }
@@ -52,18 +80,15 @@ void checkAgainstAllGroupsAndRooms(
 
 
 void SubgroupData::updateGroupAndRoomData(const std::vector<cor::Group>& groups) {
-    // make a new version of the subgroup map
-    mSubgroupMap = generateSubgroupMap(groups);
-}
-
-
-SubgroupData::SubgroupMap SubgroupData::generateSubgroupMap(const std::vector<cor::Group>& groups) {
+    // make a new version of the subgroup maps
     SubgroupMap subgroupMap;
+    SubgroupNameMap subgroupNameMap;
 
     // first loop through each group and generate its subgroups
     for (const auto& currentGroup : groups) {
-        checkAgainstAllGroupsAndRooms(subgroupMap, currentGroup, groups);
+        checkAgainstAllGroupsAndRooms(subgroupMap, subgroupNameMap, currentGroup, groups);
     }
 
-    return subgroupMap;
+    mSubgroupMap = subgroupMap;
+    mSubgroupNameMap = subgroupNameMap;
 }

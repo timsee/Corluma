@@ -33,6 +33,7 @@ GroupButton::GroupButton(QWidget* parent, const QString& text)
     mTitle->setAlignment(Qt::AlignVCenter);
 
     mButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mButton->setStyleSheet(transparentStyleSheet);
 
     handleSelectAllButton(0u, 0u);
 }
@@ -92,6 +93,9 @@ bool GroupButton::handleSelectAllButton(std::uint32_t checkedDevicesCount,
         mCheckedCount = checkedDevicesCount;
         mReachableCount = reachableDevicesCount;
         renderFlag = true;
+    }
+    if (renderFlag) {
+        update();
     }
     return renderFlag;
 }

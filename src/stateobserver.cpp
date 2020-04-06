@@ -147,7 +147,7 @@ void StateObserver::moodChanged(std::uint64_t moodID) {
         mData->addLights(moodDict.items());
         if (!moodDict.items().empty()) {
             mTopMenu->lightCountChanged();
-            mMainWindow->leftHandMenu()->deviceCountChanged();
+            mMainWindow->leftHandMenu()->lightCountChanged();
         }
     }
 }

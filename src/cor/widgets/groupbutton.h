@@ -102,10 +102,10 @@ private:
     bool mIsSelected;
 
     /// count of reachable devices
-    uint32_t mReachableCount;
+    std::uint32_t mReachableCount;
 
     /// count of checked devices
-    uint32_t mCheckedCount;
+    std::uint32_t mCheckedCount;
 
     /// label for checkbox
     QLabel* mTitle;

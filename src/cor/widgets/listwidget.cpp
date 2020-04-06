@@ -9,7 +9,6 @@
 #include <QScrollBar>
 
 #include "listmoodgroupwidget.h"
-#include "parentgroupwidget.h"
 
 namespace cor {
 

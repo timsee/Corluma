@@ -821,7 +821,7 @@ void MainWindow::setupStateObserver() {
             SLOT(routineChanged(ERoutine)));
 
     // left hand menu changes
-    connect(mLeftHandMenu, SIGNAL(changedDeviceCount()), mStateObserver, SLOT(lightCountChanged()));
+    connect(mLeftHandMenu, SIGNAL(changedLightCount()), mStateObserver, SLOT(lightCountChanged()));
 
     // sync status
     connect(mSyncStatus, SIGNAL(statusChanged(bool)), mStateObserver, SLOT(dataInSync(bool)));

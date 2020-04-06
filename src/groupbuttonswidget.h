@@ -26,22 +26,16 @@ class GroupButtonsWidget : public QWidget {
 
 public:
     /// constructor
-    explicit GroupButtonsWidget(QWidget* parent,
-                                cor::EWidgetType type,
-                                const QString& roomName,
-                                const std::vector<QString>& groups);
+    explicit GroupButtonsWidget(QWidget* parent, cor::EWidgetType type);
 
-    /// add a group to a the list of supported groups
-    void addGroup(const QString& group);
+    /// shows the groups with the names provided
+    void showGroups(std::vector<QString> groups);
 
-    /// removes a group from the list of supported groups
-    void removeGroup(const QString& group);
+    /// getter for group buttons
+    const std::vector<cor::GroupButton*> groupButtons() { return mButtons; }
 
     /// true if empty, false if theres at least one button
     bool empty() { return mButtons.empty(); }
-
-    /// get list of groups shown by the widget
-    std::vector<QString> groupNames();
 
     /// key of the currently selected group
     const QString& currentKey() const { return mCurrentKey; }
@@ -60,12 +54,8 @@ public:
     /// the end point in the y dimension of a group given a key
     int groupEndPointY(int topWidgetHeight, const QString& key);
 
-    /// returns the renamed version of a group when given an actual group name
-    QString renamedGroup(const QString& group);
-
-    /// returns the original group name when given a renamed group
-    QString originalGroup(const QString& group);
-
+    /// resizes prorgrammatically
+    void resize();
 signals:
 
     /// emitted when a group button is pressed. This emits its actual group name, instead of its
@@ -86,31 +76,20 @@ private slots:
     void buttonPressed(const QString& key);
 
     /// picks up when a group's select all/deselect all button is pressed.
-    void buttonToggled(QString key, bool selectAll) {
-        emit groupSelectAllToggled(originalGroup(key), selectAll);
-    }
+    void buttonToggled(QString key, bool selectAll) { emit groupSelectAllToggled(key, selectAll); }
 
 private:
-    /// resizes prorgrammatically
-    void resize();
+    /// add a group to a the list of supported groups
+    void addGroup(const QString& group);
 
     /// ttype of widget
     cor::EWidgetType mType;
 
-    /// creates a converted group name, when given a room and group name.
-    QString convertGroupName(const QString& room, const QString& group);
-
     /// stores the key of the currently selected group
     QString mCurrentKey;
 
-    /// stores the name of the room it is representing
-    QString mRoomName;
-
     /// stores the group button widgets
     std::vector<cor::GroupButton*> mButtons;
-
-    /// stores the map of the relabeled named
-    cor::Dictionary<std::string> mRelabeledNames;
 
     /// number of buttons displayed in row
     int mGroupCount;
