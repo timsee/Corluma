@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.19.6</span>
+   &#160;<span id="projectnumber">v0.19.75</span>
    </div>
   </td>
  </tr>
@@ -83,7 +83,7 @@ $(function() {
 , <a class="el" href="class_single_light_brightness_widget.html#ad7bd418b6d44bb5e4e615a3762985211">SingleLightBrightnessWidget</a>
 </li>
 <li>updateCheckedLights()
-: <a class="el" href="class_group_buttons_widget.html#a34454d6cf70d7b1261021c26573c9cbb">GroupButtonsWidget</a>
+: <a class="el" href="class_parent_group_widget.html#a3c9e0e94c28eacf875d4dc85a52de403">ParentGroupWidget</a>
 </li>
 <li>updateCollectionButton()
 : <a class="el" href="class_floating_layout.html#aaa21e19e1ff596598bcd535bd3414163">FloatingLayout</a>
@@ -115,6 +115,9 @@ $(function() {
 <li>updateConnectionList()
 : <a class="el" href="class_mood_page.html#a92af7588cc9e57cd676142029322866d">MoodPage</a>
 </li>
+<li>updateDataGroupInUI()
+: <a class="el" href="class_menu_parent_group_container.html#a2b4e55c9455c146cd7f50a4f0ebf85f1">MenuParentGroupContainer</a>
+</li>
 <li>updateDevices()
 : <a class="el" href="class_edit_page.html#ad65eed777ac45978a8b4ff371f9c3566">EditPage</a>
 , <a class="el" href="class_list_simple_group_widget.html#a031ff9900f1db0e32029aa5fd99ad7a8">ListSimpleGroupWidget</a>
@@ -128,9 +131,6 @@ $(function() {
 <li>updateExternallyStoredGroups()
 : <a class="el" href="class_group_data.html#ae3bb8770b5ed7b0b6b1e7209bb454cd8">GroupData</a>
 </li>
-<li>updateExternallyStoredRooms()
-: <a class="el" href="class_group_data.html#a1e22d319f595ac145439951a46a6e0a7">GroupData</a>
-</li>
 <li>updateFoundLight()
 : <a class="el" href="classnano_1_1_leaf_discovery.html#ae07173ad8e2b04e3323c459d01e95f46">nano::LeafDiscovery</a>
 </li>
@@ -138,13 +138,13 @@ $(function() {
 : <a class="el" href="class_comm_hue.html#a7b342521c43a152eb4c26b00e6ce4395">CommHue</a>
 </li>
 <li>updateGroupAndRoomData()
-: <a class="el" href="class_subgroup_data.html#ae7c983707646095f3f5d621f1431290e">SubgroupData</a>
+: <a class="el" href="class_subgroup_data.html#a918e98438cddb5cff7ea7139cc3d5b57">SubgroupData</a>
 </li>
 <li>updateGroups()
-: <a class="el" href="classhue_1_1_bridge_groups_widget.html#a6984b5f9f4431b692c069493f3d8ec8c">hue::BridgeGroupsWidget</a>
+: <a class="el" href="classhue_1_1_bridge_groups_widget.html#aa6055c6a9eeeb109ac3a17b0fd0e1122">hue::BridgeGroupsWidget</a>
 </li>
 <li>updateGroupsAndRooms()
-: <a class="el" href="classhue_1_1_bridge_discovery.html#a1e059640e5b76c9d2159af38f0d2e963">hue::BridgeDiscovery</a>
+: <a class="el" href="classhue_1_1_bridge_discovery.html#a724f4ea83eba72ac57977e4422394f48">hue::BridgeDiscovery</a>
 </li>
 <li>updateHues()
 : <a class="el" href="class_light_info_scroll_area.html#a503372eeef97dc1e3527c4db4a5f0a97">LightInfoScrollArea</a>
@@ -167,7 +167,11 @@ $(function() {
 </li>
 <li>updateLights()
 : <a class="el" href="classcor_1_1_light_vector_widget.html#af0e56790edc156144b0c197508f7d807">cor::LightVectorWidget</a>
+, <a class="el" href="class_left_hand_light_menu.html#a6c78815c03120a61ce69d9da395541fd">LeftHandLightMenu</a>
 , <a class="el" href="class_left_hand_menu.html#a1f3a027a1e126959e239c412b26924fc">LeftHandMenu</a>
+</li>
+<li>updateLightWidgets()
+: <a class="el" href="class_menu_light_container.html#ad1ac2df32efbc6a0b9c47f3f08e31222">MenuLightContainer</a>
 </li>
 <li>updateMainIcons()
 : <a class="el" href="class_mood_page.html#aff7e265c3cf691ad939cb6cfff14b612">MoodPage</a>
@@ -182,7 +186,7 @@ $(function() {
 : <a class="el" href="class_light_info_scroll_area.html#ae9616e8c7dee353fa9139b508292e1c5">LightInfoScrollArea</a>
 </li>
 <li>updateParentGroups()
-: <a class="el" href="class_parent_data.html#a593d23083914fbb0e7fc3a238185dd2b">ParentData</a>
+: <a class="el" href="class_parent_data.html#adb97688d91b23f00b8df4ddf8be8e0a8">ParentData</a>
 </li>
 <li>updateRanges()
 : <a class="el" href="classnano_1_1_leaf_metadata.html#abae68acdc659f158e86e9c68f900d977">nano::LeafMetadata</a>
@@ -217,7 +221,6 @@ $(function() {
 : <a class="el" href="classcor_1_1_light_list.html#abd0c31efbaf256fbdd22d1c24f1ad86a">cor::LightList</a>
 , <a class="el" href="class_left_hand_button.html#a7fd92963539b7a154d4d838117e425b8">LeftHandButton</a>
 , <a class="el" href="class_multi_color_state_widget.html#a75da520239d0bb288493de154b909db9">MultiColorStateWidget</a>
-, <a class="el" href="class_parent_group_widget.html#a1a44c3c8f9a861441c1d84fd406d1bb5">ParentGroupWidget</a>
 , <a class="el" href="class_single_color_state_widget.html#a74e9c15ef954a8831dd98d6702f9262f">SingleColorStateWidget</a>
 , <a class="el" href="class_top_menu.html#a56b53eda5b0feed29735775ba2dfa51d">TopMenu</a>
 </li>
@@ -247,7 +250,7 @@ $(function() {
 : <a class="el" href="class_u_pn_p_discovery.html#a6aa5f2290853601da7fdcd7af052be43">UPnPDiscovery</a>
 </li>
 <li>username()
-: <a class="el" href="classhue_1_1_bridge.html#a777eb761e27ccda76bc10c6f0832e507">hue::Bridge</a>
+: <a class="el" href="classhue_1_1_bridge.html#aec6eecda6a4c04f6f5969ec7fba86fcc">hue::Bridge</a>
 </li>
 <li>useTimeout()
 : <a class="el" href="class_global_settings_widget.html#a0ef59043cc36359ee35ae6d56bea7faa">GlobalSettingsWidget</a>

@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.19.6</span>
+   &#160;<span id="projectnumber">v0.19.75</span>
    </div>
   </td>
  </tr>
@@ -123,10 +123,10 @@ const <a class="el" href="classcor_1_1_dictionary.html">cor::Dictionary</a>&lt; 
 std::vector&lt; <a class="el" href="classcor_1_1_group.html">cor::Group</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classhue_1_1_bridge.html#a6d8755e3c309876ac06dace85f678c64">groups</a> () const noexcept</td></tr>
 <tr class="memdesc:a6d8755e3c309876ac06dace85f678c64"><td class="mdescLeft">&#160;</td><td class="mdescRight">list of the groups stored on the bridge <br /></td></tr>
 <tr class="separator:a6d8755e3c309876ac06dace85f678c64"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a72b72e0fbfba8c98be9d921266424ad6"><td class="memItemLeft" align="right" valign="top"><a id="a72b72e0fbfba8c98be9d921266424ad6"></a>
-std::vector&lt; <a class="el" href="classcor_1_1_room.html">cor::Room</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classhue_1_1_bridge.html#a72b72e0fbfba8c98be9d921266424ad6">rooms</a> () const noexcept</td></tr>
-<tr class="memdesc:a72b72e0fbfba8c98be9d921266424ad6"><td class="mdescLeft">&#160;</td><td class="mdescRight">list of the rooms stored on the bridge <br /></td></tr>
-<tr class="separator:a72b72e0fbfba8c98be9d921266424ad6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82e5e67eabaf76aef9a64a8713f9df12"><td class="memItemLeft" align="right" valign="top"><a id="a82e5e67eabaf76aef9a64a8713f9df12"></a>
+std::vector&lt; <a class="el" href="classcor_1_1_group.html">cor::Group</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classhue_1_1_bridge.html#a82e5e67eabaf76aef9a64a8713f9df12">rooms</a> () const noexcept</td></tr>
+<tr class="memdesc:a82e5e67eabaf76aef9a64a8713f9df12"><td class="mdescLeft">&#160;</td><td class="mdescRight">list of the rooms stored on the bridge <br /></td></tr>
+<tr class="separator:a82e5e67eabaf76aef9a64a8713f9df12"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c20827fc9acc8e038dbeaa665984857"><td class="memItemLeft" align="right" valign="top"><a id="a7c20827fc9acc8e038dbeaa665984857"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classhue_1_1_bridge.html#a7c20827fc9acc8e038dbeaa665984857">state</a> (EBridgeDiscoveryState state)</td></tr>
 <tr class="memdesc:a7c20827fc9acc8e038dbeaa665984857"><td class="mdescLeft">&#160;</td><td class="mdescRight">setter for the state <br /></td></tr>
@@ -135,26 +135,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 EBridgeDiscoveryState&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classhue_1_1_bridge.html#a686bab0435967614cf5c961b906c7e13">state</a> () const noexcept</td></tr>
 <tr class="memdesc:a686bab0435967614cf5c961b906c7e13"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the state <br /></td></tr>
 <tr class="separator:a686bab0435967614cf5c961b906c7e13"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3951865b132bbe8187337015b3e02762"><td class="memItemLeft" align="right" valign="top"><a id="a3951865b132bbe8187337015b3e02762"></a>
-BridgeGroupVector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classhue_1_1_bridge.html#a3951865b132bbe8187337015b3e02762">groupsWithIDs</a> () const</td></tr>
-<tr class="memdesc:a3951865b132bbe8187337015b3e02762"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for groups with IDs <br /></td></tr>
-<tr class="separator:a3951865b132bbe8187337015b3e02762"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac55138a4f4fd5c090e4e2b59f87cbd8c"><td class="memItemLeft" align="right" valign="top"><a id="ac55138a4f4fd5c090e4e2b59f87cbd8c"></a>
 BridgeGroupVector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classhue_1_1_bridge.html#ac55138a4f4fd5c090e4e2b59f87cbd8c">groupsAndRoomsWithIDs</a> () const</td></tr>
 <tr class="memdesc:ac55138a4f4fd5c090e4e2b59f87cbd8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for both the groups and rooms with their associated IDs <br /></td></tr>
 <tr class="separator:ac55138a4f4fd5c090e4e2b59f87cbd8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6bcdd668949d825980d438bd8d01e276"><td class="memItemLeft" align="right" valign="top"><a id="a6bcdd668949d825980d438bd8d01e276"></a>
-BridgeRoomVector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classhue_1_1_bridge.html#a6bcdd668949d825980d438bd8d01e276">roomsWithIDs</a> () const</td></tr>
-<tr class="memdesc:a6bcdd668949d825980d438bd8d01e276"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for pairs of rooms with IDs <br /></td></tr>
-<tr class="separator:a6bcdd668949d825980d438bd8d01e276"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a05e4be500872162c5ab3cbe33ba55b23"><td class="memItemLeft" align="right" valign="top"><a id="a05e4be500872162c5ab3cbe33ba55b23"></a>
+BridgeGroupVector&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classhue_1_1_bridge.html#a05e4be500872162c5ab3cbe33ba55b23">roomsWithIDs</a> () const</td></tr>
+<tr class="memdesc:a05e4be500872162c5ab3cbe33ba55b23"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for pairs of rooms with IDs <br /></td></tr>
+<tr class="separator:a05e4be500872162c5ab3cbe33ba55b23"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acbc404922190b24cc6a4b9a695aad329"><td class="memItemLeft" align="right" valign="top"><a id="acbc404922190b24cc6a4b9a695aad329"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classhue_1_1_bridge.html#acbc404922190b24cc6a4b9a695aad329">groupsWithIDs</a> (const BridgeGroupVector &amp;<a class="el" href="classhue_1_1_bridge.html#a6d8755e3c309876ac06dace85f678c64">groups</a>)</td></tr>
 <tr class="memdesc:acbc404922190b24cc6a4b9a695aad329"><td class="mdescLeft">&#160;</td><td class="mdescRight">setter for groups and their IDs <br /></td></tr>
 <tr class="separator:acbc404922190b24cc6a4b9a695aad329"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0f825a39f50e1ad62e1441853890b8fe"><td class="memItemLeft" align="right" valign="top"><a id="a0f825a39f50e1ad62e1441853890b8fe"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classhue_1_1_bridge.html#a0f825a39f50e1ad62e1441853890b8fe">roomsWithIDs</a> (const BridgeRoomVector &amp;<a class="el" href="classhue_1_1_bridge.html#a72b72e0fbfba8c98be9d921266424ad6">rooms</a>)</td></tr>
-<tr class="memdesc:a0f825a39f50e1ad62e1441853890b8fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">setter for rooms and their IDs <br /></td></tr>
-<tr class="separator:a0f825a39f50e1ad62e1441853890b8fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a90a3722ae9d7fec49e4bb957f4c2b77f"><td class="memItemLeft" align="right" valign="top"><a id="a90a3722ae9d7fec49e4bb957f4c2b77f"></a>
 std::uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classhue_1_1_bridge.html#a90a3722ae9d7fec49e4bb957f4c2b77f">groupID</a> (const <a class="el" href="classcor_1_1_group.html">cor::Group</a> &amp;group) const noexcept</td></tr>
 <tr class="memdesc:a90a3722ae9d7fec49e4bb957f4c2b77f"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for group ID, regardless of if its a room or group <br /></td></tr>

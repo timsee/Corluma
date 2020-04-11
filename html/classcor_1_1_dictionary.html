@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.19.6</span>
+   &#160;<span id="projectnumber">v0.19.75</span>
    </div>
   </td>
  </tr>
@@ -92,6 +92,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a1c30c779a405d7cd37652bb1c5a63322"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_dictionary.html#a1c30c779a405d7cd37652bb1c5a63322">items</a> () const</td></tr>
 <tr class="memdesc:a1c30c779a405d7cd37652bb1c5a63322"><td class="mdescLeft">&#160;</td><td class="mdescRight">itemVector Getter for a vector of all items stored in the dictionary  <a href="#a1c30c779a405d7cd37652bb1c5a63322">More...</a><br /></td></tr>
 <tr class="separator:a1c30c779a405d7cd37652bb1c5a63322"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4754443f1b5ac16d96d4ffcd2aeda8a1"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair&lt; std::string, T &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_dictionary.html#a4754443f1b5ac16d96d4ffcd2aeda8a1">keysAndItems</a> () const</td></tr>
+<tr class="memdesc:a4754443f1b5ac16d96d4ffcd2aeda8a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">keysAndItems Getter for a vector of pairs of all items stored in the dictionary along with their associated keys  <a href="#a4754443f1b5ac16d96d4ffcd2aeda8a1">More...</a><br /></td></tr>
+<tr class="separator:a4754443f1b5ac16d96d4ffcd2aeda8a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a92cfb42b4528f3d34d3df7b4e5459684"><td class="memItemLeft" align="right" valign="top"><a id="a92cfb42b4528f3d34d3df7b4e5459684"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_dictionary.html#a92cfb42b4528f3d34d3df7b4e5459684">empty</a> () const noexcept</td></tr>
 <tr class="memdesc:a92cfb42b4528f3d34d3df7b4e5459684"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns true if empty, false if it has any values <br /></td></tr>
@@ -287,6 +290,34 @@ template&lt;typename T&gt; </div>
 </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>a vector of keys used by the <a class="el" href="classcor_1_1_dictionary.html" title="Simple dictionary optimized for lookup times. Keys are always std::string, but any type can be used f...">Dictionary</a> </dd></dl>
+
+</div>
+</div>
+<a id="a4754443f1b5ac16d96d4ffcd2aeda8a1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4754443f1b5ac16d96d4ffcd2aeda8a1">&#9670;&nbsp;</a></span>keysAndItems()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;std::pair&lt;std::string, T&gt; &gt; <a class="el" href="classcor_1_1_dictionary.html">cor::Dictionary</a>&lt; T &gt;::keysAndItems </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>a pair where the first value is the key and the second value is the item. </dd></dl>
 
 </div>
 </div>

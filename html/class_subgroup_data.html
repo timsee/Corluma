@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.19.6</span>
+   &#160;<span id="projectnumber">v0.19.75</span>
    </div>
   </td>
  </tr>
@@ -59,15 +59,63 @@ Public Member Functions</h2></td></tr>
 const SubgroupMap&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_subgroup_data.html#ae5ac1a46c407adb786d432f3d41d2c82">subgroups</a> () const noexcept</td></tr>
 <tr class="memdesc:ae5ac1a46c407adb786d432f3d41d2c82"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the map of all subgroups <br /></td></tr>
 <tr class="separator:ae5ac1a46c407adb786d432f3d41d2c82"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0e74e0682fda10ff495b131113a2f937"><td class="memItemLeft" align="right" valign="top"><a id="a0e74e0682fda10ff495b131113a2f937"></a>
-std::vector&lt; std::uint64_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_subgroup_data.html#a0e74e0682fda10ff495b131113a2f937">subgroupsForGroup</a> (std::uint64_t uniqueID) const</td></tr>
-<tr class="memdesc:a0e74e0682fda10ff495b131113a2f937"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the subgroups for a specfic group. <br /></td></tr>
-<tr class="separator:a0e74e0682fda10ff495b131113a2f937"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae7c983707646095f3f5d621f1431290e"><td class="memItemLeft" align="right" valign="top"><a id="ae7c983707646095f3f5d621f1431290e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_subgroup_data.html#ae7c983707646095f3f5d621f1431290e">updateGroupAndRoomData</a> (const std::vector&lt; <a class="el" href="classcor_1_1_group.html">cor::Group</a> &gt; &amp;groups, const std::vector&lt; <a class="el" href="classcor_1_1_room.html">cor::Room</a> &gt; &amp;rooms)</td></tr>
-<tr class="memdesc:ae7c983707646095f3f5d621f1431290e"><td class="mdescLeft">&#160;</td><td class="mdescRight">updates the data for subgroups by parsing all groups and rooms <br /></td></tr>
-<tr class="separator:ae7c983707646095f3f5d621f1431290e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d9fde11cf887c06e49df30505d6ac6c"><td class="memItemLeft" align="right" valign="top"><a id="a5d9fde11cf887c06e49df30505d6ac6c"></a>
+std::vector&lt; std::uint64_t &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_subgroup_data.html#a5d9fde11cf887c06e49df30505d6ac6c">subgroupIDsForGroup</a> (std::uint64_t uniqueID) const</td></tr>
+<tr class="memdesc:a5d9fde11cf887c06e49df30505d6ac6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the subgroups for a specfic group. <br /></td></tr>
+<tr class="separator:a5d9fde11cf887c06e49df30505d6ac6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adac532b7d5bb52fb2e5d4247c3652dde"><td class="memItemLeft" align="right" valign="top"><a id="adac532b7d5bb52fb2e5d4247c3652dde"></a>
+std::vector&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_subgroup_data.html#adac532b7d5bb52fb2e5d4247c3652dde">subgroupNamesForGroup</a> (std::uint64_t uniqueID) const</td></tr>
+<tr class="memdesc:adac532b7d5bb52fb2e5d4247c3652dde"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns a vector of all alternative names for the subgroups of a parent group. <br /></td></tr>
+<tr class="separator:adac532b7d5bb52fb2e5d4247c3652dde"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f238d21819fd57dce40582174f9427e"><td class="memItemLeft" align="right" valign="top"><a id="a0f238d21819fd57dce40582174f9427e"></a>
+std::uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_subgroup_data.html#a0f238d21819fd57dce40582174f9427e">subgroupIDFromRenamedGroup</a> (std::uint64_t parentGroup, const QString &amp;renamedName) const</td></tr>
+<tr class="memdesc:a0f238d21819fd57dce40582174f9427e"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the subgroup ID when provided a parent group ID and the renamed group. <br /></td></tr>
+<tr class="separator:a0f238d21819fd57dce40582174f9427e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e149803192891e6f3a3fc9a8e192ea6"><td class="memItemLeft" align="right" valign="top">QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_subgroup_data.html#a5e149803192891e6f3a3fc9a8e192ea6">renamedSubgroupFromParentAndGroupID</a> (std::uint64_t parentGroupID, std::uint64_t subgroupID) const</td></tr>
+<tr class="separator:a5e149803192891e6f3a3fc9a8e192ea6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a918e98438cddb5cff7ea7139cc3d5b57"><td class="memItemLeft" align="right" valign="top"><a id="a918e98438cddb5cff7ea7139cc3d5b57"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_subgroup_data.html#a918e98438cddb5cff7ea7139cc3d5b57">updateGroupAndRoomData</a> (const std::vector&lt; <a class="el" href="classcor_1_1_group.html">cor::Group</a> &gt; &amp;groups)</td></tr>
+<tr class="memdesc:a918e98438cddb5cff7ea7139cc3d5b57"><td class="mdescLeft">&#160;</td><td class="mdescRight">updates the data for subgroups by parsing all groups and rooms <br /></td></tr>
+<tr class="separator:a918e98438cddb5cff7ea7139cc3d5b57"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a5e149803192891e6f3a3fc9a8e192ea6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5e149803192891e6f3a3fc9a8e192ea6">&#9670;&nbsp;</a></span>renamedSubgroupFromParentAndGroupID()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">QString SubgroupData::renamedSubgroupFromParentAndGroupID </td>
+          <td>(</td>
+          <td class="paramtype">std::uint64_t&#160;</td>
+          <td class="paramname"><em>parentGroupID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::uint64_t&#160;</td>
+          <td class="paramname"><em>subgroupID</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>queries a parent group and subgroup pair for its alternative name for the subgroup. Returns the subgroup's actual name if no alternative name exists, and returns an empty string if the parent group ID/subgroup ID pair is invalid. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li><a class="el" href="subgroupdata_8h_source.html">subgroupdata.h</a></li>
 <li>subgroupdata.cpp</li>

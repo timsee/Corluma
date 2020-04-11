@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.19.6</span>
+   &#160;<span id="projectnumber">v0.19.75</span>
    </div>
   </td>
  </tr>
@@ -42,6 +42,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="class_group_data-members.html">List of all members</a> &#124;
+<a href="#pub-slots">Public Slots</a> &#124;
 <a href="#signals">Signals</a> &#124;
 <a href="#pub-methods">Public Member Functions</a>  </div>
   <div class="headertitle">
@@ -56,6 +57,17 @@ $(function() {
 
 <p>Inherits QObject, and <a class="el" href="classcor_1_1_j_s_o_n_save_data.html">cor::JSONSaveData</a>.</p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-slots"></a>
+Public Slots</h2></td></tr>
+<tr class="memitem:a20c90d32d22657bf90740af79dbe9f67"><td class="memItemLeft" align="right" valign="top"><a id="a20c90d32d22657bf90740af79dbe9f67"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#a20c90d32d22657bf90740af79dbe9f67">addLightToGroups</a> (ECommType, const QString &amp;uniqueID)</td></tr>
+<tr class="memdesc:a20c90d32d22657bf90740af79dbe9f67"><td class="mdescLeft">&#160;</td><td class="mdescRight">adds a light to group metadata <br /></td></tr>
+<tr class="separator:a20c90d32d22657bf90740af79dbe9f67"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3852b93e2116a74c7b81eebddcf7c7ba"><td class="memItemLeft" align="right" valign="top"><a id="a3852b93e2116a74c7b81eebddcf7c7ba"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#a3852b93e2116a74c7b81eebddcf7c7ba">removeLightFromGroups</a> (ECommType, const QString &amp;uniqueID)</td></tr>
+<tr class="memdesc:a3852b93e2116a74c7b81eebddcf7c7ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">removes a light from group metadata <br /></td></tr>
+<tr class="separator:a3852b93e2116a74c7b81eebddcf7c7ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
 Signals</h2></td></tr>
 <tr class="memitem:ab51582096572ea0430fd5edfd02f5409"><td class="memItemLeft" align="right" valign="top"><a id="ab51582096572ea0430fd5edfd02f5409"></a>
@@ -78,18 +90,18 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ac630c13faedf0fac0e3ed34f639b2597"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classcor_1_1_dictionary.html">cor::Dictionary</a>&lt; <a class="el" href="classcor_1_1_mood.html">cor::Mood</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#ac630c13faedf0fac0e3ed34f639b2597">moods</a> () const noexcept</td></tr>
 <tr class="memdesc:ac630c13faedf0fac0e3ed34f639b2597"><td class="mdescLeft">&#160;</td><td class="mdescRight">moodList getter for all known moods.  <a href="#ac630c13faedf0fac0e3ed34f639b2597">More...</a><br /></td></tr>
 <tr class="separator:ac630c13faedf0fac0e3ed34f639b2597"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a683183e3fd2c4c2d9f6ac6a6b6c232a3"><td class="memItemLeft" align="right" valign="top"><a id="a683183e3fd2c4c2d9f6ac6a6b6c232a3"></a>
-const <a class="el" href="classcor_1_1_dictionary.html">cor::Dictionary</a>&lt; <a class="el" href="classcor_1_1_group.html">cor::Group</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#a683183e3fd2c4c2d9f6ac6a6b6c232a3">groups</a> () const noexcept</td></tr>
-<tr class="memdesc:a683183e3fd2c4c2d9f6ac6a6b6c232a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for groups <br /></td></tr>
-<tr class="separator:a683183e3fd2c4c2d9f6ac6a6b6c232a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8cc4c9c7b517b8cc8854e8ea8ddb666a"><td class="memItemLeft" align="right" valign="top"><a id="a8cc4c9c7b517b8cc8854e8ea8ddb666a"></a>
-const <a class="el" href="classcor_1_1_dictionary.html">cor::Dictionary</a>&lt; <a class="el" href="classcor_1_1_room.html">cor::Room</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#a8cc4c9c7b517b8cc8854e8ea8ddb666a">rooms</a> () const noexcept</td></tr>
-<tr class="memdesc:a8cc4c9c7b517b8cc8854e8ea8ddb666a"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for rooms <br /></td></tr>
-<tr class="separator:a8cc4c9c7b517b8cc8854e8ea8ddb666a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5b07c800bb87b2d6762d9e0bf8367770"><td class="memItemLeft" align="right" valign="top"><a id="a5b07c800bb87b2d6762d9e0bf8367770"></a>
-std::vector&lt; <a class="el" href="classcor_1_1_group.html">cor::Group</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#a5b07c800bb87b2d6762d9e0bf8367770">groupsAndRooms</a> () const</td></tr>
-<tr class="memdesc:a5b07c800bb87b2d6762d9e0bf8367770"><td class="mdescLeft">&#160;</td><td class="mdescRight">creates a vector of groups and rooms <br /></td></tr>
-<tr class="separator:a5b07c800bb87b2d6762d9e0bf8367770"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0729393ab22b3243a3d4396c33455607"><td class="memItemLeft" align="right" valign="top"><a id="a0729393ab22b3243a3d4396c33455607"></a>
+std::vector&lt; <a class="el" href="classcor_1_1_group.html">cor::Group</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#a0729393ab22b3243a3d4396c33455607">groups</a> () const noexcept</td></tr>
+<tr class="memdesc:a0729393ab22b3243a3d4396c33455607"><td class="mdescLeft">&#160;</td><td class="mdescRight">creates a vector of all groups without rooms <br /></td></tr>
+<tr class="separator:a0729393ab22b3243a3d4396c33455607"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4daab8a2952f3dd490edc847ecac44d7"><td class="memItemLeft" align="right" valign="top"><a id="a4daab8a2952f3dd490edc847ecac44d7"></a>
+std::vector&lt; <a class="el" href="classcor_1_1_group.html">cor::Group</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#a4daab8a2952f3dd490edc847ecac44d7">rooms</a> () const noexcept</td></tr>
+<tr class="memdesc:a4daab8a2952f3dd490edc847ecac44d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">creates a vector of all rooms <br /></td></tr>
+<tr class="separator:a4daab8a2952f3dd490edc847ecac44d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb4fffca23b6e8f7a01b75ac909cef95"><td class="memItemLeft" align="right" valign="top"><a id="acb4fffca23b6e8f7a01b75ac909cef95"></a>
+const <a class="el" href="classcor_1_1_dictionary.html">cor::Dictionary</a>&lt; <a class="el" href="classcor_1_1_group.html">cor::Group</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#acb4fffca23b6e8f7a01b75ac909cef95">groupDict</a> () const noexcept</td></tr>
+<tr class="memdesc:acb4fffca23b6e8f7a01b75ac909cef95"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the dictionary of all groups and rooms <br /></td></tr>
+<tr class="separator:acb4fffca23b6e8f7a01b75ac909cef95"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8154d12639ecbf3caab0f3e5b3639b3a"><td class="memItemLeft" align="right" valign="top"><a id="a8154d12639ecbf3caab0f3e5b3639b3a"></a>
 std::vector&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#a8154d12639ecbf3caab0f3e5b3639b3a">groupNames</a> ()</td></tr>
 <tr class="memdesc:a8154d12639ecbf3caab0f3e5b3639b3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns a vector of names for the groups. <br /></td></tr>
@@ -102,6 +114,10 @@ std::vector&lt; QString &gt;&#160;</td><td class="memItemRight" valign="bottom">
 std::vector&lt; <a class="el" href="classcor_1_1_group.html">cor::Group</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#a40dc3103a68d81908898f70dfba5399b">groupsFromIDs</a> (std::vector&lt; std::uint64_t &gt; IDs)</td></tr>
 <tr class="memdesc:a40dc3103a68d81908898f70dfba5399b"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns a vector of groups from a vector of IDs <br /></td></tr>
 <tr class="separator:a40dc3103a68d81908898f70dfba5399b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17fd76fb253cd0c5eb955d4157d49c47"><td class="memItemLeft" align="right" valign="top"><a id="a17fd76fb253cd0c5eb955d4157d49c47"></a>
+<a class="el" href="classcor_1_1_group.html">cor::Group</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#a17fd76fb253cd0c5eb955d4157d49c47">groupFromID</a> (std::uint64_t ID)</td></tr>
+<tr class="memdesc:a17fd76fb253cd0c5eb955d4157d49c47"><td class="mdescLeft">&#160;</td><td class="mdescRight">converts a group into an ID, returning an invalid group if the ID is invalid. <br /></td></tr>
+<tr class="separator:a17fd76fb253cd0c5eb955d4157d49c47"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8cf12e4778be1bd37dd9ca4451a5d32"><td class="memItemLeft" align="right" valign="top"><a id="ad8cf12e4778be1bd37dd9ca4451a5d32"></a>
 const <a class="el" href="class_subgroup_data.html">SubgroupData</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#ad8cf12e4778be1bd37dd9ca4451a5d32">subgroups</a> () const</td></tr>
 <tr class="memdesc:ad8cf12e4778be1bd37dd9ca4451a5d32"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the subgroups <br /></td></tr>
@@ -122,20 +138,9 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 std::uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#afb13f83f5158cb5185d6e8c3c7d8d03e">groupNameToID</a> (const QString name)</td></tr>
 <tr class="memdesc:afb13f83f5158cb5185d6e8c3c7d8d03e"><td class="mdescLeft">&#160;</td><td class="mdescRight">converts a group name to a ID, WARNING: this is not fast. <br /></td></tr>
 <tr class="separator:afb13f83f5158cb5185d6e8c3c7d8d03e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a64b01eb9cc0e4ab70546df8bcb9dce64"><td class="memItemLeft" align="right" valign="top"><a id="a64b01eb9cc0e4ab70546df8bcb9dce64"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#a64b01eb9cc0e4ab70546df8bcb9dce64">isGroupARoom</a> (const <a class="el" href="classcor_1_1_group.html">cor::Group</a> &amp;group)</td></tr>
-<tr class="memdesc:a64b01eb9cc0e4ab70546df8bcb9dce64"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if a group is a room, false if its a group <br /></td></tr>
-<tr class="separator:a64b01eb9cc0e4ab70546df8bcb9dce64"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a35a9daa7604711dad9cfd0413444c815"><td class="memItemLeft" align="right" valign="top"><a id="a35a9daa7604711dad9cfd0413444c815"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#a35a9daa7604711dad9cfd0413444c815">updateSubgroups</a> ()</td></tr>
-<tr class="memdesc:a35a9daa7604711dad9cfd0413444c815"><td class="mdescLeft">&#160;</td><td class="mdescRight">adds subgroups to rooms <br /></td></tr>
-<tr class="separator:a35a9daa7604711dad9cfd0413444c815"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3bb8770b5ed7b0b6b1e7209bb454cd8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#ae3bb8770b5ed7b0b6b1e7209bb454cd8">updateExternallyStoredGroups</a> (const std::vector&lt; <a class="el" href="classcor_1_1_group.html">cor::Group</a> &gt; &amp;externalGroups)</td></tr>
 <tr class="memdesc:ae3bb8770b5ed7b0b6b1e7209bb454cd8"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateExternallyStoredGroups update the information stored from external sources, such as Philips Bridges. This data gets added to the group info but does not get saved locally.  <a href="#ae3bb8770b5ed7b0b6b1e7209bb454cd8">More...</a><br /></td></tr>
 <tr class="separator:ae3bb8770b5ed7b0b6b1e7209bb454cd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e22d319f595ac145439951a46a6e0a7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#a1e22d319f595ac145439951a46a6e0a7">updateExternallyStoredRooms</a> (const std::vector&lt; <a class="el" href="classcor_1_1_room.html">cor::Room</a> &gt; &amp;externalRooms)</td></tr>
-<tr class="memdesc:a1e22d319f595ac145439951a46a6e0a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateExternallyStoredRooms update the information stored from external sources, such as Philips Bridges. This data gets added to the group info but does not get saved locally.  <a href="#a1e22d319f595ac145439951a46a6e0a7">More...</a><br /></td></tr>
-<tr class="separator:a1e22d319f595ac145439951a46a6e0a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a220a6d9b2214920ceb4701e116e9c0ce"><td class="memItemLeft" align="right" valign="top"><a id="a220a6d9b2214920ceb4701e116e9c0ce"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#a220a6d9b2214920ceb4701e116e9c0ce">saveNewMood</a> (const <a class="el" href="classcor_1_1_mood.html">cor::Mood</a> &amp;mood)</td></tr>
 <tr class="memdesc:a220a6d9b2214920ceb4701e116e9c0ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">saveNewMood save a new mood <br /></td></tr>
@@ -143,9 +148,6 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a34a92e884e7fd34ffe770a27d69a52c5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#a34a92e884e7fd34ffe770a27d69a52c5">saveNewGroup</a> (const <a class="el" href="classcor_1_1_group.html">cor::Group</a> &amp;group)</td></tr>
 <tr class="memdesc:a34a92e884e7fd34ffe770a27d69a52c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">saveNewGroup save a new group of devices to JSON data, which then gets saved to file in AppData.  <a href="#a34a92e884e7fd34ffe770a27d69a52c5">More...</a><br /></td></tr>
 <tr class="separator:a34a92e884e7fd34ffe770a27d69a52c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ecb8283abd24a50a4a07dbae5eb1e7c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#a8ecb8283abd24a50a4a07dbae5eb1e7c">saveNewRoom</a> (const <a class="el" href="classcor_1_1_room.html">cor::Room</a> &amp;room)</td></tr>
-<tr class="memdesc:a8ecb8283abd24a50a4a07dbae5eb1e7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">saveNewRoom save a new room of devices to JSON data, which then gets saved to file in AppData.  <a href="#a8ecb8283abd24a50a4a07dbae5eb1e7c">More...</a><br /></td></tr>
-<tr class="separator:a8ecb8283abd24a50a4a07dbae5eb1e7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a398e0357d31c1977bccf97976ca69ad9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#a398e0357d31c1977bccf97976ca69ad9">removeGroup</a> (std::uint64_t uniqueID)</td></tr>
 <tr class="memdesc:a398e0357d31c1977bccf97976ca69ad9"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeGroup remove the group of devices associated with the name provided. If no group has this name, nothing happens and it returns false. If a group does have this name, it is removed and this is saved to JSON which is then saved to AppData  <a href="#a398e0357d31c1977bccf97976ca69ad9">More...</a><br /></td></tr>
 <tr class="separator:a398e0357d31c1977bccf97976ca69ad9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -173,6 +175,10 @@ std::uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#a258bdff3c6f598c6aa2b2192967f8979">save</a> (const QString &amp;filePath)</td></tr>
 <tr class="memdesc:a258bdff3c6f598c6aa2b2192967f8979"><td class="mdescLeft">&#160;</td><td class="mdescRight">saves JSON data to the given filepath <br /></td></tr>
 <tr class="separator:a258bdff3c6f598c6aa2b2192967f8979"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35a9daa7604711dad9cfd0413444c815"><td class="memItemLeft" align="right" valign="top"><a id="a35a9daa7604711dad9cfd0413444c815"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_group_data.html#a35a9daa7604711dad9cfd0413444c815">updateSubgroups</a> ()</td></tr>
+<tr class="memdesc:a35a9daa7604711dad9cfd0413444c815"><td class="mdescLeft">&#160;</td><td class="mdescRight">adds subgroups to rooms <br /></td></tr>
+<tr class="separator:a35a9daa7604711dad9cfd0413444c815"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classcor_1_1_j_s_o_n_save_data"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classcor_1_1_j_s_o_n_save_data')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classcor_1_1_j_s_o_n_save_data.html">cor::JSONSaveData</a></td></tr>
 <tr class="memitem:a00ded8241312b4e03673e6eabc62e60f inherit pub_methods_classcor_1_1_j_s_o_n_save_data"><td class="memItemLeft" align="right" valign="top"><a id="a00ded8241312b4e03673e6eabc62e60f"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_j_s_o_n_save_data.html#a00ded8241312b4e03673e6eabc62e60f">JSONSaveData</a> (const QString &amp;saveName)</td></tr>
@@ -495,30 +501,6 @@ states" for groups and rooms. If a light is part of a group or room with a defau
 
 </div>
 </div>
-<a id="a8ecb8283abd24a50a4a07dbae5eb1e7c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8ecb8283abd24a50a4a07dbae5eb1e7c">&#9670;&nbsp;</a></span>saveNewRoom()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void GroupData::saveNewRoom </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classcor_1_1_room.html">cor::Room</a> &amp;&#160;</td>
-          <td class="paramname"><em>room</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">room</td><td>new room to save </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
 <a id="ae3bb8770b5ed7b0b6b1e7209bb454cd8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae3bb8770b5ed7b0b6b1e7209bb454cd8">&#9670;&nbsp;</a></span>updateExternallyStoredGroups()</h2>
 
@@ -537,30 +519,6 @@ states" for groups and rooms. If a light is part of a group or room with a defau
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">externalGroups</td><td>groups that are stored in an external location </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a1e22d319f595ac145439951a46a6e0a7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1e22d319f595ac145439951a46a6e0a7">&#9670;&nbsp;</a></span>updateExternallyStoredRooms()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void GroupData::updateExternallyStoredRooms </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; <a class="el" href="classcor_1_1_room.html">cor::Room</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>externalRooms</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">externalRooms</td><td>room that are stored in an external location </td></tr>
   </table>
   </dd>
 </dl>

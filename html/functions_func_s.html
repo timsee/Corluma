@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.19.6</span>
+   &#160;<span id="projectnumber">v0.19.75</span>
    </div>
   </td>
  </tr>
@@ -69,9 +69,6 @@ $(function() {
 <li>saveNewMood()
 : <a class="el" href="class_group_data.html#a220a6d9b2214920ceb4701e116e9c0ce">GroupData</a>
 </li>
-<li>saveNewRoom()
-: <a class="el" href="class_group_data.html#a8ecb8283abd24a50a4a07dbae5eb1e7c">GroupData</a>
-</li>
 <li>savePath()
 : <a class="el" href="classcor_1_1_j_s_o_n_save_data.html#aeac6c9f211cb4d46ba43f691c7132989">cor::JSONSaveData</a>
 </li>
@@ -83,7 +80,7 @@ $(function() {
 </li>
 <li>schedules()
 : <a class="el" href="class_comm_hue.html#a1441eca1966f2658bf0e2524caf25d85">CommHue</a>
-, <a class="el" href="classhue_1_1_bridge.html#a6fc7c3e3e4d0fdda7b12e3ca0450672f">hue::Bridge</a>
+, <a class="el" href="classhue_1_1_bridge.html#a568a0b56ec1908232b386fa9638cc80a">hue::Bridge</a>
 </li>
 <li>schedulesPressed()
 : <a class="el" href="classhue_1_1_bridge_info_widget.html#a167e99e51c4d0bc4cf83924cdd60000f">hue::BridgeInfoWidget</a>
@@ -175,9 +172,6 @@ $(function() {
 <li>setCheckedDevices()
 : <a class="el" href="class_list_simple_group_widget.html#a5a5cfb5e1a42a3ea8743e1a0fc3b7552">ListSimpleGroupWidget</a>
 </li>
-<li>setCheckedLights()
-: <a class="el" href="class_parent_group_widget.html#a26dc94743cf6f17d58635e0afa001d2c">ParentGroupWidget</a>
-</li>
 <li>setCheckedMoods()
 : <a class="el" href="class_list_mood_group_widget.html#a8d14b338ee4cc3a615c822207a4c2881">ListMoodGroupWidget</a>
 </li>
@@ -243,7 +237,6 @@ $(function() {
 </li>
 <li>setShowButtons()
 : <a class="el" href="class_list_mood_group_widget.html#abc90fc1ef21bb233e1747ad9069c0904">ListMoodGroupWidget</a>
-, <a class="el" href="class_parent_group_widget.html#a0fba624f78a5926aada57b82aadf98c9">ParentGroupWidget</a>
 </li>
 <li>setSnapToNearestTick()
 : <a class="el" href="classcor_1_1_slider.html#a162e1aa88139cf44d378a29accc33ef8">cor::Slider</a>
@@ -323,7 +316,7 @@ $(function() {
 , <a class="el" href="class_discovery_page.html#aa7dff054f5ac40f2541f4582f91077aa">DiscoveryPage</a>
 , <a class="el" href="class_global_settings_widget.html#ababb0ce4a0f741daeadd5a8d262e07e9">GlobalSettingsWidget</a>
 , <a class="el" href="classhue_1_1_light_discovery.html#a36345b085246b4861c1572dd71db3ff6">hue::LightDiscovery</a>
-, <a class="el" href="class_mood_page.html#a79ed6136e90fef843d5f934e2747121b">MoodPage</a>
+, <a class="el" href="class_mood_page.html#a772ab5cd83f170f5907fc95cd5c1bdf8">MoodPage</a>
 , <a class="el" href="class_settings_page.html#aeff9510f916fa4b3913ee78c5e64c5cb">SettingsPage</a>
 , <a class="el" href="class_timeout_widget.html#aa9dcf8ed10a67103198ce44f9b54b3df">TimeoutWidget</a>
 </li>
@@ -336,8 +329,14 @@ $(function() {
 <li>showGroup()
 : <a class="el" href="class_edit_group_page.html#ad0b9f3fd314bb3bb27cead3f595db044">EditGroupPage</a>
 </li>
+<li>showGroups()
+: <a class="el" href="class_menu_subgroup_container.html#a14662480dcf7236fd36a69d002ff2d3a">MenuSubgroupContainer</a>
+</li>
 <li>showingWidth()
 : <a class="el" href="class_left_hand_menu.html#ab66cf7ae781dff7f42080f87e2e2c02f">LeftHandMenu</a>
+</li>
+<li>showLights()
+: <a class="el" href="class_menu_light_container.html#a4b8272702d639c1827d6c422d0a94328">MenuLightContainer</a>
 </li>
 <li>showMenu()
 : <a class="el" href="class_top_menu.html#ada7e5fff730bfa8a3280c8362282b423">TopMenu</a>
@@ -348,6 +347,9 @@ $(function() {
 <li>showMultiColorStateWidget()
 : <a class="el" href="class_top_menu.html#ade117005aa390cdaed4fef57d90264a4">TopMenu</a>
 </li>
+<li>showParentWidget()
+: <a class="el" href="class_left_hand_menu_top_light_widget.html#a2ee277aa8119c05902f50d1947283a15">LeftHandMenuTopLightWidget</a>
+</li>
 <li>showPresetHueGroups()
 : <a class="el" href="class_palette_page.html#a66d93b1774a16ff1ce2515ecefc17b89">PalettePage</a>
 </li>
@@ -356,6 +358,12 @@ $(function() {
 </li>
 <li>showSingleColorStateWidget()
 : <a class="el" href="class_top_menu.html#af93a140ed4df3d802287e141282b4593">TopMenu</a>
+</li>
+<li>showSubgroup()
+: <a class="el" href="class_left_hand_menu_top_light_widget.html#ace06aa14688ec21ffd4b7e65451f3743">LeftHandMenuTopLightWidget</a>
+</li>
+<li>showSubgroups()
+: <a class="el" href="class_menu_subgroup_container.html#a34b80eb92b24fca6f4d5e19b3f014c61">MenuSubgroupContainer</a>
 </li>
 <li>shutdown()
 : <a class="el" href="class_comm_ardu_cor.html#af19838b80ff83b980c9c99d75c3a1a83">CommArduCor</a>
@@ -437,8 +445,8 @@ $(function() {
 </li>
 <li>state()
 : <a class="el" href="classcor_1_1_button.html#a648f292be0e0eb02ea3ba98d9a80d17c">cor::Button</a>
-, <a class="el" href="classcor_1_1_light.html#a937f03ccc401a472d8a24f04780a0ee3">cor::Light</a>
-, <a class="el" href="classhue_1_1_bridge.html#a686bab0435967614cf5c961b906c7e13">hue::Bridge</a>
+, <a class="el" href="classcor_1_1_light.html#a95d9d9bda724b53f39f80fc01d90346b">cor::Light</a>
+, <a class="el" href="classhue_1_1_bridge.html#a7c20827fc9acc8e038dbeaa665984857">hue::Bridge</a>
 , <a class="el" href="classhue_1_1_bridge_discovery.html#a3606b79a21e0a76731f217610b3a1dfb">hue::BridgeDiscovery</a>
 , <a class="el" href="classnano_1_1_leaf_discovery.html#adc13795b3002bcd29b62224328d11248">nano::LeafDiscovery</a>
 , <a class="el" href="class_sync_widget.html#a8b109caa4c8621edf8b8698057037803">SyncWidget</a>
@@ -472,12 +480,27 @@ $(function() {
 , <a class="el" href="class_comm_layer.html#adfbf4b32b9137e7015f5b7c14c1ae784">CommLayer</a>
 , <a class="el" href="class_comm_type.html#a684c569bb57248ae4b0b2e4563339f74">CommType</a>
 </li>
+<li>subgroupClicked()
+: <a class="el" href="class_menu_subgroup_container.html#aedff3e0d44ffb33eafc5e892086fa57b">MenuSubgroupContainer</a>
+</li>
+<li>subgroupID()
+: <a class="el" href="class_left_hand_menu_top_light_widget.html#a89c00cac39ec7dc574040a21640e7554">LeftHandMenuTopLightWidget</a>
+</li>
+<li>subgroupIDFromRenamedGroup()
+: <a class="el" href="class_subgroup_data.html#a0f238d21819fd57dce40582174f9427e">SubgroupData</a>
+</li>
+<li>subgroupIDsForGroup()
+: <a class="el" href="class_subgroup_data.html#a5d9fde11cf887c06e49df30505d6ac6c">SubgroupData</a>
+</li>
+<li>subgroupNamesForGroup()
+: <a class="el" href="class_subgroup_data.html#adac532b7d5bb52fb2e5d4247c3652dde">SubgroupData</a>
+</li>
 <li>subgroups()
 : <a class="el" href="class_group_data.html#ad8cf12e4778be1bd37dd9ca4451a5d32">GroupData</a>
 , <a class="el" href="class_subgroup_data.html#ae5ac1a46c407adb786d432f3d41d2c82">SubgroupData</a>
 </li>
-<li>subgroupsForGroup()
-: <a class="el" href="class_subgroup_data.html#a0e74e0682fda10ff495b131113a2f937">SubgroupData</a>
+<li>subgroupWidget()
+: <a class="el" href="class_left_hand_menu_top_light_widget.html#a2d985cdb59684ecafb6ca97d88172bbc">LeftHandMenuTopLightWidget</a>
 </li>
 <li>supportsRoutines()
 : <a class="el" href="classcor_1_1_light_list.html#a7eb868f18be2bb39cf5bd5ffda2a7500">cor::LightList</a>

@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.19.6</span>
+   &#160;<span id="projectnumber">v0.19.75</span>
    </div>
   </td>
  </tr>
@@ -79,8 +79,8 @@ $(function() {
 <li>changeCustomArraySizePacket()
 : <a class="el" href="class_ardu_cor_packet_parser.html#a44d72ee193f2484e768a51705217a881">ArduCorPacketParser</a>
 </li>
-<li>changedDeviceCount()
-: <a class="el" href="class_left_hand_menu.html#ab417c3ee3f482589121590eef209db7b">LeftHandMenu</a>
+<li>changedLightCount()
+: <a class="el" href="class_left_hand_menu.html#a84c8a72024d635e1c72945ab7f320323">LeftHandMenu</a>
 </li>
 <li>changedName()
 : <a class="el" href="classhue_1_1_hue_info_widget.html#a786562af18faa6a3ac239d8fe9a2b266">hue::HueInfoWidget</a>
@@ -106,13 +106,24 @@ $(function() {
 </li>
 <li>changeState()
 : <a class="el" href="class_hardware_connection_widget.html#a7eafee32cbbc23d635e571a865e87646">HardwareConnectionWidget</a>
+, <a class="el" href="class_left_hand_light_menu.html#aab238b5fb3ef78eae2ce39344be87a20">LeftHandLightMenu</a>
 , <a class="el" href="class_sync_widget.html#a86820c00f667bcab1e248f18c1f03060">SyncWidget</a>
 </li>
 <li>changeTemperatureAndBrightness()
 : <a class="el" href="class_temp_bright_sliders.html#a05ae49f12a0492d44378343185c3879a">TempBrightSliders</a>
 </li>
+<li>changeText()
+: <a class="el" href="classcor_1_1_group_button.html#ad65990810daab3d6579655d369ae6b92">cor::GroupButton</a>
+, <a class="el" href="class_parent_group_widget.html#abe677e4d6eeed2f9175fd64379740ce6">ParentGroupWidget</a>
+</li>
 <li>changeTimeoutLabel()
 : <a class="el" href="class_timeout_widget.html#a756ef3e6573cd72f2b7b8aa09a102333">TimeoutWidget</a>
+</li>
+<li>changeToParentGroups()
+: <a class="el" href="class_left_hand_menu_top_light_widget.html#a68de5fe4054d6a7749a3eb7d9dfe8390">LeftHandMenuTopLightWidget</a>
+</li>
+<li>changeToSubgroups()
+: <a class="el" href="class_left_hand_menu_top_light_widget.html#ac82d72c259ff89409d609b17074bbc52">LeftHandMenuTopLightWidget</a>
 </li>
 <li>changeType()
 : <a class="el" href="class_color_wheel.html#a0f6794d7357f54c7b44a4ad700f92f26">ColorWheel</a>
@@ -185,6 +196,9 @@ $(function() {
 <li>clearLights()
 : <a class="el" href="classcor_1_1_light_list.html#a3f5e861cd525bf367c4df2f8ad9051b6">cor::LightList</a>
 </li>
+<li>clearParentWidgets()
+: <a class="el" href="class_menu_parent_group_container.html#a5684f89a3622c67a08f79d42e1950689">MenuParentGroupContainer</a>
+</li>
 <li>clearTempDir()
 : <a class="el" href="class_platform_share_utils.html#a911fd3e450f20dfbec66793b99a25b98">PlatformShareUtils</a>
 , <a class="el" href="class_share_utils.html#a85e22025d3f04c612d4ca94cb88e4ef6">ShareUtils</a>
@@ -209,8 +223,12 @@ $(function() {
 <li>clickedEditButton()
 : <a class="el" href="class_mood_page.html#ad087d2f02d96b5452ef9f589df867673">MoodPage</a>
 </li>
-<li>clickedInfoWidget()
-: <a class="el" href="class_settings_page.html#a0de18e4b57a61277a783ed19274bfb02">SettingsPage</a>
+<li>clickedGroupSelectAll()
+: <a class="el" href="class_left_hand_light_menu.html#a4f0735a07640daa8f4f0f051a0754f70">LeftHandLightMenu</a>
+</li>
+<li>clickedLight()
+: <a class="el" href="class_left_hand_light_menu.html#ab054d1c1aeb58245f7fed245c8e27738">LeftHandLightMenu</a>
+, <a class="el" href="class_menu_light_container.html#a0718f2d7da4bd4d3340837c200f7d964">MenuLightContainer</a>
 </li>
 <li>clickedLoadJSON()
 : <a class="el" href="class_settings_page.html#a195a4eb97d3e68e6affd1bfba162de06">SettingsPage</a>
@@ -231,9 +249,6 @@ $(function() {
 , <a class="el" href="classhue_1_1_light_discovery.html#a73ac01f033fc8416d3944abb96c8a3e9">hue::LightDiscovery</a>
 , <a class="el" href="class_settings_page.html#a6e98bb704319821f92ca2f7c38a2bdb5">SettingsPage</a>
 </li>
-<li>closeWidget()
-: <a class="el" href="class_parent_group_widget.html#a69aa3a911e51ddaa534318eed781e456">ParentGroupWidget</a>
-</li>
 <li>closeWithoutTransition()
 : <a class="el" href="class_discovery_page.html#a31dc989cbddd3d1abd781a0a3a288202">DiscoveryPage</a>
 </li>
@@ -251,7 +266,7 @@ $(function() {
 , <a class="el" href="class_r_g_b_sliders.html#a443ac1367bfc37d8669c0a35b519bcfa">RGBSliders</a>
 </li>
 <li>colorMode()
-: <a class="el" href="class_hue_metadata.html#a96e7b9c55c811b26e587e59491c6fcf2">HueMetadata</a>
+: <a class="el" href="class_hue_metadata.html#afe0446cb38b7c4125f1e44c1bf70b7c4">HueMetadata</a>
 </li>
 <li>ColorPage()
 : <a class="el" href="class_color_page.html#a4ad91de867db615a79d74bbfbd8f8cb3">ColorPage</a>
@@ -294,7 +309,7 @@ $(function() {
 : <a class="el" href="class_color_wheel.html#ab72bbe77aa0d0c25cd04620eeee46d9f">ColorWheel</a>
 </li>
 <li>Command()
-: <a class="el" href="classhue_1_1_command.html#abfc40ccf205eccdb25ab2041e1314c24">hue::Command</a>
+: <a class="el" href="classhue_1_1_command.html#a64a6b5285f5b633556504aaeea3b1395">hue::Command</a>
 </li>
 <li>command()
 : <a class="el" href="classhue_1_1_schedule.html#a43ee160e40f37eff04b671cfc68e8bec">hue::Schedule</a>
@@ -374,6 +389,9 @@ $(function() {
 : <a class="el" href="classcor_1_1_list_layout.html#a191ae86033c4292f6a51c14ff62fc9c6">cor::ListLayout</a>
 , <a class="el" href="classnano_1_1_panels.html#ab2ed99c18c0fbcd4eeb4ee25556b573c">nano::Panels</a>
 </li>
+<li>countNumberOfLights()
+: <a class="el" href="classcor_1_1_light_list.html#ad0925e75261893d5ea896e8738dfafd2">cor::LightList</a>
+</li>
 <li>CRCCalculator()
 : <a class="el" href="class_c_r_c_calculator.html#ad0289e1f6f6cdd9ec92d2e5553c8e260">CRCCalculator</a>
 </li>
@@ -396,7 +414,7 @@ $(function() {
 : <a class="el" href="classnano_1_1_leaf_metadata.html#a240006ae0d7cdf2182753e4fc51f85e8">nano::LeafMetadata</a>
 </li>
 <li>currentKey()
-: <a class="el" href="class_group_buttons_widget.html#a8c2fafb125f3fd1635b893814a8f7847">GroupButtonsWidget</a>
+: <a class="el" href="class_menu_subgroup_container.html#a15df62c7d24991697677e0d3a8d4d806">MenuSubgroupContainer</a>
 </li>
 <li>currentMood()
 : <a class="el" href="class_mood_page.html#a1096cfd70faa20785dca681ff05cd8c2">MoodPage</a>
@@ -415,13 +433,13 @@ $(function() {
 : <a class="el" href="class_comm_nanoleaf.html#aa0dc8154dae76673998489f8c02861ec">CommNanoleaf</a>
 </li>
 <li>customCount()
-: <a class="el" href="classcor_1_1_light_state.html#aafcd8ee4396f62726e879b39e64b4204">cor::LightState</a>
+: <a class="el" href="classcor_1_1_light_state.html#a8b106f97accb997e19bb43cb8cd7d957">cor::LightState</a>
 </li>
 <li>customName()
 : <a class="el" href="classhue_1_1_bridge.html#a0c3b560747de5b72f34c91d2064e4929">hue::Bridge</a>
 </li>
 <li>customPalette()
-: <a class="el" href="classcor_1_1_light_state.html#a5d3015dafbdd6bf3be201722a7e1565c">cor::LightState</a>
+: <a class="el" href="classcor_1_1_light_state.html#ae891a336a6f160d26e3742c57533afdb">cor::LightState</a>
 </li>
 </ul>
 </div><!-- contents -->

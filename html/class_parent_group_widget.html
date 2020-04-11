@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.19.6</span>
+   &#160;<span id="projectnumber">v0.19.75</span>
    </div>
   </td>
  </tr>
@@ -42,7 +42,6 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="class_parent_group_widget-members.html">List of all members</a> &#124;
-<a href="#signals">Signals</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a>  </div>
   <div class="headertitle">
@@ -50,236 +49,83 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>The <a class="el" href="class_parent_group_widget.html" title="The ParentGroupWidget class is a widget that displays all the subgroups and lights associated with a ...">ParentGroupWidget</a> class is a widget that displays all the subgroups and lights associated with a parent. subgroups only go one level deep, so if a parent is "First Floor
-Lights" and this parent contains "Living Room" as a subgroup, and "Living Room" contains "Computer Desk" of a subgroup of it, then "Computer Desk" is treated as a subgroup of "First
-Floor Lights", not "Living Room".  
+<p>The <a class="el" href="class_parent_group_widget.html" title="The ParentGroupWidget class is derived from the DropdownTopWidget, but has the ability to change its ...">ParentGroupWidget</a> class is derived from the <a class="el" href="class_dropdown_top_widget.html" title="The DropdownTopWidget class provides a widget that can be used at the top of a dropdown list...">DropdownTopWidget</a>, but has the ability to change its text, as well as highlight based off of the number of reachable and checked lights. This is useful for menus, since it allows the app to show how many lights are selected out of all possible lights for a group.  
  <a href="class_parent_group_widget.html#details">More...</a></p>
 
 <p><code>#include &quot;<a class="el" href="parentgroupwidget_8h_source.html">parentgroupwidget.h</a>&quot;</code></p>
 
-<p>Inherits <a class="el" href="classcor_1_1_list_item_widget.html">cor::ListItemWidget</a>.</p>
+<p>Inherits <a class="el" href="class_dropdown_top_widget.html">DropdownTopWidget</a>.</p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="signals"></a>
-Signals</h2></td></tr>
-<tr class="memitem:a34b2c4c43d7853b2468164c8f04aeafd"><td class="memItemLeft" align="right" valign="top"><a id="a34b2c4c43d7853b2468164c8f04aeafd"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_parent_group_widget.html#a34b2c4c43d7853b2468164c8f04aeafd">deviceClicked</a> (QString, QString)</td></tr>
-<tr class="memdesc:a34b2c4c43d7853b2468164c8f04aeafd"><td class="mdescLeft">&#160;</td><td class="mdescRight">deviceClicked emitted whenever a device is clicked on the widget. Emits both the widget key and the device key. <br /></td></tr>
-<tr class="separator:a34b2c4c43d7853b2468164c8f04aeafd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a208baea369b2406130eebfd9064aab8d"><td class="memItemLeft" align="right" valign="top"><a id="a208baea369b2406130eebfd9064aab8d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_parent_group_widget.html#a208baea369b2406130eebfd9064aab8d">allButtonPressed</a> (QString, bool)</td></tr>
-<tr class="memdesc:a208baea369b2406130eebfd9064aab8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">selectAllClicked emitted when select all is clicked. Should add all devices to data layer. <br /></td></tr>
-<tr class="separator:a208baea369b2406130eebfd9064aab8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7655410190d86b0e9d66775a245a0205"><td class="memItemLeft" align="right" valign="top"><a id="a7655410190d86b0e9d66775a245a0205"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_parent_group_widget.html#a7655410190d86b0e9d66775a245a0205">buttonsShown</a> (QString, bool)</td></tr>
-<tr class="memdesc:a7655410190d86b0e9d66775a245a0205"><td class="mdescLeft">&#160;</td><td class="mdescRight">buttonsShown emitted when the buttons are shown or hidden. emits the key and a boolean representing whether the buttons are shown. <br /></td></tr>
-<tr class="separator:a7655410190d86b0e9d66775a245a0205"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7095656dcad6484d41d85aef92675501"><td class="memItemLeft" align="right" valign="top"><a id="a7095656dcad6484d41d85aef92675501"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_parent_group_widget.html#a7095656dcad6484d41d85aef92675501">groupChanged</a> (QString)</td></tr>
-<tr class="memdesc:a7095656dcad6484d41d85aef92675501"><td class="mdescLeft">&#160;</td><td class="mdescRight">signals that the group has changed and the size of the widget has potentially changed. <br /></td></tr>
-<tr class="separator:a7095656dcad6484d41d85aef92675501"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9d08e0addf62124bf0877b415764930b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_parent_group_widget.html#a9d08e0addf62124bf0877b415764930b">ParentGroupWidget</a> (const <a class="el" href="classcor_1_1_group.html">cor::Group</a> &amp;room, const std::vector&lt; std::uint64_t &gt; &amp;subgroups, <a class="el" href="class_comm_layer.html">CommLayer</a> *comm, <a class="el" href="class_group_data.html">GroupData</a> *groups, const QString &amp;<a class="el" href="classcor_1_1_list_item_widget.html#af4596072d354b593f202ee51e1911c48">key</a>, <a class="el" href="namespacecor.html#a2f55795b3ebf94ac596a507b252b76a8">cor::EListType</a> listType, <a class="el" href="namespacecor.html#a41a13d76f2c1dc8da00b4869e1f7d920">cor::EWidgetType</a> type, QWidget *parent)</td></tr>
-<tr class="memdesc:a9d08e0addf62124bf0877b415764930b"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor  <a href="#a9d08e0addf62124bf0877b415764930b">More...</a><br /></td></tr>
-<tr class="separator:a9d08e0addf62124bf0877b415764930b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a26dc94743cf6f17d58635e0afa001d2c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_parent_group_widget.html#a26dc94743cf6f17d58635e0afa001d2c">setCheckedLights</a> (const std::vector&lt; QString &gt; &amp;lights)</td></tr>
-<tr class="memdesc:a26dc94743cf6f17d58635e0afa001d2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">setCheckedLights takes a list of devices and compares it against all devices in the widget. If the device exists in both the widgets and the devices, it is set as checked. Otherwise, the widget is set to unchecked.  <a href="#a26dc94743cf6f17d58635e0afa001d2c">More...</a><br /></td></tr>
-<tr class="separator:a26dc94743cf6f17d58635e0afa001d2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a44c3c8f9a861441c1d84fd406d1bb5"><td class="memItemLeft" align="right" valign="top"><a id="a1a44c3c8f9a861441c1d84fd406d1bb5"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_parent_group_widget.html#a1a44c3c8f9a861441c1d84fd406d1bb5">updateState</a> (const <a class="el" href="classcor_1_1_group.html">cor::Group</a> &amp;<a class="el" href="class_parent_group_widget.html#a1104d418b1b5d7287fd4e37380f91dbc">group</a>, const std::vector&lt; std::uint64_t &gt; &amp;subgroups)</td></tr>
-<tr class="memdesc:a1a44c3c8f9a861441c1d84fd406d1bb5"><td class="mdescLeft">&#160;</td><td class="mdescRight">update the widget with new information. <br /></td></tr>
-<tr class="separator:a1a44c3c8f9a861441c1d84fd406d1bb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0fba624f78a5926aada57b82aadf98c9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_parent_group_widget.html#a0fba624f78a5926aada57b82aadf98c9">setShowButtons</a> (bool show)</td></tr>
-<tr class="memdesc:a0fba624f78a5926aada57b82aadf98c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">setShowButtons shows and hides all buttons on the widget  <a href="#a0fba624f78a5926aada57b82aadf98c9">More...</a><br /></td></tr>
-<tr class="separator:a0fba624f78a5926aada57b82aadf98c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69aa3a911e51ddaa534318eed781e456"><td class="memItemLeft" align="right" valign="top"><a id="a69aa3a911e51ddaa534318eed781e456"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_parent_group_widget.html#a69aa3a911e51ddaa534318eed781e456">closeWidget</a> ()</td></tr>
-<tr class="memdesc:a69aa3a911e51ddaa534318eed781e456"><td class="mdescLeft">&#160;</td><td class="mdescRight">hides the group buttons widget (if it has one) and all the listdevicewidgets <br /></td></tr>
-<tr class="separator:a69aa3a911e51ddaa534318eed781e456"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a283b145e8fa36eb9d5a3d7274b28901b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_parent_group_widget.html#a283b145e8fa36eb9d5a3d7274b28901b">isOpen</a> () const noexcept</td></tr>
-<tr class="separator:a283b145e8fa36eb9d5a3d7274b28901b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1104d418b1b5d7287fd4e37380f91dbc"><td class="memItemLeft" align="right" valign="top"><a id="a1104d418b1b5d7287fd4e37380f91dbc"></a>
-const <a class="el" href="classcor_1_1_group.html">cor::Group</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_parent_group_widget.html#a1104d418b1b5d7287fd4e37380f91dbc">group</a> ()</td></tr>
-<tr class="memdesc:a1104d418b1b5d7287fd4e37380f91dbc"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the room data. <br /></td></tr>
-<tr class="separator:a1104d418b1b5d7287fd4e37380f91dbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6651c2a2807a89b65d835c1431b95812"><td class="memItemLeft" align="right" valign="top"><a id="a6651c2a2807a89b65d835c1431b95812"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_parent_group_widget.html#a6651c2a2807a89b65d835c1431b95812">widgetHeightSum</a> ()</td></tr>
-<tr class="memdesc:a6651c2a2807a89b65d835c1431b95812"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for the desired height of the widget <br /></td></tr>
-<tr class="separator:a6651c2a2807a89b65d835c1431b95812"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_methods_classcor_1_1_list_item_widget"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classcor_1_1_list_item_widget')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classcor_1_1_list_item_widget.html">cor::ListItemWidget</a></td></tr>
-<tr class="memitem:aae982650f2d7e3c524299aa5c8a5fdcd inherit pub_methods_classcor_1_1_list_item_widget"><td class="memItemLeft" align="right" valign="top"><a id="aae982650f2d7e3c524299aa5c8a5fdcd"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_list_item_widget.html#aae982650f2d7e3c524299aa5c8a5fdcd">ListItemWidget</a> (const QString &amp;<a class="el" href="classcor_1_1_list_item_widget.html#af4596072d354b593f202ee51e1911c48">key</a>, QWidget *parent)</td></tr>
-<tr class="memdesc:aae982650f2d7e3c524299aa5c8a5fdcd inherit pub_methods_classcor_1_1_list_item_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor <br /></td></tr>
-<tr class="separator:aae982650f2d7e3c524299aa5c8a5fdcd inherit pub_methods_classcor_1_1_list_item_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af4596072d354b593f202ee51e1911c48 inherit pub_methods_classcor_1_1_list_item_widget"><td class="memItemLeft" align="right" valign="top"><a id="af4596072d354b593f202ee51e1911c48"></a>
-const QString &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_list_item_widget.html#af4596072d354b593f202ee51e1911c48">key</a> () const</td></tr>
-<tr class="memdesc:af4596072d354b593f202ee51e1911c48 inherit pub_methods_classcor_1_1_list_item_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for key <br /></td></tr>
-<tr class="separator:af4596072d354b593f202ee51e1911c48 inherit pub_methods_classcor_1_1_list_item_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c64f1872c26db15146c3b570cd1dd5e"><td class="memItemLeft" align="right" valign="top"><a id="a8c64f1872c26db15146c3b570cd1dd5e"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_parent_group_widget.html#a8c64f1872c26db15146c3b570cd1dd5e">ParentGroupWidget</a> (const QString &amp;<a class="el" href="class_dropdown_top_widget.html#a8a2977b8a6f92049a22b35e5d9f6730c">key</a>, const QString &amp;name, <a class="el" href="namespacecor.html#a41a13d76f2c1dc8da00b4869e1f7d920">cor::EWidgetType</a> type, bool hideEdit, QWidget *parent)</td></tr>
+<tr class="memdesc:a8c64f1872c26db15146c3b570cd1dd5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor <br /></td></tr>
+<tr class="separator:a8c64f1872c26db15146c3b570cd1dd5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe677e4d6eeed2f9175fd64379740ce6"><td class="memItemLeft" align="right" valign="top"><a id="abe677e4d6eeed2f9175fd64379740ce6"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_parent_group_widget.html#abe677e4d6eeed2f9175fd64379740ce6">changeText</a> (const QString &amp;text)</td></tr>
+<tr class="memdesc:abe677e4d6eeed2f9175fd64379740ce6"><td class="mdescLeft">&#160;</td><td class="mdescRight">change the text of the dropdownwidget <br /></td></tr>
+<tr class="separator:abe677e4d6eeed2f9175fd64379740ce6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c9e0e94c28eacf875d4dc85a52de403"><td class="memItemLeft" align="right" valign="top"><a id="a3c9e0e94c28eacf875d4dc85a52de403"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_parent_group_widget.html#a3c9e0e94c28eacf875d4dc85a52de403">updateCheckedLights</a> (std::uint32_t checkedLightCount, std::uint32_t reachableLightCount)</td></tr>
+<tr class="memdesc:a3c9e0e94c28eacf875d4dc85a52de403"><td class="mdescLeft">&#160;</td><td class="mdescRight">update the checked devices of the group that matches the key <br /></td></tr>
+<tr class="separator:a3c9e0e94c28eacf875d4dc85a52de403"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_class_dropdown_top_widget"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_dropdown_top_widget')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_dropdown_top_widget.html">DropdownTopWidget</a></td></tr>
+<tr class="memitem:a38d96a20761e5b433a157954ee0ae30e inherit pub_methods_class_dropdown_top_widget"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dropdown_top_widget.html#a38d96a20761e5b433a157954ee0ae30e">DropdownTopWidget</a> (const QString &amp;<a class="el" href="class_dropdown_top_widget.html#a8a2977b8a6f92049a22b35e5d9f6730c">key</a>, const QString &amp;name, <a class="el" href="namespacecor.html#a41a13d76f2c1dc8da00b4869e1f7d920">cor::EWidgetType</a> type, bool hideEdit, QWidget *parent)</td></tr>
+<tr class="memdesc:a38d96a20761e5b433a157954ee0ae30e inherit pub_methods_class_dropdown_top_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">constuctor  <a href="class_dropdown_top_widget.html#a38d96a20761e5b433a157954ee0ae30e">More...</a><br /></td></tr>
+<tr class="separator:a38d96a20761e5b433a157954ee0ae30e inherit pub_methods_class_dropdown_top_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d7d82e938a0376c73baed8ff82d5af8 inherit pub_methods_class_dropdown_top_widget"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dropdown_top_widget.html#a4d7d82e938a0376c73baed8ff82d5af8">showButtons</a> ()</td></tr>
+<tr class="memdesc:a4d7d82e938a0376c73baed8ff82d5af8 inherit pub_methods_class_dropdown_top_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">showButtons getter that checks if buttons are showing  <a href="class_dropdown_top_widget.html#a4d7d82e938a0376c73baed8ff82d5af8">More...</a><br /></td></tr>
+<tr class="separator:a4d7d82e938a0376c73baed8ff82d5af8 inherit pub_methods_class_dropdown_top_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5821b1a76f3c44bf2eb20785ba4540a5 inherit pub_methods_class_dropdown_top_widget"><td class="memItemLeft" align="right" valign="top"><a id="a5821b1a76f3c44bf2eb20785ba4540a5"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dropdown_top_widget.html#a5821b1a76f3c44bf2eb20785ba4540a5">showButtons</a> (bool showButtons)</td></tr>
+<tr class="memdesc:a5821b1a76f3c44bf2eb20785ba4540a5 inherit pub_methods_class_dropdown_top_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">set to true to show all widgets, false to just show the dropdown widget. <br /></td></tr>
+<tr class="separator:a5821b1a76f3c44bf2eb20785ba4540a5 inherit pub_methods_class_dropdown_top_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a2977b8a6f92049a22b35e5d9f6730c inherit pub_methods_class_dropdown_top_widget"><td class="memItemLeft" align="right" valign="top"><a id="a8a2977b8a6f92049a22b35e5d9f6730c"></a>
+const QString &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dropdown_top_widget.html#a8a2977b8a6f92049a22b35e5d9f6730c">key</a> () const noexcept</td></tr>
+<tr class="memdesc:a8a2977b8a6f92049a22b35e5d9f6730c inherit pub_methods_class_dropdown_top_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">getter for key <br /></td></tr>
+<tr class="separator:a8a2977b8a6f92049a22b35e5d9f6730c inherit pub_methods_class_dropdown_top_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a0aa6f64288b04e5834fcf17a09ba1d49"><td class="memItemLeft" align="right" valign="top"><a id="a0aa6f64288b04e5834fcf17a09ba1d49"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_parent_group_widget.html#a0aa6f64288b04e5834fcf17a09ba1d49">resizeEvent</a> (QResizeEvent *)</td></tr>
-<tr class="memdesc:a0aa6f64288b04e5834fcf17a09ba1d49"><td class="mdescLeft">&#160;</td><td class="mdescRight">resizes interal widgets when a resize event is triggered <br /></td></tr>
-<tr class="separator:a0aa6f64288b04e5834fcf17a09ba1d49"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ade1035a6f3d21f7ab3fd327846027ffa"><td class="memItemLeft" align="right" valign="top"><a id="ade1035a6f3d21f7ab3fd327846027ffa"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_parent_group_widget.html#ade1035a6f3d21f7ab3fd327846027ffa">paintEvent</a> (QPaintEvent *event)</td></tr>
-<tr class="memdesc:ade1035a6f3d21f7ab3fd327846027ffa"><td class="mdescLeft">&#160;</td><td class="mdescRight">paintEvent paints the background of the widget <br /></td></tr>
-<tr class="separator:ade1035a6f3d21f7ab3fd327846027ffa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8940ba77ae03ec25bc899aafc3c829bd"><td class="memItemLeft" align="right" valign="top"><a id="a8940ba77ae03ec25bc899aafc3c829bd"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_parent_group_widget.html#a8940ba77ae03ec25bc899aafc3c829bd">paintEvent</a> (QPaintEvent *)</td></tr>
+<tr class="memdesc:a8940ba77ae03ec25bc899aafc3c829bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">renders the widget <br /></td></tr>
+<tr class="separator:a8940ba77ae03ec25bc899aafc3c829bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_methods_class_dropdown_top_widget"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_dropdown_top_widget')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_dropdown_top_widget.html">DropdownTopWidget</a></td></tr>
+<tr class="memitem:a1c377e2d4458d900c9d178d8f2d51e13 inherit pro_methods_class_dropdown_top_widget"><td class="memItemLeft" align="right" valign="top"><a id="a1c377e2d4458d900c9d178d8f2d51e13"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dropdown_top_widget.html#a1c377e2d4458d900c9d178d8f2d51e13">mouseReleaseEvent</a> (QMouseEvent *)</td></tr>
+<tr class="memdesc:a1c377e2d4458d900c9d178d8f2d51e13 inherit pro_methods_class_dropdown_top_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">mouseReleaseEvent picks up when a click (or a tap on mobile) is released. <br /></td></tr>
+<tr class="separator:a1c377e2d4458d900c9d178d8f2d51e13 inherit pro_methods_class_dropdown_top_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pro_attribs_classcor_1_1_list_item_widget"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classcor_1_1_list_item_widget')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classcor_1_1_list_item_widget.html">cor::ListItemWidget</a></td></tr>
-<tr class="memitem:a7bf29351cac86ec2c50b445c329af78b inherit pro_attribs_classcor_1_1_list_item_widget"><td class="memItemLeft" align="right" valign="top"><a id="a7bf29351cac86ec2c50b445c329af78b"></a>
-QString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_list_item_widget.html#a7bf29351cac86ec2c50b445c329af78b">mKey</a></td></tr>
-<tr class="memdesc:a7bf29351cac86ec2c50b445c329af78b inherit pro_attribs_classcor_1_1_list_item_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">key for widget. <br /></td></tr>
-<tr class="separator:a7bf29351cac86ec2c50b445c329af78b inherit pro_attribs_classcor_1_1_list_item_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header signals_class_dropdown_top_widget"><td colspan="2" onclick="javascript:toggleInherit('signals_class_dropdown_top_widget')"><img src="closed.png" alt="-"/>&#160;Signals inherited from <a class="el" href="class_dropdown_top_widget.html">DropdownTopWidget</a></td></tr>
+<tr class="memitem:ad5b6ce89414c6d566bde5b297f311d2f inherit signals_class_dropdown_top_widget"><td class="memItemLeft" align="right" valign="top"><a id="ad5b6ce89414c6d566bde5b297f311d2f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dropdown_top_widget.html#ad5b6ce89414c6d566bde5b297f311d2f">editClicked</a> (QString)</td></tr>
+<tr class="memdesc:ad5b6ce89414c6d566bde5b297f311d2f inherit signals_class_dropdown_top_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">editClicked emitted when edit button is clicked. Emits its key. <br /></td></tr>
+<tr class="separator:ad5b6ce89414c6d566bde5b297f311d2f inherit signals_class_dropdown_top_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ff16e05548860e1967dd833ddea3825 inherit signals_class_dropdown_top_widget"><td class="memItemLeft" align="right" valign="top"><a id="a2ff16e05548860e1967dd833ddea3825"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dropdown_top_widget.html#a2ff16e05548860e1967dd833ddea3825">buttonsShown</a> (QString, bool)</td></tr>
+<tr class="memdesc:a2ff16e05548860e1967dd833ddea3825 inherit signals_class_dropdown_top_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">buttonsShown emitted when the buttons are shown or hidden. emits the key and a boolean representing whether the buttons are shown. <br /></td></tr>
+<tr class="separator:a2ff16e05548860e1967dd833ddea3825 inherit signals_class_dropdown_top_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7bee430bb5f2b0493da3081c3665adba inherit signals_class_dropdown_top_widget"><td class="memItemLeft" align="right" valign="top"><a id="a7bee430bb5f2b0493da3081c3665adba"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dropdown_top_widget.html#a7bee430bb5f2b0493da3081c3665adba">pressed</a> ()</td></tr>
+<tr class="memdesc:a7bee430bb5f2b0493da3081c3665adba inherit signals_class_dropdown_top_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">emits when the widget is pressed <br /></td></tr>
+<tr class="separator:a7bee430bb5f2b0493da3081c3665adba inherit signals_class_dropdown_top_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62ec268e116cd4966785aef783dedc19 inherit signals_class_dropdown_top_widget"><td class="memItemLeft" align="right" valign="top"><a id="a62ec268e116cd4966785aef783dedc19"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dropdown_top_widget.html#a62ec268e116cd4966785aef783dedc19">dropdownPressed</a> (QString)</td></tr>
+<tr class="memdesc:a62ec268e116cd4966785aef783dedc19 inherit signals_class_dropdown_top_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">signals when the widget is pressed. sends its current text <br /></td></tr>
+<tr class="separator:a62ec268e116cd4966785aef783dedc19 inherit signals_class_dropdown_top_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_attribs_class_dropdown_top_widget"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_dropdown_top_widget')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_dropdown_top_widget.html">DropdownTopWidget</a></td></tr>
+<tr class="memitem:a72b4eb1be2f3f57efa98765e2937c0f0 inherit pro_attribs_class_dropdown_top_widget"><td class="memItemLeft" align="right" valign="top"><a id="a72b4eb1be2f3f57efa98765e2937c0f0"></a>
+QLabel *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_dropdown_top_widget.html#a72b4eb1be2f3f57efa98765e2937c0f0">mName</a></td></tr>
+<tr class="memdesc:a72b4eb1be2f3f57efa98765e2937c0f0 inherit pro_attribs_class_dropdown_top_widget"><td class="mdescLeft">&#160;</td><td class="mdescRight">mName label for name of collection <br /></td></tr>
+<tr class="separator:a72b4eb1be2f3f57efa98765e2937c0f0 inherit pro_attribs_class_dropdown_top_widget"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a9d08e0addf62124bf0877b415764930b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9d08e0addf62124bf0877b415764930b">&#9670;&nbsp;</a></span>ParentGroupWidget()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">ParentGroupWidget::ParentGroupWidget </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classcor_1_1_group.html">cor::Group</a> &amp;&#160;</td>
-          <td class="paramname"><em>group</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; std::uint64_t &gt; &amp;&#160;</td>
-          <td class="paramname"><em>subgroups</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_comm_layer.html">CommLayer</a> *&#160;</td>
-          <td class="paramname"><em>comm</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_group_data.html">GroupData</a> *&#160;</td>
-          <td class="paramname"><em>groups</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const QString &amp;&#160;</td>
-          <td class="paramname"><em>key</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="namespacecor.html#a2f55795b3ebf94ac596a507b252b76a8">cor::EListType</a>&#160;</td>
-          <td class="paramname"><em>listType</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="namespacecor.html#a41a13d76f2c1dc8da00b4869e1f7d920">cor::EWidgetType</a>&#160;</td>
-          <td class="paramname"><em>type</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">QWidget *&#160;</td>
-          <td class="paramname"><em>parent</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a283b145e8fa36eb9d5a3d7274b28901b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a283b145e8fa36eb9d5a3d7274b28901b">&#9670;&nbsp;</a></span>isOpen()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool ParentGroupWidget::isOpen </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>true if the widget is currently in an open state (and showing groups or lights) or closed (showing just its name) </p>
-
-</div>
-</div>
-<a id="a26dc94743cf6f17d58635e0afa001d2c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a26dc94743cf6f17d58635e0afa001d2c">&#9670;&nbsp;</a></span>setCheckedLights()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ParentGroupWidget::setCheckedLights </td>
-          <td>(</td>
-          <td class="paramtype">const std::vector&lt; QString &gt; &amp;&#160;</td>
-          <td class="paramname"><em>lights</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">lights</td><td>list of lights to compare to the widget. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a0fba624f78a5926aada57b82aadf98c9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0fba624f78a5926aada57b82aadf98c9">&#9670;&nbsp;</a></span>setShowButtons()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void ParentGroupWidget::setShowButtons </td>
-          <td>(</td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>show</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">show</td><td>true to show, false otherwise. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following files:<ul>
+</div><hr/>The documentation for this class was generated from the following files:<ul>
 <li><a class="el" href="parentgroupwidget_8h_source.html">parentgroupwidget.h</a></li>
 <li>parentgroupwidget.cpp</li>
 </ul>
