@@ -109,9 +109,6 @@ public:
     /// converts a group name to a ID, WARNING: this is not fast.
     std::uint64_t groupNameToID(const QString name);
 
-    /// adds subgroups to rooms
-    void updateSubgroups();
-
     /*!
      * \brief updateExternallyStoredGroups update the information stored from external sources, such
      * as Philips Bridges. This data gets added to the group info but does not get saved locally.
@@ -186,6 +183,9 @@ public:
 
     /// saves JSON data to the given filepath
     bool save(const QString& filePath);
+
+    /// adds subgroups to rooms
+    void updateSubgroups();
 
 public slots:
 

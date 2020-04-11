@@ -89,6 +89,7 @@ SettingsPage::SettingsPage(QWidget* parent,
 
     mTitles = {"Find New Lights",
                "View/Edit Lights",
+               "Add New Group",
                "Backup Save Data",
 #ifndef MOBILE_BUILD
                "Load Backup",
@@ -266,6 +267,8 @@ void SettingsPage::settingsButtonPressed(const QString& title) {
         saveButtonClicked();
     } else if (title == "View/Edit Lights") {
         lightInfoWidgetClicked();
+    } else if (title == "Add New Group") {
+        addNewGroupButtonPressed();
     } else if (title == "Find New Lights") {
         emit clickedDiscovery();
     } else if (title == "Copyright") {

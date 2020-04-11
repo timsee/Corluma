@@ -31,15 +31,15 @@ ListLightWidget::ListLightWidget(const cor::Light& light,
       mHasRendered{false},
       mFontPtSize(16),
       mLight{light},
-      mController{new QLabel(this)},
+      mName{new QLabel(this)},
       mTypeIcon{new QLabel(this)} {
     mTypeIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mTypeIcon->setStyleSheet("background-color:rgba(0,0,0,0);");
 
-    mController->setText(createName(light.name()));
-    mController->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mController->setAlignment(Qt::AlignVCenter);
-    mController->setStyleSheet("background-color:rgba(0,0,0,0);");
+    mName->setText(createName(light.name()));
+    mName->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mName->setAlignment(Qt::AlignVCenter);
+    mName->setStyleSheet("background-color:rgba(0,0,0,0);");
 
     mKey = light.uniqueID();
     updateWidget(light);
@@ -56,14 +56,12 @@ void ListLightWidget::updateWidget(const cor::Light& light) {
         mHasRendered = false;
     }
 
-    if (mHardwareType != light.hardwareType() || mLastRenderedSize != size()) {
+    if (mHardwareType != light.hardwareType()) {
         mTypePixmap = lightHardwareTypeToPixmap(light.hardwareType());
-        resizeIcons();
-        mLastRenderedSize = size();
     }
 
-    if (light.name() != mController->text()) {
-        mController->setText(createName(light.name()));
+    if (light.name() != mName->text()) {
+        mName->setText(createName(light.name()));
     }
 
     mState = light.state();
@@ -85,80 +83,86 @@ bool ListLightWidget::setHighlightChecked(bool checked) {
 }
 
 
+namespace {
+
+void paintLightState(QPainter& painter,
+                     const QRect& rect,
+                     const cor::LightState& state,
+                     QPixmap& statePixmap) {
+    // draw the pixmap stretched to teh width provided
+    if (state.isOn()) {
+        if (statePixmap.size() != rect.size()) {
+            statePixmap = statePixmap.scaled(rect.width(),
+                                             rect.height(),
+                                             Qt::IgnoreAspectRatio,
+                                             Qt::FastTransformation);
+        }
+        QBrush iconBrush(statePixmap);
+        painter.setBrush(iconBrush);
+        painter.drawRect(rect);
+    } else {
+        QBrush blackBrush(QColor(0, 0, 0));
+        painter.setBrush(blackBrush);
+        painter.drawRect(rect);
+    }
+}
+
+
+void paintLightBarBackground(QPainter& painter, const cor::LightState& state, const QRect& rect) {
+    // draw the back rectangle
+    QBrush blackBrush(QColor(0, 0, 0));
+    if (!state.isOn()) {
+        // if its not on, hide it
+        blackBrush.setColor(QColor(0, 0, 0, 5));
+    }
+    painter.setBrush(blackBrush);
+    painter.drawRect(rect);
+}
+
+} // namespace
+
 void ListLightWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
 
+    // handle highlight
     if (mIsChecked && mShouldHighlight) {
         painter.fillRect(rect(), QBrush(QColor(61, 142, 201)));
     } else {
         painter.fillRect(rect(), QBrush(QColor(32, 31, 31)));
     }
 
-    auto x = int(iconRegion().width() + spacer() * 1.5);
-    auto side = iconRegion().width();
-    int y;
-    if (mType == cor::EWidgetType::full) {
-        y = iconRegion().height();
-    } else {
-        y = height() - iconRegion().height();
-    }
-
+    QRect stateIconRect = stateIconRegion();
     if (mIsReachable) {
-        QRect rect;
-        if (mType == cor::EWidgetType::full) {
-            rect = QRect(x, y, width() / 2, int(height() * 0.6f / 2));
-        } else {
-            rect = QRect(x, y, side, side);
-        }
-
         if (!mState.isOn()) {
             painter.setOpacity(0.25);
         }
 
+        // if the icon is a "full" version, the state icon is more of a brightness bar; the state
+        // icon stretches to fill free space with a black widget. then the state icon is overlaid
+        // over a percentage of that black rectangele. IE, if brightness is 50%, the state icon is
+        // extended over 50% of the black rectangle
         if (mType == cor::EWidgetType::full) {
-            // draw the back rectangle
-            QBrush blackBrush(QColor(0, 0, 0));
-            if (!mState.isOn()) {
-                // if its not on, hide it
-                blackBrush.setColor(QColor(0, 0, 0, 5));
-            }
-            painter.setBrush(blackBrush);
-            painter.drawRect(rect);
+            // paint the background of the brightness bar
+            paintLightBarBackground(painter, mState, stateIconRect);
 
-            // set brightness width
+            // generate a brightness for the state
             double brightness = mState.color().valueF();
             if (mState.routine() > cor::ERoutineSingleColorEnd) {
                 brightness = mState.palette().brightness() / 100.0;
             }
-            rect.setWidth(int(rect.width() * brightness));
-        } else {
-            rect.setWidth(int(rect.width()));
+
+            // scale down the width of the rect of the state icon, to show how bright it is
+            stateIconRect.setWidth(int(stateIconRect.width() * brightness));
         }
 
+
         // draw the pixmap stretched to teh width provided
-        if (mState.isOn()) {
-            if (mIconPixmap.size() != rect.size()) {
-                mIconPixmap = mIconPixmap.scaled(rect.width(),
-                                                 rect.height(),
-                                                 Qt::IgnoreAspectRatio,
-                                                 Qt::FastTransformation);
-            }
-            QBrush iconBrush(mIconPixmap);
-            painter.setBrush(iconBrush);
-            painter.drawRect(rect);
-        } else {
-            QBrush blackBrush(QColor(0, 0, 0));
-            painter.setBrush(blackBrush);
-            painter.drawRect(rect);
-        }
+        paintLightState(painter, stateIconRect, mState, mIconPixmap);
     } else {
         painter.setOpacity(0.5);
-        // draw a quesiton mark in this region
-        auto xPos = std::max(x, int(this->width() * 0.18f - x + side));
-        QRect rect(xPos, y, side, side);
-        painter.drawPixmap(rect, mNoConnectionPixmap);
+        painter.drawPixmap(stateIconRect, mNoConnectionPixmap);
     }
 }
 
@@ -187,44 +191,56 @@ QString ListLightWidget::createName(QString nameText) {
     return nameText;
 }
 
+void ListLightWidget::resize() {
+    auto typeIconSide = this->height() * 0.8;
+    mTypeIcon->setGeometry(spacer(), this->height() * 0.1, typeIconSide, typeIconSide);
+
+    if (mType == cor::EWidgetType::full) {
+        mName->setGeometry(stateIconRegion().x(),
+                           stateIconRegion().y() + stateIconRegion().height(),
+                           stateIconRegion().width(),
+                           stateIconRegion().height());
+    } else {
+        auto nameX = stateIconRegion().x() + stateIconRegion().width() + spacer();
+        mName->setGeometry(nameX, stateIconRegion().y(), width() - nameX, stateIconRegion().height());
+    }
+
+    // resize icons only if necessary
+    if (mTypeIcon->size() != mLastIconSize) {
+        mLastIconSize = mTypeIcon->size();
+        resizeIcons();
+    }
+}
 
 void ListLightWidget::resizeIcons() {
     mTypePixmap = lightHardwareTypeToPixmap(mHardwareType);
-    auto min = std::min(iconRegion().width(), iconRegion().height());
+    auto min = mTypeIcon->height();
     mTypePixmap = mTypePixmap.scaled(min, min, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     mTypeIcon->setPixmap(mTypePixmap);
     mNoConnectionPixmap = QPixmap(":/images/questionMark.png");
     mNoConnectionPixmap =
         mNoConnectionPixmap.scaled(min, min, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-
-    auto topSpacer = (height() - iconRegion().height()) / 2;
-    int spaceBesidesName;
-    if (mType == cor::EWidgetType::full) {
-        spaceBesidesName = spacer() * 2 + iconRegion().width();
-    } else {
-        spaceBesidesName = (spacer() + iconRegion().width()) * 2;
-    }
-    mTypeIcon->setGeometry(spacer(), topSpacer, iconRegion().width(), iconRegion().height());
-    mController->setGeometry(spaceBesidesName,
-                             topSpacer,
-                             width() - spaceBesidesName,
-                             iconRegion().height());
 }
 
 
 void ListLightWidget::resizeEvent(QResizeEvent*) {
-    resizeIcons();
+    resize();
 }
 
 int ListLightWidget::spacer() {
-    return this->geometry().width() / 20;
+    return this->geometry().height() / 10;
 }
 
-QSize ListLightWidget::iconRegion() {
-    int width = this->geometry().width() / 6 - spacer();
+QRect ListLightWidget::stateIconRegion() {
+    int x = mTypeIcon->width() + mTypeIcon->pos().x() + spacer();
+    int y = mTypeIcon->pos().y();
     if (mType == cor::EWidgetType::full) {
-        return QSize(width, int(height() / 3 * 2));
+        int width = this->width() - spacer() * 3 - mTypeIcon->width();
+        int height = int(this->height() / 3);
+        return QRect(x, y, width, height);
+
     } else {
-        return QSize(width, int(height() * 0.8));
+        int side = int(height() * 0.8);
+        return QRect(x, y, side, side);
     }
 }

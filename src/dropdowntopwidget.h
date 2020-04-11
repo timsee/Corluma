@@ -30,9 +30,6 @@ public:
                                bool hideEdit,
                                QWidget* parent);
 
-    /// chang the text of the dropdownwidget
-    void changeText(const QString& text) { mName->setText(text); }
-
     /*!
      * \brief showButtons getter that checks if buttons are showing
      * \return  true if buttons are showing, false otherwise.
@@ -44,9 +41,6 @@ public:
 
     /// getter for key
     const QString& key() const noexcept { return mKey; }
-
-    /// update the checked devices of the group that matches the key
-    void updateCheckedLights(std::uint32_t checkedLightCount, std::uint32_t reachableLightCount);
 
 signals:
 
@@ -83,8 +77,10 @@ protected:
      */
     virtual void mouseReleaseEvent(QMouseEvent*);
 
-    /// renders the widget
-    virtual void paintEvent(QPaintEvent*);
+    /*!
+     * \brief mName label for name of collection
+     */
+    QLabel* mName;
 
 private:
     /// the type of dropdowntopwidget
@@ -94,11 +90,6 @@ private:
      * \brief mLayout layout for the widget
      */
     QHBoxLayout* mLayout;
-
-    /*!
-     * \brief mName label for name of collection
-     */
-    QLabel* mName;
 
     /*!
      * \brief mEditButton button used to edit the collection. Editing can change
@@ -148,12 +139,6 @@ private:
      * \brief mIconRatio
      */
     float mIconRatio;
-
-    /// count of reachable devices
-    std::uint32_t mReachableCount;
-
-    /// count of checked devices
-    std::uint32_t mCheckedCount;
 };
 
 #endif // DROPDOWNTOPWIDGET_H

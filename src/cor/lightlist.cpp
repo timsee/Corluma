@@ -398,6 +398,19 @@ cor::Group LightList::findCurrentGroup(const std::vector<cor::Group>& groups) {
     return {};
 }
 
+
+std::uint32_t LightList::countNumberOfLights(const std::vector<QString>& lightIDs) {
+    std::uint32_t selectedCount = 0u;
+    for (const auto& light : lightIDs) {
+        for (const auto& storedLight : mLights) {
+            if (storedLight.uniqueID() == light) {
+                selectedCount++;
+            }
+        }
+    }
+    return selectedCount;
+}
+
 std::uint64_t LightList::findCurrentMood(const cor::Dictionary<cor::Mood>& moods) {
     for (const auto& mood : moods.items()) {
         if (mLights == mood.lights()) {

@@ -30,8 +30,7 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
       mComm{comm},
       mData{lights},
       mGroups{groups},
-      mLastRenderTime{QTime::currentTime()},
-      mLastScrollValue{0} {
+      mLastRenderTime{QTime::currentTime()} {
     auto width = int(parent->size().width() * 0.66f);
     setGeometry(width * -1, 0, width, parent->height());
     mIsIn = false;
@@ -42,33 +41,12 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     mSpacer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mSpacer->setStyleSheet("border: none; background-color:rgb(33,32,32);");
 
-    mScrollArea = new LeftHandMenuScrollArea(this, mComm, mGroups);
-    connect(mScrollArea, SIGNAL(clickedLight(QString)), this, SLOT(lightClicked(QString)));
-    connect(mScrollArea,
-            SIGNAL(clickedSubgroup(std::uint64_t)),
+    mLightMenu = new LeftHandLightMenu(this, mComm, mData, mGroups);
+    connect(mLightMenu, SIGNAL(clickedLight(QString)), this, SLOT(lightClicked(QString)));
+    connect(mLightMenu,
+            SIGNAL(clickedGroupSelectAll(std::uint64_t, bool)),
             this,
-            SLOT(showSubgroupLights(std::uint64_t)));
-    connect(mScrollArea,
-            SIGNAL(allButtonPressed(std::uint64_t, bool)),
-            this,
-            SLOT(groupSelected(std::uint64_t, bool)));
-    connect(mScrollArea,
-            SIGNAL(clickedParentGroup(std::uint64_t)),
-            this,
-            SLOT(parentGroupClicked(std::uint64_t)));
-    connect(mScrollArea->newGroupButton(), SIGNAL(pressed()), this, SLOT(newGroupButtonPressed()));
-
-    mScrollTopWidget = new LeftHandMenuTopLightWidget(this);
-    mScrollTopWidget->setVisible(false);
-    connect(mScrollTopWidget,
-            SIGNAL(changeToParentGroups()),
-            this,
-            SLOT(changeStateToParentGroups()));
-    connect(mScrollTopWidget, SIGNAL(changeToSubgroups()), this, SLOT(changeStateToSubgroups()));
-    connect(mScrollTopWidget,
-            SIGNAL(toggleSelectAll(QString, bool)),
-            this,
-            SLOT(selectAllToggled(QString, bool)));
+            SLOT(selectAllToggled(std::uint64_t, bool)));
 
     // --------------
     // Setup Main Palette
@@ -143,7 +121,7 @@ void LeftHandMenu::resize() {
         setGeometry(-width, pos().y(), width, parentSize.height());
     }
 
-    auto buttonHeight = int(height() * 0.07);
+    auto buttonHeight = mMoodButton->height();
     auto yPos = int(height() * 0.02);
 
     mSpacer->setGeometry(0, 0, this->width(), height());
@@ -160,30 +138,11 @@ void LeftHandMenu::resize() {
     mSettingsButton->setGeometry(0, yPos, this->width(), buttonHeight);
     yPos += mSettingsButton->height();
 
-    mMainPalette->setGeometry(0,
-                              yPos + int(height() * 0.02),
-                              this->width(),
-                              int(buttonHeight * 1.2));
+    mMainPalette->setGeometry(0, yPos, this->width(), int(buttonHeight * 1.2));
 
     yPos += int(mMainPalette->height() + height() * 0.02);
 
-    if (mScrollArea->state() != ELeftHandMenuScrollAreaState::parentGroups) {
-        if (mScrollTopWidget->showingParentGroup() && mScrollTopWidget->showingSubgroup()) {
-            mScrollTopWidget->setVisible(true);
-            mScrollTopWidget->setGeometry(0, yPos, this->width(), buttonHeight * 2);
-        } else {
-            mScrollTopWidget->setVisible(true);
-            mScrollTopWidget->setGeometry(0, yPos, this->width(), buttonHeight);
-        }
-        yPos += mScrollTopWidget->height();
-    } else {
-        mScrollTopWidget->setVisible(false);
-    }
-
-    QRect leftHandScrollAreaRect = QRect(0, yPos, this->width(), height() - yPos);
-    mScrollArea->changeGeometry(leftHandScrollAreaRect, buttonHeight);
-
-    setFixedHeight(parentSize.height());
+    mLightMenu->resize(yPos, buttonHeight);
 }
 
 void LeftHandMenu::pushIn() {
@@ -226,27 +185,7 @@ void LeftHandMenu::lightCountChanged() {
 
 void LeftHandMenu::updateLights() {
     mLastRenderTime = QTime::currentTime();
-    mGroups->updateSubgroups();
-
-    mScrollArea->updateLightWidgets(mComm->allLights());
-
-    // get all rooms
-    auto parentGroups = mGroups->parents();
-    std::vector<cor::Group> groupData = mGroups->groupsFromIDs(parentGroups);
-    if (!mGroups->orphanLights().empty()) {
-        groupData.push_back(mGroups->orphanGroup());
-    }
-
-    // update ui groups
-    const auto& uiGroups = mScrollArea->parentGroups();
-    for (const auto& group : groupData) {
-        mScrollArea->updateDataGroupInUI(group, uiGroups);
-    }
-
-    // TODO: remove any groups that should no longer be shown
-
-    // update highlighted lights
-    highlightLightsAndGroups();
+    mLightMenu->updateLights();
 
     auto filledDataLights = mComm->commLightsFromVector(mData->lights());
     if (filledDataLights != mLastDataLights) {
@@ -335,14 +274,10 @@ void LeftHandMenu::lightClicked(const QString& lightKey) {
         emit changedLightCount();
         lightCountChanged();
     }
-    highlightLightsAndGroups();
 }
 
 
-void LeftHandMenu::groupSelected(std::uint64_t ID, bool shouldSelect) {
-    if (ID == 0u) {
-        ID = mScrollTopWidget->parentID();
-    }
+void LeftHandMenu::selectAllToggled(std::uint64_t ID, bool shouldSelect) {
     // convert the group ID to a group
     auto groupResult = mGroups->groupDict().item(QString::number(ID).toStdString());
     bool groupFound = groupResult.second;
@@ -362,111 +297,11 @@ void LeftHandMenu::groupSelected(std::uint64_t ID, bool shouldSelect) {
     } else {
         qDebug() << " group not found " << ID;
     }
-    highlightLightsAndGroups();
-}
-
-void LeftHandMenu::shouldShowButtons(std::uint64_t key, bool show) {
-    auto group = mGroups->groupFromID(key);
-    if (show) {
-        auto subgroups = mGroups->subgroups().subgroupIDsForGroup(key);
-        // check if it should show lights or not
-        if (subgroups.empty()) {
-            mScrollArea->changeState(ELeftHandMenuScrollAreaState::lights);
-            auto result = mGroups->groupDict().item(QString::number(key).toStdString());
-            if (result.second) {
-                mScrollArea->showLights(mComm->lightsByIDs(result.first.lights()),
-                                        mMoodButton->height());
-            } else {
-                qDebug() << " got a gorup we don't recongize here.... " << group.name();
-            }
-            auto subgroup = mGroups->groupDict().item(QString::number(key).toStdString());
-        } else {
-            mScrollArea->changeState(ELeftHandMenuScrollAreaState::subgroups);
-            mScrollArea->showSubgroups(key);
-        }
-        mScrollTopWidget->showParentGroup(group.name(), group.uniqueID());
-    } else {
-        mScrollArea->changeState(ELeftHandMenuScrollAreaState::parentGroups);
-        mScrollTopWidget->closeAll();
-    }
-    resize();
-    highlightLightsAndGroups();
-}
-
-
-
-void LeftHandMenu::parentGroupClicked(std::uint64_t ID) {
-    auto name = mGroups->nameFromID(ID);
-    if (ID == 0u) {
-        name = "Miscellaneous";
-    }
-    // check for subgroups
-    auto subgroups = mGroups->subgroups().subgroupIDsForGroup(ID);
-    mScrollTopWidget->showParentGroup(name, ID);
-
-    // check if it should show lights or not
-    if (ID == 0u) {
-        // if its a miscellaneous group, show orphans
-        mScrollArea->changeState(ELeftHandMenuScrollAreaState::lights);
-        auto group = mGroups->orphanGroup();
-        mScrollArea->showLights(mComm->lightsByIDs(group.lights()), mMoodButton->height());
-    } else if (subgroups.empty()) {
-        // if its a group with no subgroups, show the lights for the group
-        mScrollArea->changeState(ELeftHandMenuScrollAreaState::lights);
-        auto result = mGroups->groupDict().item(QString::number(ID).toStdString());
-        if (result.second) {
-            mScrollArea->showLights(mComm->lightsByIDs(result.first.lights()),
-                                    mMoodButton->height());
-        } else {
-            qDebug() << " got a group we don't recongize here.... " << name;
-        }
-    } else {
-        // if its a parent group with subgroups, show the subgroups
-        mScrollArea->changeState(ELeftHandMenuScrollAreaState::subgroups);
-        mScrollArea->showSubgroups(ID);
-    }
-    resize();
-    highlightLightsAndGroups();
-}
-
-void LeftHandMenu::showSubgroupLights(std::uint64_t ID) {
-    if (ID == 0u) {
-        mScrollArea->changeState(ELeftHandMenuScrollAreaState::lights);
-        mScrollTopWidget->showSubgroup("All", 0u);
-        // use the parent ID rather than 0 for getting all
-        auto result =
-            mGroups->groupDict().item(QString::number(mScrollTopWidget->parentID()).toStdString());
-        if (result.second) {
-            mScrollArea->showLights(mComm->lightsByIDs(result.first.lights()),
-                                    mMoodButton->height());
-        } else {
-            qDebug() << " Could not find a group for all lights.... ";
-        }
-    } else {
-        mScrollArea->changeState(ELeftHandMenuScrollAreaState::lights);
-        // rename the group
-        auto renamedGroup =
-            mGroups->subgroups().renamedSubgroupFromParentAndGroupID(mScrollTopWidget->parentID(),
-                                                                     ID);
-        mScrollTopWidget->showSubgroup(renamedGroup, ID);
-        auto result = mGroups->groupDict().item(QString::number(ID).toStdString());
-        if (result.second) {
-            mScrollArea->showLights(mComm->lightsByIDs(result.first.lights()),
-                                    mMoodButton->height());
-        } else {
-            qDebug() << " got a group we don't recongize here.... " << renamedGroup;
-        }
-    }
-    resize();
-    highlightLightsAndGroups();
 }
 
 void LeftHandMenu::renderUI() {
-    auto scrollValue = mScrollArea->verticalScrollBar()->value();
-    if (mIsIn && (mLastRenderTime < mComm->lastUpdateTime()) && (scrollValue == mLastScrollValue)) {
+    if (mIsIn && (mLastRenderTime < mComm->lastUpdateTime())) {
         updateLights();
-    } else {
-        mLastScrollValue = scrollValue;
     }
 }
 
@@ -480,7 +315,7 @@ void LeftHandMenu::newGroupButtonPressed() {
 
 
 void LeftHandMenu::clearWidgets() {
-    mScrollArea->clearParentWidgets();
+    //    mScrollArea->parentGroupContainer()->clearParentWidgets();
     resize();
 }
 
@@ -517,67 +352,4 @@ int LeftHandMenu::showingWidth() {
         width = this->width();
     }
     return width;
-}
-
-void LeftHandMenu::changeStateToParentGroups() {
-    mScrollArea->changeState(ELeftHandMenuScrollAreaState::parentGroups);
-    mScrollTopWidget->closeAll();
-    resize();
-    highlightLightsAndGroups();
-}
-
-void LeftHandMenu::changeStateToSubgroups() {
-    mScrollArea->changeState(ELeftHandMenuScrollAreaState::subgroups);
-    mScrollArea->showSubgroups(mScrollTopWidget->parentID());
-    resize();
-    highlightLightsAndGroups();
-}
-
-void LeftHandMenu::selectAllToggled(QString key, bool selectAll) {
-    if (key == "All") {
-        groupSelected(0u, selectAll);
-    } else {
-        groupSelected(
-            mGroups->subgroups().subgroupIDFromRenamedGroup(mScrollTopWidget->parentID(), key),
-            selectAll);
-    }
-}
-
-void LeftHandMenu::highlightLightsAndGroups() {
-    auto selectedLights = mData->lights();
-
-
-    mScrollArea->highlightLights(cor::lightVectorToIDs(selectedLights));
-    // update the subgroups
-    if (mScrollArea->state() == ELeftHandMenuScrollAreaState::subgroups) {
-        mScrollArea->highlightSubgroups();
-    } else if (mScrollArea->state() == ELeftHandMenuScrollAreaState::parentGroups) {
-        mScrollArea->highlightParentGroups();
-    }
-
-    // update the top parent widget
-    if (mScrollTopWidget->showingParentGroup()) {
-        auto parentGroup = mGroups->groupFromID(mScrollTopWidget->parentID());
-        if (parentGroup.isValid()) {
-            auto counts = mScrollArea->countCheckedAndReachable(parentGroup.lights());
-            mScrollTopWidget->handleParentHighlight(counts.first, counts.second);
-        } else {
-            qDebug() << " invalid parent Group for top light widget";
-        }
-    }
-    // update the top subgroup
-    if (mScrollTopWidget->showingSubgroup()) {
-        cor::Group subgroup;
-        if (mScrollTopWidget->subgroupID() == 0u) {
-            subgroup = mGroups->groupFromID(mScrollTopWidget->parentID());
-        } else {
-            subgroup = mGroups->groupFromID(mScrollTopWidget->subgroupID());
-        }
-        if (subgroup.isValid()) {
-            auto counts = mScrollArea->countCheckedAndReachable(subgroup.lights());
-            mScrollTopWidget->handleSubgroupHighlight(counts.first, counts.second);
-        } else {
-            qDebug() << " invalid parent Group for top light widget";
-        }
-    }
 }

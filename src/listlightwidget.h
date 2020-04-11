@@ -66,8 +66,8 @@ public:
     /// true if displaying a reachable state, false otherwise
     bool isReachable() const noexcept { return mIsReachable; }
 
-    /// getter for name of controller
-    QString name() const noexcept { return mController->text(); }
+    /// getter for name of light
+    QString name() const noexcept { return mName->text(); }
 
     /// getter for current light
     const cor::Light& light() const noexcept { return mLight; }
@@ -96,11 +96,14 @@ protected:
     void resizeEvent(QResizeEvent*);
 
 private:
+    /// programmatically resizes the widget
+    void resize();
+
     /// spacer to use when creating list light widgets
     int spacer();
 
-    /// size of the region used for the icon
-    QSize iconRegion();
+    /// region used for the state icon
+    QRect stateIconRegion();
 
     /// truncates and modifies the name so that it fits, if necessary
     QString createName(QString name);
@@ -146,9 +149,6 @@ private:
     /// resizes the icons for the widget
     void resizeIcons();
 
-    /// stores the last rendered size to check if it needs to rerender again
-    QSize mLastRenderedSize;
-
     /// font point size for widget
     int mFontPtSize;
 
@@ -156,12 +156,15 @@ private:
     cor::Light mLight;
 
     /*!
-     * \brief mController name of the controller
+     * \brief mName name of the light
      */
-    QLabel* mController;
+    QLabel* mName;
 
     /// displays the type of light, such as a lightbulb or a light cube.
     QLabel* mTypeIcon;
+
+    /// stores the last icon size, to check if the pixmaps need to be recomputed.
+    QSize mLastIconSize;
 };
 
 

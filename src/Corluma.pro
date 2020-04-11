@@ -157,7 +157,11 @@ SOURCES += main.cpp \
     cor/widgets/lightvectorwidget.cpp \
     cor/listlayout.cpp \
     cor/widgets/groupbutton.cpp \
-    lefthandmenutoplightwidget.cpp \
+    menu/lefthandlightmenu.cpp \
+    menu/menulightcontainer.cpp \
+    menu/menuparentgroupcontainer.cpp \
+    menu/menusubgroupcontainer.cpp \
+    parentgroupwidget.cpp \
     stateobserver.cpp \
     data/subgroupdata.cpp \
     utils/qt.cpp \
@@ -199,17 +203,15 @@ SOURCES += main.cpp \
     appsettings.cpp \
     listsimplegroupwidget.cpp \
     dropdowntopwidget.cpp \
-    groupbuttonswidget.cpp \
     nowifiwidget.cpp \
     listmooddetailedwidget.cpp \
     listmoodpreviewwidget.cpp \
     data/groupdata.cpp \
     mooddetailswidget.cpp \
-    lefthandmenu.cpp \
-    lefthandmenuscrollarea.cpp \
+    menu/lefthandmenu.cpp \
     selectlightsbutton.cpp \
     mainviewport.cpp \
-    lefthandbutton.cpp \
+    menu/lefthandbutton.cpp \
     listlightwidget.cpp \
     addnewgroupbutton.cpp \
     palettescrollarea.cpp \
@@ -272,7 +274,12 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     globalbrightnesswidget.h \
     data/orphandata.h \
     data/parentdata.h \
-    lefthandmenutoplightwidget.h \
+    menu/lefthandlightmenu.h \
+    menu/lefthandmenutoplightwidget.h \
+    menu/menulightcontainer.h \
+    menu/menuparentgroupcontainer.h \
+    menu/menusubgroupcontainer.h \
+    parentgroupwidget.h \
     singlelightbrightnesswidget.h \
     stateobserver.h \
     data/subgroupdata.h \
@@ -317,7 +324,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     appsettings.h \
     listsimplegroupwidget.h \
     dropdowntopwidget.h \
-    groupbuttonswidget.h \
     nowifiwidget.h \
     listmooddetailedwidget.h \
     listmoodpreviewwidget.h \
@@ -326,11 +332,10 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     utils/reachability.h \
     utils/color.h \
     utils/qt.h \
-    lefthandmenu.h \
-    lefthandmenuscrollarea.h \
+    menu/lefthandmenu.h \
     selectlightsbutton.h \
     mainviewport.h \
-    lefthandbutton.h \
+    menu/lefthandbutton.h \
     listlightwidget.h \
     addnewgroupbutton.h \
     palettescrollarea.h \

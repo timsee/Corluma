@@ -102,6 +102,9 @@ public:
      */
     bool doesLightExist(const cor::Light& light);
 
+    /// returns a count of how many lights from the input vector are contained in the light list.
+    std::uint32_t countNumberOfLights(const std::vector<QString>& lightIDs);
+
     /*!
      * \brief clearLights remove all lights from the current connected lights list.
      * \return true if successful

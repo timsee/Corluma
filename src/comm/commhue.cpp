@@ -573,7 +573,7 @@ std::pair<cor::Group, bool> CommHue::jsonToGroup(QJsonObject object,
             }
         }
         auto uniqueID = generateUniqueID(groupList, name);
-        cor::Group room(uniqueID, name, cor::EGroupType::room, lightsInGroup);
+        cor::Group room(uniqueID, name, type, lightsInGroup);
         return std::make_pair(room, true);
     }
     return std::make_pair(cor::Group{}, false);

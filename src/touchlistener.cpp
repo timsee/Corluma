@@ -4,8 +4,8 @@
  * Released under the GNU General Public License.
  */
 #include "touchlistener.h"
-#include "lefthandmenu.h"
 #include "mainwindow.h"
+#include "menu/lefthandmenu.h"
 #include "topmenu.h"
 
 TouchListener::TouchListener(MainWindow* mainWindow,

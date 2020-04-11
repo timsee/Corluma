@@ -849,3 +849,14 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed bugs with the `LeftHandMenu`.
 
 
+### **v0.19.75**
+#### The LeftHandLightMenu Update
+- Added `MenuLightContainer`, `MenuParentGroupContainer`, and `MenuSubgroupContainer` as high-level widgets to display `GroupData`.
+- Added `LeftHandLightMenu`.
+- Added `ParentGroupWidget` as a new widget that derives from `DropdownTopWidget`.
+- Simplified the logic for updating the lights in the `LeftHandMenu`.
+- Fixed bugs with the size of `ListLightWidget`.
+- Fixed miscellaneous bugs.
+- Fixed bugs with the `LeftHandMenu`.
+
+

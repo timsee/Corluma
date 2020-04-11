@@ -203,6 +203,7 @@ void GroupData::lightDeleted(const QString& uniqueID) {
             groupIndex++;
             mJsonData.setArray(array);
             saveJSON();
+            updateSubgroups();
         }
     }
     // parse the moods, remove from list if needed
@@ -236,6 +237,7 @@ bool GroupData::removeGroup(std::uint64_t groupID) {
                             if (mood.uniqueID() == groupID) {
                                 mMoodDict.remove(mood);
                                 emit groupDeleted(mood.name());
+                                updateSubgroups();
                                 return true;
                             }
                         }
@@ -245,6 +247,7 @@ bool GroupData::removeGroup(std::uint64_t groupID) {
                             if (group.uniqueID() == groupID) {
                                 mGroupDict.remove(group);
                                 emit groupDeleted(group.name());
+                                updateSubgroups();
                                 return true;
                             }
                         }
@@ -299,6 +302,7 @@ bool GroupData::loadExternalData(const QString& file) {
             mJsonData = document;
             if (saveJSON()) {
                 if (loadJSON()) {
+                    updateSubgroups();
                     return true;
                 } else {
                     qDebug() << " could not load JSON";
@@ -373,6 +377,7 @@ bool GroupData::save(const QString& filePath) {
 void GroupData::addLightToGroups(ECommType, const QString& uniqueID) {
     // qDebug() << " add light to groups " << uniqueID;
     mOrphans.addNewLight(uniqueID, mGroupDict.items());
+    updateSubgroups();
 }
 
 void GroupData::removeLightFromGroups(ECommType, const QString& uniqueID) {

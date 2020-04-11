@@ -13,7 +13,7 @@
 
 #include "cor/objects/light.h"
 #include "icondata.h"
-#include "lefthandmenu.h"
+#include "menu/lefthandmenu.h"
 #include "utils/qt.h"
 
 

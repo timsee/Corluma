@@ -13,7 +13,7 @@
 #include <QPainter>
 #include <QStyleOption>
 
-#include "groupbuttonswidget.h"
+#include "menu/menusubgroupcontainer.h"
 #include "utils/qt.h"
 
 namespace cor {
@@ -63,7 +63,7 @@ void GroupButton::resize() {
                                              Qt::SmoothTransformation);
 
     mTitle->setGeometry(spaceWidth, 0, titleWidth, height());
-    mButton->setGeometry(titleWidth + spaceWidth, 0, size.width(), height());
+    mButton->setGeometry(titleWidth + spaceWidth, 0, width() - titleWidth, height());
     mButton->setPixmap(currentPixmap());
 
     if (handleSelectAllButton(mCheckedCount, mReachableCount)) {
@@ -164,7 +164,7 @@ void GroupButton::paintEvent(QPaintEvent*) {
 void GroupButton::mouseReleaseEvent(QMouseEvent* event) {
     if (cor::isMouseEventTouchUpInside(event, this, true)) {
         if (cor::isMouseEventTouchUpInside(event, mButton, false)) {
-            auto groupButtonsWidget = qobject_cast<GroupButtonsWidget*>(parentWidget());
+            auto groupButtonsWidget = qobject_cast<MenuSubgroupContainer*>(parentWidget());
             if (groupButtonsWidget != nullptr) {
                 if (groupButtonsWidget->type() == cor::EWidgetType::condensed) {
                     if (cor::leftHandMenuMoving()) {

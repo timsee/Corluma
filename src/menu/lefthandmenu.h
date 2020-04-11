@@ -6,12 +6,10 @@
 #include <QWidget>
 
 #include "comm/commlayer.h"
-#include "cor/lightlist.h"
 #include "cor/widgets/lightvectorwidget.h"
 #include "data/groupdata.h"
 #include "lefthandbutton.h"
-#include "lefthandmenuscrollarea.h"
-#include "lefthandmenutoplightwidget.h"
+#include "lefthandlightmenu.h"
 
 /*!
  * \copyright
@@ -85,29 +83,11 @@ public slots:
 
 private slots:
 
-    /// changes the state of the LeftHandMenu to showing parent groups
-    void changeStateToParentGroups();
-
-    /// changes the state of the LeftHandMenu to showing subgroups
-    void changeStateToSubgroups();
-
     /// select all lights is toggled from a group
-    void selectAllToggled(QString, bool);
+    void selectAllToggled(std::uint64_t, bool);
 
     /// a light is clicked from the LeftHandMenuScrollArea
     void lightClicked(const QString& lightID);
-
-    /// called when a group is selected or deselected
-    void groupSelected(std::uint64_t key, bool shouldSelect);
-
-    /// called when buttons should be shown or hidden
-    void shouldShowButtons(std::uint64_t, bool);
-
-    /// called when a parent group is changed
-    void parentGroupClicked(std::uint64_t ID);
-
-    /// transition from the subgroups to the lights, by showing the lights for a specific group
-    void showSubgroupLights(std::uint64_t);
 
     /// used to render UI updates
     void renderUI();
@@ -126,20 +106,14 @@ private:
     /// returns a pointer to the currently selected button
     QWidget* selectedButton();
 
-    /// highlights the lights and groups
-    void highlightLightsAndGroups();
-
     /// true if menu is in, false otherwise
     bool mIsIn;
 
     /// point to start the widget at
     QPoint mStartPoint;
 
-    /// scroll area for the widget
-    LeftHandMenuScrollArea* mScrollArea;
-
-    /// top widget that shows the parent group and subgroup, if either is necessary
-    LeftHandMenuTopLightWidget* mScrollTopWidget;
+    /// the menu that allows the user to select lights or groups of lights
+    LeftHandLightMenu* mLightMenu;
 
     /// spacer for top of widget
     QWidget* mSpacer;
@@ -182,9 +156,6 @@ private:
 
     /// last time lights were rendered.
     QTime mLastRenderTime;
-
-    /// used to skip rendering while scrolling
-    int mLastScrollValue;
 
     /// true if moving, false otherwise
     bool mIsMoving;

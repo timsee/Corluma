@@ -20,7 +20,7 @@
 #include "floatinglayout.h"
 #include "greyoutoverlay.h"
 #include "icondata.h"
-#include "lefthandmenu.h"
+#include "menu/lefthandmenu.h"
 #include "mainviewport.h"
 #include "nowifiwidget.h"
 #include "routinebuttonswidget.h"

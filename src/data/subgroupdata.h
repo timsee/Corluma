@@ -6,7 +6,6 @@
 #include "cor/objects/group.h"
 
 using SubgroupMap = std::unordered_map<std::uint64_t, std::vector<std::uint64_t>>;
-
 using SubgroupNameMap =
     std::unordered_map<std::uint64_t, std::vector<std::pair<QString, std::uint64_t>>>;
 /**

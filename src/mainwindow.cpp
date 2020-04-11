@@ -86,6 +86,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     connect(mSettingsPage, SIGNAL(closePressed()), this, SLOT(settingsClosePressed()));
     connect(mSettingsPage, SIGNAL(clickedDiscovery()), this, SLOT(pushInDiscovery()));
     connect(mSettingsPage, SIGNAL(clickedLoadJSON(QString)), this, SLOT(loadJSON(QString)));
+    connect(mSettingsPage, SIGNAL(addNewGroupButtonPressed()), this, SLOT(openNewGroupMenu()));
 
     // --------------
     // Setup Discovery Page

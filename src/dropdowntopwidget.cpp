@@ -15,27 +15,6 @@
 
 #include "utils/qt.h"
 
-namespace {
-
-QColor computeHighlightColor(std::uint32_t checkedCount, std::uint32_t reachableCount) {
-    QColor pureBlue(61, 142, 201);
-    QColor pureBlack(33, 32, 32);
-    QColor difference(pureBlue.red() - pureBlack.red(),
-                      pureBlue.green() - pureBlack.green(),
-                      pureBlue.blue() - pureBlack.blue());
-
-    if (reachableCount == 0u) {
-        return pureBlack;
-    } else {
-        double amountOfBlue = double(checkedCount) / double(reachableCount);
-        return {int(amountOfBlue * difference.red() + pureBlack.red()),
-                int(amountOfBlue * difference.green() + pureBlack.green()),
-                int(amountOfBlue * difference.blue() + pureBlack.blue())};
-    }
-}
-
-} // namespace
-
 DropdownTopWidget::DropdownTopWidget(const QString& key,
                                      const QString& name,
                                      cor::EWidgetType type,
@@ -124,24 +103,4 @@ void DropdownTopWidget::showButtons(bool showButtons) {
     } else {
         mHiddenStateIcon->setPixmap(mClosedPixmap);
     }
-}
-
-void DropdownTopWidget::updateCheckedLights(std::uint32_t checkedLightCount,
-                                            std::uint32_t reachableLightCount) {
-    mCheckedCount = checkedLightCount;
-    mReachableCount = reachableLightCount;
-    update();
-}
-
-void DropdownTopWidget::paintEvent(QPaintEvent*) {
-    QStyleOption opt;
-    opt.init(this);
-    QPainter painter(this);
-    QPen pen(Qt::white, 5);
-    painter.setPen(pen);
-
-    QPainterPath path;
-    path.addRect(rect());
-
-    painter.fillPath(path, QBrush(computeHighlightColor(mCheckedCount, mReachableCount)));
 }

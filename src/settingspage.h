@@ -89,14 +89,12 @@ signals:
     void closePressed();
 
     /*!
-     * \brief clickedInfoWidget emits when hue info widget is clicked
-     */
-    void clickedInfoWidget();
-
-    /*!
      * \brief clickedDiscovery emits when discovery button is clicked
      */
     void clickedDiscovery();
+
+    /// emits when the add new group button is pressed
+    void addNewGroupButtonPressed();
 
     /*!
      * \brief clickedLoadJSON emits when the load button is clicked
