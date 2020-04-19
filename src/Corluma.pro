@@ -157,10 +157,13 @@ SOURCES += main.cpp \
     cor/widgets/lightvectorwidget.cpp \
     cor/listlayout.cpp \
     cor/widgets/groupbutton.cpp \
+    edit/editpage.cpp \
+    edit/editprogresswidget.cpp \
     menu/lefthandlightmenu.cpp \
     menu/menulightcontainer.cpp \
     menu/menuparentgroupcontainer.cpp \
     menu/menusubgroupcontainer.cpp \
+    oldeditpage.cpp \
     parentgroupwidget.cpp \
     stateobserver.cpp \
     data/subgroupdata.cpp \
@@ -177,7 +180,6 @@ SOURCES += main.cpp \
     comm/nanoleaf/leafdiscovery.cpp \
     comm/syncstatus.cpp \
     editgrouppage.cpp \
-    editpage.cpp \
     globalbrightnesswidget.cpp \
     mainwindow.cpp \
     settingspage.cpp \
@@ -269,8 +271,9 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     cor/jsonsavedata.h \
     cor/listlayout.h \
     cor/dictionary.h \
+    edit/editpage.h \
+    edit/editprogresswidget.h \
     editgrouppage.h \
-    editpage.h \
     globalbrightnesswidget.h \
     data/orphandata.h \
     data/parentdata.h \
@@ -279,6 +282,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     menu/menulightcontainer.h \
     menu/menuparentgroupcontainer.h \
     menu/menusubgroupcontainer.h \
+    oldeditpage.h \
     parentgroupwidget.h \
     singlelightbrightnesswidget.h \
     stateobserver.h \

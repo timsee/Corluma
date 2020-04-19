@@ -22,6 +22,10 @@
 #include "utils/qt.h"
 #include "utils/reachability.h"
 
+// commented out until page is functional
+//#define USE_NEW_EDIT_PAGE
+
+
 MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& minimumSize)
     : QMainWindow(parent),
       mPagesLoaded{false},
@@ -235,6 +239,11 @@ void MainWindow::loadPages() {
         mRoutineWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
 
+        mEditPage = new cor::EditPage(this, mComm, mGroups);
+        mEditPage->setVisible(false);
+        mEditPage->isOpen(false);
+        connect(mEditPage, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
+
         // --------------
         // Top Menu
         // --------------
@@ -410,6 +419,17 @@ void MainWindow::settingsClosePressed() {
     }
 }
 
+void MainWindow::editPageClosePressed() {
+    pushOutEditPage();
+    // this fixes the higlight of the left hand menu when its always open. "Settings" only gets
+    // highlighted if its always open. Checking if discovery page is open fixes an edge case where
+    // settings is called from discovery. this makes settings overlay over discovery, so correcting
+    // the left hand menu isnt necessary.
+    if (mLeftHandMenu->alwaysOpen() && !mDiscoveryPage->isOpen()) {
+        mLeftHandMenu->buttonPressed(mMainViewport->currentPage());
+    }
+}
+
 void MainWindow::closeDiscoveryWithoutTransition() {
     loadPages();
     mFirstLoad = false;
@@ -449,6 +469,9 @@ void MainWindow::editButtonClicked(bool isMood) {
             mEditMoodPage->showMood(mood, mComm->allLights());
         }
     } else {
+#ifdef USE_NEW_EDIT_PAGE
+        pushInEditPage();
+#else
         mEditGroupPage->resize();
         mEditGroupPage->pushIn();
         mEditGroupPage->isOpen(true);
@@ -473,6 +496,7 @@ void MainWindow::editButtonClicked(bool isMood) {
                              lights);
             mEditGroupPage->showGroup(group, mData->lights(), mComm->allLights(), false);
         }
+#endif
     }
 }
 
@@ -490,6 +514,36 @@ void MainWindow::editClosePressed() {
     }
     // TODO: update lefthandmenu
     // mMainViewport->lightPage()->updateRoomWidgets();
+}
+
+void MainWindow::resizeFullPageWidget(QWidget* widget) {
+    QSize fullScreenSize = size();
+    if (widget->isVisible()) {
+        if (mFirstLoad) {
+            widget->setFixedSize(fullScreenSize.width(), fullScreenSize.height());
+        } else if (mLeftHandMenu->alwaysOpen()) {
+            widget->setFixedSize(fullScreenSize.width() - mLeftHandMenu->width(),
+                                 fullScreenSize.height());
+        } else {
+            widget->setFixedSize(fullScreenSize.width(), fullScreenSize.height());
+        }
+
+        if (mFirstLoad) {
+            widget->move(QPoint(0, widget->geometry().y()));
+        } else if (mLeftHandMenu->isIn()) {
+            widget->move(QPoint(mLeftHandMenu->width(), widget->geometry().y()));
+        } else {
+            widget->move(QPoint(0, widget->geometry().y()));
+        }
+    } else {
+        int diff = widget->geometry().width()
+                   - fullScreenSize.width(); // adjust x coordinate of discovery page as it
+                                             // scales since its sitting next to main page.
+        widget->setGeometry(widget->geometry().x() - diff,
+                            widget->geometry().y(),
+                            fullScreenSize.width(),
+                            fullScreenSize.height());
+    }
 }
 
 
@@ -543,32 +597,8 @@ void MainWindow::resize() {
                                     fullScreenSize.height());
     }
 
-    if (mSettingsPage->isOpen()) {
-        if (mFirstLoad) {
-            mSettingsPage->setFixedSize(fullScreenSize.width(), fullScreenSize.height());
-        } else if (mLeftHandMenu->alwaysOpen()) {
-            mSettingsPage->setFixedSize(fullScreenSize.width() - mLeftHandMenu->width(),
-                                        fullScreenSize.height());
-        } else {
-            mSettingsPage->setFixedSize(fullScreenSize.width(), fullScreenSize.height());
-        }
-
-        if (mFirstLoad) {
-            mSettingsPage->move(QPoint(0, mSettingsPage->geometry().y()));
-        } else if (mLeftHandMenu->isIn()) {
-            mSettingsPage->move(QPoint(mLeftHandMenu->width(), mSettingsPage->geometry().y()));
-        } else {
-            mSettingsPage->move(QPoint(0, mSettingsPage->geometry().y()));
-        }
-    } else {
-        int diff = mSettingsPage->geometry().width()
-                   - fullScreenSize.width(); // adjust x coordinate of discovery page as it scales
-                                             // since its sitting next to main page.
-        mSettingsPage->setGeometry(mSettingsPage->geometry().x() - diff,
-                                   mSettingsPage->geometry().y(),
-                                   fullScreenSize.width(),
-                                   fullScreenSize.height());
-    }
+    resizeFullPageWidget(mSettingsPage);
+    resizeFullPageWidget(mEditPage);
 
     mGreyOut->resize();
 
@@ -608,11 +638,12 @@ void MainWindow::greyoutClicked() {
 void MainWindow::wifiChecker() {
     mWifiFound = cor::wifiEnabled();
 
-    // NOTE: this is a bit of a UX hack since its a non-documented feature, but it would make a more
-    // confusing UX to 99%+ of potential users to fully show this edge case at this point. The No
-    // wifi detected screen will get hidden if theres a serial connection, since serial is the one
-    // exception to not needing wifi. This edge case only comes up if the user is using arduino
-    // devices on a non-mobile build in a place where they don't have a wifi connection.
+    // NOTE: this is a bit of a UX hack since its a non-documented feature, but it would make a
+    // more confusing UX to 99%+ of potential users to fully show this edge case at this point.
+    // The No wifi detected screen will get hidden if theres a serial connection, since serial
+    // is the one exception to not needing wifi. This edge case only comes up if the user is
+    // using arduino devices on a non-mobile build in a place where they don't have a wifi
+    // connection.
 #ifndef MOBILE_BUILD
     if (!mWifiFound) {
         mWifiFound = !mComm->lightDict(ECommType::serial).empty();
@@ -672,6 +703,10 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
         pushOutSettingsPage();
     }
 
+    if (mEditPage->isOpen()) {
+        pushOutEditPage();
+    }
+
     if (mDiscoveryPage->isOpen() && page == EPage::discoveryPage) {
         // special case, page is already settings, just return
         return;
@@ -699,17 +734,29 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
     }
 }
 
-void MainWindow::pushInSettingsPage() {
+void MainWindow::pushInFullPageWidget(QWidget* widget) {
     const auto& fullScreenSize = size();
     if (mFirstLoad) {
-        mSettingsPage->setFixedSize(fullScreenSize.width(), fullScreenSize.height());
+        widget->setFixedSize(fullScreenSize.width(), fullScreenSize.height());
     } else if (mLeftHandMenu->alwaysOpen()) {
-        mSettingsPage->setFixedSize(fullScreenSize.width() - mLeftHandMenu->width(),
-                                    fullScreenSize.height());
+        widget->setFixedSize(fullScreenSize.width() - mLeftHandMenu->width(),
+                             fullScreenSize.height());
     } else {
-        mSettingsPage->setFixedSize(fullScreenSize.width(), fullScreenSize.height());
+        widget->setFixedSize(fullScreenSize.width(), fullScreenSize.height());
     }
+}
 
+void MainWindow::pushOutFullPageWidget(QWidget*) {
+    if ((mMainViewport->currentPage() == EPage::colorPage
+         || mMainViewport->currentPage() == EPage::palettePage)
+        && mData->empty() && !mLeftHandMenu->isIn()) {
+        mTopMenu->pushInTapToSelectButton();
+    }
+    mTopMenu->showFloatingLayout(mMainViewport->currentPage());
+}
+
+void MainWindow::pushInSettingsPage() {
+    pushInFullPageWidget(mSettingsPage);
     if (mLeftHandMenu->alwaysOpen() && !mFirstLoad) {
         mSettingsPage->pushIn(QPoint(width(), 0), QPoint(mLeftHandMenu->width(), 0));
     } else {
@@ -718,23 +765,36 @@ void MainWindow::pushInSettingsPage() {
 }
 
 void MainWindow::pushOutSettingsPage() {
-    mSettingsPage->pushOut(QPoint(width(), 0u));
+    pushOutFullPageWidget(mSettingsPage);
 
+    mSettingsPage->pushOut(QPoint(width(), 0u));
     if (mDiscoveryPage->isOpen()) {
         mDiscoveryPage->updateTopMenu();
     }
+}
 
-    if ((mMainViewport->currentPage() == EPage::colorPage
-         || mMainViewport->currentPage() == EPage::palettePage)
-        && mData->empty() && !mLeftHandMenu->isIn()) {
-        mTopMenu->pushInTapToSelectButton();
+
+void MainWindow::pushInEditPage() {
+    pushInFullPageWidget(mEditPage);
+    if (mLeftHandMenu->alwaysOpen() && !mFirstLoad) {
+        mEditPage->pushIn(QPoint(width(), 0), QPoint(mLeftHandMenu->width(), 0));
+    } else {
+        mEditPage->pushIn(QPoint(width(), 0), QPoint(0u, 0u));
     }
+}
 
-    mTopMenu->showFloatingLayout(mMainViewport->currentPage());
+void MainWindow::pushOutEditPage() {
+    pushOutFullPageWidget(mEditPage);
+
+    mEditPage->pushOut(QPoint(width(), 0u));
+    if (mDiscoveryPage->isOpen()) {
+        mDiscoveryPage->updateTopMenu();
+    }
 }
 
 bool MainWindow::isAnyWidgetAbove() {
-    if (mSettingsPage->isOpen() || mDiscoveryPage->isOpen() || mNoWifiWidget->isVisible()) {
+    if (mSettingsPage->isOpen() || mEditPage->isOpen() || mDiscoveryPage->isOpen()
+        || mNoWifiWidget->isVisible()) {
         return true;
     }
     return false;

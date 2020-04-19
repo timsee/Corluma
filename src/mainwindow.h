@@ -15,13 +15,14 @@
 #include "cor/objects/page.h"
 #include "cor/widgets/button.h"
 #include "discoverypage.h"
+#include "edit/editpage.h"
 #include "editgrouppage.h"
 #include "editmoodpage.h"
 #include "floatinglayout.h"
 #include "greyoutoverlay.h"
 #include "icondata.h"
-#include "menu/lefthandmenu.h"
 #include "mainviewport.h"
+#include "menu/lefthandmenu.h"
 #include "nowifiwidget.h"
 #include "routinebuttonswidget.h"
 #include "settingspage.h"
@@ -97,8 +98,14 @@ public slots:
     /// displays the settings page
     void pushInSettingsPage();
 
-    /// hides teh settings page
+    /// hides the settings page
     void pushOutSettingsPage();
+
+    /// displays the edit page
+    void pushInEditPage();
+
+    /// hides the edit page
+    void pushOutEditPage();
 
     /*!
      * \brief editButtonClicked an edit button has been clicked for either a collection or mood.
@@ -109,6 +116,9 @@ public slots:
      * \brief editClosePressed close the edit page
      */
     void editClosePressed();
+
+    /// close the edit page
+    void editPageClosePressed();
 
     /*!
      * \brief settingsButtonFromDiscoveryPressed settings button pressed on discovery page. Handled
@@ -322,6 +332,18 @@ private:
      * loading from JSON or reseting things to defaults.
      */
     SettingsPage* mSettingsPage;
+
+    /// edit page for editing gorups and moods
+    cor::EditPage* mEditPage;
+
+    /// resize a widget that takes up the full page
+    void resizeFullPageWidget(QWidget* widget);
+
+    /// push in a widget that takes up the full page
+    void pushInFullPageWidget(QWidget* widget);
+
+    /// push out a widget that takes up the full page
+    void pushOutFullPageWidget(QWidget* widget);
 
     /*!
      * \brief mDiscoveryPage page devoted to discovering new connections. Previous connections

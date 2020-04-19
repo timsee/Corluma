@@ -4,15 +4,15 @@
  * Released under the GNU General Public License.
  */
 
-#include "editpage.h"
+#include "oldeditpage.h"
 
 #include <QMessageBox>
-#include <QScroller>
 #include <QPainter>
+#include <QScroller>
 
 #include "utils/qt.h"
 
-EditPage::EditPage(QWidget* parent, CommLayer* comm, GroupData* parser)
+OldEditPage::OldEditPage(QWidget* parent, CommLayer* comm, GroupData* parser)
     : QWidget(parent),
       mComm(comm),
       mGroups(parser) {
@@ -35,8 +35,8 @@ EditPage::EditPage(QWidget* parent, CommLayer* comm, GroupData* parser)
     mSimpleGroupWidget->setStyleSheet("background-color:rgba(33,32,32,255);");
 }
 
-void EditPage::updateDevices(const std::vector<cor::Light>& checkedDevices,
-                             const std::vector<cor::Light>& devices) {
+void OldEditPage::updateDevices(const std::vector<cor::Light>& checkedDevices,
+                                const std::vector<cor::Light>& devices) {
     mSimpleGroupWidget->updateDevices(devices, cor::EWidgetType::full, true, false);
     mSimpleGroupWidget->setCheckedDevices(checkedDevices);
 }
@@ -45,7 +45,7 @@ void EditPage::updateDevices(const std::vector<cor::Light>& checkedDevices,
 // Slots
 // ----------------------------
 
-void EditPage::closePressed(bool) {
+void OldEditPage::closePressed(bool) {
     if (checkForChanges()) {
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(this,
@@ -64,11 +64,11 @@ void EditPage::closePressed(bool) {
     emit pressedClose();
 }
 
-void EditPage::resetPressed(bool) {
+void OldEditPage::resetPressed(bool) {
     reset();
 }
 
-void EditPage::savePressed(bool) {
+void OldEditPage::savePressed(bool) {
     if (checkForChanges()) {
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(this,
@@ -94,7 +94,7 @@ void EditPage::savePressed(bool) {
 // ----------------------------
 
 
-void EditPage::resize() {
+void OldEditPage::resize() {
     auto yPos = 0;
     mTopMenu->setGeometry(0, yPos, width(), height() / 5);
     yPos += mTopMenu->height();
@@ -104,11 +104,11 @@ void EditPage::resize() {
     mSimpleGroupWidget->resizeWidgets();
 }
 
-void EditPage::resizeEvent(QResizeEvent*) {
+void OldEditPage::resizeEvent(QResizeEvent*) {
     resize();
 }
 
-void EditPage::paintEvent(QPaintEvent*) {
+void OldEditPage::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
@@ -117,7 +117,7 @@ void EditPage::paintEvent(QPaintEvent*) {
     painter.fillRect(rect(), QBrush(QColor(48, 47, 47)));
 }
 
-void EditPage::lineEditChanged(const QString& newText) {
+void OldEditPage::lineEditChanged(const QString& newText) {
     changeName(newText);
 
     if (checkForChanges()) {
@@ -131,8 +131,8 @@ void EditPage::lineEditChanged(const QString& newText) {
 // Private
 // ----------------------------
 
-bool EditPage::shouldSetChecked(const cor::Light& device,
-                                const std::vector<cor::Light>& groupDevices) {
+bool OldEditPage::shouldSetChecked(const cor::Light& device,
+                                   const std::vector<cor::Light>& groupDevices) {
     for (const auto& collectionDevice : groupDevices) {
         if (device.uniqueID() == collectionDevice.uniqueID()) {
             return true;
@@ -141,7 +141,7 @@ bool EditPage::shouldSetChecked(const cor::Light& device,
     return false;
 }
 
-void EditPage::clickedDevice(const QString&) {
+void OldEditPage::clickedDevice(const QString&) {
     // call the highlight button
     if (checkForChanges()) {
         mTopMenu->saveButton()->setEnabled(true);
@@ -150,7 +150,7 @@ void EditPage::clickedDevice(const QString&) {
     }
 }
 
-void EditPage::pushIn() {
+void OldEditPage::pushIn() {
     moveWidget(
         this,
         QPoint(int(parentWidget()->width() * 0.125f), int(-1 * parentWidget()->height())),
@@ -159,7 +159,7 @@ void EditPage::pushIn() {
     setVisible(true);
 }
 
-void EditPage::pushOut() {
+void OldEditPage::pushOut() {
     moveWidget(
         this,
         QPoint(int(parentWidget()->width() * 0.125f), int(parentWidget()->height() * 0.125f)),

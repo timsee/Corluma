@@ -117,6 +117,8 @@ void LeftHandLightMenu::overrideState(const std::vector<cor::Group>& groupData) 
         } else if (singleGroupIsMisc && mState == EState::noGroups) {
             changeStateToNoGroups();
         }
+    } else if (groupData.size() > 1 && (mState != EState::noGroups)) {
+        // nothing needs to be done
     } else {
         qDebug() << " encountered unrecognized state";
     }
@@ -152,6 +154,7 @@ void LeftHandLightMenu::resize(int yPos, int buttonHeight) {
     if (mState == EState::parentGroups) {
         mParentScrollArea->setGeometry(rect.x(), rect.y(), scrollAreaWidth, rect.height());
         mParentGroupContainer->setGeometry(0, 0, rect.width(), rect.height());
+        mParentGroupContainer->resizeParentGroupWidgets();
     } else if (mState == EState::lights || mState == EState::noGroups) {
         mLightScrollArea->setGeometry(rect.x(), rect.y(), scrollAreaWidth, rect.height());
         mLightContainer->setFixedWidth(rect.width());

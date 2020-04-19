@@ -1,7 +1,7 @@
 #ifndef EDITMOODPAGE_H
 #define EDITMOODPAGE_H
 
-#include "editpage.h"
+#include "oldeditpage.h"
 
 /*!
  * \copyright
@@ -10,12 +10,12 @@
  *
  * \brief The EditMoodPage class is a widget for editing and making new moods.
  */
-class EditMoodPage : public EditPage {
+class EditMoodPage : public OldEditPage {
     Q_OBJECT
 public:
     /// constructor
     explicit EditMoodPage(QWidget* parent, CommLayer* layer, GroupData* parser)
-        : EditPage(parent, layer, parser) {}
+        : OldEditPage(parent, layer, parser) {}
 
     /*!
      * \brief showMood show the edit page with the provided mood

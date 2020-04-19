@@ -1,7 +1,7 @@
 #ifndef EDITGROUPPAGE_H
 #define EDITGROUPPAGE_H
 
-#include "editpage.h"
+#include "oldeditpage.h"
 
 /*!
  * \copyright
@@ -17,12 +17,12 @@
  * messages to bridge. This allows multiple versions of the app to use the same data without
  * explicitly syncing the app's save data.
  */
-class EditGroupPage : public EditPage {
+class EditGroupPage : public OldEditPage {
     Q_OBJECT
 public:
     /// constructor
     explicit EditGroupPage(QWidget* parent, CommLayer* layer, GroupData* parser)
-        : EditPage(parent, layer, parser) {
+        : OldEditPage(parent, layer, parser) {
         connect(mTopMenu->roomCheckBox(),
                 SIGNAL(boxChecked(bool)),
                 this,

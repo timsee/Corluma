@@ -26,12 +26,12 @@
  * devices from this page, you cannot change the settings of individual devices. A special
  * case of this page can also create new collections and moods.
  */
-class EditPage : public QWidget, public cor::Page {
+class OldEditPage : public QWidget, public cor::Page {
     Q_OBJECT
 
 public:
     /// constructor
-    explicit EditPage(QWidget* parent, CommLayer* layer, GroupData* parser);
+    explicit OldEditPage(QWidget* parent, CommLayer* layer, GroupData* parser);
 
     /*!
      * \brief updateDevices update the device widgets in the edit page with new values

@@ -860,3 +860,10 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed bugs with the `LeftHandMenu`.
 
 
+### **v0.19.79**
+#### The EditPage Update
+- Added a new `EditPage` and a `EditProgressWidget`.
+- Fixed bugs with the `LefthandLightMenu`.
+- Fixed miscellaneous bugs.
+
+

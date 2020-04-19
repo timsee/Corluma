@@ -414,7 +414,11 @@ void TopMenu::moveFloatingLayout() {
         showMultiColorStateWidget(true);
     }
 
-    if (!mData->empty()) {
+    if (mData->empty()) {
+        currentFloatingLayout()->move(
+            QPoint(parentWidget()->size().width() + currentFloatingLayout()->width(),
+                   mFloatingMenuStart));
+    } else {
         currentFloatingLayout()->move(topRight);
     }
 
