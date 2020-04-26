@@ -154,10 +154,15 @@ void SettingsPage::show() {
     Q_ASSERT(mainWindow);
     bool anyDiscovered = mainWindow->anyDiscovered();
     mGlobalWidget->hideTimeout(!anyDiscovered);
+    // view/edit lights
     mButtons[1]->shouldEnable(anyDiscovered);
-    mButtons[2]->shouldEnable(mGroups->saveExists());
+    // add new group
+    mButtons[2]->shouldEnable(anyDiscovered);
+    // backup save data
+    mButtons[3]->shouldEnable(mGroups->saveExists());
 #ifndef MOBILE_BUILD
-    mButtons[3]->shouldEnable(anyDiscovered);
+    // load backup
+    mButtons[4]->shouldEnable(anyDiscovered);
 #endif
     mGlobalWidget->resize();
     mCopyrightWidget->setGeometry(geometry());
@@ -186,7 +191,6 @@ void SettingsPage::resizeEvent(QResizeEvent*) {
 
 
     mLightInfoWidget->resize();
-
     mGreyOut->resize();
 }
 

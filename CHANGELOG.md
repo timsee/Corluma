@@ -867,3 +867,11 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed miscellaneous bugs.
 
 
+### **v0.19.8**
+#### Bug Fixes
+- Fixed a crash when wifi is not enabled.
+- Fixed a bug where the "Add New Group" button on the `SettingsPage` was greyed out erroneously.
+- Added a new `EditGroupPage` class.
+
+
+

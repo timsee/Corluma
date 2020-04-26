@@ -277,7 +277,7 @@ void MainWindow::loadPages() {
         // Setup Editing Page
         // --------------
 
-        mEditGroupPage = new EditGroupPage(this, mComm, mGroups);
+        mEditGroupPage = new OldEditGroupPage(this, mComm, mGroups);
         mEditGroupPage->isOpen(false);
         connect(mEditGroupPage, SIGNAL(pressedClose()), this, SLOT(editClosePressed()));
         mEditGroupPage->setGeometry(0, -1 * height(), int(width() * 0.75), int(height() * 0.75));
@@ -598,8 +598,6 @@ void MainWindow::resize() {
     }
 
     resizeFullPageWidget(mSettingsPage);
-    resizeFullPageWidget(mEditPage);
-
     mGreyOut->resize();
 
     if (mPagesLoaded) {
@@ -617,6 +615,8 @@ void MainWindow::resize() {
                                        int(size.width() * 0.75f),
                                        int(size.height() * 0.75f));
         }
+
+        resizeFullPageWidget(mEditPage);
 
         mRoutineWidget->resize(mMainViewport->x(),
                                QSize(mMainViewport->width(), mMainViewport->height()));

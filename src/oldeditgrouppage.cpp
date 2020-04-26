@@ -6,12 +6,12 @@
 
 #include <QMessageBox>
 
-#include "editgrouppage.h"
+#include "oldeditgrouppage.h"
 
-void EditGroupPage::showGroup(const cor::Group& group,
-                              const std::vector<cor::Light>& groupLights,
-                              const std::vector<cor::Light>& lights,
-                              bool isRoom) {
+void OldEditGroupPage::showGroup(const cor::Group& group,
+                                 const std::vector<cor::Light>& groupLights,
+                                 const std::vector<cor::Light>& lights,
+                                 bool isRoom) {
     mOriginalGroup = group;
     mNewName = group.name();
     mNewLights = groupLights;
@@ -31,7 +31,7 @@ void EditGroupPage::showGroup(const cor::Group& group,
     update();
 }
 
-bool EditGroupPage::checkForChanges() {
+bool OldEditGroupPage::checkForChanges() {
     if (mNewName.isEmpty()) {
         return false;
     }
@@ -73,7 +73,7 @@ bool EditGroupPage::checkForChanges() {
     return false;
 }
 
-void EditGroupPage::isRoomChecked(bool checked) {
+void OldEditGroupPage::isRoomChecked(bool checked) {
     mIsRoom = checked;
 
     if (checkForChanges()) {
@@ -83,7 +83,7 @@ void EditGroupPage::isRoomChecked(bool checked) {
     }
 }
 
-bool EditGroupPage::saveChanges() {
+bool OldEditGroupPage::saveChanges() {
     //---------------------------------
     // check if group has a name, at least one device, and all valid devices.
     //---------------------------------
@@ -217,7 +217,7 @@ bool EditGroupPage::saveChanges() {
     return true;
 }
 
-void EditGroupPage::deletePressed(bool) {
+void OldEditGroupPage::deletePressed(bool) {
     QMessageBox::StandardButton reply;
     auto name = mOriginalGroup.name();
     QString text("Delete the " + name + " group?");

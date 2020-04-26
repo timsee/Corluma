@@ -16,7 +16,6 @@
 #include "cor/widgets/button.h"
 #include "discoverypage.h"
 #include "edit/editpage.h"
-#include "editgrouppage.h"
 #include "editmoodpage.h"
 #include "floatinglayout.h"
 #include "greyoutoverlay.h"
@@ -24,6 +23,7 @@
 #include "mainviewport.h"
 #include "menu/lefthandmenu.h"
 #include "nowifiwidget.h"
+#include "oldeditgrouppage.h"
 #include "routinebuttonswidget.h"
 #include "settingspage.h"
 #include "shareutils/shareutils.hpp"
@@ -242,7 +242,7 @@ private:
     //------------------
 
     /// page for editing or making a new group
-    EditGroupPage* mEditGroupPage;
+    OldEditGroupPage* mEditGroupPage;
 
     /// page for editing or making a new mood
     EditMoodPage* mEditMoodPage;

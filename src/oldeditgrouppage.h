@@ -8,20 +8,20 @@
  * Copyright (C) 2015 - 2020.
  * Released under the GNU General Public License.
  *
- * \brief The EditGroupPage class is a widget for editing and making new groups. It can make either
- * groups or rooms, but it cannot make moods. It can also define if a group should be a room or a
- * group. If it is editing an existing room/group, this option is greyed out.
+ * \brief The OldEditGroupPage class is a widget for editing and making new groups. It can make
+ * either groups or rooms, but it cannot make moods. It can also define if a group should be a room
+ * or a group. If it is editing an existing room/group, this option is greyed out.
  *
  * The metadata for the group is only stored in the app if theres no other place to store it. For
  * example, in the case of a Hue Bridge, it can store both groups and rooms, so this page sends
  * messages to bridge. This allows multiple versions of the app to use the same data without
  * explicitly syncing the app's save data.
  */
-class EditGroupPage : public OldEditPage {
+class OldEditGroupPage : public OldEditPage {
     Q_OBJECT
 public:
     /// constructor
-    explicit EditGroupPage(QWidget* parent, CommLayer* layer, GroupData* parser)
+    explicit OldEditGroupPage(QWidget* parent, CommLayer* layer, GroupData* parser)
         : OldEditPage(parent, layer, parser) {
         connect(mTopMenu->roomCheckBox(),
                 SIGNAL(boxChecked(bool)),
