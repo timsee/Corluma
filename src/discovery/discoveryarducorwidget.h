@@ -1,7 +1,6 @@
-#ifndef DISCOVERYYUNWIDGET_H
-#define DISCOVERYYUNWIDGET_H
+#ifndef DISCOVERYARDUCORWIDGET_H
+#define DISCOVERYARDUCORWIDGET_H
 
-#include <QLineEdit>
 #include <QPushButton>
 
 #include "comm/commarducor.h"
@@ -74,4 +73,4 @@ private:
     QVBoxLayout* mLayout;
 };
 
-#endif // DISCOVERYYUNWIDGET_H
+#endif // DISCOVERYARDUCORWIDGET_H

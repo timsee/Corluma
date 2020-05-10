@@ -166,52 +166,19 @@ bool OldEditGroupPage::saveChanges() {
     // remove group
     mGroups->removeGroup(mOriginalGroup.uniqueID());
 
-    // split hues from group
-    std::vector<QString> nonHueLights;
-    for (const auto& light : newDevices) {
-        if (light.protocol() != EProtocolType::hue) {
-            nonHueLights.push_back(light.uniqueID());
-        }
+    std::vector<QString> lightIDs;
+    for (auto light : newDevices) {
+        lightIDs.push_back(light.uniqueID());
     }
-
-    // make a group to save into app data that isn't hue
     if (mIsRoom) {
-        cor::Group nonHueRoom(mGroups->generateNewUniqueKey(),
-                              mNewName,
-                              cor::EGroupType::room,
-                              nonHueLights);
-        mGroups->saveNewGroup(nonHueRoom);
+        cor::Group room(mGroups->generateNewUniqueKey(), mNewName, cor::EGroupType::room, lightIDs);
+        mComm->saveNewGroup(room);
     } else {
-        cor::Group nonHueGroup(mGroups->generateNewUniqueKey(),
-                               mNewName,
-                               cor::EGroupType::group,
-                               nonHueLights);
-        mGroups->saveNewGroup(nonHueGroup);
-    }
-
-    // convert any group devices to Hue Lights, if applicable.
-    std::vector<HueMetadata> hueLights;
-    for (const auto& device : newDevices) {
-        if (device.commType() == ECommType::hue) {
-            HueMetadata hue = mComm->hue()->hueLightFromLight(device);
-            hueLights.push_back(hue);
-        }
-    }
-    if (!hueLights.empty()) {
-        for (const auto& bridge : mComm->hue()->bridges().items()) {
-            // check if group already exists
-            auto hueGroups = mComm->hue()->groups(bridge);
-            bool groupExists = false;
-            for (const auto& group : hueGroups) {
-                if (group.name() == mNewName) {
-                    groupExists = true;
-                    mComm->hue()->updateGroup(bridge, group, hueLights);
-                }
-            }
-            if (!groupExists) {
-                mComm->hue()->createGroup(bridge, mNewName, hueLights, mIsRoom);
-            }
-        }
+        cor::Group group(mGroups->generateNewUniqueKey(),
+                         mNewName,
+                         cor::EGroupType::group,
+                         lightIDs);
+        mComm->saveNewGroup(group);
     }
 
     return true;

@@ -239,10 +239,11 @@ void MainWindow::loadPages() {
         mRoutineWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
 
-        mEditPage = new cor::EditPage(this, mComm, mGroups);
+        mEditPage = new cor::EditGroupPage(this, mComm, mGroups);
         mEditPage->setVisible(false);
         mEditPage->isOpen(false);
         connect(mEditPage, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
+        mEditPage->changeRowHeight(mLeftHandMenu->height() / 18);
 
         // --------------
         // Top Menu

@@ -1,8 +1,12 @@
-#ifndef EDITGROUPPAGE_H
-#define EDITGROUPPAGE_H
+#ifndef COR_EDITGROUPPAGE_H
+#define COR_EDITGROUPPAGE_H
 
 #include <QWidget>
+#include "edit/chooselightswidget.h"
+#include "edit/choosemetadatawidget.h"
 #include "edit/editpage.h"
+#include "edit/editprogressstate.h"
+#include "edit/reviewgroupwidget.h"
 
 namespace cor {
 /*!
@@ -21,9 +25,50 @@ namespace cor {
 class EditGroupPage : public cor::EditPage {
     Q_OBJECT
 public:
-    explicit EditGroupPage(QWidget* parent, CommLayer* layer, GroupData* parser);
+    explicit EditGroupPage(QWidget* parent, CommLayer* comm, GroupData* groups)
+        : EditPage(parent, comm, groups),
+          mMetadataWidget{new ChooseMetadataWidget(this)},
+          mLightsWidget{new ChooseLightsWidget(this, comm, groups)},
+          mReviewPage{new ReviewGroupWidget(this, comm, groups)} {
+        setupWidgets({mMetadataWidget, mLightsWidget, mReviewPage});
+    }
 
-signals:
+    /// @copydoc EditPage::pageChanged(std::uint32_t)
+    void pageChanged(std::uint32_t i) override {
+        switch (i) {
+            case 0: {
+                break;
+            }
+            case 1: {
+                mLightsWidget->updateLights();
+                break;
+            }
+            case 2: {
+                mReviewPage->displayGroup(mMetadataWidget->name(),
+                                          mMetadataWidget->description(),
+                                          mLightsWidget->lights());
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    /// @copydoc EditPage::changeRowHeight(int)
+    void changeRowHeight(int height) override {
+        mLightsWidget->changeRowHeight(height);
+        mReviewPage->changeRowHeight(height);
+    }
+
+private:
+    /// widget for choosing the metadata for a group, such as its name and description.
+    ChooseMetadataWidget* mMetadataWidget;
+
+    /// widget for choosing the lights in a group
+    ChooseLightsWidget* mLightsWidget;
+
+    /// widget for reviewing the final state of a group.
+    ReviewGroupWidget* mReviewPage;
 };
 
 } // namespace cor

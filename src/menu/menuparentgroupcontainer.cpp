@@ -26,15 +26,16 @@ void MenuParentGroupContainer::removeParentGroupWidget(const QString& key) {
     }
 }
 
-int MenuParentGroupContainer::resizeParentGroupWidgets() {
+int MenuParentGroupContainer::resizeParentGroupWidgets(int buttonHeight) {
     int yPos = 0u;
+    mButtonHeight = buttonHeight;
     // check if any is open
     std::sort(mParentGroupWidgets.begin(),
               mParentGroupWidgets.end(),
               [](DropdownTopWidget* a, DropdownTopWidget* b) { return a->key() < b->key(); });
     for (auto widget : mParentGroupWidgets) {
         widget->setVisible(true);
-        widget->setGeometry(0, yPos, this->width(), widget->height());
+        widget->setGeometry(0, yPos, this->width(), buttonHeight);
         yPos += widget->height();
     }
     // mContentWidget->setFixedHeight(yPos);
@@ -113,5 +114,5 @@ void MenuParentGroupContainer::initParentGroupWidget(const cor::Group& group, co
     connect(widget, SIGNAL(dropdownPressed(QString)), this, SLOT(parentPressed(QString)));
 
     mParentGroupWidgets.push_back(widget);
-    resizeParentGroupWidgets();
+    resizeParentGroupWidgets(mButtonHeight);
 }

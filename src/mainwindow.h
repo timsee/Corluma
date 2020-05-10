@@ -15,7 +15,7 @@
 #include "cor/objects/page.h"
 #include "cor/widgets/button.h"
 #include "discoverypage.h"
-#include "edit/editpage.h"
+#include "edit/editgrouppage.h"
 #include "editmoodpage.h"
 #include "floatinglayout.h"
 #include "greyoutoverlay.h"
@@ -334,7 +334,7 @@ private:
     SettingsPage* mSettingsPage;
 
     /// edit page for editing gorups and moods
-    cor::EditPage* mEditPage;
+    cor::EditGroupPage* mEditPage;
 
     /// resize a widget that takes up the full page
     void resizeFullPageWidget(QWidget* widget);

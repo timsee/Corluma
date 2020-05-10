@@ -39,6 +39,11 @@ QLineEdit {
     background-color: #201F1F;
 }
 
+QTextEdit {
+    border: none;
+    background-color: #201F1F;
+}
+
 QWidget:disabled {
     color: #454545;
 }

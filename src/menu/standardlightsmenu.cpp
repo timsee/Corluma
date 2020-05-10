@@ -3,7 +3,7 @@
  * Copyright (C) 2015 - 2020.
  * Released under the GNU General Public License.
  */
-#include "lefthandlightmenu.h"
+#include "standardlightsmenu.h"
 #include <QScrollBar>
 #include <QScroller>
 
@@ -21,10 +21,10 @@ void initScrollArea(QWidget* widget, QScrollArea* scrollArea) {
 
 } // namespace
 
-LeftHandLightMenu::LeftHandLightMenu(QWidget* parent,
-                                     CommLayer* comm,
-                                     cor::LightList* data,
-                                     GroupData* groups)
+StandardLightsMenu::StandardLightsMenu(QWidget* parent,
+                                       CommLayer* comm,
+                                       cor::LightList* data,
+                                       GroupData* groups)
     : QWidget(parent),
       mComm{comm},
       mData{data},
@@ -36,7 +36,7 @@ LeftHandLightMenu::LeftHandLightMenu(QWidget* parent,
       mSubgroupContainer{
           new MenuSubgroupContainer(mSubgroupScrollArea, mGroups, cor::EWidgetType::condensed)},
       mLightScrollArea{new QScrollArea(this)},
-      mLightContainer{new MenuLightContainer(mLightScrollArea)},
+      mLightContainer{new MenuLightContainer(mLightScrollArea, true)},
       mButtonHeight{0u},
       mPositionY{0u} {
     mScrollTopWidget = new LeftHandMenuTopLightWidget(this);
@@ -75,7 +75,7 @@ LeftHandLightMenu::LeftHandLightMenu(QWidget* parent,
     setStyleSheet("background-color:rgb(33,32,32);");
 }
 
-void LeftHandLightMenu::updateLights() {
+void StandardLightsMenu::updateLights() {
     mLightContainer->updateLightWidgets(mComm->allLights());
     // get all rooms
     auto parentGroups = mGroups->parents();
@@ -99,7 +99,7 @@ void LeftHandLightMenu::updateLights() {
     highlightTopWidget();
 }
 
-void LeftHandLightMenu::overrideState(const std::vector<cor::Group>& groupData) {
+void StandardLightsMenu::overrideState(const std::vector<cor::Group>& groupData) {
     if (groupData.size() > 1 && (mState == EState::noGroups)) {
         // there are now groups when none existed, override and change state to the parent group
         // widgets
@@ -124,10 +124,10 @@ void LeftHandLightMenu::overrideState(const std::vector<cor::Group>& groupData) 
     }
 }
 
-void LeftHandLightMenu::resize(int yPos, int buttonHeight) {
+void StandardLightsMenu::resize(const QRect& inputRect, int buttonHeight) {
     mButtonHeight = buttonHeight;
-    mPositionY = yPos;
-    setGeometry(0, yPos, parentWidget()->width(), parentWidget()->height() - yPos);
+    mPositionY = inputRect.y();
+    setGeometry(inputRect);
     int offsetY = 0u;
     if (mState == EState::subgroups) {
         mScrollTopWidget->setVisible(true);
@@ -154,7 +154,7 @@ void LeftHandLightMenu::resize(int yPos, int buttonHeight) {
     if (mState == EState::parentGroups) {
         mParentScrollArea->setGeometry(rect.x(), rect.y(), scrollAreaWidth, rect.height());
         mParentGroupContainer->setGeometry(0, 0, rect.width(), rect.height());
-        mParentGroupContainer->resizeParentGroupWidgets();
+        mParentGroupContainer->resizeParentGroupWidgets(mButtonHeight);
     } else if (mState == EState::lights || mState == EState::noGroups) {
         mLightScrollArea->setGeometry(rect.x(), rect.y(), scrollAreaWidth, rect.height());
         mLightContainer->setFixedWidth(rect.width());
@@ -167,7 +167,7 @@ void LeftHandLightMenu::resize(int yPos, int buttonHeight) {
 }
 
 
-void LeftHandLightMenu::highlightTopWidget() {
+void StandardLightsMenu::highlightTopWidget() {
     // update the top parent widget
     if (mScrollTopWidget->parentWidget()->isVisible()) {
         auto parentGroup = mGroups->groupFromID(mScrollTopWidget->parentID());
@@ -192,7 +192,7 @@ void LeftHandLightMenu::highlightTopWidget() {
 }
 
 
-void LeftHandLightMenu::highlightScrollArea() {
+void StandardLightsMenu::highlightScrollArea() {
     // update the subgroups
     if (mState == EState::subgroups) {
         auto groups = mSubgroupContainer->buttonGroups();
@@ -208,30 +208,30 @@ void LeftHandLightMenu::highlightScrollArea() {
     }
 }
 
-void LeftHandLightMenu::changeStateToParentGroups() {
+void StandardLightsMenu::changeStateToParentGroups() {
     changeState(EState::parentGroups);
     mScrollTopWidget->parentWidget()->setVisible(false);
     mScrollTopWidget->subgroupWidget()->setVisible(false);
-    resize(mPositionY, mButtonHeight);
+    resize(this->geometry(), mButtonHeight);
     highlightScrollArea();
 }
 
-void LeftHandLightMenu::changeStateToSubgroups() {
+void StandardLightsMenu::changeStateToSubgroups() {
     changeState(EState::subgroups);
     mSubgroupContainer->showSubgroups(mScrollTopWidget->parentID(), mButtonHeight);
-    resize(mPositionY, mButtonHeight);
+    resize(this->geometry(), mButtonHeight);
     highlightTopWidget();
     highlightScrollArea();
 }
 
-void LeftHandLightMenu::changeStateToNoGroups() {
+void StandardLightsMenu::changeStateToNoGroups() {
     changeState(EState::noGroups);
     mLightContainer->showLights(mComm->allLights(), mButtonHeight);
-    resize(mPositionY, mButtonHeight);
+    resize(this->geometry(), mButtonHeight);
     highlightScrollArea();
 }
 
-void LeftHandLightMenu::groupSelected(std::uint64_t ID, bool shouldSelect) {
+void StandardLightsMenu::groupSelected(std::uint64_t ID, bool shouldSelect) {
     if (ID == 0u) {
         ID = mScrollTopWidget->parentID();
     }
@@ -241,7 +241,7 @@ void LeftHandLightMenu::groupSelected(std::uint64_t ID, bool shouldSelect) {
 }
 
 
-void LeftHandLightMenu::shouldShowButtons(std::uint64_t key, bool show) {
+void StandardLightsMenu::shouldShowButtons(std::uint64_t key, bool show) {
     auto group = mGroups->groupFromID(key);
     if (show) {
         auto subgroups = mGroups->subgroups().subgroupIDsForGroup(key);
@@ -266,14 +266,14 @@ void LeftHandLightMenu::shouldShowButtons(std::uint64_t key, bool show) {
         mScrollTopWidget->parentWidget()->setVisible(false);
         mScrollTopWidget->subgroupWidget()->setVisible(false);
     }
-    resize(mPositionY, mButtonHeight);
+    resize(this->geometry(), mButtonHeight);
     highlightTopWidget();
     highlightScrollArea();
 }
 
 
 
-void LeftHandLightMenu::parentGroupClicked(std::uint64_t ID) {
+void StandardLightsMenu::parentGroupClicked(std::uint64_t ID) {
     auto name = mGroups->nameFromID(ID);
     if (ID == 0u) {
         name = "Miscellaneous";
@@ -302,12 +302,12 @@ void LeftHandLightMenu::parentGroupClicked(std::uint64_t ID) {
         changeState(EState::subgroups);
         mSubgroupContainer->showSubgroups(ID, mButtonHeight);
     }
-    resize(mPositionY, mButtonHeight);
+    resize(this->geometry(), mButtonHeight);
     highlightTopWidget();
     highlightScrollArea();
 }
 
-void LeftHandLightMenu::showSubgroupLights(std::uint64_t ID) {
+void StandardLightsMenu::showSubgroupLights(std::uint64_t ID) {
     changeState(EState::lights);
     // rename the group
     auto renamedGroup =
@@ -323,13 +323,13 @@ void LeftHandLightMenu::showSubgroupLights(std::uint64_t ID) {
         qDebug() << " got a group we don't recongize here.... " << renamedGroup;
     }
 
-    resize(mPositionY, mButtonHeight);
+    resize(this->geometry(), mButtonHeight);
     highlightTopWidget();
     highlightScrollArea();
 }
 
 
-void LeftHandLightMenu::changeState(EState state) {
+void StandardLightsMenu::changeState(EState state) {
     if (mState != state) {
         mState = state;
         if (mState == EState::parentGroups) {

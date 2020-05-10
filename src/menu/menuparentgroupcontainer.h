@@ -51,7 +51,7 @@ public:
     void highlightParentGroups(const MenuParentGroupCounts& parentCounts);
 
     /// resizes the parent group widgets
-    int resizeParentGroupWidgets();
+    int resizeParentGroupWidgets(int buttonHeight);
 
     /*!
      * \brief initRoomsWidget constructor helper for making a DropdownTopWidget
@@ -78,6 +78,9 @@ private slots:
     }
 
 private:
+    /// stores the height of buttons in the widget
+    int mButtonHeight;
+
     /// getter for group data
     GroupData* mGroups;
 

@@ -76,5 +76,7 @@
         <file>images/ct_range.png</file>
         <file>images/syncing.gif</file>
         <file>images/questionMark.png</file>
+        <file>images/arrowLeft.png</file>
+        <file>images/arrowRight.png</file>
     </qresource>
 </RCC>

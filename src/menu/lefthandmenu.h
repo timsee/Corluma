@@ -9,7 +9,7 @@
 #include "cor/widgets/lightvectorwidget.h"
 #include "data/groupdata.h"
 #include "lefthandbutton.h"
-#include "lefthandlightmenu.h"
+#include "standardlightsmenu.h"
 
 /*!
  * \copyright
@@ -113,7 +113,7 @@ private:
     QPoint mStartPoint;
 
     /// the menu that allows the user to select lights or groups of lights
-    LeftHandLightMenu* mLightMenu;
+    StandardLightsMenu* mLightMenu;
 
     /// spacer for top of widget
     QWidget* mSpacer;

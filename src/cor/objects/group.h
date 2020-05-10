@@ -54,6 +54,10 @@ public:
                 object["name"].toString(),
                 jsonToGroupType(object),
                 {}) {
+        // add optional description if it exists
+        if (object["description"].isString()) {
+            description(object["description"].toString());
+        }
         QJsonArray deviceArray = object["devices"].toArray();
         std::vector<QString> lightList;
         foreach (const QJsonValue& value, deviceArray) {
@@ -77,6 +81,11 @@ public:
 
     /// setter for name
     void name(const QString& name) noexcept { mName = name; }
+
+    /// setter for description
+    void description(const QString& description) noexcept { mDescription = description; }
+
+    const QString& description() const noexcept { return mDescription; }
 
     /// true if group is valid, false otherwise
     bool isValid() const noexcept { return mName != "Error" && mUniqueID != 0u; }
@@ -116,6 +125,12 @@ public:
             object["isRoom"] = true;
         }
         object["uniqueID"] = double(uniqueID());
+
+        // only add a description field if one exists, since
+        // this field is optional.
+        if (!mDescription.isEmpty()) {
+            object["description"] = mDescription;
+        }
 
         // create string of jsondata to add to file
         QJsonArray lightArray;
@@ -169,6 +184,9 @@ public:
 private:
     /// name of group
     QString mName;
+
+    /// description of group
+    QString mDescription;
 
     /// unique ID
     std::uint64_t mUniqueID;

@@ -2,9 +2,7 @@
 #define EDITPROGRESSWIDGET_H
 
 #include <QWidget>
-
-//// the progress state of each edit page
-enum class EEditProgressState { locked, incomplete, completed };
+#include "edit/editprogressstate.h"
 
 /*!
  * \copyright
@@ -26,6 +24,9 @@ public:
 
     /// update the state of a page to a different state
     void updateState(std::uint32_t index, EEditProgressState state);
+
+    /// getter for the state of a page
+    EEditProgressState state(std::uint32_t index);
 
     /// getter for the current page
     std::uint32_t currentPage() const noexcept { return mCurrentPage; }

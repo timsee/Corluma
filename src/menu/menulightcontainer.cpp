@@ -36,6 +36,9 @@ void MenuLightContainer::updateLightWidgets(const std::vector<cor::Light>& light
             }
         } else {
             auto widget = new ListLightWidget(light, true, cor::EWidgetType::condensed, this);
+            if (!mAllowInteraction) {
+                widget->allowInteraction(false);
+            }
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleLightClicked(QString)));
             widget->setVisible(false);
             mLightLayout.insertWidget(widget);

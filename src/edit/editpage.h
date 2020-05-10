@@ -6,6 +6,7 @@
 #include "comm/commlayer.h"
 #include "cor/objects/page.h"
 #include "data/groupdata.h"
+#include "edit/editpagechildwidget.h"
 #include "edit/editprogresswidget.h"
 
 namespace cor {
@@ -34,6 +35,24 @@ public:
     /// shows a specific page by index
     void showPage(std::uint32_t pageIndex);
 
+    /*!
+     * \brief widgets All edit pages have a group of widgets that the user must go through to
+     * complete an edit. This is a vector of all widgets contained by the EditPage
+     * \return vector of all widgets contained by the edit page
+     */
+    std::vector<EditPageChildWidget*> widgets() { return mWidgets; }
+
+    /*!
+     * \brief editProgressWidget All edit pages have a progress widget in the top right taht can be
+     * used to see how many steps are left in the edit or to change what step you are on. This is a
+     * getter for the EditProgressWidget
+     * \return getter for EditProgressWidget
+     */
+    EditProgressWidget* editProgressWidget() { return mProgressWidget; }
+
+    /// programmatically set the height of rows in scroll widgets.
+    virtual void changeRowHeight(int height) = 0;
+
 signals:
 
     /*!
@@ -42,6 +61,22 @@ signals:
     void pressedClose();
 
 protected:
+    /*!
+     * \brief setupWidgets initializes the widget vector and hooks up its signals and slots. This
+     * must be called from the constructor of a derived class in order to have the class function
+     * properly.
+     */
+    void setupWidgets(std::vector<EditPageChildWidget*>);
+
+    /*!
+     * \brief pageChanged handles whenever a page changes in a derived class. The UI elements of a
+     * page changing are already handled, but this function exists to do tasks such as piping data
+     * from one widget to another, or doing any state changes that require knowledge of multiple
+     * widgets.
+     * \param i index of the new page to change to.
+     */
+    virtual void pageChanged(std::uint32_t i) = 0;
+
     /*!
      * \brief resizeEvent called whenever the widget resizes so that assets can be updated.
      */
@@ -53,6 +88,17 @@ protected:
     void paintEvent(QPaintEvent*);
 
 private slots:
+    /// moves the edit page one page forwrad
+    void pageForwards();
+
+    /// moves the edit page one page backward
+    void pageBackwards();
+
+    /// handles when close is pressed from a child widget
+    void closeFromPagePressed();
+
+    /// handles when a widget's state is changed.
+    void widgetChangedState(std::uint32_t, EEditProgressState);
 
     /*!
      * \brief closePressed called when close button is pressed. Checks if changes were made, asks
@@ -69,6 +115,10 @@ private:
 
     /// shows a page and resizes it.
     void showAndResizePage(std::uint32_t i);
+
+    /// computes the state of the review page. the review page's state is based off of the state of
+    /// the other widgets.
+    void computeStateOfReviewPage();
 
     /// top height doesnt change as the app resizes, so this is the cached version of the top height
     int mTopHeight;
@@ -88,11 +138,11 @@ private:
     /// button placed at left hand side of widget
     QPushButton* mCloseButton;
 
-    /// vector of widgets to show
-    std::vector<QWidget*> mWidgets;
-
     /// a progress widget that shows what page you're on and what pages are completed.
     EditProgressWidget* mProgressWidget;
+
+    /// stores all the widgets that the user flips through on the EditPage.
+    std::vector<EditPageChildWidget*> mWidgets;
 };
 
 } // namespace cor

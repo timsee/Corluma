@@ -41,7 +41,7 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     mSpacer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mSpacer->setStyleSheet("border: none; background-color:rgb(33,32,32);");
 
-    mLightMenu = new LeftHandLightMenu(this, mComm, mData, mGroups);
+    mLightMenu = new StandardLightsMenu(this, mComm, mData, mGroups);
     connect(mLightMenu, SIGNAL(clickedLight(QString)), this, SLOT(lightClicked(QString)));
     connect(mLightMenu,
             SIGNAL(clickedGroupSelectAll(std::uint64_t, bool)),
@@ -142,7 +142,8 @@ void LeftHandMenu::resize() {
 
     yPos += int(mMainPalette->height() + height() * 0.02);
 
-    mLightMenu->resize(yPos, buttonHeight);
+    QRect lightMenuRect(0, yPos, this->width(), this->height() - yPos);
+    mLightMenu->resize(lightMenuRect, buttonHeight);
 }
 
 void LeftHandMenu::pushIn() {

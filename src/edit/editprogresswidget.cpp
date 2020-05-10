@@ -16,7 +16,9 @@ EditProgressWidget::EditProgressWidget(QWidget* parent, std::uint32_t numberOfPa
     : QWidget(parent),
       mNumberOfPages{numberOfPages},
       mCurrentPage{0u},
-      mPageState(mNumberOfPages, EEditProgressState::incomplete) {}
+      mPageState(mNumberOfPages, EEditProgressState::locked) {
+    mPageState[0] = EEditProgressState::incomplete;
+}
 
 
 void EditProgressWidget::changeToPage(std::uint32_t pageNumber) {
@@ -26,10 +28,21 @@ void EditProgressWidget::changeToPage(std::uint32_t pageNumber) {
     }
 }
 
+EEditProgressState EditProgressWidget::state(std::uint32_t index) {
+    if (index < mPageState.size()) {
+        return mPageState[index];
+    } else {
+        qDebug() << "sent incorrect index, expected an index less than " << mPageState.size()
+                 << " but got " << index;
+        return EEditProgressState::locked;
+    }
+}
+
 
 void EditProgressWidget::updateState(std::uint32_t index, EEditProgressState state) {
     if (index < mPageState.size()) {
         mPageState[index] = state;
+        update();
     } else {
         qDebug() << "sent incorrect index, expected an index less than " << mPageState.size()
                  << " but got " << index;
@@ -79,8 +92,13 @@ void paintCircle(QPainter& painter,
                  bool paintLine) {
     // generate circle rect
     auto circleDiameter = position.height() * 3 / 5;
+    if (!isActive) {
+        circleDiameter /= 2;
+    }
+    auto circleCenterX = position.x() + (position.width() / 2);
+    auto circleStartX = circleCenterX - circleDiameter / 2;
     auto circleSpacer = (position.height() - circleDiameter) / 2;
-    QRect circleRect(position.x() + circleSpacer / 2, circleSpacer, circleDiameter, circleDiameter);
+    QRect circleRect(circleStartX, circleSpacer, circleDiameter, circleDiameter);
     QBrush circleBrush(stateToColor(state));
     if (paintLine) {
         //        auto lastStartX = position.x() - position.width() + circleSpacer / 2 +
@@ -116,10 +134,11 @@ void EditProgressWidget::paintEvent(QPaintEvent*) {
     auto widgetSize = this->geometry().size();
     auto circleRegionWidth = std::uint32_t(widgetSize.width()) / mNumberOfPages;
 
-    paintBackgroundLine(painter,
-                        QPoint(circleRegionWidth / 2, this->height() / 2),
-                        QPoint(this->width() - (circleRegionWidth / 2), this->height() / 2),
-                        this->height() / 15);
+    paintBackgroundLine(
+        painter,
+        QPoint(circleRegionWidth / 2, this->height() / 2),
+        QPoint(int(std::uint32_t(this->width()) - (circleRegionWidth / 2)), this->height() / 2),
+        this->height() / 15);
 
     // get initial widget's region
     QRect initalRect(0, 0, int(circleRegionWidth), widgetSize.height());

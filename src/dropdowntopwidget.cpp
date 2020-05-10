@@ -85,6 +85,7 @@ DropdownTopWidget::DropdownTopWidget(const QString& key,
     mLayout->setStretch(2, 2);
     mLayout->setStretch(3, 2);
 
+    // TODO: figure out a more elegant solution for this, too much relies on fixed height
     setFixedHeight(mMinimumHeight);
 }
 

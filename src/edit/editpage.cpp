@@ -18,34 +18,38 @@ EditPage::EditPage(QWidget* parent, CommLayer* comm, GroupData* groups)
       mComm(comm),
       mGroups(groups),
       mPlaceholder{new QWidget(this)},
-      mCloseButton{new QPushButton(this)},
-      mWidgets{4, nullptr},
-      mProgressWidget{new EditProgressWidget(this, 4)} {
+      mCloseButton{new QPushButton(this)} {
     connect(mCloseButton, SIGNAL(clicked(bool)), this, SLOT(closePressed(bool)));
 
 #ifdef MOBILE_BUILD
     mTopHeight = cor::applicationSize().height() * 0.075;
 #else
-    mTopHeight = cor::applicationSize().height() * 0.1;
+    mTopHeight = int(cor::applicationSize().height() * 0.1);
 #endif
+}
 
-    mProgressWidget->updateState(0, EEditProgressState::completed);
+void EditPage::setupWidgets(std::vector<EditPageChildWidget*> widgets) {
+    mWidgets = widgets;
+    mProgressWidget = new EditProgressWidget(this, std::uint32_t(mWidgets.size()));
+    // wire up the bottom buttons
+    auto i = 0u;
+    for (auto widget : mWidgets) {
+        widget->index(i);
+        ++i;
+        connect(widget->bottomButtons(), SIGNAL(leftButtonPressed()), this, SLOT(pageBackwards()));
+        connect(widget->bottomButtons(), SIGNAL(rightButtonPressed()), this, SLOT(pageForwards()));
+        connect(widget,
+                SIGNAL(stateChanged(std::uint32_t, EEditProgressState)),
+                this,
+                SLOT(widgetChangedState(std::uint32_t, EEditProgressState)));
+        connect(widget, SIGNAL(closePage()), this, SLOT(closeFromPagePressed()));
+    }
+
     connect(mProgressWidget,
             SIGNAL(changePage(std::uint32_t)),
             this,
             SLOT(changePageFromProgressWidget(std::uint32_t)));
-
-    for (std::uint32_t i = 0; i < mWidgets.size(); ++i) {
-        mWidgets[i] = new QWidget(this);
-        mWidgets[i]->setVisible(false);
-    }
-    mWidgets[0]->setStyleSheet("background-color:rgb(255,0,0);");
-    mWidgets[1]->setStyleSheet("background-color:rgb(255,255,0);");
-    mWidgets[2]->setStyleSheet("background-color:rgb(0,255,0);");
-    mWidgets[3]->setStyleSheet("background-color:rgb(0,255,255);");
-    mWidgets[3]->setVisible(false);
 }
-
 
 void EditPage::pushIn(const QPoint& startPoint, const QPoint& endPoint) {
     setVisible(true);
@@ -65,24 +69,85 @@ void EditPage::changePageFromProgressWidget(std::uint32_t index) {
 
 void EditPage::showPage(std::uint32_t pageIndex) {
     // update top widget
-    mProgressWidget->changeToPage(pageIndex);
+    editProgressWidget()->changeToPage(pageIndex);
 
     // update the currently showing widget
     showAndResizePage(pageIndex);
+
+    // do widget specific initializations
+    pageChanged(pageIndex);
 }
 
+void EditPage::pageForwards() {
+    auto currentIndex = editProgressWidget()->currentPage();
+    if (currentIndex < editProgressWidget()->numberOfPages()) {
+        auto newIndex = currentIndex + 1;
+        showPage(newIndex);
+    }
+}
+
+void EditPage::pageBackwards() {
+    auto currentIndex = editProgressWidget()->currentPage();
+    if (currentIndex > 0) {
+        showPage(currentIndex - 1);
+    }
+}
+
+void EditPage::closeFromPagePressed() {
+    emit closePressed(true);
+}
+
+void EditPage::widgetChangedState(std::uint32_t i, EEditProgressState state) {
+    editProgressWidget()->updateState(i, state);
+    // programmatically check states of other pages based off of the changing page
+    if (i < (editProgressWidget()->numberOfPages() - 1)) {
+        // first unlock/lock the next page
+        auto newIndex = i + 1;
+        if (state == EEditProgressState::completed
+            && editProgressWidget()->state(newIndex) == EEditProgressState::locked) {
+            editProgressWidget()->updateState(newIndex, EEditProgressState::incomplete);
+        } else if (state == EEditProgressState::incomplete) {
+            editProgressWidget()->updateState(newIndex, EEditProgressState::locked);
+        }
+        // now compute the final page
+        computeStateOfReviewPage();
+    }
+}
+
+void EditPage::computeStateOfReviewPage() {
+    auto editIndex = editProgressWidget()->numberOfPages() - 1;
+    bool allWidgetsComplete = true;
+    bool noWidgetsLocked = true;
+    for (auto i = 0; i < editIndex; ++i) {
+        if (editProgressWidget()->state(i) != EEditProgressState::completed) {
+            allWidgetsComplete = false;
+        }
+
+        if (editProgressWidget()->state(i) == EEditProgressState::locked) {
+            noWidgetsLocked = false;
+        }
+    }
+
+    if (allWidgetsComplete && noWidgetsLocked) {
+        editProgressWidget()->updateState(editIndex, EEditProgressState::completed);
+    } else if (!noWidgetsLocked) {
+        editProgressWidget()->updateState(editIndex, EEditProgressState::locked);
+    }
+}
+
+
 void EditPage::showAndResizePage(std::uint32_t i) {
-    for (auto widget : mWidgets) {
+    for (auto widget : widgets()) {
         widget->setVisible(false);
     }
-    mWidgets[i]->setVisible(true);
-    mWidgets[i]->setGeometry(mPlaceholder->geometry());
-    mWidgets[i]->raise();
+    widgets()[i]->setVisible(true);
+    widgets()[i]->setGeometry(mPlaceholder->geometry());
+    widgets()[i]->raise();
 }
 
 void EditPage::resizeCloseButton() {
     QPixmap pixmap(":images/closeX.png");
-    int closeSize = mTopHeight * 0.8;
+    int closeSize = int(mTopHeight * 0.8);
     int finalSize = int(mTopHeight * 0.5);
     int spacer = (mTopHeight - finalSize) / 4;
     mCloseButton->setIconSize(QSize(finalSize, finalSize));
@@ -95,8 +160,8 @@ void EditPage::resizeEvent(QResizeEvent*) {
     resizeCloseButton();
     int yPos = mTopHeight;
     // width of progress widget should be relatively fixed
-    auto progressWidth = int(mProgressWidget->numberOfPages() * mTopHeight);
-    mProgressWidget->setGeometry(this->width() - progressWidth, 0u, progressWidth, mTopHeight);
+    auto progressWidth = int(editProgressWidget()->numberOfPages() * std::uint32_t(mTopHeight));
+    editProgressWidget()->setGeometry(this->width() - progressWidth, 0u, progressWidth, mTopHeight);
 
     auto placeholderWidthPadding = this->width() / 20;
     auto placeholderHeightPadding = this->height() / 20;
@@ -105,7 +170,7 @@ void EditPage::resizeEvent(QResizeEvent*) {
                               yPos,
                               this->width() - placeholderWidthPadding * 2,
                               this->height() - yPos - placeholderHeightPadding);
-    showAndResizePage(mProgressWidget->currentPage());
+    showAndResizePage(editProgressWidget()->currentPage());
 }
 
 void EditPage::paintEvent(QPaintEvent*) {

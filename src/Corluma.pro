@@ -157,13 +157,13 @@ SOURCES += main.cpp \
     cor/widgets/lightvectorwidget.cpp \
     cor/listlayout.cpp \
     cor/widgets/groupbutton.cpp \
-    edit/editgrouppage.cpp \
     edit/editpage.cpp \
     edit/editprogresswidget.cpp \
-    menu/lefthandlightmenu.cpp \
+    menu/lightslistmenu.cpp \
     menu/menulightcontainer.cpp \
     menu/menuparentgroupcontainer.cpp \
     menu/menusubgroupcontainer.cpp \
+    menu/standardlightsmenu.cpp \
     oldeditgrouppage.cpp \
     oldeditpage.cpp \
     parentgroupwidget.cpp \
@@ -272,17 +272,25 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     cor/jsonsavedata.h \
     cor/listlayout.h \
     cor/dictionary.h \
+    edit/chooselightswidget.h \
+    edit/choosemetadatawidget.h \
+    edit/editbottombuttons.h \
     edit/editgrouppage.h \
     edit/editpage.h \
+    edit/editpagechildwidget.h \
+    edit/editprogressstate.h \
     edit/editprogresswidget.h \
+    edit/reviewgroupwidget.h \
     globalbrightnesswidget.h \
     data/orphandata.h \
     data/parentdata.h \
-    menu/lefthandlightmenu.h \
+    menu/displaygroupwidget.h \
     menu/lefthandmenutoplightwidget.h \
+    menu/lightslistmenu.h \
     menu/menulightcontainer.h \
     menu/menuparentgroupcontainer.h \
     menu/menusubgroupcontainer.h \
+    menu/standardlightsmenu.h \
     oldeditgrouppage.h \
     oldeditpage.h \
     parentgroupwidget.h \

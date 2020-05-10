@@ -103,7 +103,8 @@ protected:
             yPos += mParentWidget->height();
             mSubgroupButton->setGeometry(0, yPos, width(), height() / 2);
         } else if (mParentWidget->isVisible()) {
-            mParentWidget->setGeometry(QRect(0, 0, width(), height()));
+            mParentWidget->setFixedHeight(height());
+            mParentWidget->setGeometry(0, 0, width(), height());
         }
     }
 

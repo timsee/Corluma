@@ -53,7 +53,7 @@ public:
     /*!
      * \brief Constructor
      */
-    CommLayer(QObject* parent, GroupData* parser);
+    CommLayer(QObject* parent, GroupData* groups);
 
     /*!
      * \brief resetStateUpdates reset the state updates timeouts for specified commtypes. If it
@@ -136,6 +136,15 @@ public:
 
     /// creates a list of lights and their current state based off of a group.
     std::vector<cor::Light> lightListFromGroup(const cor::Group& group);
+
+    /*!
+     * \brief saves a for future use. For lights like hues, that can save groups to their bridge,
+     * the group is saved externally. For lights without this capability, the Group is saved to the
+     * @ref GroupData provided to the constructor.
+     * \param group the group to save to external storage or to group data, when applicable.
+     * \return true if successful, false if encounters error.
+     */
+    bool saveNewGroup(const cor::Group& group);
 
     /// makes a dictionary of lights based off of the formula provided by a mood object.
     cor::Dictionary<cor::Light> makeMood(const cor::Mood& mood);

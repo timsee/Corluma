@@ -874,4 +874,10 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Added a new `EditGroupPage` class.
 
 
+### **v0.19.85**
+#### The New EditGroupPage Update
+- Added `ChooseMetadataWidget` and `ChooseLightWidget` for building groups, rooms, and moods. 
+- Added `EditBottomButtons` and fleshed out the `EditPage`.
+- Added the complete workflow to create a new group with the new edit pages. 
+- Added an optional field for group descriptions in the `GroupData`.
 

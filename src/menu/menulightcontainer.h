@@ -21,9 +21,10 @@ class MenuLightContainer : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit MenuLightContainer(QWidget* parent)
+    explicit MenuLightContainer(QWidget* parent, bool allowInteraction)
         : QWidget(parent),
-          mLightLayout(cor::EListType::linear) {
+          mLightLayout(cor::EListType::linear),
+          mAllowInteraction{allowInteraction} {
         QScroller::grabGesture(this, QScroller::LeftMouseButtonGesture);
     }
 
@@ -54,6 +55,9 @@ private slots:
 private:
     /// stores ListLightWidgets, which show lights
     cor::ListLayout mLightLayout;
+
+    /// true if interactions are allowed, false if they are disabled.
+    bool mAllowInteraction;
 };
 
 #endif // LIGHTMENUCONTAINER_H

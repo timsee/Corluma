@@ -28,12 +28,12 @@ public:
     /*!
      * \brief ListLightWidget Constructo
      *
-     * \param device device for the widget
+     * \param light light for the widget
      * \param setHighlightable if true, the widget highlights itself, if false,
      * it does not highlight.
      * \param parent parent widget
      */
-    explicit ListLightWidget(const cor::Light& device,
+    explicit ListLightWidget(const cor::Light& light,
                              bool setHighlightable,
                              cor::EWidgetType type,
                              QWidget* parent);
@@ -71,6 +71,10 @@ public:
 
     /// getter for current light
     const cor::Light& light() const noexcept { return mLight; }
+
+    /// programmatically determine if the user can interact with the widget by clicking on it. true
+    /// if they can, false if they cannot.
+    void allowInteraction(bool allowInteraction) { mAllowInteraction = allowInteraction; }
 
 signals:
     /*!
@@ -142,6 +146,9 @@ private:
      * \brief mIsChecked true if checked, false otherwise
      */
     bool mIsChecked;
+
+    /// true if interaction is allowed, false if it is disabled.
+    bool mAllowInteraction;
 
     /// forces initial update to render
     bool mHasRendered;

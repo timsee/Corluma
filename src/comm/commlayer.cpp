@@ -180,6 +180,48 @@ std::vector<cor::Light> CommLayer::lightListFromGroup(const cor::Group& group) {
     return lightList;
 }
 
+bool CommLayer::saveNewGroup(const cor::Group& group) {
+    // split hues from non-hues, since hues get stored on a bridge.
+    std::vector<QString> nonHueLightIDs;
+    std::vector<HueMetadata> hueLights;
+    for (const auto& uniqueID : group.lights()) {
+        auto light = lightByID(uniqueID);
+        if (light.isValid()) {
+            if (light.protocol() == EProtocolType::hue) {
+                hueLights.push_back(mHue->hueLightFromLight(light));
+            } else {
+                nonHueLightIDs.push_back(light.uniqueID());
+            }
+        }
+    }
+
+    // save the non-hue groups to local data
+    cor::Group nonHueGroup(group.uniqueID(), group.name(), group.type(), nonHueLightIDs);
+    nonHueGroup.description(group.description());
+    mGroups->saveNewGroup(nonHueGroup);
+
+    // check if any hues are used
+    if (!hueLights.empty()) {
+        for (const auto& bridge : mHue->bridges().items()) {
+            // check if group already exists
+            bool groupExists = false;
+            for (const auto& hueGroup : mHue->groups(bridge)) {
+                if (hueGroup.name() == group.name()) {
+                    groupExists = true;
+                    mHue->updateGroup(bridge, hueGroup, hueLights);
+                }
+            }
+            if (!groupExists) {
+                mHue->createGroup(bridge,
+                                  group.name(),
+                                  hueLights,
+                                  group.type() == cor::EGroupType::room);
+            }
+        }
+    }
+    return true;
+}
+
 
 cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
     cor::Dictionary<cor::Light> moodDict;

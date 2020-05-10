@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QWidget>
 
+#include "comm/commhue.h"
 #include "comm/commlayer.h"
 #include "cor/objects/page.h"
 #include "cor/widgets/topwidget.h"

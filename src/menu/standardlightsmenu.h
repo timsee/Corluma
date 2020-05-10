@@ -22,61 +22,33 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief The LeftHandLightMenu class is the menu that allows the user to select and deslect lights
- * in the LeftHandMenu. It has three states. The highest level state is showing "Parent Groups",
- * which includes all rooms and groups that aren't considered a subgroup of any other group. The
- * second state is accessed by clicking a parent group with subgroups. This state shows the
- * subgroups of a specific parent. The final state is showing single lights. If any groups exist,
- * this state contains the lights of a specific group. If no groups exist, then this just shows all
- * of the lights.
+ * \brief The StandardLightMenu class is the menu that allows the user to select and deslect any
+ * known light. It does so by breaking lights into groups based off of the GroupData, so that the
+ * user has an easier menu to find lights than say, sorting alphabetically or something like that.
+ * It has three states. The highest level state is showing "Parent Groups", which
+ * includes all rooms and groups that aren't considered a subgroup of any other group. The second
+ * state is accessed by clicking a parent group with subgroups. This state shows the subgroups of a
+ * specific parent. The final state is showing single lights. If any groups exist, this state
+ * contains the lights of a specific group. If no groups exist, then this just shows all of the
+ * lights.
  */
-class LeftHandLightMenu : public QWidget {
+class StandardLightsMenu : public QWidget {
     Q_OBJECT
 public:
     /// enum for tracking the state of the scroll area.
     enum class EState { noGroups, parentGroups, subgroups, lights };
 
     /// constructor
-    explicit LeftHandLightMenu(QWidget* parent,
-                               CommLayer* comm,
-                               cor::LightList* data,
-                               GroupData* groups);
+    explicit StandardLightsMenu(QWidget* parent,
+                                CommLayer* comm,
+                                cor::LightList* data,
+                                GroupData* groups);
 
     /// resizes programmatically
-    void resize(int yPos, int buttonHeight);
+    void resize(const QRect& rect, int buttonHeight);
 
     /// updates the lights with their current states
     void updateLights();
-
-    /// setter that changes the menu's state
-    void changeState(EState state);
-
-    /// counts the number of selected lights and the number of reachable lights for a specific group
-    std::pair<std::uint32_t, std::uint32_t> groupSelectedAndReachableCount(
-        const cor::Group& group) {
-        std::uint32_t reachableCount = 0u;
-        std::uint32_t selectedCount = 0u;
-        for (auto light : mComm->lightsByIDs(group.lights())) {
-            if (light.isReachable()) {
-                ++reachableCount;
-                if (mData->doesLightExist(light)) {
-                    ++selectedCount;
-                }
-            }
-        }
-        return std::make_pair(selectedCount, reachableCount);
-    }
-
-    /// counts the number of selected lights and the number of reachable lights for a vector of
-    /// groups
-    std::unordered_map<std::uint64_t, std::pair<std::uint32_t, std::uint32_t>>
-    multiGroupSelectedAndReachableCount(const std::vector<cor::Group>& groups) {
-        std::unordered_map<std::uint64_t, std::pair<std::uint32_t, std::uint32_t>> counts;
-        for (const auto& group : groups) {
-            counts.insert({group.uniqueID(), groupSelectedAndReachableCount(group)});
-        }
-        return counts;
-    }
 
 signals:
 
@@ -116,6 +88,36 @@ private slots:
     }
 
 private:
+    /// counts the number of selected lights and the number of reachable lights for a specific group
+    std::pair<std::uint32_t, std::uint32_t> groupSelectedAndReachableCount(
+        const cor::Group& group) {
+        std::uint32_t reachableCount = 0u;
+        std::uint32_t selectedCount = 0u;
+        for (auto light : mComm->lightsByIDs(group.lights())) {
+            if (light.isReachable()) {
+                ++reachableCount;
+                if (mData->doesLightExist(light)) {
+                    ++selectedCount;
+                }
+            }
+        }
+        return std::make_pair(selectedCount, reachableCount);
+    }
+
+    /// counts the number of selected lights and the number of reachable lights for a vector of
+    /// groups
+    std::unordered_map<std::uint64_t, std::pair<std::uint32_t, std::uint32_t>>
+    multiGroupSelectedAndReachableCount(const std::vector<cor::Group>& groups) {
+        std::unordered_map<std::uint64_t, std::pair<std::uint32_t, std::uint32_t>> counts;
+        for (const auto& group : groups) {
+            counts.insert({group.uniqueID(), groupSelectedAndReachableCount(group)});
+        }
+        return counts;
+    }
+
+    /// setter that changes the menu's state
+    void changeState(EState state);
+
     /// highlights the lights and groups
     void highlightScrollArea();
 

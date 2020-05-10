@@ -28,7 +28,7 @@ public:
                 auto result = std::find(lights.begin(), lights.end(), uniqueID);
                 if (result != lights.end()) {
                     lightFound = true;
-                    continue;
+                    break;
                 }
             }
 

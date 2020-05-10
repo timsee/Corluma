@@ -28,6 +28,7 @@ ListLightWidget::ListLightWidget(const cor::Light& light,
       mIsReachable{light.isReachable()},
       mShouldHighlight{setHighlightable},
       mIsChecked{false},
+      mAllowInteraction{true},
       mHasRendered{false},
       mFontPtSize(16),
       mLight{light},
@@ -171,6 +172,12 @@ void ListLightWidget::mouseReleaseEvent(QMouseEvent* event) {
         event->ignore();
         return;
     }
+
+    if (!mAllowInteraction) {
+        event->ignore();
+        return;
+    }
+
     if (cor::isMouseEventTouchUpInside(event, this, true)) {
         setHighlightChecked(!mIsChecked);
         emit clicked(mKey);
@@ -202,7 +209,10 @@ void ListLightWidget::resize() {
                            stateIconRegion().height());
     } else {
         auto nameX = stateIconRegion().x() + stateIconRegion().width() + spacer();
-        mName->setGeometry(nameX, stateIconRegion().y(), width() - nameX, stateIconRegion().height());
+        mName->setGeometry(nameX,
+                           stateIconRegion().y(),
+                           width() - nameX,
+                           stateIconRegion().height());
     }
 
     // resize icons only if necessary
