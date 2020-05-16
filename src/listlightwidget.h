@@ -76,6 +76,10 @@ public:
     /// if they can, false if they cannot.
     void allowInteraction(bool allowInteraction) { mAllowInteraction = allowInteraction; }
 
+    /// true if the state of the widget should display, false if it should display the metadata
+    /// (name of light, type of light)
+    void displayState(bool shouldDisplayState) { mDisplayState = shouldDisplayState; }
+
 signals:
     /*!
      * \brief clicked emited whenever a mouse press is released anywhere on the widget
@@ -149,6 +153,9 @@ private:
 
     /// true if interaction is allowed, false if it is disabled.
     bool mAllowInteraction;
+
+    /// true if state should be displayed, false if just the metadata should be displayed
+    bool mDisplayState;
 
     /// forces initial update to render
     bool mHasRendered;

@@ -1,12 +1,13 @@
 #ifndef DISPLAYGROUPWIDGET_H
 #define DISPLAYGROUPWIDGET_H
 
-#include <QLabel>
-#include <QScrollArea>
-#include <QScrollBar>
-#include <QScroller>
+#include <QPainter>
+#include <QStyleOption>
+#include <QTextEdit>
 #include <QWidget>
 #include "cor/objects/group.h"
+#include "cor/widgets/expandingtextscrollarea.h"
+#include "menu/displaygroupmetadata.h"
 #include "menu/lightslistmenu.h"
 
 /*!
@@ -21,24 +22,17 @@
 class DisplayGroupWidget : public QWidget {
     Q_OBJECT
 public:
-    explicit DisplayGroupWidget(QWidget* parent, CommLayer* comm)
+    explicit DisplayGroupWidget(QWidget* parent, CommLayer* comm, GroupData* groups)
         : QWidget(parent),
           mName{new QLabel(this)},
-          mDescription{new QLabel(this)},
-          mDescriptionScrollArea{new QScrollArea(this)},
-          mLights{new LightsListMenu(this, comm)} {
-        mDescriptionScrollArea->setWidget(mDescription);
-        mDescriptionScrollArea->horizontalScrollBar()->setVisible(false);
-        QScroller::grabGesture(mDescriptionScrollArea->viewport(),
-                               QScroller::LeftMouseButtonGesture);
-
+          mDescription{new cor::ExpandingTextScrollArea(this)},
+          mMetadata{new DisplayGroupMetadata(this, groups)},
+          mLights{new LightsListMenu(this, comm, false)} {
         auto font = mName->font();
         font.setPointSize(20);
         mName->setFont(font);
 
-        mDescription->setWordWrap(true);
-        mDescription->setAlignment(Qt::AlignTop | Qt::AlignLeft);
-        mDescription->setStyleSheet("background-color:rgb(33,32,32);");
+        this->setStyleSheet("background-color:rgb(33,32,32);");
     }
 
     /// getter for group represented by the widget
@@ -50,14 +44,13 @@ public:
         mName->setText(group.name());
         if (group.description().isEmpty()) {
             mDescription->setVisible(false);
-            mDescriptionScrollArea->setVisible(false);
         } else {
             mDescription->setVisible(true);
-            mDescriptionScrollArea->setVisible(true);
-            mDescription->setText(group.description());
+            mDescription->updateText(group.description());
         }
         mLights->updateLights();
         mLights->showGroup(group.lights());
+        mMetadata->update(group);
         resize();
     }
 
@@ -70,6 +63,15 @@ protected:
      */
     void resizeEvent(QResizeEvent*) { resize(); }
 
+    /// paints the dark grey background
+    void paintEvent(QPaintEvent*) {
+        QStyleOption opt;
+        opt.init(this);
+        QPainter painter(this);
+        painter.fillRect(rect(), QBrush(QColor(32, 31, 31, 255)));
+    }
+
+
 private:
     /// programmatically resize
     void resize() {
@@ -78,26 +80,29 @@ private:
         int buttonHeight = this->height() / 10;
         int xSecondColumnStart = int(this->width() / 2 * 1.05);
         int columnWidth = int((this->width() / 2) * 0.95);
+        int xSpacer = this->width() / 20;
 
         // top of both
-        mName->setGeometry(0, yPosColumn1, this->width(), buttonHeight);
+        mName->setGeometry(xSpacer / 2, yPosColumn1, this->width() - xSpacer / 2, buttonHeight);
         yPosColumn1 += mName->height();
         yPosColumn2 += mName->height();
 
         // column 1
-        QRect selectedLightsRect(0, yPosColumn1, columnWidth, buttonHeight * 7);
+        QRect selectedLightsRect(xSpacer, yPosColumn1, columnWidth - xSpacer, buttonHeight * 7);
         mLights->resize(selectedLightsRect, mRowHeight);
         yPosColumn1 += mLights->height();
 
         // column 2
         if (mDescription->isVisible()) {
-            mDescriptionScrollArea->setGeometry(xSecondColumnStart,
-                                                yPosColumn2,
-                                                columnWidth,
-                                                3 * buttonHeight);
-            yPosColumn2 += mDescription->height();
-            mDescription->setGeometry(0, 0, int(columnWidth * 0.9), 4 * buttonHeight);
+            mDescription->setGeometry(xSecondColumnStart,
+                                      yPosColumn2,
+                                      columnWidth,
+                                      3 * buttonHeight);
+            // add an additional spacer
+            yPosColumn2 += mDescription->height() + buttonHeight;
         }
+
+        mMetadata->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, 6 * buttonHeight);
     }
 
     /// stores the group that is being displayed
@@ -107,10 +112,10 @@ private:
     QLabel* mName;
 
     /// description text box
-    QLabel* mDescription;
+    cor::ExpandingTextScrollArea* mDescription;
 
-    /// scroll area for the description
-    QScrollArea* mDescriptionScrollArea;
+    /// metadata, displays info like the group's parent, subgroups, etc.
+    DisplayGroupMetadata* mMetadata;
 
     /// displays the lights that are part of this group and their current states.
     LightsListMenu* mLights;

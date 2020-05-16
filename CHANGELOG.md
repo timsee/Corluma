@@ -881,3 +881,10 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Added the complete workflow to create a new group with the new edit pages. 
 - Added an optional field for group descriptions in the `GroupData`.
 
+
+### **v0.19.87**
+#### The Group Metadata Update
+- Added `cor::ExpandingTextScrollArea`.
+- Added `DisplayGroupMetadata`, which computes and displays metadata about a group before its created.
+- Fixed miscellaneous bugs.
+

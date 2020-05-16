@@ -159,6 +159,7 @@ SOURCES += main.cpp \
     cor/widgets/groupbutton.cpp \
     edit/editpage.cpp \
     edit/editprogresswidget.cpp \
+    menu/displaygroupmetadata.cpp \
     menu/lightslistmenu.cpp \
     menu/menulightcontainer.cpp \
     menu/menuparentgroupcontainer.cpp \
@@ -261,6 +262,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     colorpicker/multicolorpicker.h \
     colorpicker/schemegenerator.h \
     cor/lightlist.h \
+    cor/widgets/expandingtextscrollarea.h \
     discovery/discoverywidget.h \
     discovery/discoveryhuewidget.h \
     discovery/discoverynanoleafwidget.h \
@@ -284,6 +286,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     globalbrightnesswidget.h \
     data/orphandata.h \
     data/parentdata.h \
+    menu/displaygroupmetadata.h \
     menu/displaygroupwidget.h \
     menu/lefthandmenutoplightwidget.h \
     menu/lightslistmenu.h \

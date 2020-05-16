@@ -2,11 +2,11 @@
 #include <QScrollBar>
 #include <QScroller>
 
-LightsListMenu::LightsListMenu(QWidget* parent, CommLayer* comm)
+LightsListMenu::LightsListMenu(QWidget* parent, CommLayer* comm, bool displayState)
     : QWidget(parent),
       mComm{comm},
       mScrollArea{new QScrollArea(this)},
-      mLightContainer{new MenuLightContainer(mScrollArea, false)} {
+      mLightContainer{new MenuLightContainer(mScrollArea, false, displayState)} {
     mLightContainer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     mScrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);

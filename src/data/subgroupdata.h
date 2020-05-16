@@ -75,8 +75,23 @@ public:
         return {};
     }
 
+    /// tests a theoretical group against all other groups. Returns the potential subgroups for that
+    /// group.
+    std::vector<std::uint64_t> findSubgroupsForNewGroup(
+        const cor::Group& group,
+        const std::vector<cor::Group>& allGroups) const;
+
     /// updates the data for subgroups by parsing all groups and rooms
     void updateGroupAndRoomData(const std::vector<cor::Group>& groups);
+
+    /*!
+     * \brief checkIfAisSubsetOfB compares vector A and sees if all strings within vector A also
+     * exist in vector B.
+     * \param a a vector of strings
+     * \param b a vector of strings
+     * \return true if all strings in A can be found in B, false otherwise.
+     */
+    static bool checkIfAisSubsetOfB(const std::vector<QString>& a, const std::vector<QString>& b);
 
 private:
     /// stores all subgroup data

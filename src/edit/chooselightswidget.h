@@ -26,7 +26,7 @@ public:
           mComm{comm},
           mGroups{groups},
           mLightsMenu{new StandardLightsMenu(this, comm, mLights, groups)},
-          mSelectedLightsMenu{new LightsListMenu(this, comm)} {
+          mSelectedLightsMenu{new LightsListMenu(this, comm, false)} {
         mBottomButtons->enableForward(false);
 
         connect(mLightsMenu, SIGNAL(clickedLight(QString)), this, SLOT(lightClicked(QString)));

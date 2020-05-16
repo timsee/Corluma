@@ -29,6 +29,7 @@ ListLightWidget::ListLightWidget(const cor::Light& light,
       mShouldHighlight{setHighlightable},
       mIsChecked{false},
       mAllowInteraction{true},
+      mDisplayState{true},
       mHasRendered{false},
       mFontPtSize(16),
       mLight{light},
@@ -158,9 +159,10 @@ void ListLightWidget::paintEvent(QPaintEvent*) {
             stateIconRect.setWidth(int(stateIconRect.width() * brightness));
         }
 
-
-        // draw the pixmap stretched to teh width provided
-        paintLightState(painter, stateIconRect, mState, mIconPixmap);
+        if (mDisplayState) {
+            // draw the pixmap stretched to teh width provided
+            paintLightState(painter, stateIconRect, mState, mIconPixmap);
+        }
     } else {
         painter.setOpacity(0.5);
         painter.drawPixmap(stateIconRect, mNoConnectionPixmap);
@@ -208,7 +210,12 @@ void ListLightWidget::resize() {
                            stateIconRegion().width(),
                            stateIconRegion().height());
     } else {
-        auto nameX = stateIconRegion().x() + stateIconRegion().width() + spacer();
+        int nameX = 0;
+        if (mDisplayState) {
+            nameX = stateIconRegion().x() + stateIconRegion().width() + spacer();
+        } else {
+            nameX = stateIconRegion().x() + spacer();
+        }
         mName->setGeometry(nameX,
                            stateIconRegion().y(),
                            width() - nameX,

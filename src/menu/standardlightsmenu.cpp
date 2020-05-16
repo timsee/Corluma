@@ -36,7 +36,7 @@ StandardLightsMenu::StandardLightsMenu(QWidget* parent,
       mSubgroupContainer{
           new MenuSubgroupContainer(mSubgroupScrollArea, mGroups, cor::EWidgetType::condensed)},
       mLightScrollArea{new QScrollArea(this)},
-      mLightContainer{new MenuLightContainer(mLightScrollArea, true)},
+      mLightContainer{new MenuLightContainer(mLightScrollArea, true, true)},
       mButtonHeight{0u},
       mPositionY{0u} {
     mScrollTopWidget = new LeftHandMenuTopLightWidget(this);

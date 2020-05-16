@@ -21,7 +21,7 @@ void MenuLightContainer::showLights(const std::vector<cor::Light>& lights, int h
         }
     }
     updateLightWidgets(lights);
-    moveLightWidgets(QSize(parentWidget()->width(), height), QPoint(0, 0));
+    moveLightWidgets(QSize(parentWidget()->width(), height), QPoint(this->width() / 20, 0));
     setFixedHeight(mLightLayout.overallSize().height());
 }
 
@@ -39,6 +39,9 @@ void MenuLightContainer::updateLightWidgets(const std::vector<cor::Light>& light
             if (!mAllowInteraction) {
                 widget->allowInteraction(false);
             }
+            if (!mDisplayState) {
+                widget->displayState(false);
+            }
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleLightClicked(QString)));
             widget->setVisible(false);
             mLightLayout.insertWidget(widget);
@@ -51,15 +54,16 @@ void MenuLightContainer::updateLightWidgets(const std::vector<cor::Light>& light
 
 
 void MenuLightContainer::moveLightWidgets(QSize size, QPoint offset) {
-    size = mLightLayout.widgetSize(size);
+    auto actualSize = QSize(size.width() - offset.x(), size.height() - offset.y());
+    actualSize = mLightLayout.widgetSize(actualSize);
     for (std::size_t i = 0u; i < mLightLayout.widgets().size(); ++i) {
         if (mLightLayout.widgets()[i]->isVisible()) {
             QPoint position = mLightLayout.widgetPosition(mLightLayout.widgets()[i]);
-            mLightLayout.widgets()[i]->setFixedSize(size);
+            mLightLayout.widgets()[i]->setFixedSize(actualSize);
             mLightLayout.widgets()[i]->setGeometry(offset.x() + position.x() * size.width(),
                                                    offset.y() + position.y() * size.height(),
-                                                   size.width(),
-                                                   size.height());
+                                                   actualSize.width(),
+                                                   actualSize.height());
         }
     }
 }

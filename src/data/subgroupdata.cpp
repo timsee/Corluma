@@ -3,20 +3,6 @@
 
 namespace {
 
-/// verifies that all lights in a are part of b. Returns false if either group is empty, or any
-/// light doesn't exist in b
-bool checkIfAisSubsetOfB(const std::vector<QString>& a, const std::vector<QString>& b) {
-    if (b.empty() || a.empty()) {
-        return false;
-    }
-    for (const auto& av : a) {
-        if (std::find(b.begin(), b.end(), av) == b.end()) {
-            return false;
-        }
-    }
-    return true;
-}
-
 /// inserts a group in the subgroup map, by either creating a new key, or filling the vector of
 /// subgroups with an additional entry.
 void insertIntoSubgroupMaps(SubgroupMap& map,
@@ -64,7 +50,7 @@ void checkAgainstAllGroupsAndRooms(SubgroupMap& map,
                                    const std::vector<cor::Group>& parentGroups) {
     for (const auto& parentGroup : parentGroups) {
         if (parentGroup.uniqueID() != subgroup.uniqueID()) {
-            if (checkIfAisSubsetOfB(subgroup.lights(), parentGroup.lights())) {
+            if (SubgroupData::checkIfAisSubsetOfB(subgroup.lights(), parentGroup.lights())) {
                 auto simplifiedName = makeSimplifiedGroupName(parentGroup.name(), subgroup.name());
                 insertIntoSubgroupMaps(map,
                                        nameMap,
@@ -77,6 +63,34 @@ void checkAgainstAllGroupsAndRooms(SubgroupMap& map,
 }
 
 } // namespace
+
+bool SubgroupData::checkIfAisSubsetOfB(const std::vector<QString>& a,
+                                       const std::vector<QString>& b) {
+    if (b.empty() || a.empty()) {
+        return false;
+    }
+    for (const auto& av : a) {
+        if (std::find(b.begin(), b.end(), av) == b.end()) {
+            return false;
+        }
+    }
+    return true;
+}
+
+std::vector<std::uint64_t> SubgroupData::findSubgroupsForNewGroup(
+    const cor::Group& newGroup,
+    const std::vector<cor::Group>& allGroups) const {
+    std::vector<std::uint64_t> subgroups;
+    for (const auto& group : allGroups) {
+        if (SubgroupData::checkIfAisSubsetOfB(group.lights(), newGroup.lights())) {
+            // if the lights are identically sized, don't count as a subgroup in this case
+            if (group.lights().size() == newGroup.lights().size()) {
+                subgroups.push_back(group.uniqueID());
+            }
+        }
+    }
+    return subgroups;
+}
 
 
 void SubgroupData::updateGroupAndRoomData(const std::vector<cor::Group>& groups) {

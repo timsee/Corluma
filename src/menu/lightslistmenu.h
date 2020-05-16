@@ -19,7 +19,7 @@
 class LightsListMenu : public QWidget {
     Q_OBJECT
 public:
-    explicit LightsListMenu(QWidget* parent, CommLayer* comm);
+    explicit LightsListMenu(QWidget* parent, CommLayer* comm, bool displayState);
 
     /// resizes programmatically
     void resize(const QRect& rect, int buttonHeight);

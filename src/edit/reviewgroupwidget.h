@@ -27,7 +27,7 @@ public:
           mComm{comm},
           mGroups{groups},
           mTopLabel{new QLabel("Review:", this)},
-          mGroupWidget{new DisplayGroupWidget(this, comm)},
+          mGroupWidget{new DisplayGroupWidget(this, comm, groups)},
           mCreateButton{new QPushButton("Create", this)} {
         mBottomButtons->hideForward(true);
         mCreateButton->setStyleSheet("background-color:rgb(69,67,67);");
