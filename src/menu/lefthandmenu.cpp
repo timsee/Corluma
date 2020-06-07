@@ -41,7 +41,7 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     mSpacer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mSpacer->setStyleSheet("border: none; background-color:rgb(33,32,32);");
 
-    mLightMenu = new StandardLightsMenu(this, mComm, mData, mGroups);
+    mLightMenu = new StandardLightsMenu(this, mComm, mGroups);
     connect(mLightMenu, SIGNAL(clickedLight(QString)), this, SLOT(lightClicked(QString)));
     connect(mLightMenu,
             SIGNAL(clickedGroupSelectAll(std::uint64_t, bool)),
@@ -186,7 +186,7 @@ void LeftHandMenu::lightCountChanged() {
 
 void LeftHandMenu::updateLights() {
     mLastRenderTime = QTime::currentTime();
-    mLightMenu->updateLights();
+    mLightMenu->updateLights(cor::lightVectorToIDs(mData->lights()));
 
     auto filledDataLights = mComm->commLightsFromVector(mData->lights());
     if (filledDataLights != mLastDataLights) {
@@ -274,6 +274,7 @@ void LeftHandMenu::lightClicked(const QString& lightKey) {
         // update UI
         emit changedLightCount();
         lightCountChanged();
+        updateLights();
     }
 }
 
@@ -316,7 +317,7 @@ void LeftHandMenu::newGroupButtonPressed() {
 
 
 void LeftHandMenu::clearWidgets() {
-    //    mScrollArea->parentGroupContainer()->clearParentWidgets();
+    mLightMenu->reset();
     resize();
 }
 

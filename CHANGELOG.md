@@ -888,3 +888,16 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Added `DisplayGroupMetadata`, which computes and displays metadata about a group before its created.
 - Fixed miscellaneous bugs.
 
+
+### **v0.19.9**
+#### The New Edit Group Update
+- Added a `MenuGroupContainer` for displaying a series of groups in a scroll area.
+- Added the `ChooseGroupWidget` to choose a specific group for editing or deleting.
+- Added the `ChooseEditWidget` to choose whether you are adding a new group, editing an existing group, or deleting an existing group.
+- Removed `cor::LightList` dependency from `StandardLightsMenu`.
+- Added the ability to edit groups instead of just create them from the new editing interface.
+- Fixed a bug in updating group info from a Hue Bridge. 
+- Added the ability to clear and reset the edit widgets. 
+- Fixed miscellaneous bugs.
+
+

@@ -19,6 +19,10 @@ public:
     /// constructor
     explicit EditProgressWidget(QWidget* parent, std::uint32_t numberOfPages);
 
+    /// resets the progress widget to its default state. This means all pages except the first are
+    /// locked, and the user is booted back to the first page.
+    void reset();
+
     /// programmatically change to a specific page
     void changeToPage(std::uint32_t pageNumber);
 

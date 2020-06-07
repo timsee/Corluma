@@ -46,6 +46,9 @@ public:
      */
     void removeWidget(cor::ListItemWidget* widget);
 
+    /// clear all widgets from the layout, leaving it empty.
+    void clear();
+
     /*!
      * \brief widget get a ListCollectionWidget by its index.
      * \param index index of widget to return

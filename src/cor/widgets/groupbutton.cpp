@@ -22,6 +22,9 @@ GroupButton::GroupButton(QWidget* parent, const QString& text)
     : QWidget(parent),
       mButtonState{EGroupButtonState::selectAll},
       mIsSelected{false},
+      mShowButton{true},
+      mHighlightByCountOfLights{true},
+      mShouldHighlight{true},
       mReachableCount{0},
       mCheckedCount{0},
       mTitle{new QLabel(text, this)},
@@ -31,9 +34,11 @@ GroupButton::GroupButton(QWidget* parent, const QString& text)
     mTitle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mTitle->setStyleSheet(transparentStyleSheet);
     mTitle->setAlignment(Qt::AlignVCenter);
+    mTitle->setAttribute(Qt::WA_TransparentForMouseEvents);
 
     mButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mButton->setStyleSheet(transparentStyleSheet);
+    mButton->setAttribute(Qt::WA_TransparentForMouseEvents);
 
     handleSelectAllButton(0u, 0u);
 }
@@ -63,8 +68,10 @@ void GroupButton::resize() {
                                              Qt::SmoothTransformation);
 
     mTitle->setGeometry(spaceWidth, 0, titleWidth, height());
-    mButton->setGeometry(titleWidth + spaceWidth, 0, width() - titleWidth, height());
-    mButton->setPixmap(currentPixmap());
+    if (mShowButton) {
+        mButton->setGeometry(titleWidth + spaceWidth, 0, width() - titleWidth, height());
+        mButton->setPixmap(currentPixmap());
+    }
 
     if (handleSelectAllButton(mCheckedCount, mReachableCount)) {
         update();
@@ -83,10 +90,15 @@ bool GroupButton::handleSelectAllButton(std::uint32_t checkedDevicesCount,
         state = EGroupButtonState::selectAll;
     }
 
-    if (mButtonState != state) {
-        mButtonState = state;
-        mButton->setPixmap(currentPixmap());
-        renderFlag = true;
+    if (mShowButton) {
+        mButton->setVisible(true);
+        if (mButtonState != state) {
+            mButtonState = state;
+            mButton->setPixmap(currentPixmap());
+            renderFlag = true;
+        }
+    } else {
+        mButton->setVisible(false);
     }
 
     if (mCheckedCount != checkedDevicesCount || mReachableCount != reachableDevicesCount) {
@@ -109,9 +121,11 @@ void GroupButton::buttonPressed(bool) {
         if (mCheckedCount > 0) {
             mButtonState = EGroupButtonState::selectAll;
             mCheckedCount = 0;
+            mShouldHighlight = false;
         } else {
             mCheckedCount = mReachableCount;
             mButtonState = EGroupButtonState::clearAll;
+            mShouldHighlight = true;
         }
 
         mButton->setPixmap(currentPixmap());
@@ -153,8 +167,12 @@ void GroupButton::paintEvent(QPaintEvent*) {
     QPainterPath path;
     path.addRect(rect());
 
-    if (mButtonState == EGroupButtonState::clearAll) {
-        painter.fillPath(path, QBrush(computeHighlightColor(mCheckedCount, mReachableCount)));
+    if (mShouldHighlight) {
+        if (mHighlightByCountOfLights) {
+            painter.fillPath(path, QBrush(computeHighlightColor(mCheckedCount, mReachableCount)));
+        } else {
+            painter.fillPath(path, QBrush(QColor(61, 142, 201)));
+        }
     } else {
         painter.fillPath(path, QBrush(QColor(32, 31, 31, 255)));
     }
@@ -163,7 +181,7 @@ void GroupButton::paintEvent(QPaintEvent*) {
 
 void GroupButton::mouseReleaseEvent(QMouseEvent* event) {
     if (cor::isMouseEventTouchUpInside(event, this, true)) {
-        if (cor::isMouseEventTouchUpInside(event, mButton, false)) {
+        if (mShowButton && cor::isMouseEventTouchUpInside(event, mButton, false)) {
             auto groupButtonsWidget = qobject_cast<MenuSubgroupContainer*>(parentWidget());
             if (groupButtonsWidget != nullptr) {
                 if (groupButtonsWidget->type() == cor::EWidgetType::condensed) {

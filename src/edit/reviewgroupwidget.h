@@ -34,6 +34,17 @@ public:
         connect(mCreateButton, SIGNAL(clicked(bool)), this, SLOT(createGroup(bool)));
     }
 
+    /// set to true if editing an existing group, set to false if its a new group
+    void editMode(bool isEditMode, std::uint64_t uniqueID) {
+        mEditMode = isEditMode;
+        if (mEditMode) {
+            mCreateButton->setText("Edit");
+        } else {
+            mCreateButton->setText("Create");
+        }
+        mUniqueID = uniqueID;
+    }
+
     /// change the height of rows in scroll widgets
     void changeRowHeight(int height) { mGroupWidget->changeRowHeight(height); }
 
@@ -41,9 +52,15 @@ public:
     void displayGroup(const QString& name,
                       const QString& description,
                       const std::vector<QString>& lights) {
-        cor::Group group(mGroups->generateNewUniqueKey(), name, cor::EGroupType::group, lights);
+        // generate a unique ID if and only if its a new group, otherwise, use the unique ID
+        // provided when edit mode was turned on.
+        std::uint64_t key = mUniqueID;
+        if (!mEditMode) {
+            key = mGroups->generateNewUniqueKey();
+        }
+        cor::Group group(key, name, cor::EGroupType::group, lights);
         group.description(description);
-        mGroupWidget->updateGroup(group);
+        mGroupWidget->updateGroup(group, mEditMode);
     }
 
     /// getter for the bottom buttons. Only the forward button is used in this widget.
@@ -77,16 +94,30 @@ private slots:
     void createGroup(bool) {
         const auto& group = mGroupWidget->group();
         // ask if the user is sure before creating
-        QString text = "Are you sure you want to save the group named " + group.name() + " with "
-                       + QString::number(group.lights().size()) + " lights?";
+        QString text;
+        QString title;
+        if (mEditMode) {
+            text = "Are you sure you want to edit the group named " + group.name() + " with "
+                                   + QString::number(group.lights().size()) + " lights?";
+            title = "Edit Group?";
+        } else {
+            text = "Are you sure you want to save the group named " + group.name() + " with "
+                                   + QString::number(group.lights().size()) + " lights?";
+            title = "Save Group?";
+        }
         auto reply =
-            QMessageBox::question(this, "Save Group?", text, QMessageBox::Yes | QMessageBox::No);
+            QMessageBox::question(this, title, text, QMessageBox::Yes | QMessageBox::No);
         if (reply == QMessageBox::Yes) {
-            qDebug() << "make this group" << group.toJson();
-
+            if (mEditMode) {
+                // remove the existing group
+                mGroups->removeGroup(mGroupWidget->group().uniqueID());
+                qDebug() << "INFO: editing group" << group.toJson();
+            } else {
+                qDebug() << "INFO: adding new group" << group.toJson();
+            }
             // save the group
-            // mComm->saveNewGroup(group);
-
+            mComm->saveNewGroup(group);
+            emit updateGroups();
             // close the page.
             emit closePage();
         }
@@ -108,6 +139,12 @@ private:
 
     /// button that creates the group
     QPushButton* mCreateButton;
+
+    /// true if reviewing an existing group and thus editing, false if its a new group entirely
+    bool mEditMode;
+
+    /// the unique ID of the group being either edited or created.
+    std::uint64_t mUniqueID;
 };
 
 #endif // EDITREVIEWGROUPWIDGET_H

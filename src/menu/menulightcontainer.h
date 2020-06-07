@@ -29,20 +29,25 @@ public:
         QScroller::grabGesture(this, QScroller::LeftMouseButtonGesture);
     }
 
+    /// if set to true, unreachable lights can be selected.
+    void allowUnreachableLights(bool allowUnreachable) {
+        mAllowUnreachableLights = allowUnreachable;
+    }
+
     /// updates the state of the light widgets
     void updateLightWidgets(const std::vector<cor::Light>& lights);
 
     /// shows the lights provided, with the height of one light widget provided
     void showLights(const std::vector<cor::Light>& lights, int height);
 
-    /// hides all of the lights
-    void hideLights();
-
     /// highlights the lights based off of the currently selected lights
     void highlightLights(const std::vector<QString>& selectedLights);
 
     /// moves the light widgets into place
     void moveLightWidgets(QSize size, QPoint offset);
+
+    /// remove all widgets from the container, reseting it to an empty state
+    void clear();
 
 signals:
 
@@ -56,6 +61,9 @@ private slots:
 private:
     /// stores ListLightWidgets, which show lights
     cor::ListLayout mLightLayout;
+
+    /// true if you can select unreachable lights, false otherwise
+    bool mAllowUnreachableLights;
 
     /// true if interactions are allowed, false if they are disabled.
     bool mAllowInteraction;

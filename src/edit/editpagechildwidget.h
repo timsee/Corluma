@@ -31,6 +31,10 @@ signals:
     /// signals that the state of one of its widgets has changed.
     void stateChanged(std::uint32_t index, EEditProgressState state);
 
+    /// signals that the UI elements on other pages should update to new group information. Use this
+    /// when a new group is made, or a group is deleted, or an existing group is altered.
+    void updateGroups();
+
     /// signals that it wants to close its parent's page. This reverts the app back to whatever it
     /// was doing before it opened the edit page.
     void closePage();

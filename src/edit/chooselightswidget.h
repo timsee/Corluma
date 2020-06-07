@@ -1,6 +1,7 @@
 #ifndef EDITCHOOSELIGHTSWIDGET_H
 #define EDITCHOOSELIGHTSWIDGET_H
 
+#include <QLabel>
 #include <QWidget>
 #include "edit/editpagechildwidget.h"
 #include "menu/lightslistmenu.h"
@@ -22,10 +23,9 @@ public:
         : EditPageChildWidget(parent),
           mChooseLabel{new QLabel("Choose Lights:", this)},
           mSelectedLabel{new QLabel("Selected Lights:", this)},
-          mLights{new cor::LightList(this)},
           mComm{comm},
           mGroups{groups},
-          mLightsMenu{new StandardLightsMenu(this, comm, mLights, groups)},
+          mLightsMenu{new StandardLightsMenu(this, comm, groups)},
           mSelectedLightsMenu{new LightsListMenu(this, comm, false)} {
         mBottomButtons->enableForward(false);
 
@@ -39,11 +39,28 @@ public:
     /// programmatically changes the height of rows in scrolling menus
     void changeRowHeight(int height) { mRowHeight = height; }
 
+    /// prefill the lights widget with lights already selected, so that the user can edit that
+    /// preexisting selection
+    void prefill(const std::vector<QString>& keys) {
+        clear();
+        for (const auto& key : keys) {
+            auto light = mComm->lightByID(key);
+            mSelectedLightsMenu->addLight(key);
+        }
+        conditionsMet();
+    }
+
     /// clears all data currently on the page.
-    void clear() { mBottomButtons->enableForward(false); }
+    void clear() {
+        auto lights = mSelectedLightsMenu->lights();
+        for (const auto& light : lights) {
+            mSelectedLightsMenu->removeLight(light);
+        }
+        mBottomButtons->enableForward(false);
+    }
 
     /// updates the lights based off of app data.
-    void updateLights() { mLightsMenu->updateLights(); }
+    void updateLights() { mLightsMenu->updateLights(mSelectedLightsMenu->lights()); }
 
     /// getter for all selected lights.
     const std::vector<QString>& lights() { return mSelectedLightsMenu->lights(); }
@@ -52,7 +69,68 @@ protected:
     /*!
      * \brief resizeEvent called whenever the widget resizes so that assets can be updated.
      */
-    void resizeEvent(QResizeEvent*) {
+    void resizeEvent(QResizeEvent*) { resize(); }
+
+private slots:
+
+    /// handles when a light is clicked. it will either add or remove lights from the selected list.
+    void lightClicked(QString key) {
+        auto light = mComm->lightByID(key);
+        auto lights = mSelectedLightsMenu->lights();
+        auto result = std::find(lights.begin(), lights.end(), key);
+        if (result != lights.end()) {
+            mSelectedLightsMenu->removeLight(key);
+        } else {
+            mSelectedLightsMenu->addLight(key);
+        }
+        conditionsMet();
+    }
+
+
+    /// handles when select all is toggled for a group. it will either add or remove all lights from
+    /// teh selected list.
+    void selectAllToggled(std::uint64_t ID, bool shouldSelect) {
+        // convert the group ID to a group
+        auto groupResult = mGroups->groupDict().item(QString::number(ID).toStdString());
+        bool groupFound = groupResult.second;
+        cor::Group group = groupResult.first;
+        if (groupFound) {
+            auto lightIDs = group.lights();
+            auto lights = mComm->lightsByIDs(group.lights());
+            // if the group selected is found, either select or deselect it
+            if (shouldSelect) {
+                for (auto light : lights) {
+                    mSelectedLightsMenu->addLight(light.uniqueID());
+                }
+            } else {
+                for (auto light : lights) {
+                    mSelectedLightsMenu->removeLight(light.uniqueID());
+                }
+            }
+            updateLights();
+            conditionsMet();
+        } else {
+            qDebug() << " group not found " << ID;
+        }
+    }
+
+private:
+    /// true if all fields have met the conditions needed to proceed, false if any widget has an
+    /// invalid input.
+    bool conditionsMet() {
+        if (mSelectedLightsMenu->lights().size() > 1) {
+            mBottomButtons->enableForward(true);
+            emit stateChanged(mIndex, EEditProgressState::completed);
+            return true;
+        } else {
+            mBottomButtons->enableForward(false);
+            emit stateChanged(mIndex, EEditProgressState::incomplete);
+            return false;
+        }
+    }
+
+    /// resize programmatically
+    void resize() {
         int yPos = 0;
         int buttonHeight = this->height() / 10;
 
@@ -76,79 +154,11 @@ protected:
         mBottomButtons->setGeometry(0, this->height() - buttonHeight, this->width(), buttonHeight);
     }
 
-private slots:
-
-    /// handles when a light is clicked. it will either add or remove lights from the selected list.
-    void lightClicked(QString key) {
-        auto light = mComm->lightByID(key);
-        auto state = light.state();
-        if (light.isReachable()) {
-            if (mLights->doesLightExist(light)) {
-                mLights->removeLight(light);
-                mSelectedLightsMenu->removeLight(key);
-            } else {
-                mLights->addLight(light);
-                mSelectedLightsMenu->addLight(key);
-            }
-            conditionsMet();
-        }
-    }
-
-
-    /// handles when select all is toggled for a group. it will either add or remove all lights from
-    /// teh selected list.
-    void selectAllToggled(std::uint64_t ID, bool shouldSelect) {
-        // convert the group ID to a group
-        auto groupResult = mGroups->groupDict().item(QString::number(ID).toStdString());
-        bool groupFound = groupResult.second;
-        cor::Group group = groupResult.first;
-        if (groupFound) {
-            auto lightIDs = group.lights();
-            auto lights = mComm->lightsByIDs(group.lights());
-            // if the group selected is found, either select or deselect it
-            if (shouldSelect) {
-                for (auto light : lights) {
-                    if (light.isReachable()) {
-                        mSelectedLightsMenu->addLight(light.uniqueID());
-                    }
-                }
-                mLights->addLights(lights);
-            } else {
-                for (auto light : lights) {
-                    mSelectedLightsMenu->removeLight(light.uniqueID());
-                }
-                mLights->removeLights(lights);
-            }
-            updateLights();
-            conditionsMet();
-        } else {
-            qDebug() << " group not found " << ID;
-        }
-    }
-
-private:
-    /// true if all fields have met the conditions needed to proceed, false if any widget has an
-    /// invalid input.
-    bool conditionsMet() {
-        if (mLights->lights().size() > 1) {
-            mBottomButtons->enableForward(true);
-            emit stateChanged(mIndex, EEditProgressState::completed);
-            return true;
-        } else {
-            mBottomButtons->enableForward(false);
-            emit stateChanged(mIndex, EEditProgressState::incomplete);
-            return false;
-        }
-    }
-
     /// label for left hand column
     QLabel* mChooseLabel;
 
     /// label for right hand column
     QLabel* mSelectedLabel;
-
-    /// list of currently selected lights
-    cor::LightList* mLights;
 
     /// pointer to comm data
     CommLayer* mComm;

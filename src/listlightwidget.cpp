@@ -163,7 +163,7 @@ void ListLightWidget::paintEvent(QPaintEvent*) {
             // draw the pixmap stretched to teh width provided
             paintLightState(painter, stateIconRect, mState, mIconPixmap);
         }
-    } else {
+    } else if (mDisplayState) {
         painter.setOpacity(0.5);
         painter.drawPixmap(stateIconRect, mNoConnectionPixmap);
     }

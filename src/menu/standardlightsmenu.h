@@ -4,7 +4,6 @@
 #include <QScrollArea>
 #include <QWidget>
 #include "comm/commlayer.h"
-#include "cor/lightlist.h"
 #include "cor/listlayout.h"
 #include "cor/objects/group.h"
 #include "data/groupdata.h"
@@ -39,16 +38,18 @@ public:
     enum class EState { noGroups, parentGroups, subgroups, lights };
 
     /// constructor
-    explicit StandardLightsMenu(QWidget* parent,
-                                CommLayer* comm,
-                                cor::LightList* data,
-                                GroupData* groups);
+    explicit StandardLightsMenu(QWidget* parent, CommLayer* comm, GroupData* groups);
 
     /// resizes programmatically
     void resize(const QRect& rect, int buttonHeight);
 
     /// updates the lights with their current states
-    void updateLights();
+    void updateLights(const std::vector<QString>& lightIDs);
+
+    /// clears all the info in the widget, and reset the widget to an empty state. Then it calls
+    /// updateLights() and refills with new data. used to remove data or recover from a broken
+    /// state.
+    void reset();
 
 signals:
 
@@ -96,7 +97,9 @@ private:
         for (auto light : mComm->lightsByIDs(group.lights())) {
             if (light.isReachable()) {
                 ++reachableCount;
-                if (mData->doesLightExist(light)) {
+                auto result =
+                    std::find(mSelectedLights.begin(), mSelectedLights.end(), light.uniqueID());
+                if (result != mSelectedLights.end()) {
                     ++selectedCount;
                 }
             }
@@ -130,9 +133,6 @@ private:
     /// pointer to comm layer
     CommLayer* mComm;
 
-    /// pointer to currently selected lights
-    cor::LightList* mData;
-
     /// pointer to group data
     GroupData* mGroups;
 
@@ -165,6 +165,9 @@ private:
 
     /// stores the offset of the widget
     int mPositionY;
+
+    /// stores the selected lights for displaying highlights properly
+    std::vector<QString> mSelectedLights;
 };
 
 #endif // LEFTHANDLIGHTMENU_H

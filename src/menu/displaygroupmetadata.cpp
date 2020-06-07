@@ -74,24 +74,26 @@ DisplayGroupMetadata::DisplayGroupMetadata(QWidget* parent, GroupData* groups)
       mGroups{groups} {}
 
 
-void DisplayGroupMetadata::update(const cor::Group& group) {
+void DisplayGroupMetadata::update(const cor::Group& group, bool groupExistsAlready) {
     GroupMetadataFlags groupMetadata(group, mGroups);
     std::stringstream returnString;
     returnString << "<style>";
     returnString << "</style>";
-    // check for errors first
-    if (groupMetadata.hasIdenticalName || !groupMetadata.identicalGroups.empty()) {
-        mErrorsExist = true;
-        returnString << "<b><ul>ERROR:</ul></b>";
-        if (groupMetadata.hasIdenticalName) {
-            returnString << "  - Another group already has the same name\r\n";
+    if (!groupExistsAlready) {
+        // check for errors first
+        if (groupMetadata.hasIdenticalName || !groupMetadata.identicalGroups.empty()) {
+            mErrorsExist = true;
+            returnString << "<b><ul>ERROR:</ul></b>";
+            if (groupMetadata.hasIdenticalName) {
+                returnString << "  - Another group already has the same name\r\n";
+            }
+            if (!groupMetadata.identicalGroups.empty()) {
+                returnString << "  - Another group already has the same exact set of lights\r\n";
+            }
+            returnString << "<hr>";
+        } else {
+            mErrorsExist = false;
         }
-        if (!groupMetadata.identicalGroups.empty()) {
-            returnString << "  - Another group already has the same exact set of lights\r\n";
-        }
-        returnString << "<hr>";
-    } else {
-        mErrorsExist = false;
     }
 
     // now fill in non errors
@@ -127,4 +129,8 @@ void DisplayGroupMetadata::update(const cor::Group& group) {
     }
     std::string result = returnString.str();
     updateText(QString(result.c_str()));
+}
+
+void DisplayGroupMetadata::reset() {
+    updateText("");
 }

@@ -27,7 +27,10 @@ public:
     bool errorsExist() const noexcept { return mErrorsExist; }
 
     /// update the widget to display metadata about a new group.
-    void update(const cor::Group& group);
+    void update(const cor::Group& group, bool groupExistsAlready);
+
+    /// reset to showing no value
+    void reset();
 
 private:
     /// true if errors that would prevent the group from being valid exist, false if the group can

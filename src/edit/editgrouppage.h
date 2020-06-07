@@ -33,6 +33,21 @@ public:
         setupWidgets({mMetadataWidget, mLightsWidget, mReviewPage});
     }
 
+    /// fill the page with preexisting data to edit
+    void prefillGroup(const cor::Group& group) {
+        mMetadataWidget->prefill(group.name(), group.description());
+        mLightsWidget->prefill(group.lights());
+        mReviewPage->editMode(true, group.uniqueID());
+    }
+
+    /// clear all data from the page, and reset it to its default state.
+    void clearGroup() {
+        mMetadataWidget->clear();
+        mLightsWidget->clear();
+        mReviewPage->editMode(false, 0u);
+        reset();
+    }
+
     /// @copydoc EditPage::pageChanged(std::uint32_t)
     void pageChanged(std::uint32_t i) override {
         switch (i) {

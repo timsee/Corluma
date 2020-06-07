@@ -28,6 +28,11 @@ void LightsListMenu::resize(const QRect& inputRect, int buttonHeight) {
     int scrollAreaWidth = int(rect.width() * 1.2);
     mScrollArea->setGeometry(rect.x(), rect.y(), scrollAreaWidth, rect.height());
     mLightContainer->setFixedWidth(rect.width());
+    auto heightCount = mLights.size();
+    if (heightCount == 0) {
+        heightCount = 1;
+    }
+    mLightContainer->setFixedHeight(heightCount * buttonHeight);
     mLightContainer->moveLightWidgets(QSize(this->width(), buttonHeight), QPoint(0, 0));
 }
 
@@ -56,11 +61,10 @@ void LightsListMenu::removeLight(const QString& ID) {
 
 void LightsListMenu::showGroup(const std::vector<QString>& IDs) {
     mLights = IDs;
-    mLightContainer->hideLights();
     mLightContainer->updateLightWidgets(mComm->lightsByIDs(IDs));
     mLightContainer->showLights(mComm->lightsByIDs(IDs), mRowHeight);
 }
 
 void LightsListMenu::clear() {
-    mLightContainer->hideLights();
+    mLightContainer->showLights({}, mRowHeight);
 }

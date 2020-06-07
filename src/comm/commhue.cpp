@@ -304,11 +304,12 @@ void CommHue::parseJSONObject(const hue::Bridge& bridge, const QJsonObject& obje
             } else if (updateType == EHueUpdates::scheduleUpdate) {
                 scheduleList.push_back(hue::Schedule(innerObject, int(key.toDouble())));
             } else if (updateType == EHueUpdates::groupUpdate) {
-                auto object = innerObject.value(key).toObject();
-                const auto& jsonResult = jsonToGroup(object, groupList);
+                const auto& jsonResult = jsonToGroup(innerObject, groupList);
                 if (jsonResult.second) {
                     groupVector.emplace_back(jsonResult.first, key.toDouble());
                     groupList.emplace_back(jsonResult.first);
+                } else {
+                    qDebug() << " not a valid group";
                 }
             } else if (updateType == EHueUpdates::newLightNameUpdate) {
                 updateNewHueLight(bridge, innerObject, int(key.toDouble()));
@@ -321,6 +322,8 @@ void CommHue::parseJSONObject(const hue::Bridge& bridge, const QJsonObject& obje
             if (updateType == EHueUpdates::scanStateUpdate) {
                 // should udpate state instead, while the keys are decoupled
                 updateScanState(object);
+            } else {
+                qDebug() << "json not recognized....";
             }
         }
     }
@@ -343,8 +346,10 @@ void CommHue::parseJSONArray(const hue::Bridge& bridge, const QJsonArray& array)
             } else if (object["success"].isObject()) {
                 QJsonObject successObject = object["success"].toObject();
                 if (successObject["id"].isString()) {
-                    qDebug() << "success is just an id, so its a schedule!"
+                    qDebug() << "success is just an id, so its a schedule or a group!"
                              << successObject["id"].toString();
+                    getGroups();
+                    getSchedules();
                 } else {
                     QStringList keys = successObject.keys();
                     for (auto& key : keys) {

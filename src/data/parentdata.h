@@ -33,7 +33,7 @@ public:
         const std::unordered_map<std::uint64_t, std::vector<std::uint64_t>>& subgroups) {
         std::vector<std::uint64_t> parentGroups;
 
-        // now loop through groups, and check every subgroup map entry. if any entry marks this
+        // loop through groups, and check every subgroup map entry. if any entry marks this
         // group as a subgroup, then it has a parent and is not parentless.
         for (const auto& groupID : groups) {
             bool found = false;

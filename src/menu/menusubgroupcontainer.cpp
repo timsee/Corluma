@@ -22,19 +22,22 @@ MenuSubgroupContainer::MenuSubgroupContainer(QWidget* parent,
 }
 
 void MenuSubgroupContainer::showGroups(std::vector<QString> groups, std::uint64_t parentID) {
+    clear();
     mParentID = parentID;
-    // remove any existing groups
-    for (auto widget : mButtons) {
-        delete widget;
-    }
-    mButtons.clear();
-
     addGroup("All");
     for (const auto& group : groups) {
         addGroup(group);
     }
 }
 
+
+void MenuSubgroupContainer::clear() {
+    // remove any existing groups
+    for (auto widget : mButtons) {
+        delete widget;
+    }
+    mButtons.clear();
+}
 
 void MenuSubgroupContainer::addGroup(const QString& group) {
     auto groupButton = new cor::GroupButton(this, group);

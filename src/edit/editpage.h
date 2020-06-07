@@ -35,6 +35,9 @@ public:
     /// shows a specific page by index
     void showPage(std::uint32_t pageIndex);
 
+    /// reset the page to its default state, removing all edits that have happened.
+    void reset();
+
     /*!
      * \brief widgets All edit pages have a group of widgets that the user must go through to
      * complete an edit. This is a vector of all widgets contained by the EditPage
@@ -59,6 +62,10 @@ signals:
      * \brief pressedClose emited when the close button is pressed.
      */
     void pressedClose();
+
+    /// signals when a group has been edited in any capacity. This signal is listened to by widgets
+    /// that require to update to edited data.
+    void updateGroups();
 
 protected:
     /*!
@@ -96,6 +103,10 @@ private slots:
 
     /// handles when close is pressed from a child widget
     void closeFromPagePressed();
+
+    /// a child page has sent an updateGroups signal, which is intercepted here and turned into an
+    /// EditPage signal.
+    void updateGroupsFromPagePressed();
 
     /// handles when a widget's state is changed.
     void widgetChangedState(std::uint32_t, EEditProgressState);

@@ -6,6 +6,7 @@
 #include <QWidget>
 
 #include "comm/commlayer.h"
+#include "cor/lightlist.h"
 #include "cor/widgets/lightvectorwidget.h"
 #include "data/groupdata.h"
 #include "lefthandbutton.h"

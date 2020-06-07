@@ -45,7 +45,7 @@ public:
     void hideParentGroups();
 
     /// removes all parent group widgets from memory
-    void clearParentWidgets();
+    void clear();
 
     /// highlights the parent groups based on checked and reachable lights
     void highlightParentGroups(const MenuParentGroupCounts& parentCounts);

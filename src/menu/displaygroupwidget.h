@@ -39,7 +39,7 @@ public:
     const cor::Group& group() const noexcept { return mGroup; }
 
     /// updates the group's UI elements.
-    void updateGroup(const cor::Group& group) {
+    void updateGroup(const cor::Group& group, bool groupExistsAlready) {
         mGroup = group;
         mName->setText(group.name());
         if (group.description().isEmpty()) {
@@ -50,12 +50,23 @@ public:
         }
         mLights->updateLights();
         mLights->showGroup(group.lights());
-        mMetadata->update(group);
+        mMetadata->update(group, groupExistsAlready);
         resize();
     }
 
     /// changes the row height of rows in scroll areas.
     void changeRowHeight(int height) { mRowHeight = height; }
+
+    /// reset the widget to showing no group
+    void reset() {
+        cor::Group group{};
+        mGroup = {};
+        mName->setText("");
+        mDescription->setVisible(false);
+        mLights->showGroup({});
+        mMetadata->reset();
+        resize();
+    }
 
 protected:
     /*!

@@ -38,6 +38,28 @@ public:
     /// key for group
     QString key() const { return mTitle->text(); }
 
+    /// if true, the highlight takes into account how many lights are selected from within the
+    /// group. if all lights are selected, the highlight is fully highlighted, otherwise, the
+    /// intensity of the highlight is based off of the ratio of selected lights vs unselected
+    /// lights. If false, the highlight is either fully highlighted, or not higlighted at all.
+    void highlightByCountOfLights(bool shouldHighlight) {
+        mHighlightByCountOfLights = shouldHighlight;
+    }
+
+    /// true to programmatically highlight, false otherwise
+    void highlight(bool shouldHighlight) {
+        if (shouldHighlight != mShouldHighlight) {
+            mShouldHighlight = shouldHighlight;
+            update();
+        }
+    }
+
+    /// getter for if the widget is highlighted or not.
+    bool isHighlighted() const noexcept { return mShouldHighlight; }
+
+    /// true to show the button, false to not.
+    void showButton(bool shouldShowButton) { mShowButton = shouldShowButton; }
+
     /// set whether the button should show select all or deselect all
     void setSelectAll(bool shoudlSelect);
 
@@ -100,6 +122,16 @@ private:
 
     /// true if widget is selected, false otherwise
     bool mIsSelected;
+
+    /// true if showing button, false otherwise
+    bool mShowButton;
+
+    /// if true, the highlight reflects the number of selected lights. if false, the highlight is
+    /// binary, its either highlighted, or not.
+    bool mHighlightByCountOfLights;
+
+    /// true if the widget should be able to be highlighted, false otherwise.
+    bool mShouldHighlight;
 
     /// count of reachable devices
     std::uint32_t mReachableCount;

@@ -84,7 +84,7 @@ std::vector<std::uint64_t> SubgroupData::findSubgroupsForNewGroup(
     for (const auto& group : allGroups) {
         if (SubgroupData::checkIfAisSubsetOfB(group.lights(), newGroup.lights())) {
             // if the lights are identically sized, don't count as a subgroup in this case
-            if (group.lights().size() == newGroup.lights().size()) {
+            if (group.lights().size() != newGroup.lights().size()) {
                 subgroups.push_back(group.uniqueID());
             }
         }

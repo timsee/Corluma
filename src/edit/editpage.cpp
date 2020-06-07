@@ -43,6 +43,7 @@ void EditPage::setupWidgets(std::vector<EditPageChildWidget*> widgets) {
                 this,
                 SLOT(widgetChangedState(std::uint32_t, EEditProgressState)));
         connect(widget, SIGNAL(closePage()), this, SLOT(closeFromPagePressed()));
+        connect(widget, SIGNAL(updateGroups()), this, SLOT(updateGroupsFromPagePressed()));
     }
 
     connect(mProgressWidget,
@@ -61,6 +62,11 @@ void EditPage::pushIn(const QPoint& startPoint, const QPoint& endPoint) {
 void EditPage::pushOut(const QPoint& endPoint) {
     moveWidget(this, pos(), endPoint);
     isOpen(false);
+}
+
+void EditPage::reset() {
+    mProgressWidget->reset();
+    showPage(0);
 }
 
 void EditPage::changePageFromProgressWidget(std::uint32_t index) {
@@ -186,5 +192,8 @@ void EditPage::closePressed(bool) {
     emit pressedClose();
 }
 
+void EditPage::updateGroupsFromPagePressed() {
+    emit updateGroups();
+}
 
 } // namespace cor

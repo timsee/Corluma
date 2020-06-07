@@ -15,6 +15,8 @@
 #include "cor/objects/page.h"
 #include "cor/widgets/button.h"
 #include "discoverypage.h"
+#include "edit/chooseeditpage.h"
+#include "edit/choosegroupwidget.h"
 #include "edit/editgrouppage.h"
 #include "editmoodpage.h"
 #include "floatinglayout.h"
@@ -23,7 +25,6 @@
 #include "mainviewport.h"
 #include "menu/lefthandmenu.h"
 #include "nowifiwidget.h"
-#include "oldeditgrouppage.h"
 #include "routinebuttonswidget.h"
 #include "settingspage.h"
 #include "shareutils/shareutils.hpp"
@@ -102,10 +103,32 @@ public slots:
     void pushOutSettingsPage();
 
     /// displays the edit page
-    void pushInEditPage();
+    void pushInEditPage(std::uint64_t key);
 
     /// hides the edit page
     void pushOutEditPage();
+
+    /// edit the group with the given key. if a 0u is provided as a key, a new group is created
+    /// instead.
+    void editGroupSelected(std::uint64_t);
+
+    /// displays the edit page
+    void pushInChooseEditPage();
+
+    /// hides the edit page
+    void pushOutChooseEditPage();
+
+    /// displays the choose page
+    void pushInChooseGroupPage(EGroupAction action);
+
+    /// hides the choose group page
+    void pushOutChooseGroupPage();
+
+    /// handled when an edit mode is selected
+    void selectedEditMode(EChosenEditMode);
+
+    /// updates the UI of other pages when the group info is changed from an edit page.
+    void editPageUpdateGroups();
 
     /*!
      * \brief editButtonClicked an edit button has been clicked for either a collection or mood.
@@ -241,9 +264,6 @@ private:
     // Pages
     //------------------
 
-    /// page for editing or making a new group
-    OldEditGroupPage* mEditGroupPage;
-
     /// page for editing or making a new mood
     EditMoodPage* mEditMoodPage;
 
@@ -332,6 +352,12 @@ private:
      * loading from JSON or reseting things to defaults.
      */
     SettingsPage* mSettingsPage;
+
+    /// chooses how to edit data (either add new data, remove existing data, or edit existing data)
+    ChooseEditPage* mChooseEditPage;
+
+    /// widget for choosing a group to either delete or edit
+    ChooseGroupWidget* mChooseGroupWidget;
 
     /// edit page for editing gorups and moods
     cor::EditGroupPage* mEditPage;

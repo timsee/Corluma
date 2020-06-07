@@ -10,7 +10,7 @@
 
 namespace {
 
-constexpr int kNameMaxSize = 20;
+constexpr int kNameMaxSize = 25;
 
 constexpr int kDescriptionMaxSize = 200;
 
@@ -52,6 +52,13 @@ public:
 
     /// getter for the description set by the page.
     QString description() { return mDescriptionInput->toPlainText(); }
+
+    /// prefill the metadata with existing data to edit
+    void prefill(const QString& name, const QString& description) {
+        mNameInput->setText(name);
+        mDescriptionInput->setText(description);
+        conditionsMet();
+    }
 
     /// clears all data currently on the page.
     void clear() {

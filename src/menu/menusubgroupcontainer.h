@@ -61,6 +61,9 @@ public:
     /// true if empty, false if theres at least one button
     bool empty() { return mButtons.empty(); }
 
+    /// clear all data from the container, setting it back to an empty state.
+    void clear();
+
     /// key of the currently selected group
     const QString& currentKey() const { return mCurrentKey; }
 
@@ -78,8 +81,7 @@ public:
 
 signals:
 
-    /// emitted when a group button is pressed. This emits its actual group name, instead of its
-    /// displayed group name.
+    /// emitted when a group button is pressed. This emits its unique ID
     void subgroupClicked(std::uint64_t key);
 
     /// emitted when a group's toggle button is pressed. This emits its actual group name, instead

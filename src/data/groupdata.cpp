@@ -46,7 +46,7 @@ std::vector<QString> GroupData::groupNames() {
     return retVector;
 }
 
-void GroupData::updateSubgroups() {
+void GroupData::updateGroupMetadata() {
     auto groups = mGroupDict.items();
     mSubgroups.updateGroupAndRoomData(mGroupDict.items());
     mOrphans.generateOrphans(mGroupDict.items());
@@ -112,9 +112,7 @@ void GroupData::saveNewGroup(const cor::Group& group) {
 
             // save file
             saveJSON();
-            updateSubgroups();
-            // hues use their bridge to store their data for collections instead of the JSON
-            emit newCollectionAdded(group.name());
+            updateGroupMetadata();
         }
     }
 }
@@ -167,7 +165,7 @@ void GroupData::updateExternallyStoredGroups(const std::vector<cor::Group>& exte
             }
         }
     }
-    updateSubgroups();
+    updateGroupMetadata();
 }
 
 void GroupData::lightDeleted(const QString& uniqueID) {
@@ -203,7 +201,7 @@ void GroupData::lightDeleted(const QString& uniqueID) {
             groupIndex++;
             mJsonData.setArray(array);
             saveJSON();
-            updateSubgroups();
+            updateGroupMetadata();
         }
     }
     // parse the moods, remove from list if needed
@@ -237,7 +235,7 @@ bool GroupData::removeGroup(std::uint64_t groupID) {
                             if (mood.uniqueID() == groupID) {
                                 mMoodDict.remove(mood);
                                 emit groupDeleted(mood.name());
-                                updateSubgroups();
+                                updateGroupMetadata();
                                 return true;
                             }
                         }
@@ -247,7 +245,7 @@ bool GroupData::removeGroup(std::uint64_t groupID) {
                             if (group.uniqueID() == groupID) {
                                 mGroupDict.remove(group);
                                 emit groupDeleted(group.name());
-                                updateSubgroups();
+                                updateGroupMetadata();
                                 return true;
                             }
                         }
@@ -302,7 +300,7 @@ bool GroupData::loadExternalData(const QString& file) {
             mJsonData = document;
             if (saveJSON()) {
                 if (loadJSON()) {
-                    updateSubgroups();
+                    updateGroupMetadata();
                     return true;
                 } else {
                     qDebug() << " could not load JSON";
@@ -348,7 +346,7 @@ bool GroupData::loadJSON() {
                     }
                 }
             }
-            updateSubgroups();
+            updateGroupMetadata();
             return true;
         }
     } else {
@@ -377,7 +375,7 @@ bool GroupData::save(const QString& filePath) {
 void GroupData::addLightToGroups(ECommType, const QString& uniqueID) {
     // qDebug() << " add light to groups " << uniqueID;
     mOrphans.addNewLight(uniqueID, mGroupDict.items());
-    updateSubgroups();
+    updateGroupMetadata();
 }
 
 void GroupData::removeLightFromGroups(ECommType, const QString& uniqueID) {

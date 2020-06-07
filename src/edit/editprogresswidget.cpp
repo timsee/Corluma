@@ -28,6 +28,17 @@ void EditProgressWidget::changeToPage(std::uint32_t pageNumber) {
     }
 }
 
+
+void EditProgressWidget::reset() {
+    for (auto&& state : mPageState) {
+        state = EEditProgressState::locked;
+    }
+    mPageState[0] = EEditProgressState::incomplete;
+    mCurrentPage = 0u;
+    update();
+}
+
+
 EEditProgressState EditProgressWidget::state(std::uint32_t index) {
     if (index < mPageState.size()) {
         return mPageState[index];

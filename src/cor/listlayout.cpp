@@ -21,6 +21,13 @@ void ListLayout::insertWidget(cor::ListItemWidget* widget) {
     mWidgets.push_back(widget);
 }
 
+void ListLayout::clear() {
+    auto widgetKeys = mWidgetDictionary.keys();
+    for (const auto& key : widgetKeys) {
+        removeWidget(QString(key.c_str()));
+    }
+}
+
 void ListLayout::removeWidget(cor::ListItemWidget* widget) {
     mWidgetDictionary.remove(widget);
     auto iterator = std::find(mWidgets.begin(), mWidgets.end(), widget);

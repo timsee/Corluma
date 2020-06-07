@@ -43,7 +43,7 @@ int MenuParentGroupContainer::resizeParentGroupWidgets(int buttonHeight) {
 }
 
 
-void MenuParentGroupContainer::clearParentWidgets() {
+void MenuParentGroupContainer::clear() {
     for (auto widget : mParentGroupWidgets) {
         delete widget;
     }

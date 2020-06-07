@@ -198,6 +198,15 @@ private:
     std::vector<QString> mLights;
 };
 
+/// converts a vector of groups to a vector of IDs that represent the lights
+inline std::vector<std::uint64_t> groupVectorToIDs(const std::vector<cor::Group>& groupVector) {
+    std::vector<std::uint64_t> retVector;
+    retVector.reserve(groupVector.size());
+    for (const auto& group : groupVector) {
+        retVector.emplace_back(group.uniqueID());
+    }
+    return retVector;
+}
 
 } // namespace cor
 

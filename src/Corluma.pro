@@ -157,15 +157,17 @@ SOURCES += main.cpp \
     cor/widgets/lightvectorwidget.cpp \
     cor/listlayout.cpp \
     cor/widgets/groupbutton.cpp \
+    edit/chooseeditpage.cpp \
+    edit/choosegroupwidget.cpp \
     edit/editpage.cpp \
     edit/editprogresswidget.cpp \
     menu/displaygroupmetadata.cpp \
     menu/lightslistmenu.cpp \
+    menu/menugroupcontainer.cpp \
     menu/menulightcontainer.cpp \
     menu/menuparentgroupcontainer.cpp \
     menu/menusubgroupcontainer.cpp \
     menu/standardlightsmenu.cpp \
-    oldeditgrouppage.cpp \
     oldeditpage.cpp \
     parentgroupwidget.cpp \
     stateobserver.cpp \
@@ -274,6 +276,8 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     cor/jsonsavedata.h \
     cor/listlayout.h \
     cor/dictionary.h \
+    edit/chooseeditpage.h \
+    edit/choosegroupwidget.h \
     edit/chooselightswidget.h \
     edit/choosemetadatawidget.h \
     edit/editbottombuttons.h \
@@ -290,11 +294,11 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     menu/displaygroupwidget.h \
     menu/lefthandmenutoplightwidget.h \
     menu/lightslistmenu.h \
+    menu/menugroupcontainer.h \
     menu/menulightcontainer.h \
     menu/menuparentgroupcontainer.h \
     menu/menusubgroupcontainer.h \
     menu/standardlightsmenu.h \
-    oldeditgrouppage.h \
     oldeditpage.h \
     parentgroupwidget.h \
     singlelightbrightnesswidget.h \

@@ -21,13 +21,9 @@ void initScrollArea(QWidget* widget, QScrollArea* scrollArea) {
 
 } // namespace
 
-StandardLightsMenu::StandardLightsMenu(QWidget* parent,
-                                       CommLayer* comm,
-                                       cor::LightList* data,
-                                       GroupData* groups)
+StandardLightsMenu::StandardLightsMenu(QWidget* parent, CommLayer* comm, GroupData* groups)
     : QWidget(parent),
       mComm{comm},
-      mData{data},
       mGroups{groups},
       mState{EState::noGroups},
       mParentScrollArea{new QScrollArea(this)},
@@ -75,7 +71,8 @@ StandardLightsMenu::StandardLightsMenu(QWidget* parent,
     setStyleSheet("background-color:rgb(33,32,32);");
 }
 
-void StandardLightsMenu::updateLights() {
+void StandardLightsMenu::updateLights(const std::vector<QString>& lightIDs) {
+    mSelectedLights = lightIDs;
     mLightContainer->updateLightWidgets(mComm->allLights());
     // get all rooms
     auto parentGroups = mGroups->parents();
@@ -92,11 +89,17 @@ void StandardLightsMenu::updateLights() {
         mParentGroupContainer->updateDataGroupInUI(group, uiGroups);
     }
 
-    // TODO: remove any groups that should no longer be shown
-
     // update highlighted lights
     highlightScrollArea();
     highlightTopWidget();
+}
+
+void StandardLightsMenu::reset() {
+    mParentGroupContainer->clear();
+    mSubgroupContainer->clear();
+    mLightContainer->clear();
+    changeStateToParentGroups();
+    updateLights(mSelectedLights);
 }
 
 void StandardLightsMenu::overrideState(const std::vector<cor::Group>& groupData) {
@@ -204,7 +207,7 @@ void StandardLightsMenu::highlightScrollArea() {
         auto groupCheckedAndSelectedCounts = multiGroupSelectedAndReachableCount(groups);
         mParentGroupContainer->highlightParentGroups(groupCheckedAndSelectedCounts);
     } else if (mState == EState::lights || mState == EState::noGroups) {
-        mLightContainer->highlightLights(cor::lightVectorToIDs(mData->lights()));
+        mLightContainer->highlightLights(mSelectedLights);
     }
 }
 

@@ -184,8 +184,8 @@ public:
     /// saves JSON data to the given filepath
     bool save(const QString& filePath);
 
-    /// adds subgroups to rooms
-    void updateSubgroups();
+    /// computes the parent groups, subgroups, and orphan data
+    void updateGroupMetadata();
 
 public slots:
 
@@ -202,12 +202,6 @@ signals:
      * listening in the dark.
      */
     void groupDeleted(QString);
-
-    /*!
-     * \brief newCollectionAdded signaled whenever a collection is added, sending out its name to
-     * all listeners.
-     */
-    void newCollectionAdded(QString);
 
     /*!
      * \brief newMoodAdded signaled whenever a mood is added, sending out its name to all listeners.
