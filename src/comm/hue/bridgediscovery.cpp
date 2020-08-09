@@ -243,6 +243,10 @@ void BridgeDiscovery::handleNUPnPReply(const QJsonDocument& jsonResponse) {
             qDebug() << __func__ << "NUPnP packet is empty";
 #endif
         }
+    } else {
+#ifdef DEBUG_BRIDGE_DISCOVERY
+        qDebug() << __func__ << "NUPnP packet is not an array";
+#endif
     }
 }
 
@@ -900,6 +904,6 @@ QString BridgeDiscovery::generateUniqueName() {
 // ----------------------------
 
 const QString BridgeDiscovery::kAppName = QString("Corluma");
-const QString BridgeDiscovery::kNUPnPAddress = QString("https://www.meethue.com/api/nupnp");
+const QString BridgeDiscovery::kNUPnPAddress = QString("https://discovery.meethue.com/");
 
 } // namespace hue

@@ -93,8 +93,11 @@ signals:
      */
     void clickedDiscovery();
 
-    /// emits when the add new group button is pressed
-    void addNewGroupButtonPressed();
+    /// emits that debug mode should be used from settings page
+    void enableDebugMode();
+
+    /// emits when the add or edit group button is pressed
+    void addOrEditGroupPressed();
 
     /*!
      * \brief clickedLoadJSON emits when the load button is clicked

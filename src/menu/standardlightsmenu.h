@@ -84,8 +84,14 @@ private slots:
 
     /// handles when a light is clicked
     void lightClicked(QString key) {
-        emit clickedLight(key);
+        auto result = std::find(mSelectedLights.begin(), mSelectedLights.end(), key);
+        if (result != mSelectedLights.end()) {
+            mSelectedLights.erase(result);
+        } else {
+            mSelectedLights.push_back(key);
+        }
         highlightTopWidget();
+        emit clickedLight(key);
     }
 
 private:

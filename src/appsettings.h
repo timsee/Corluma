@@ -91,6 +91,9 @@ public:
     /// getter for count of ProtocolSettings enabled
     uint32_t numberEnabled();
 
+    /// sets the app to default settings
+    static void setToDefaults();
+
 signals:
 
     /*!

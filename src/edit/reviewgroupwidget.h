@@ -50,6 +50,7 @@ public:
 
     /// displays a group in the group widget
     void displayGroup(const QString& name,
+                      const cor::EGroupType& type,
                       const QString& description,
                       const std::vector<QString>& lights) {
         // generate a unique ID if and only if its a new group, otherwise, use the unique ID
@@ -58,7 +59,7 @@ public:
         if (!mEditMode) {
             key = mGroups->generateNewUniqueKey();
         }
-        cor::Group group(key, name, cor::EGroupType::group, lights);
+        cor::Group group(key, name, type, lights);
         group.description(description);
         mGroupWidget->updateGroup(group, mEditMode);
     }

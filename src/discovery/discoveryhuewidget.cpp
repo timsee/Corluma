@@ -87,7 +87,7 @@ void DiscoveryHueWidget::hueDiscoveryUpdate(EHueDiscoveryState newState) {
                 emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
                 break;
             case EHueDiscoveryState::testingFullConnection:
-                mLabel->setText(QString("Bridge button pressed! Testing connection..."));
+                mLabel->setText(QString("Testing full connection..."));
                 // qDebug() << "Hue Update: IP and Username received, testing combination. ";
                 emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
                 break;

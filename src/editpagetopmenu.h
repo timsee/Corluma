@@ -7,7 +7,6 @@
 #include <QPushButton>
 #include <QWidget>
 
-#include "cor/widgets/checkbox.h"
 /*!
  * \copyright
  * Copyright (C) 2015 - 2020.
@@ -38,9 +37,6 @@ public:
     /// getter for name edit.
     QLineEdit* nameEdit() { return mNameEdit; }
 
-    /// getter for checkbox
-    cor::CheckBox* roomCheckBox() { return mRoomCheckBox; }
-
     /// getter for help label
     QLabel* helpLabel() { return mHelpLabel; }
 
@@ -65,9 +61,6 @@ private:
 
     /// line edit for changing the name of a group
     QLineEdit* mNameEdit;
-
-    /// checkbox denoting whether its a room or a group
-    cor::CheckBox* mRoomCheckBox;
 };
 
 #endif // EDITPAGETOPMENU_H

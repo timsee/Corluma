@@ -270,8 +270,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                 return;
             }
         }
-        // qDebug() << "the sender: " << sender << "packet:" << packet << "type:" <<
-        // commTypeToString(type);
+        //qDebug() << "the sender: " << sender << "packet:" << packet << "type:" << commTypeToString(type);
         for (const auto& intVector : intVectors) {
             if (intVector.size() > 2) {
                 if (intVector[0] < int(EPacketHeader::MAX)) {
@@ -305,7 +304,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                         // check if its a valid size with the proper header for a state update
                         // packet
                         if (packetHeader == EPacketHeader::stateUpdateRequest) {
-                            uint32_t x = 1;
+                            std::uint32_t x = 1;
                             // check all values fall in their proper ranges
                             if (verifyStateUpdatePacketValidity(intVector, x)) {
                                 for (auto i = 0u; i < lightVector.size(); ++i) {
@@ -350,8 +349,8 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                     }
                                 }
                             } else {
-                                // qDebug() << "WARNING: Invalid packet for light index" <<
-                                // intVector[x];
+                                 qDebug() << "WARNING: Invalid packet for light index" <<
+                                 intVector[x];
                             }
                         } else if (packetHeader == EPacketHeader::customArrayUpdateRequest) {
                             if (verifyCustomColorUpdatePacket(intVector)) {

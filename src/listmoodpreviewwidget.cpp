@@ -7,6 +7,7 @@
 #include "listmoodpreviewwidget.h"
 
 #include <QPainter>
+#include <QPainterPath>
 #include <QStyleOption>
 
 #include "utils/qt.h"

@@ -145,6 +145,7 @@ SOURCES += main.cpp \
     colorpicker/multicolorpicker.cpp \
     colorpicker/schemegenerator.cpp \
     cor/lightlist.cpp \
+    debugconnectionspoofer.cpp \
     discovery/discoverywidget.cpp \
     discovery/discoveryhuewidget.cpp \
     discovery/discoverynanoleafwidget.cpp \
@@ -265,6 +266,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     colorpicker/schemegenerator.h \
     cor/lightlist.h \
     cor/widgets/expandingtextscrollarea.h \
+    debugconnectionspoofer.h \
     discovery/discoverywidget.h \
     discovery/discoveryhuewidget.h \
     discovery/discoverynanoleafwidget.h \
@@ -286,6 +288,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     edit/editpagechildwidget.h \
     edit/editprogressstate.h \
     edit/editprogresswidget.h \
+    edit/grouproomcheckboxwidget.h \
     edit/reviewgroupwidget.h \
     globalbrightnesswidget.h \
     data/orphandata.h \

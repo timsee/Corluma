@@ -52,6 +52,9 @@ public:
 
     /// clears all data currently on the page.
     void clear() {
+        // TODO: why does this need to be called for mLightContainer to show lights?
+        mLightsMenu->reset();
+
         auto lights = mSelectedLightsMenu->lights();
         for (const auto& light : lights) {
             mSelectedLightsMenu->removeLight(light);

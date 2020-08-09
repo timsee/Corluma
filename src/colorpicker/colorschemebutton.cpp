@@ -10,10 +10,11 @@
 #include <QGraphicsScene>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QPainterPath>
 #include <QStyleOption>
 
-#include "utils/qt.h"
 #include "utils/exception.h"
+#include "utils/qt.h"
 
 
 QString colorSchemeTypeToString(EColorSchemeType type) {

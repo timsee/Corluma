@@ -6,7 +6,9 @@
 #include <QLineEdit>
 #include <QTextEdit>
 #include <QWidget>
+#include "cor/objects/group.h"
 #include "edit/editpagechildwidget.h"
+#include "edit/grouproomcheckboxwidget.h"
 
 namespace {
 
@@ -37,12 +39,15 @@ public:
           mNameLabel{new QLabel("Name:", this)},
           mNameInput{new QLineEdit(this)},
           mDescriptionLabel{new QLabel("Description (Optional):", this)},
-          mDescriptionInput{new QTextEdit(this)} {
+          mDescriptionInput{new QTextEdit(this)},
+          mGroupRoomWidget{new GroupRoomCheckboxWidget(this)} {
         mBottomButtons->hideBack(true);
         mBottomButtons->enableForward(false);
 
         mNameInput->setMaxLength(kNameMaxSize);
         connect(mNameInput, SIGNAL(textEdited(QString)), this, SLOT(lineEditChanged(QString)));
+
+        connect(mGroupRoomWidget, SIGNAL(boxChecked()), this, SLOT(groupRoomBoxChecked()));
 
         connect(mDescriptionInput, SIGNAL(textChanged()), this, SLOT(descriptionChanged()));
     }
@@ -53,10 +58,21 @@ public:
     /// getter for the description set by the page.
     QString description() { return mDescriptionInput->toPlainText(); }
 
+    /// getter for the group type
+    cor::EGroupType groupType() {
+        if (mGroupRoomWidget->groupChecked()) {
+            return cor::EGroupType::group;
+        } else {
+            return cor::EGroupType::room;
+        }
+    }
+
     /// prefill the metadata with existing data to edit
-    void prefill(const QString& name, const QString& description) {
+    void prefill(const QString& name, const QString& description, const cor::EGroupType& type) {
         mNameInput->setText(name);
         mDescriptionInput->setText(description);
+        bool lockAsGroup = (type == cor::EGroupType::group);
+        mGroupRoomWidget->lockSelection(lockAsGroup);
         conditionsMet();
     }
 
@@ -64,6 +80,7 @@ public:
     void clear() {
         mNameInput->setText("");
         mDescriptionInput->setText("");
+        mGroupRoomWidget->unlockSelection();
         mBottomButtons->enableForward(false);
     }
 
@@ -81,14 +98,17 @@ protected:
         mNameInput->setGeometry(0, yPos, this->width(), heightSpacer);
         yPos += mNameInput->height();
 
+        mGroupRoomWidget->setGeometry(0, yPos, this->width(), heightSpacer * 1.5);
+        yPos += mGroupRoomWidget->height();
+
         mDescriptionLabel->setGeometry(0, yPos, this->width(), heightSpacer);
         yPos += mDescriptionLabel->height();
 
-        mDescriptionInput->setGeometry(0, yPos, this->width(), heightSpacer * 4);
+        mDescriptionInput->setGeometry(0, yPos, this->width(), heightSpacer * 3.5);
         yPos += mDescriptionInput->height();
 
         // add a spacer
-        yPos += heightSpacer * 2;
+        yPos += heightSpacer;
 
         mBottomButtons->setGeometry(0, yPos, this->width(), heightSpacer);
     }
@@ -104,6 +124,14 @@ private slots:
         }
     }
 
+    /// called when the groupRoom widget has a box that is checked.
+    void groupRoomBoxChecked() {
+        if (conditionsMet()) {
+            mBottomButtons->enableForward(true);
+        } else {
+            mBottomButtons->enableForward(false);
+        }
+    }
 
     /// the description text changed, verify that its less than the maximum length
     void descriptionChanged() {
@@ -123,6 +151,13 @@ private:
     /// true if all fields have met the conditions needed to proceed, false if any widget has an
     /// invalid input.
     bool conditionsMet() {
+        // check if the a room or group is checked
+        if (!(mGroupRoomWidget->roomChecked() || mGroupRoomWidget->groupChecked())) {
+            emit stateChanged(mIndex, EEditProgressState::incomplete);
+            return false;
+        }
+
+        // check if name is correct
         if (mNameInput->text().size() > 2) {
             auto name = mNameInput->text();
             if ((name != "zzzzMiscellaneous") && (name != "Miscellaneous")) {
@@ -145,6 +180,9 @@ private:
 
     /// text field for the description
     QTextEdit* mDescriptionInput;
+
+    /// widget for choosing whether it is a group or a room.
+    GroupRoomCheckboxWidget* mGroupRoomWidget;
 };
 
 #endif // EDITNAMEANDDESCRIPTIONWIDGET_H

@@ -14,6 +14,7 @@
 #include "comm/syncstatus.h"
 #include "cor/objects/page.h"
 #include "cor/widgets/button.h"
+#include "debugconnectionspoofer.h"
 #include "discoverypage.h"
 #include "edit/chooseeditpage.h"
 #include "edit/choosegroupwidget.h"
@@ -183,11 +184,14 @@ private slots:
     /// called when the greyout is clicked
     void greyoutClicked();
 
+    /// called when debug mode is initiated
+    void debugModeClicked();
+
     /// caleld when the left hand drawer is clicked
     void leftHandMenuButtonPressed(EPage);
 
     /// opens the new group menu
-    void openNewGroupMenu();
+    void openEditGroupMenu();
 
     /// Used by shareUtils, called when a URL to a file is receieved
     void receivedURL(QString url);
@@ -401,6 +405,10 @@ private:
      * it can look at the two widgets and adjust accordingly.
      */
     cor::StateObserver* mStateObserver;
+
+    /// class that spoofs connections for working on the application in situations where lights
+    /// can't be reached.
+    DebugConnectionSpoofer* mDebugConnections;
 
     /// sets up the object that listens to the states of various apps
     void setupStateObserver();

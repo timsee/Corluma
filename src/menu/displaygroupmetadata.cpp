@@ -46,6 +46,11 @@ struct GroupMetadataFlags {
 
         auto subgroupIDs =
             groups->subgroups().findSubgroupsForNewGroup(group, groups->groupDict().items());
+        // catch if its an edit and its listing itself as a subgroup
+        auto result = std::find(subgroupIDs.begin(), subgroupIDs.end(), group.uniqueID());
+        if (result != subgroupIDs.end()) {
+            subgroupIDs.erase(result);
+        }
         // convert IDs to names
         subgroups = groups->groupNamesFromIDs(subgroupIDs);
     }
@@ -112,7 +117,9 @@ void DisplayGroupMetadata::update(const cor::Group& group, bool groupExistsAlrea
         }
         returnString << "\r\n";
     }
-    if (groupMetadata.roomParent.isEmpty() && groupMetadata.groupParents.empty()) {
+    if (group.type() == cor::EGroupType::room) {
+        returnString << "Room\r\n";
+    } else if (groupMetadata.roomParent.isEmpty() && groupMetadata.groupParents.empty()) {
         returnString << "Parent Group\r\n";
     }
     if (!groupMetadata.subgroups.empty()) {

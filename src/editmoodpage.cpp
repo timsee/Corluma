@@ -15,7 +15,6 @@ void EditMoodPage::showMood(const cor::Mood& mood, const std::vector<cor::Light>
     mTopMenu->nameEdit()->setText(mOriginalMood.name());
     mTopMenu->saveButton()->setEnabled(false);
     mTopMenu->helpLabel()->setText("Edit the Mood...");
-    mTopMenu->roomCheckBox()->setVisible(false);
 
     updateDevices(mood.lights(), lights);
     update();

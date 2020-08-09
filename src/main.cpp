@@ -126,8 +126,7 @@ int main(int argc, char* argv[]) {
      */
     if (settings.value(kFirstTimeOpenKey, QVariant(127)) == QVariant(127)) {
         // add default settings
-        settings.setValue(cor::kUseTimeoutKey, QString::number(int(true)));
-        settings.setValue(cor::kTimeoutValue, QString::number(120));
+        AppSettings::setToDefaults();
 
         // set the value so it no longer gives a default back.
         settings.setValue(kFirstTimeOpenKey, QString::number(10));

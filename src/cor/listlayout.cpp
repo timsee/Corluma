@@ -49,14 +49,6 @@ QPoint ListLayout::widgetPosition(QWidget* widget) {
 
     // store index of inserted element
     int index = int(std::distance(mWidgets.begin(), findResult));
-
-    // count number of hidden widgets before this one
-    int tempIndex = index;
-    for (int i = 0; i < tempIndex; ++i) {
-        if (!mWidgets[i]->isVisible()) {
-            index--;
-        }
-    }
     if (index < 0) {
         return {-1, -1};
     }

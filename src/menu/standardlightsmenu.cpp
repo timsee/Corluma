@@ -74,6 +74,7 @@ StandardLightsMenu::StandardLightsMenu(QWidget* parent, CommLayer* comm, GroupDa
 void StandardLightsMenu::updateLights(const std::vector<QString>& lightIDs) {
     mSelectedLights = lightIDs;
     mLightContainer->updateLightWidgets(mComm->allLights());
+
     // get all rooms
     auto parentGroups = mGroups->parents();
     std::vector<cor::Group> groupData = mGroups->groupsFromIDs(parentGroups);
@@ -117,10 +118,9 @@ void StandardLightsMenu::overrideState(const std::vector<cor::Group>& groupData)
             // a bit strange of a case, but the user has exactly one group, and it encompasses all
             // lights, but its not miscellaneous
             changeStateToParentGroups();
-        } else if (singleGroupIsMisc && mState == EState::noGroups) {
-            changeStateToNoGroups();
         }
-    } else if (groupData.size() > 1 && (mState != EState::noGroups)) {
+    } else if ((groupData.size() > 1 && (mState != EState::noGroups))
+               || groupData.empty()) {
         // nothing needs to be done
     } else {
         qDebug() << " encountered unrecognized state";
@@ -173,12 +173,19 @@ void StandardLightsMenu::resize(const QRect& inputRect, int buttonHeight) {
 void StandardLightsMenu::highlightTopWidget() {
     // update the top parent widget
     if (mScrollTopWidget->parentWidget()->isVisible()) {
-        auto parentGroup = mGroups->groupFromID(mScrollTopWidget->parentID());
-        if (parentGroup.isValid()) {
+        if (mScrollTopWidget->parentID() == 0u) {
+            // miscellaneous group
+            auto parentGroup = mGroups->orphanGroup();
             auto counts = groupSelectedAndReachableCount(parentGroup);
             mScrollTopWidget->parentWidget()->updateCheckedLights(counts.first, counts.second);
         } else {
-            qDebug() << " invalid parent group for top light widget";
+            auto parentGroup = mGroups->groupFromID(mScrollTopWidget->parentID());
+            if (parentGroup.isValid()) {
+                auto counts = groupSelectedAndReachableCount(parentGroup);
+                mScrollTopWidget->parentWidget()->updateCheckedLights(counts.first, counts.second);
+            } else {
+                qDebug() << " invalid parent group for top light widget";
+            }
         }
     }
 

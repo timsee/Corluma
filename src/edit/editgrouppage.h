@@ -35,7 +35,7 @@ public:
 
     /// fill the page with preexisting data to edit
     void prefillGroup(const cor::Group& group) {
-        mMetadataWidget->prefill(group.name(), group.description());
+        mMetadataWidget->prefill(group.name(), group.description(), group.type());
         mLightsWidget->prefill(group.lights());
         mReviewPage->editMode(true, group.uniqueID());
     }
@@ -60,6 +60,7 @@ public:
             }
             case 2: {
                 mReviewPage->displayGroup(mMetadataWidget->name(),
+                                          mMetadataWidget->groupType(),
                                           mMetadataWidget->description(),
                                           mLightsWidget->lights());
                 break;
@@ -76,6 +77,9 @@ public:
     }
 
 private:
+    /// true if room, false otherwise
+    bool mIsRoom;
+
     /// widget for choosing the metadata for a group, such as its name and description.
     ChooseMetadataWidget* mMetadataWidget;
 

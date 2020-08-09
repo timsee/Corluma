@@ -16,6 +16,9 @@
 #include "cor/presetpalettes.h"
 #include "utils/qt.h"
 
+/// disables the light menu for debugging light menus in other places.
+//#define DISABLE_LIGHTS_MENU
+
 LeftHandMenu::LeftHandMenu(bool alwaysOpen,
                            cor::LightList* devices,
                            CommLayer* comm,
@@ -41,12 +44,14 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     mSpacer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mSpacer->setStyleSheet("border: none; background-color:rgb(33,32,32);");
 
+#ifndef DISABLE_LIGHTS_MENU
     mLightMenu = new StandardLightsMenu(this, mComm, mGroups);
     connect(mLightMenu, SIGNAL(clickedLight(QString)), this, SLOT(lightClicked(QString)));
     connect(mLightMenu,
             SIGNAL(clickedGroupSelectAll(std::uint64_t, bool)),
             this,
             SLOT(selectAllToggled(std::uint64_t, bool)));
+#endif
 
     // --------------
     // Setup Main Palette
@@ -142,8 +147,10 @@ void LeftHandMenu::resize() {
 
     yPos += int(mMainPalette->height() + height() * 0.02);
 
+#ifndef DISABLE_LIGHTS_MENU
     QRect lightMenuRect(0, yPos, this->width(), this->height() - yPos);
     mLightMenu->resize(lightMenuRect, buttonHeight);
+#endif
 }
 
 void LeftHandMenu::pushIn() {
@@ -186,8 +193,9 @@ void LeftHandMenu::lightCountChanged() {
 
 void LeftHandMenu::updateLights() {
     mLastRenderTime = QTime::currentTime();
+#ifndef DISABLE_LIGHTS_MENU
     mLightMenu->updateLights(cor::lightVectorToIDs(mData->lights()));
-
+#endif
     auto filledDataLights = mComm->commLightsFromVector(mData->lights());
     if (filledDataLights != mLastDataLights) {
         // take the lights being used as the app's expectation, and get their current state by
@@ -259,10 +267,8 @@ void LeftHandMenu::updateSingleColorButton() {
     }
 }
 
-void LeftHandMenu::lightClicked(const QString& lightKey) {
-    //    qDebug() << "collection key:" << collectionKey
-    //             << "device key:" << deviceKey;
 
+void LeftHandMenu::lightClicked(const QString& lightKey) {
     auto light = mComm->lightByID(lightKey);
     auto state = light.state();
     if (light.isReachable()) {
@@ -271,6 +277,7 @@ void LeftHandMenu::lightClicked(const QString& lightKey) {
         } else {
             mSelectedLights->addLight(light);
         }
+
         // update UI
         emit changedLightCount();
         lightCountChanged();
@@ -317,7 +324,9 @@ void LeftHandMenu::newGroupButtonPressed() {
 
 
 void LeftHandMenu::clearWidgets() {
+#ifndef DISABLE_LIGHTS_MENU
     mLightMenu->reset();
+#endif
     resize();
 }
 

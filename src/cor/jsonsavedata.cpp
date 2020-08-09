@@ -12,13 +12,17 @@
 #include <QStandardPaths>
 #include <cmath>
 
+//#define PRINT_SAVE_PATH
+
 namespace cor {
 
 JSONSaveData::JSONSaveData(const QString& saveName) {
     mSaveName = saveName + ".json";
     mSaveDirectory = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/";
     mSavePath = mSaveDirectory + mSaveName;
-
+#ifdef PRINT_SAVE_PATH
+    qDebug() << " save Path: " << mSavePath;
+#endif
     checkForJSON();
 }
 

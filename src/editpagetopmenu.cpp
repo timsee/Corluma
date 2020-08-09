@@ -27,9 +27,6 @@ EditPageTopMenu::EditPageTopMenu(QWidget* parent) : QWidget(parent) {
     mNameEdit = new QLineEdit(this);
     mNameEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    mRoomCheckBox = new cor::CheckBox(this, "Room");
-    mRoomCheckBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
     mHelpLabel = new QLabel(this);
 
     mLayout = new QGridLayout(this);
@@ -42,7 +39,6 @@ EditPageTopMenu::EditPageTopMenu(QWidget* parent) : QWidget(parent) {
     mLayout->addWidget(mNameEdit, 1, 0, 1, 8);
     mLayout->addWidget(mSaveButton, 1, 10, 1, 2);
 
-    mLayout->addWidget(mRoomCheckBox, 2, 0, 1, 4);
     mLayout->addWidget(mResetButton, 2, 8, 1, 2);
     mLayout->addWidget(mDeleteButton, 2, 10, 1, 2);
 }

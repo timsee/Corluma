@@ -9,8 +9,8 @@
 #include <QGraphicsScene>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QPainterPath>
 #include <QStyleOption>
-
 
 namespace {
 

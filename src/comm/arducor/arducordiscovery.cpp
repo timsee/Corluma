@@ -102,6 +102,7 @@ std::pair<cor::Controller, bool> ArduCorDiscovery::controllerFromDiscoveryString
 
     // check end of string is &
     if (discovery.at(discovery.length() - 1) != '&') {
+        qDebug() << "INFO: invalid arducor discovery packet";
         return std::make_pair(cor::Controller{}, false);
     }
     // remove all data that isn't part of the int vector
@@ -172,12 +173,14 @@ std::pair<cor::Controller, bool> ArduCorDiscovery::controllerFromDiscoveryString
     //--------------
     if (intVector.size() == 6) {
         if (controllerName.size() == 0) {
+            qDebug() << "INFO: no controller name found";
             return std::make_pair(cor::Controller{}, false);
         }
 
         // get the USE_CRC
         int crc = intVector[2];
         if (!(crc == 1 || crc == 0)) {
+            qDebug() << "INFO: crc in invalid raange";
             return std::make_pair(cor::Controller{}, false);
         }
         cor::Controller controller(controllerName,
@@ -194,16 +197,19 @@ std::pair<cor::Controller, bool> ArduCorDiscovery::controllerFromDiscoveryString
 
         // grab the max packet size
         if (controller.maxPacketSize() > 500) {
+            qDebug() << "INFO: max packet size invalid" << controller.maxPacketSize();
             return std::make_pair(cor::Controller{}, false);
         }
 
         // get the max hardware index
         if (controller.maxHardwareIndex() > 20) {
+            qDebug() << "INFO: maxHardwareIndex invalid" << controller.maxHardwareIndex();
             return std::make_pair(cor::Controller{}, false);
         }
 
         return std::make_pair(controller, true);
     }
+    qDebug() << " INFO: did not find controller" << intVector.size();
     return std::make_pair(cor::Controller{}, false);
 }
 

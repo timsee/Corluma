@@ -80,3 +80,10 @@ void AppSettings::enableTimeout(bool timeout) {
     mSettings->setValue(cor::kUseTimeoutKey, QString::number(int(timeout)));
     emit settingsUpdate();
 }
+
+
+void AppSettings::setToDefaults() {
+    QSettings settings;
+    settings.setValue(cor::kUseTimeoutKey, QString::number(int(true)));
+    settings.setValue(cor::kTimeoutValue, QString::number(120));
+}

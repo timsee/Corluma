@@ -31,8 +31,7 @@ public:
         mTitle->setAlignment(Qt::AlignBottom);
         QRect r = mTitle->fontMetrics().boundingRect(mTitle->text());
         mTitle->setFixedWidth(r.width());
-        mTitle->setMinimumHeight(int(r.height() * 1.75f));
-
+        mTitle->setFixedHeight(r.height() * 1.5);
 
         mSpacer = int(mTitle->width() * 0.03f);
         mCheckBox = new QPushButton(this);

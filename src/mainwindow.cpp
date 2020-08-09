@@ -22,6 +22,9 @@
 #include "utils/qt.h"
 #include "utils/reachability.h"
 
+namespace {
+bool mDebugMode = false;
+}
 
 MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& minimumSize)
     : QMainWindow(parent),
@@ -41,7 +44,8 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
       mDataSyncNanoLeaf{new DataSyncNanoLeaf(mData, mComm, mAppSettings)},
       mSyncStatus{new SyncStatus(this)},
       mShareUtils{new ShareUtils(this)},
-      mSettingsPage{new SettingsPage(this, mGroups, mComm, mAppSettings, mShareUtils)} {
+      mSettingsPage{new SettingsPage(this, mGroups, mComm, mAppSettings, mShareUtils)},
+      mDebugConnections{new DebugConnectionSpoofer(mComm)} {
     // initialize geometry
     setGeometry(0, 0, startingSize.width(), startingSize.height());
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
@@ -87,7 +91,8 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     connect(mSettingsPage, SIGNAL(closePressed()), this, SLOT(settingsClosePressed()));
     connect(mSettingsPage, SIGNAL(clickedDiscovery()), this, SLOT(pushInDiscovery()));
     connect(mSettingsPage, SIGNAL(clickedLoadJSON(QString)), this, SLOT(loadJSON(QString)));
-    connect(mSettingsPage, SIGNAL(addNewGroupButtonPressed()), this, SLOT(openNewGroupMenu()));
+    connect(mSettingsPage, SIGNAL(addOrEditGroupPressed()), this, SLOT(openEditGroupMenu()));
+    connect(mSettingsPage, SIGNAL(enableDebugMode()), this, SLOT(debugModeClicked()));
 
     // --------------
     // Setup Discovery Page
@@ -143,7 +148,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
             SIGNAL(pressedButton(EPage)),
             this,
             SLOT(leftHandMenuButtonPressed(EPage)));
-    connect(mLeftHandMenu, SIGNAL(createNewGroup()), this, SLOT(openNewGroupMenu()));
+    connect(mLeftHandMenu, SIGNAL(createNewGroup()), this, SLOT(openEditGroupMenu()));
 
     // --------------
     // Setup GreyOut View
@@ -581,7 +586,9 @@ void MainWindow::resize() {
                                     fullScreenSize.height());
     }
 
-    resizeFullPageWidget(mSettingsPage);
+    if (mSettingsPage->isOpen()) {
+        resizeFullPageWidget(mSettingsPage);
+    }
     mGreyOut->resize();
 
     if (mPagesLoaded) {
@@ -617,6 +624,9 @@ void MainWindow::greyoutClicked() {
 
 void MainWindow::wifiChecker() {
     mWifiFound = cor::wifiEnabled();
+    if (mDebugMode) {
+        mWifiFound = true;
+    }
 
     // NOTE: this is a bit of a UX hack since its a non-documented feature, but it would make a
     // more confusing UX to 99%+ of potential users to fully show this edge case at this point.
@@ -857,7 +867,7 @@ bool MainWindow::isAnyWidgetAbove() {
     return false;
 }
 
-void MainWindow::openNewGroupMenu() {
+void MainWindow::openEditGroupMenu() {
     editButtonClicked(false);
 }
 
@@ -954,4 +964,10 @@ void MainWindow::setupStateObserver() {
             SIGNAL(deleteLight(QString)),
             mStateObserver,
             SLOT(deleteLight(QString)));
+}
+
+void MainWindow::debugModeClicked() {
+    qDebug() << "INFO: enabling debug mode!";
+    mDebugMode = true;
+    mDebugConnections->initiateSpoofedConnections();
 }

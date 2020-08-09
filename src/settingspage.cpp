@@ -19,6 +19,11 @@
 #include "mainwindow.h"
 #include "utils/qt.h"
 
+//#define USE_DEBUG_OPTIONS
+#ifdef USE_DEBUG_OPTIONS
+const static char* kDebugSpoof = "DEBUG: Spoof Connection";
+#endif
+
 SettingsPage::SettingsPage(QWidget* parent,
                            GroupData* parser,
                            CommLayer* comm,
@@ -89,10 +94,13 @@ SettingsPage::SettingsPage(QWidget* parent,
 
     mTitles = {"Find New Lights",
                "View/Edit Lights",
-               "Add New Group",
+               "Add or Edit Group",
                "Backup Save Data",
 #ifndef MOBILE_BUILD
                "Load Backup",
+#endif
+#ifdef USE_DEBUG_OPTIONS
+               kDebugSpoof,
 #endif
                "Reset",
                "Copyright"};
@@ -100,7 +108,7 @@ SettingsPage::SettingsPage(QWidget* parent,
     mButtons = std::vector<SettingsButton*>(mTitles.size());
     mSectionLabels = std::vector<QLabel*>(mSectionTitles.size());
 
-    uint32_t sectionIndex = 0;
+    std::uint32_t sectionIndex = 0;
     for (std::size_t x = 0u; x < mTitles.size(); ++x) {
         if (mTitles[x] == "Backup Save Data" || mTitles[x] == "Mock Connection"
             || mTitles[x] == "Copyright") {
@@ -248,8 +256,10 @@ void SettingsPage::resetToDefaults() {
 
     mGlobalWidget->timeoutCheckboxPressed(true);
 
+    mGroups->removeAppData();
     // load no data, deleting everything.
     mGroups->loadExternalData("");
+    AppSettings::setToDefaults();
 }
 
 void SettingsPage::paintEvent(QPaintEvent*) {
@@ -271,11 +281,18 @@ void SettingsPage::settingsButtonPressed(const QString& title) {
         saveButtonClicked();
     } else if (title == "View/Edit Lights") {
         lightInfoWidgetClicked();
-    } else if (title == "Add New Group") {
-        addNewGroupButtonPressed();
+    } else if (title == "Add or Edit Group") {
+        addOrEditGroupPressed();
     } else if (title == "Find New Lights") {
         emit clickedDiscovery();
-    } else if (title == "Copyright") {
+    }
+#ifdef USE_DEBUG_OPTIONS
+    else if (title == kDebugSpoof) {
+        emit enableDebugMode();
+        emit closePressed();
+    }
+#endif // USE_DEBUG_OPTIONS
+    else if (title == "Copyright") {
         showWebView(ECorlumaWebView::copyright);
     } else if (title == "FAQ") {
         showWebView(ECorlumaWebView::FAQ);
