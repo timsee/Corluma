@@ -34,6 +34,10 @@ public:
     Mood(const QJsonObject& object)
         : Mood(std::uint64_t(object["uniqueID"].toDouble()), object["name"].toString(), {}) {
         mAdditionalInfo = object["additionalInfo"].toString();
+        // add optional description if it exists
+        if (object["description"].isString()) {
+            description(object["description"].toString());
+        }
 
         // parse devices
         const auto& deviceArray = object["devices"].toArray();
@@ -66,6 +70,12 @@ public:
 
     /// getter for name
     const QString& name() const noexcept { return mName; }
+
+    /// setter for description
+    void description(const QString& description) noexcept { mDescription = description; }
+
+    /// getter for description
+    const QString& description() const noexcept { return mDescription; }
 
     /// getter for moods
     const std::vector<Light>& lights() const noexcept { return mLights; }
@@ -132,6 +142,9 @@ public:
 private:
     /// name of mood
     QString mName;
+
+    /// description of group
+    QString mDescription;
 
     /// unique ID of the mood
     std::uint64_t mUniqueID;

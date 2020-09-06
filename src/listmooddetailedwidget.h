@@ -5,7 +5,6 @@
 
 #include "cor/objects/page.h"
 #include "cor/widgets/switch.h"
-#include "editmoodpage.h"
 #include "floatinglayout.h"
 #include "listsimplegroupwidget.h"
 #include "mooddetailswidget.h"
@@ -115,9 +114,6 @@ private:
 
     /// widget used for scroll area.
     ListSimpleGroupWidget* mSimpleGroupWidget;
-
-    /// edit page for changing the mood
-    EditMoodPage* mEditPage;
 };
 
 #endif // LISTMOODDETAILEDWIDGET_H

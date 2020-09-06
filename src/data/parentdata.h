@@ -1,5 +1,10 @@
 #ifndef PARENTDATA_H
 #define PARENTDATA_H
+/*!
+ * \copyright
+ * Copyright (C) 2015 - 2020.
+ * Released under the GNU General Public License.
+ */
 
 #include <QString>
 #include <unordered_map>

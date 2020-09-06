@@ -44,13 +44,14 @@ ChooseGroupWidget::ChooseGroupWidget(QWidget* parent, CommLayer* comm, GroupData
 #endif
 }
 
-void ChooseGroupWidget::showGroups(const std::vector<std::uint64_t>& groups, EGroupAction action) {
+void ChooseGroupWidget::showGroups(const std::vector<std::uint64_t>& groups,
+                                   cor::EGroupAction action) {
     mSelectedGroup = 0u;
     mDesiredAction = action;
     mDisplayGroup->reset();
-    if (mDesiredAction == EGroupAction::edit) {
+    if (mDesiredAction == cor::EGroupAction::edit) {
         mHeader->setText("Choose a group to edit:");
-    } else if (mDesiredAction == EGroupAction::remove) {
+    } else if (mDesiredAction == cor::EGroupAction::remove) {
         mHeader->setText("Choose a group to remove:");
     }
     handleBottomState();
@@ -60,10 +61,10 @@ void ChooseGroupWidget::showGroups(const std::vector<std::uint64_t>& groups, EGr
 void ChooseGroupWidget::handleBottomState() {
     // only enable the button if a group is selected;
     mActionButton->setEnabled(mSelectedGroup != 0u);
-    if (mDesiredAction == EGroupAction::edit) {
+    if (mDesiredAction == cor::EGroupAction::edit) {
         mActionButton->setText("Edit");
         mActionButton->setStyleSheet("background-color:rgb(30,110,30);");
-    } else if (mDesiredAction == EGroupAction::remove) {
+    } else if (mDesiredAction == cor::EGroupAction::remove) {
         mActionButton->setText("Delete");
         mActionButton->setStyleSheet("background-color:rgb(110,30,30);");
     }
@@ -147,10 +148,10 @@ void ChooseGroupWidget::closePressed(bool) {
 
 void ChooseGroupWidget::actionPresed(bool) {
     auto groupName = mGroups->nameFromID(mSelectedGroup);
-    if (mDesiredAction == EGroupAction::edit) {
+    if (mDesiredAction == cor::EGroupAction::edit) {
         emit editGroup(mSelectedGroup);
         qDebug() << "INFO: editing the group " << groupName;
-    } else if (mDesiredAction == EGroupAction::remove) {
+    } else if (mDesiredAction == cor::EGroupAction::remove) {
         auto text = "Are you sure you want to delete " + groupName
                     + "? This change will be reflected in other apps.";
         auto reply =

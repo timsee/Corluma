@@ -196,6 +196,9 @@ public:
     /// gives the last time any specific CommType last received an update
     QTime lastUpdateTime();
 
+    /// adds meta data to a light, used when creating moods.
+    cor::Light addLightMetaData(cor::Light light);
+
 signals:
 
     /*!
@@ -239,9 +242,6 @@ private slots:
     void deletedLight(ECommType, QString);
 
 private:
-    /// adds meta data to a light, used when creating moods.
-    cor::Light addLightMetaData(cor::Light light);
-
     /*!
      * \brief mArduCor ArudCor connection object
      */

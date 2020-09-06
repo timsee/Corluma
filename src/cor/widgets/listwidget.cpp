@@ -8,7 +8,7 @@
 
 #include <QScrollBar>
 
-#include "listmoodgroupwidget.h"
+#include "listmoodwidget.h"
 
 namespace cor {
 
@@ -50,6 +50,7 @@ void ListWidget::removeWidget(cor::ListItemWidget* widget) {
 }
 
 void ListWidget::resizeWidgets() {
+    // TODO: do not infer size based off of parent
     int yPos = 0;
     int newHeight = 0;
     if (mListLayout.type() == cor::EListType::linear) {
@@ -68,6 +69,7 @@ void ListWidget::resizeWidgets() {
     } else if (mListLayout.type() == cor::EListType::grid) {
         for (auto widget : mListLayout.widgets()) {
             int maxWidth = parentWidget()->width() / 2;
+            // TODO: should this be using its parents width for height?
             int height = parentWidget()->width() / 6;
             QPoint position = mListLayout.widgetPosition(widget);
             widget->setGeometry(position.x() * maxWidth, position.y() * height, maxWidth, height);

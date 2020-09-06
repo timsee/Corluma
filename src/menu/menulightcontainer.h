@@ -21,13 +21,16 @@ class MenuLightContainer : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit MenuLightContainer(QWidget* parent, bool allowInteraction, bool displayState)
+    explicit MenuLightContainer(QWidget* parent, bool allowInteraction)
         : QWidget(parent),
           mLightLayout(cor::EListType::linear),
           mAllowInteraction{allowInteraction},
-          mDisplayState{displayState} {
+          mDisplayState{true} {
         QScroller::grabGesture(this, QScroller::LeftMouseButtonGesture);
     }
+
+    /// set whether the state should be displayed by the container or not.
+    void displayState(bool displayState) { mDisplayState = displayState; }
 
     /// if set to true, unreachable lights can be selected.
     void allowUnreachableLights(bool allowUnreachable) {
@@ -48,6 +51,9 @@ public:
 
     /// remove all widgets from the container, reseting it to an empty state
     void clear();
+
+    /// getter for currently highlighted lights.
+    std::vector<QString> highlightedLights();
 
 signals:
 

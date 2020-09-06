@@ -214,6 +214,23 @@ inline std::vector<QString> lightVectorToIDs(const std::vector<cor::Light>& ligh
     return retVector;
 }
 
+
+/// takes a std::vector of lights and a specific light, and looks for a light that matches its
+/// unique ID in the vector. This is useful for looking for lights that may have changed states
+/// between being added to a vector and the current time of searching. An invalid light is returned
+/// if the light cannot be found in the vector.
+inline cor::Light findLightInVectorByID(const std::vector<cor::Light>& lights,
+                                        const cor::Light& light) {
+    cor::Light returnLight;
+    for (const auto& storedLight : lights) {
+        if (storedLight.uniqueID() == light.uniqueID()) {
+            returnLight = storedLight;
+            break;
+        }
+    }
+    return returnLight;
+}
+
 } // namespace cor
 
 namespace std {

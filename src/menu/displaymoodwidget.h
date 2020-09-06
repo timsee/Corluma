@@ -1,14 +1,15 @@
-#ifndef DISPLAYGROUPWIDGET_H
-#define DISPLAYGROUPWIDGET_H
+#ifndef DISPLAYMOODWIDGET_H
+#define DISPLAYMOODWIDGET_H
 
 #include <QPainter>
 #include <QStyleOption>
 #include <QTextEdit>
 #include <QWidget>
+#include "comm/commlayer.h"
 #include "cor/objects/group.h"
 #include "cor/widgets/expandingtextscrollarea.h"
 #include "menu/displaygroupmetadata.h"
-#include "menu/statelesslightslistmenu.h"
+#include "menu/lightslistmenu.h"
 
 /*!
  * \copyright
@@ -19,15 +20,16 @@
  * \brief The DisplayGroupWidget class displays all pertinent info for a cor::Group. This includes
  * the group's name, the group's lights, and the description if one exists.
  */
-class DisplayGroupWidget : public QWidget {
+class DisplayMoodWidget : public QWidget {
     Q_OBJECT
 public:
-    explicit DisplayGroupWidget(QWidget* parent, CommLayer* comm, GroupData* groups)
+    explicit DisplayMoodWidget(QWidget* parent, CommLayer* comm, GroupData* groups)
         : QWidget(parent),
+          mComm{comm},
           mName{new QLabel(this)},
           mDescription{new cor::ExpandingTextScrollArea(this)},
           mMetadata{new DisplayGroupMetadata(this, groups)},
-          mLights{new StatelessLightsListMenu(this, comm, false)} {
+          mLights{new LightsListMenu(this, false)} {
         auto font = mName->font();
         font.setPointSize(20);
         mName->setFont(font);
@@ -36,21 +38,27 @@ public:
     }
 
     /// getter for group represented by the widget
-    const cor::Group& group() const noexcept { return mGroup; }
+    const cor::Mood& mood() const noexcept { return mMood; }
 
     /// updates the group's UI elements.
-    void updateGroup(const cor::Group& group, bool groupExistsAlready) {
-        mGroup = group;
-        mName->setText(group.name());
-        if (group.description().isEmpty()) {
+    void updateMood(const cor::Mood& mood, bool moodExistsAlready) {
+        mMood = mood;
+        mName->setText(mood.name());
+        if (mood.description().isEmpty()) {
             mDescription->setVisible(false);
         } else {
             mDescription->setVisible(true);
-            mDescription->updateText(group.description());
+            mDescription->updateText(mood.description());
         }
         mLights->updateLights();
-        mLights->showGroup(group.lights());
-        mMetadata->update(group, groupExistsAlready);
+        auto lights = mood.lights();
+        for (auto&& light : lights) {
+            light = mComm->addLightMetaData(light);
+            // since we are displaying a mood, mark the light as reachable even when it isn't.
+            light.isReachable(true);
+        }
+        mLights->showLights(lights);
+        // mMetadata->update(mood, groupExistsAlready);
         resize();
     }
 
@@ -59,11 +67,10 @@ public:
 
     /// reset the widget to showing no group
     void reset() {
-        cor::Group group{};
-        mGroup = {};
+        mMood = {};
         mName->setText("");
         mDescription->setVisible(false);
-        mLights->showGroup({});
+        mLights->showLights({});
         mMetadata->reset();
         resize();
     }
@@ -116,8 +123,11 @@ private:
         mMetadata->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, 6 * buttonHeight);
     }
 
+    /// pointer to comm data
+    CommLayer* mComm;
+
     /// stores the group that is being displayed
-    cor::Group mGroup;
+    cor::Mood mMood;
 
     /// name of the group
     QLabel* mName;
@@ -129,10 +139,10 @@ private:
     DisplayGroupMetadata* mMetadata;
 
     /// displays the lights that are part of this group and their current states.
-    StatelessLightsListMenu* mLights;
+    LightsListMenu* mLights;
 
     /// the height of a row in a scroll area
     int mRowHeight;
 };
 
-#endif // DISPLAYGROUPWIDGET_H
+#endif // DISPLAYMOODWIDGET_H

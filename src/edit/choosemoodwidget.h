@@ -1,32 +1,30 @@
-#ifndef CHOOSEGROUPWIDGET_H
-#define CHOOSEGROUPWIDGET_H
+#ifndef CHOOSEMOODWIDGET_H
+#define CHOOSEMOODWIDGET_H
 
 #include <QObject>
 #include <QPushButton>
 #include <QScrollArea>
 #include <QWidget>
+#include "comm/commlayer.h"
 #include "cor/objects/page.h"
-#include "menu/displaygroupwidget.h"
-#include "menu/menugroupcontainer.h"
-
+#include "menu/displaymoodwidget.h"
+#include "menu/menumoodcontainer.h"
 /*!
  * \copyright
  * Copyright (C) 2015 - 2020.
  * Released under the GNU General Public License.
  *
  *
- * \brief The ChooseGroupWidget class is a full page widget that aids in choosing a specific group
- * or room to edit. It uses EGroupAction to determine the state it intends to select a group to.
- * There are slight UI differences depending on whether the group is being selected for editing or
- * deleting.
+ * \brief The ChooseMoodWidget class presents the user with a list of moods, and allows them to
+ * choose one for either editing or deleting.
  */
-class ChooseGroupWidget : public QWidget, public cor::Page {
+class ChooseMoodWidget : public QWidget, public cor::Page {
     Q_OBJECT
 public:
-    explicit ChooseGroupWidget(QWidget* parent, CommLayer* comm, GroupData* groups);
+    explicit ChooseMoodWidget(QWidget* parent, CommLayer* comm, GroupData* groups);
 
-    /// shows a set of groups and updates the UI to reflect the EGroupAction provided
-    void showGroups(const std::vector<std::uint64_t>& groups, cor::EGroupAction action);
+    /// shows a set of moods and updates the UI to reflect the EGroupAction provided
+    void showMoods(cor::EGroupAction action);
 
     /// displays the page
     void pushIn(const QPoint& startPoint, const QPoint& endPoint);
@@ -41,12 +39,12 @@ signals:
      */
     void pressedClose();
 
-    /// signals that a group was updated in some way, so widgets that display groups should also
+    /// signals that a mood was updated in some way, so widgets that display groups should also
     /// update
-    void updateGroups();
+    void updateMoods();
 
     /// signals the key of a group that has been selected for editing.
-    void editGroup(std::uint64_t);
+    void editMood(std::uint64_t);
 
 protected:
     /*!
@@ -61,8 +59,8 @@ protected:
 
 private slots:
 
-    /// handles when a specific group is clicked
-    void clickedGroup(std::uint64_t key);
+    /// handles when a specific mood is clicked
+    void clickedMood(std::uint64_t key);
 
     /*!
      * \brief closePressed called when close button is pressed. Checks if changes were made, asks
@@ -96,26 +94,26 @@ private:
     /// label for the header of the page
     QLabel* mHeader;
 
-    /// stored variable on whether or not the widget is intended to delete or edit a group.
+    /// stored variable on whether or not the widget is intended to delete or edit a mood.
     cor::EGroupAction mDesiredAction;
 
-    /// scroll area for displaying groups
-    QScrollArea* mGroupScrollArea;
+    /// scroll area for displaying moods
+    QScrollArea* mMoodScrollArea;
 
     /// container that displays groups in the mGroupScrollArea.
-    MenuGroupContainer* mGroupContainer;
+    MenuMoodContainer* mMoodContainer;
 
-    /// display widget that displays the currently selected group.
-    DisplayGroupWidget* mDisplayGroup;
+    /// display widget that displays the currently selected mood.
+    DisplayMoodWidget* mDisplayMood;
 
     /// label for confirming the action the user wants to take
     QLabel* mConfirmationLabel;
 
-    /// button that the user presses to either delete or edit the selected group
+    /// button that the user presses to either delete or edit the selected mood
     QPushButton* mActionButton;
 
-    /// stored key for the currently selected group.
-    std::uint64_t mSelectedGroup;
+    /// stored key for the currently selected mood.
+    std::uint64_t mSelectedMood;
 };
 
-#endif // CHOOSEGROUPWIDGET_H
+#endif // CHOOSEMOODWIDGET_H

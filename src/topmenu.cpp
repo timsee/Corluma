@@ -414,11 +414,18 @@ void TopMenu::moveFloatingLayout() {
         showMultiColorStateWidget(true);
     }
 
-    if (mData->empty()) {
+
+    if (mData->empty() && mCurrentPage == EPage::moodPage) {
+        // special case where the current floating layout is shown regardless of if the data is
+        // empty
+        currentFloatingLayout()->move(topRight);
+    } else if (mData->empty()) {
+        // floating layout is not shown
         currentFloatingLayout()->move(
             QPoint(parentWidget()->size().width() + currentFloatingLayout()->width(),
                    mFloatingMenuStart));
     } else {
+        // floating layout should be shown, since data is showing.
         currentFloatingLayout()->move(topRight);
     }
 

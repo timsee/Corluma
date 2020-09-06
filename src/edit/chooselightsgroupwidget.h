@@ -4,30 +4,33 @@
 #include <QLabel>
 #include <QWidget>
 #include "edit/editpagechildwidget.h"
-#include "menu/lightslistmenu.h"
 #include "menu/standardlightsmenu.h"
+#include "menu/statelesslightslistmenu.h"
 /*!
  * \copyright
  * Copyright (C) 2015 - 2020.
  * Released under the GNU General Public License.
  *
  *
- * \brief The ChooseLightsWidget class provides a menu for choosing a group of lights. On the left
- * hand side, it displays all lights sorted into common groups. On the righthand side, it shows all
- * currently selected lights.
+ * \brief The ChooseLightsWidget class provides a menu for choosing a group of lights for either a
+ * group or a room. On the left hand side, it displays all lights sorted into common groups. On the
+ * righthand side, it shows all currently selected lights.
  */
-class ChooseLightsWidget : public EditPageChildWidget {
+class ChooseLightsGroupWidget : public EditPageChildWidget {
     Q_OBJECT
 public:
-    explicit ChooseLightsWidget(QWidget* parent, CommLayer* comm, GroupData* groups)
+    explicit ChooseLightsGroupWidget(QWidget* parent, CommLayer* comm, GroupData* groups)
         : EditPageChildWidget(parent),
           mChooseLabel{new QLabel("Choose Lights:", this)},
           mSelectedLabel{new QLabel("Selected Lights:", this)},
           mComm{comm},
           mGroups{groups},
           mLightsMenu{new StandardLightsMenu(this, comm, groups)},
-          mSelectedLightsMenu{new LightsListMenu(this, comm, false)} {
+          mRoomLights{new StatelessLightsListMenu(this, comm, true)},
+          mSelectedLightsMenu{new StatelessLightsListMenu(this, comm, false)},
+          mIsRoom{false} {
         mBottomButtons->enableForward(false);
+        connect(mRoomLights, SIGNAL(clickedLight(QString)), this, SLOT(lightClicked(QString)));
 
         connect(mLightsMenu, SIGNAL(clickedLight(QString)), this, SLOT(lightClicked(QString)));
         connect(mLightsMenu,
@@ -50,12 +53,42 @@ public:
         conditionsMet();
     }
 
+    /// setup the the page as choosing for groups, showing all available lights
+    void setupAsGroup() {
+        // set visibility of the proper light menu
+        mRoomLights->setVisible(false);
+        mLightsMenu->setVisible(true);
+
+        mIsRoom = false;
+
+        resize();
+    }
+
+    /// setup the the page as choosing for rooms, showing only lights that exist either in the
+    /// current room or no room.
+    void setupAsRoom(const std::vector<QString>& roomLights) {
+        // start with the room lights
+        auto lights = roomLights;
+        // add in the orphan lights
+        lights.insert(lights.end(), mGroups->orphanLights().begin(), mGroups->orphanLights().end());
+        mRoomLights->showGroup(lights);
+        mRoomLights->highlightLights(roomLights);
+
+        // set visibility of the proper light menu
+        mRoomLights->setVisible(true);
+        mLightsMenu->setVisible(false);
+
+        mIsRoom = true;
+
+        resize();
+    }
+
     /// clears all data currently on the page.
     void clear() {
         // TODO: why does this need to be called for mLightContainer to show lights?
         mLightsMenu->reset();
 
-        auto lights = mSelectedLightsMenu->lights();
+        auto lights = mSelectedLightsMenu->lightIDs();
         for (const auto& light : lights) {
             mSelectedLightsMenu->removeLight(light);
         }
@@ -63,10 +96,10 @@ public:
     }
 
     /// updates the lights based off of app data.
-    void updateLights() { mLightsMenu->updateLights(mSelectedLightsMenu->lights()); }
+    void updateLights() { mLightsMenu->updateLights(mSelectedLightsMenu->lightIDs()); }
 
     /// getter for all selected lights.
-    const std::vector<QString>& lights() { return mSelectedLightsMenu->lights(); }
+    const std::vector<QString>& lightIDs() { return mSelectedLightsMenu->lightIDs(); }
 
 protected:
     /*!
@@ -78,8 +111,7 @@ private slots:
 
     /// handles when a light is clicked. it will either add or remove lights from the selected list.
     void lightClicked(QString key) {
-        auto light = mComm->lightByID(key);
-        auto lights = mSelectedLightsMenu->lights();
+        auto lights = mSelectedLightsMenu->lightIDs();
         auto result = std::find(lights.begin(), lights.end(), key);
         if (result != lights.end()) {
             mSelectedLightsMenu->removeLight(key);
@@ -121,7 +153,8 @@ private:
     /// true if all fields have met the conditions needed to proceed, false if any widget has an
     /// invalid input.
     bool conditionsMet() {
-        if (mSelectedLightsMenu->lights().size() > 1) {
+        bool allLightsValid = true;
+        if (mSelectedLightsMenu->lightIDs().size() > 1 && allLightsValid) {
             mBottomButtons->enableForward(true);
             emit stateChanged(mIndex, EEditProgressState::completed);
             return true;
@@ -146,7 +179,11 @@ private:
         yPos += mChooseLabel->height();
 
         QRect lightRect(0, yPos, int((this->width() / 2) * 0.95), 7 * buttonHeight);
-        mLightsMenu->resize(lightRect, mRowHeight);
+        if (mIsRoom) {
+            mRoomLights->resize(lightRect, mRowHeight);
+        } else {
+            mLightsMenu->resize(lightRect, mRowHeight);
+        }
         QRect selectedLightsRect(int(this->width() / 2 * 1.05),
                                  lightRect.y(),
                                  lightRect.width(),
@@ -172,8 +209,14 @@ private:
     /// widget for showing all available lights.
     StandardLightsMenu* mLightsMenu;
 
+    /// rooms require specific lights to be shown, instead of showing all lights
+    StatelessLightsListMenu* mRoomLights;
+
     /// widget for showing all selected lights
-    LightsListMenu* mSelectedLightsMenu;
+    StatelessLightsListMenu* mSelectedLightsMenu;
+
+    /// true if room, false if group
+    bool mIsRoom;
 
     /// height of rows in scroll areas.
     int mRowHeight;

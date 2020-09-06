@@ -6,14 +6,11 @@
 #include <QPushButton>
 #include <QWidget>
 
-#include "cor/objects/group.h"
-#include "cor/objects/light.h"
-#include "cor/objects/page.h"
-#include "cor/presetpalettes.h"
-#include "cor/widgets/listwidget.h"
+#include "cor/objects/mood.h"
 #include "greyoutoverlay.h"
 #include "listmooddetailedwidget.h"
-#include "listmoodgroupwidget.h"
+#include "listmoodwidget.h"
+#include "menu/standardmoodsmenu.h"
 
 /*!
  * \copyright
@@ -36,25 +33,11 @@ public:
     /// constructor
     explicit MoodPage(QWidget* parent, GroupData* groups, CommLayer* comm);
 
-    /*!
-     * \brief updateConnectionList updates the GUI elements that display the
-     * CommLayer's connection list.
-     */
-    void updateConnectionList();
-
     /// called when the widget is shown
-    void show(std::uint64_t currentMood,
-              const cor::Dictionary<cor::Mood>& moods,
-              const std::vector<cor::Group>& roomList);
+    void show(std::uint64_t currentMood);
 
-    /*!
-     * \brief makeMoodsCollections make all the mood-based UI widgets based on the saved JSON data
-     * in the application
-     *
-     * \param moods list of all saved moods
-     */
-    void makeMoodsCollections(const cor::Dictionary<cor::Mood>& moods,
-                              const std::vector<cor::Group>& roomList);
+    /// update the moods.
+    void updateMoods();
 
     /// getter for mood detailed widget
     ListMoodDetailedWidget* moodDetailedWidget() { return mMoodDetailedWidget; }
@@ -73,23 +56,12 @@ public:
 
 signals:
     /*!
-     * \brief Used to signal back to the main page that it should update its top-left icon
-     * with new RGB values
-     */
-    void updateMainIcons();
-
-    /*!
      * \brief clickedEditButton sent whenever an edit button is clicked so that the main page can
      * load the edit page.
      */
     void clickedEditButton(bool isMood);
 
 private slots:
-    /*!
-     * \brief editMoodClicked the edit button has been pressed for a specific mood. This
-     * gets sent to the main window and tells it to open the edit page.
-     */
-    void editMoodClicked(const QString& collectionKey, std::uint64_t moodKey);
 
     /*!
      * \brief selectedMood called whenever an individual mood is selceted
@@ -104,14 +76,6 @@ private slots:
      */
     void newMoodAdded(const QString&);
 
-    /*!
-     * \brief shouldShowButtons show buttons was clicked by a ListCollectionWidget.
-     *
-     * \param key the key fo the ListCollectionWidget
-     * \param isShowing true if showing, false if not
-     */
-    void shouldShowButtons(const QString& key, bool isShowing);
-
     /// called when the greyout is clicked
     void greyoutClicked();
 
@@ -121,6 +85,9 @@ private slots:
     /// called when a request for a detailed mood is sent
     void detailedMoodDisplay(std::uint64_t key);
 
+    /// called when a mood is selected
+    void moodSelected(std::uint64_t);
+
 protected:
     /*!
      * \brief resizeEvent called every time the main window is resized.
@@ -128,17 +95,14 @@ protected:
     void resizeEvent(QResizeEvent*);
 
 private:
-    /// called when a mood is selected
-    void moodSelected(std::uint64_t);
-
     /// groups parser
     GroupData* mGroups;
 
     /// comm layer
     CommLayer* mComm;
 
-    /// preset data for palettes from ArduCor
-    PresetPalettes mPalettes;
+    /// menu for displaying moods.
+    StandardMoodsMenu* mMoodMenu;
 
     /*!
      * \brief mMoodDetailedWidget widget for displaying detailed information about a mood.
@@ -147,33 +111,6 @@ private:
 
     /// greyout for mood detailed widget
     GreyOutOverlay* mGreyOut;
-
-    /*!
-     * \brief mMoodsListWidget List widget for devices. Either the moods widget or this device
-     * widget is shown at any given time but the other is kept around in memory since they are
-     * expensive to render.
-     */
-    cor::ListWidget* mMoodsListWidget;
-
-    /*!
-     * \brief initMoodsCollectionWidget constructor helper for making a ListGroupGroupWidget
-     *
-     * \param name name of mood
-     * \param devices devices in mood
-     * \param key key for mood
-     * \param hideEdit true for special case groups (Available and Not Reachable), false otherwise
-     * \return pointer to the newly created ListGroupGroupWidget
-     */
-    ListMoodGroupWidget* initMoodsCollectionWidget(const QString& name,
-                                                   const std::vector<cor::Mood>& moods,
-                                                   const QString& key,
-                                                   bool hideEdit = false);
-
-    /*!
-     * \brief mLastUpdateConnectionList the time that the connection list
-     * was last rendered. Used to throttle unnecessary rendering.
-     */
-    QTime mLastUpdateConnectionList;
 
     /// current mood based on the state of lights
     std::uint64_t mCurrentMood;

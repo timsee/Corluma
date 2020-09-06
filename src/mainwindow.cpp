@@ -68,7 +68,6 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     // --------------
     // Setup Backend
     // --------------
-
     connect(mDataSyncArduino,
             SIGNAL(statusChanged(EDataSyncType, bool)),
             mSyncStatus,
@@ -97,8 +96,6 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     // --------------
     // Setup Discovery Page
     // --------------
-
-
     mDiscoveryPage = new DiscoveryPage(this, mData, mComm, mAppSettings);
     mDiscoveryPage->show();
     mDiscoveryPage->isOpen(true);
@@ -115,7 +112,6 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     // --------------
     // Start Discovery
     // --------------
-
     connect(mComm,
             SIGNAL(newLightFound(ECommType, QString)),
             mGroups,
@@ -136,7 +132,6 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     // --------------
     // Setup Left Hand Menu
     // --------------
-
     float sizeRatio = size().width() / float(size().height());
     bool alwaysOpen = false;
     if (sizeRatio > 1.0f) {
@@ -241,13 +236,19 @@ void MainWindow::loadPages() {
         mRoutineWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
 
-        mEditPage = new cor::EditGroupPage(this, mComm, mGroups);
-        mEditPage->setVisible(false);
-        mEditPage->isOpen(false);
-        connect(mEditPage, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
-        connect(mEditPage, SIGNAL(updateGroups()), this, SLOT(editPageUpdateGroups()));
-        mEditPage->changeRowHeight(mLeftHandMenu->height() / 18);
+        mEditGroupPage = new cor::EditGroupPage(this, mComm, mGroups);
+        mEditGroupPage->setVisible(false);
+        mEditGroupPage->isOpen(false);
+        connect(mEditGroupPage, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
+        connect(mEditGroupPage, SIGNAL(updateGroups()), this, SLOT(editPageUpdateGroups()));
+        mEditGroupPage->changeRowHeight(mLeftHandMenu->height() / 18);
 
+        mEditMoodPage = new cor::EditMoodPage(this, mComm, mGroups);
+        mEditMoodPage->setVisible(false);
+        mEditMoodPage->isOpen(false);
+        connect(mEditMoodPage, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
+        connect(mEditMoodPage, SIGNAL(updateGroups()), this, SLOT(editPageUpdateGroups()));
+        mEditMoodPage->changeRowHeight(mLeftHandMenu->height() / 18);
 
         mChooseEditPage = new ChooseEditPage(this);
         mChooseEditPage->setVisible(false);
@@ -267,6 +268,17 @@ void MainWindow::loadPages() {
                 SIGNAL(editGroup(std::uint64_t)),
                 this,
                 SLOT(editGroupSelected(std::uint64_t)));
+
+
+        mChooseMoodWidget = new ChooseMoodWidget(this, mComm, mGroups);
+        mChooseMoodWidget->setVisible(false);
+        mChooseMoodWidget->isOpen(false);
+        connect(mChooseMoodWidget, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
+        connect(mChooseMoodWidget, SIGNAL(updateMoods()), this, SLOT(editPageUpdateMoods()));
+        connect(mChooseMoodWidget,
+                SIGNAL(editMood(std::uint64_t)),
+                this,
+                SLOT(editMoodSelected(std::uint64_t)));
 
         // --------------
         // Top Menu
@@ -296,15 +308,6 @@ void MainWindow::loadPages() {
         mSpacer = new QWidget(this);
         mSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         mSpacer->setFixedHeight(int(height() * 0.22f));
-
-        // --------------
-        // Setup Editing Page
-        // --------------
-
-        mEditMoodPage = new EditMoodPage(this, mComm, mGroups);
-        mEditMoodPage->isOpen(false);
-        connect(mEditMoodPage, SIGNAL(pressedClose()), this, SLOT(editClosePressed()));
-        mEditMoodPage->setGeometry(0, -1 * height(), int(width() * 0.75), int(height() * 0.75));
 
         mSettingsPage->enableButtons(true);
 
@@ -440,6 +443,7 @@ void MainWindow::settingsClosePressed() {
 
 void MainWindow::editPageClosePressed() {
     pushOutChooseGroupPage();
+    pushOutChooseMoodPage();
     pushOutEditPage();
     pushOutChooseEditPage();
     // this fixes the higlight of the left hand menu when its always open. "Settings" only gets
@@ -469,40 +473,9 @@ void MainWindow::closeDiscoveryWithoutTransition() {
 }
 
 void MainWindow::editButtonClicked(bool isMood) {
+    mIsMoodEdit = isMood;
     pushOutLeftHandMenu();
-
-    if (isMood) {
-        mEditMoodPage->resize();
-        mEditMoodPage->pushIn();
-        mEditMoodPage->isOpen(true);
-        mGreyOut->greyOut(true);
-        mEditMoodPage->raise();
-
-        auto result = mGroups->moods().item(
-            QString::number(mMainViewport->moodPage()->currentMood()).toStdString());
-        if (result.second) {
-            // use existing mood
-            mEditMoodPage->showMood(result.first, mComm->allLights());
-        } else {
-            // make a new mood
-            auto lights = mData->lights();
-            cor::Mood mood(mGroups->generateNewUniqueKey(), "New Mood", lights);
-            mEditMoodPage->showMood(mood, mComm->allLights());
-        }
-    } else {
-        pushInChooseEditPage();
-    }
-}
-
-
-void MainWindow::editClosePressed() {
-    mGreyOut->greyOut(false);
-    if (mEditMoodPage->isOpen()) {
-        mEditMoodPage->pushOut();
-        mEditMoodPage->isOpen(false);
-    }
-    // TODO: update lefthandmenu
-    // mMainViewport->lightPage()->updateRoomWidgets();
+    pushInChooseEditPage();
 }
 
 void MainWindow::resizeFullPageWidget(QWidget* widget) {
@@ -588,22 +561,19 @@ void MainWindow::resize() {
 
     if (mSettingsPage->isOpen()) {
         resizeFullPageWidget(mSettingsPage);
+    } else {
+        mSettingsPage->setGeometry(geometry().width(),
+                                   0,
+                                   mSettingsPage->width(),
+                                   mSettingsPage->height());
     }
     mGreyOut->resize();
 
     if (mPagesLoaded) {
-        auto size = this->size();
-        if (mEditMoodPage->isOpen()) {
-            mEditMoodPage->setGeometry(int(size.width() * 0.125f),
-                                       int(size.height() * 0.125f),
-                                       int(size.width() * 0.75f),
-                                       int(size.height() * 0.75f));
-        }
-
-
-        resizeFullPageWidget(mEditPage);
+        resizeFullPageWidget(mEditGroupPage);
         resizeFullPageWidget(mChooseEditPage);
         resizeFullPageWidget(mChooseGroupWidget);
+        resizeFullPageWidget(mChooseMoodWidget);
 
         mRoutineWidget->resize(mMainViewport->x(),
                                QSize(mMainViewport->width(), mMainViewport->height()));
@@ -615,10 +585,6 @@ void MainWindow::resize() {
 void MainWindow::greyoutClicked() {
     if (mLeftHandMenu->isIn()) {
         pushOutLeftHandMenu();
-    }
-
-    if (mEditMoodPage->isOpen()) {
-        editClosePressed();
     }
 }
 
@@ -653,10 +619,6 @@ void MainWindow::wifiChecker() {
 void MainWindow::backButtonPressed() {
     if (mSettingsPage->isOpen()) {
         settingsClosePressed();
-    }
-
-    if (mEditMoodPage->isOpen()) {
-        editClosePressed();
     }
 }
 
@@ -693,7 +655,7 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
         pushOutSettingsPage();
     }
 
-    if (mEditPage->isOpen()) {
+    if (mEditGroupPage->isOpen() || mEditMoodPage->isOpen()) {
         pushOutEditPage();
     }
 
@@ -703,6 +665,10 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
 
     if (mChooseGroupWidget->isOpen()) {
         pushOutChooseGroupPage();
+    }
+
+    if (mChooseMoodWidget->isOpen()) {
+        pushOutChooseMoodPage();
     }
 
     if (mDiscoveryPage->isOpen() && page == EPage::discoveryPage) {
@@ -771,28 +737,47 @@ void MainWindow::pushOutSettingsPage() {
     }
 }
 
-
-void MainWindow::pushInEditPage(std::uint64_t key) {
+void MainWindow::pushInEditGroupPage(std::uint64_t key) {
     if (key != 0u) {
         auto group = mGroups->groupFromID(key);
-        mEditPage->prefillGroup(group);
+        mEditGroupPage->prefillGroup(group);
     } else {
-        mEditPage->clearGroup();
+        mEditGroupPage->clearGroup();
     }
 
-    pushInFullPageWidget(mEditPage);
+    pushInFullPageWidget(mEditGroupPage);
     if (mLeftHandMenu->alwaysOpen() && !mFirstLoad) {
-        mEditPage->pushIn(QPoint(width(), 0), QPoint(mLeftHandMenu->width(), 0));
+        mEditGroupPage->pushIn(QPoint(width(), 0), QPoint(mLeftHandMenu->width(), 0));
     } else {
-        mEditPage->pushIn(QPoint(width(), 0), QPoint(0u, 0u));
+        mEditGroupPage->pushIn(QPoint(width(), 0), QPoint(0u, 0u));
+    }
+}
+
+void MainWindow::pushInEditMoodPage(std::uint64_t key) {
+    if (key != 0u) {
+        auto mood = mGroups->moods().item(std::to_string(key));
+        mEditMoodPage->prefillMood(mood.first);
+    } else {
+        mEditMoodPage->clearGroup();
+    }
+
+    pushInFullPageWidget(mEditMoodPage);
+    if (mLeftHandMenu->alwaysOpen() && !mFirstLoad) {
+        mEditMoodPage->pushIn(QPoint(width(), 0), QPoint(mLeftHandMenu->width(), 0));
+    } else {
+        mEditMoodPage->pushIn(QPoint(width(), 0), QPoint(0u, 0u));
     }
 }
 
 void MainWindow::pushOutEditPage() {
-    pushOutFullPageWidget(mEditPage);
+    pushOutFullPageWidget(mEditGroupPage);
+    pushOutFullPageWidget(mEditMoodPage);
 
-    mEditPage->pushOut(QPoint(width(), 0u));
-    mEditPage->reset();
+    mEditGroupPage->pushOut(QPoint(width(), 0u));
+    mEditGroupPage->reset();
+
+    mEditMoodPage->pushOut(QPoint(width(), 0u));
+    mEditMoodPage->reset();
     if (mDiscoveryPage->isOpen()) {
         mDiscoveryPage->updateTopMenu();
     }
@@ -817,8 +802,8 @@ void MainWindow::pushOutChooseEditPage() {
 }
 
 
-void MainWindow::pushInChooseGroupPage(EGroupAction action) {
-    mChooseGroupWidget->showGroups(cor::groupVectorToIDs(mGroups->groups()), action);
+void MainWindow::pushInChooseGroupPage(cor::EGroupAction action) {
+    mChooseGroupWidget->showGroups(cor::groupVectorToIDs(mGroups->groupDict().items()), action);
     pushInFullPageWidget(mChooseGroupWidget);
     if (mLeftHandMenu->alwaysOpen() && !mFirstLoad) {
         mChooseGroupWidget->pushIn(QPoint(width(), 0), QPoint(mLeftHandMenu->width(), 0));
@@ -836,22 +821,59 @@ void MainWindow::pushOutChooseGroupPage() {
     }
 }
 
+void MainWindow::pushInChooseMoodPage(cor::EGroupAction action) {
+    mChooseMoodWidget->showMoods(action);
+    pushInFullPageWidget(mChooseMoodWidget);
+    if (mLeftHandMenu->alwaysOpen() && !mFirstLoad) {
+        mChooseMoodWidget->pushIn(QPoint(width(), 0), QPoint(mLeftHandMenu->width(), 0));
+    } else {
+        mChooseMoodWidget->pushIn(QPoint(width(), 0), QPoint(0u, 0u));
+    }
+}
+
+void MainWindow::pushOutChooseMoodPage() {
+    pushOutFullPageWidget(mChooseMoodWidget);
+
+    mChooseMoodWidget->pushOut(QPoint(width(), 0u));
+    if (mDiscoveryPage->isOpen()) {
+        mDiscoveryPage->updateTopMenu();
+    }
+}
+
 void MainWindow::selectedEditMode(EChosenEditMode mode) {
-    switch (mode) {
-        case EChosenEditMode::add:
-            pushInEditPage(0u);
-            break;
-        case EChosenEditMode::edit:
-            pushInChooseGroupPage(EGroupAction::edit);
-            break;
-        case EChosenEditMode::remove:
-            pushInChooseGroupPage(EGroupAction::remove);
-            break;
+    if (mIsMoodEdit) {
+        switch (mode) {
+            case EChosenEditMode::add:
+                pushInEditMoodPage(0u);
+                break;
+            case EChosenEditMode::edit:
+                pushInChooseMoodPage(cor::EGroupAction::edit);
+                break;
+            case EChosenEditMode::remove:
+                pushInChooseMoodPage(cor::EGroupAction::remove);
+                break;
+        }
+    } else {
+        switch (mode) {
+            case EChosenEditMode::add:
+                pushInEditGroupPage(0u);
+                break;
+            case EChosenEditMode::edit:
+                pushInChooseGroupPage(cor::EGroupAction::edit);
+                break;
+            case EChosenEditMode::remove:
+                pushInChooseGroupPage(cor::EGroupAction::remove);
+                break;
+        }
     }
 }
 
 void MainWindow::editGroupSelected(std::uint64_t key) {
-    pushInEditPage(key);
+    pushInEditGroupPage(key);
+}
+
+void MainWindow::editMoodSelected(std::uint64_t key) {
+    pushInEditMoodPage(key);
 }
 
 void MainWindow::editPageUpdateGroups() {
@@ -859,9 +881,13 @@ void MainWindow::editPageUpdateGroups() {
     mLeftHandMenu->clearWidgets();
 }
 
+void MainWindow::editPageUpdateMoods() {
+    mMainViewport->moodPage()->updateMoods();
+}
+
 bool MainWindow::isAnyWidgetAbove() {
-    if (mSettingsPage->isOpen() || mEditPage->isOpen() || mDiscoveryPage->isOpen()
-        || mNoWifiWidget->isVisible()) {
+    if (mSettingsPage->isOpen() || mEditGroupPage->isOpen() || mEditMoodPage->isOpen()
+        || mDiscoveryPage->isOpen() || mNoWifiWidget->isVisible()) {
         return true;
     }
     return false;

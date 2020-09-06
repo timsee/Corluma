@@ -908,3 +908,12 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed compilation in Qt 15.
 - Fixed a bug in discovery of Hue Bridges.
 - Fixed miscellaneous bugs.
+
+### **v0.19.20**
+### The New Edit Mood Update
+- Added the ability to edit moods with the new edit widgets.
+- Added a `StandardMoodsMenu` for choosing moods.
+- Removed old system for editing app data.
+- Updated to C++14
+- Fixed a bug with Nanoleaf discovery.
+- Fixed miscellaneous bugs.

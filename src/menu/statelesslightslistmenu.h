@@ -1,8 +1,9 @@
-#ifndef LIGHTSLISTMENU_H
-#define LIGHTSLISTMENU_H
+#ifndef STATELESSLIGHTSLISTMENU_H
+#define STATELESSLIGHTSLISTMENU_H
 
 #include <QScrollArea>
 #include <QWidget>
+#include "comm/commlayer.h"
 #include "menu/menulightcontainer.h"
 
 /*!
@@ -14,10 +15,10 @@
  * default it displays the state of the lights, but that can be toggled by calling
  * displayState(bool)
  */
-class LightsListMenu : public QWidget {
+class StatelessLightsListMenu : public QWidget {
     Q_OBJECT
 public:
-    explicit LightsListMenu(QWidget* parent, bool allowInteraction);
+    explicit StatelessLightsListMenu(QWidget* parent, CommLayer* comm, bool allowInteraction);
 
     /// resizes programmatically
     void resize(const QRect& rect, int buttonHeight);
@@ -26,15 +27,15 @@ public:
     void updateLights();
 
     /// add a light to display
-    void addLight(const cor::Light&);
+    void addLight(const QString&);
 
     /// remove a light from display.
-    void removeLight(const cor::Light&);
+    void removeLight(const QString&);
 
     /// shows a group of lights.
-    void showLights(const std::vector<cor::Light>&);
+    void showGroup(const std::vector<QString>&);
 
-    /// highlight the lights listed, removing highlights from all others.
+    /// highlight all the lights provided, removing the highlight from lights not in the list.
     void highlightLights(const std::vector<QString>& lights) {
         mLightContainer->highlightLights(lights);
     }
@@ -42,25 +43,22 @@ public:
     /// clears all data from the widget, so it is no longer showing any lights.
     void clear();
 
-    /// getter for selected lights.
-    std::vector<cor::Light> lights() const noexcept { return mLights; }
+    /// getter for the lights that are displayed
+    const std::vector<QString>& lightIDs() const noexcept { return mLights; }
 
 signals:
 
-    /// emits when a light is clicked.
-    void clickedLight(cor::Light);
+    /// emits when a light is clicked
+    void clickedLight(QString);
 
 private slots:
-    /// handles when a light is clicked, emits the full cor::Light
-    void lightClicked(QString light) {
-        for (auto storedLight : mLights) {
-            if (storedLight.uniqueID() == light) {
-                emit clickedLight(storedLight);
-            }
-        }
-    }
+    /// handles when a light is clicked
+    void lightClicked(QString light) { emit clickedLight(light); }
 
 private:
+    /// pointer to comm layer
+    CommLayer* mComm;
+
     /// scroll area for showing the MenuLightContainer
     QScrollArea* mScrollArea;
 
@@ -71,8 +69,7 @@ private:
     int mRowHeight;
 
     /// stores the unique IDs of all lights being displayed.
-    std::vector<cor::Light> mLights;
+    std::vector<QString> mLights;
 };
 
-
-#endif // LIGHTSLISTMENU_H
+#endif // STATELESSLIGHTSLISTMENU_H

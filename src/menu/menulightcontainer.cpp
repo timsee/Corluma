@@ -52,6 +52,18 @@ void MenuLightContainer::moveLightWidgets(QSize size, QPoint offset) {
     }
 }
 
+std::vector<QString> MenuLightContainer::highlightedLights() {
+    std::vector<QString> lights;
+    for (const auto& existingWidget : mLightLayout.widgets()) {
+        auto widget = qobject_cast<ListLightWidget*>(existingWidget);
+        Q_ASSERT(widget);
+        if (widget->checked()) {
+            lights.push_back(widget->key());
+        }
+    }
+    return lights;
+}
+
 void MenuLightContainer::clear() {
     mLightLayout.clear();
 }

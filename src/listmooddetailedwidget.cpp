@@ -64,9 +64,6 @@ ListMoodDetailedWidget::ListMoodDetailedWidget(QWidget* parent, GroupData* group
 
     mScrollArea->setWidget(mAdditionalDetailsWidget);
 
-    mEditPage = new EditMoodPage(this, mComm, groups);
-    mEditPage->setVisible(false);
-
     mPlaceholder = new QWidget(this);
     mPlaceholder->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -86,8 +83,13 @@ void ListMoodDetailedWidget::update(const cor::Mood& mood) {
     mSimpleGroupWidget->removeWidgets();
     mKey = mood.uniqueID();
     mTopLabel->setText(mood.name());
-    mSimpleGroupWidget->updateDevices(mood.lights(), cor::EWidgetType::full, false, true);
-    mEditPage->showMood(mood, mComm->allLights());
+    auto lights = mood.lights();
+    // since this is displaying desired states of lights, override the state of the lights to show
+    // they are reachable even if they aren't.
+    for (auto& light : lights) {
+        light.isReachable(true);
+    }
+    mSimpleGroupWidget->updateDevices(lights, cor::EWidgetType::full, false, true);
 
     mOnOffSwitch->setSwitchState(ESwitchState::off);
     mAdditionalDetailsWidget->display(mood, mPlaceholder->size());
@@ -103,7 +105,6 @@ void ListMoodDetailedWidget::resize() {
     mOnOffSwitch->setFixedWidth(int(size.width() * 0.2));
 
     mSimpleGroupWidget->setGeometry(mPlaceholder->geometry());
-    mEditPage->setGeometry(mPlaceholder->geometry());
     mScrollArea->setGeometry(mPlaceholder->geometry());
 
     if (mPageKey == "Group_Details") {
@@ -112,7 +113,6 @@ void ListMoodDetailedWidget::resize() {
     } else if (mPageKey == "Group_Lights") {
         mSimpleGroupWidget->resizeWidgets();
     } else if (mPageKey == "Group_Edit") {
-        mEditPage->resize();
     }
 }
 
@@ -130,25 +130,16 @@ void ListMoodDetailedWidget::floatingLayoutButtonPressed(const QString& key) {
         mPageKey = key;
         if (key == "Group_Details") {
             mScrollArea->setVisible(true);
-            mEditPage->setVisible(false);
             mSimpleGroupWidget->setVisible(false);
             mScrollArea->raise();
-            mEditPage->hide();
-            mEditPage->isOpen(false);
         } else if (key == "Group_Lights") {
             mScrollArea->setVisible(false);
-            mEditPage->setVisible(false);
             mSimpleGroupWidget->setVisible(true);
             mSimpleGroupWidget->raise();
-            mEditPage->hide();
-            mEditPage->isOpen(false);
         } else if (key == "Group_Edit") {
+            // TODO: either implement edit mode from this page, or remove it entirely.
             mScrollArea->setVisible(false);
-            mEditPage->setVisible(true);
             mSimpleGroupWidget->setVisible(false);
-            mEditPage->raise();
-            mEditPage->show();
-            mEditPage->isOpen(true);
         }
         resize();
     }

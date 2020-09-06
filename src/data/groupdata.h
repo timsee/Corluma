@@ -7,6 +7,7 @@
 #include "cor/jsonsavedata.h"
 #include "cor/objects/group.h"
 #include "cor/objects/mood.h"
+#include "moodparentdata.h"
 #include "orphandata.h"
 #include "parentdata.h"
 #include "subgroupdata.h"
@@ -83,11 +84,17 @@ public:
     /// returns a vector of names for the group IDs that are provided
     std::vector<QString> groupNamesFromIDs(std::vector<std::uint64_t> IDs);
 
+    /// returns a group's name from its ID
+    QString groupNameFromID(std::uint64_t ID);
+
     /// returns a vector of groups from a vector of IDs
     std::vector<cor::Group> groupsFromIDs(std::vector<std::uint64_t> IDs);
 
-    /// converts a group into an ID, returning an invalid group if the ID is invalid.
+    /// converts a group ID into a group, returning an invalid group if the ID is invalid.
     cor::Group groupFromID(std::uint64_t ID);
+
+    /// converts a mood ID into a mood, returning an invalid mood if the ID is invalid.
+    cor::Mood moodFromID(std::uint64_t ID);
 
     /// getter for the subgroups
     const SubgroupData& subgroups() const { return mSubgroups; }
@@ -102,6 +109,10 @@ public:
     /// getter for the "Parent" groups, which are either rooms, or groups that are not a subgroup of
     /// any other group
     const std::vector<std::uint64_t>& parents() const { return mParents.parents(); }
+
+    /// This returns all moods sorted into a map where the key is the room that contains them. All
+    /// moods that span multiple rooms are stored in the key '0'.
+    const RoomMoodMap& moodParents() const { return mMoodParents.moodParents(); }
 
     /// getter for name from ID
     QString nameFromID(std::uint64_t ID);
@@ -249,6 +260,9 @@ private:
     /// stores all parent groups, which are either rooms, or groups that are not a subgroup of any
     /// other group.
     ParentData mParents;
+
+    /// stores the parent group data for moods.
+    MoodParentData mMoodParents;
 };
 
 #endif // GROUPS_DATA_H

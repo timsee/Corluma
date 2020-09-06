@@ -1,11 +1,11 @@
-#ifndef EDITREVIEWGROUPWIDGET_H
-#define EDITREVIEWGROUPWIDGET_H
+#ifndef EDITREVIEWMOODIDGET_H
+#define EDITREVIEWMOODIDGET_H
 
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QWidget>
 #include "edit/editpagechildwidget.h"
-#include "menu/displaygroupwidget.h"
+#include "menu/displaymoodwidget.h"
 #include "menu/statelesslightslistmenu.h"
 #include "utils/qt.h"
 
@@ -19,19 +19,19 @@
  * page, and allows the user to review the edit they are making to a group before finally committing
  * the edit.
  */
-class ReviewGroupWidget : public EditPageChildWidget {
+class ReviewMoodWidget : public EditPageChildWidget {
     Q_OBJECT
 public:
-    explicit ReviewGroupWidget(QWidget* parent, CommLayer* comm, GroupData* groups)
+    explicit ReviewMoodWidget(QWidget* parent, CommLayer* comm, GroupData* groups)
         : EditPageChildWidget(parent),
           mComm{comm},
           mGroups{groups},
           mTopLabel{new QLabel("Review:", this)},
-          mGroupWidget{new DisplayGroupWidget(this, comm, groups)},
+          mMoodWidget{new DisplayMoodWidget(this, comm, groups)},
           mCreateButton{new QPushButton("Create", this)} {
         mBottomButtons->hideForward(true);
         mCreateButton->setStyleSheet("background-color:rgb(69,67,67);");
-        connect(mCreateButton, SIGNAL(clicked(bool)), this, SLOT(createGroup(bool)));
+        connect(mCreateButton, SIGNAL(clicked(bool)), this, SLOT(createMood(bool)));
     }
 
     /// set to true if editing an existing group, set to false if its a new group
@@ -46,32 +46,24 @@ public:
     }
 
     /// change the height of rows in scroll widgets
-    void changeRowHeight(int height) { mGroupWidget->changeRowHeight(height); }
+    void changeRowHeight(int height) { mMoodWidget->changeRowHeight(height); }
 
     /// displays a group in the group widget
-    void displayGroup(const QString& name,
-                      const cor::EGroupType& type,
-                      const QString& description,
-                      const std::vector<QString>& lights) {
+    void displayMood(const QString& name,
+                     const QString& description,
+                     const std::vector<cor::Light>& lights) {
         // generate a unique ID if and only if its a new group, otherwise, use the unique ID
         // provided when edit mode was turned on.
         std::uint64_t key = mUniqueID;
         if (!mEditMode) {
             key = mGroups->generateNewUniqueKey();
         }
-        cor::Group group(key, name, type, lights);
-        group.description(description);
-        mGroupWidget->updateGroup(group, mEditMode);
+        cor::Mood mood(key, name, lights);
+        mood.description(description);
+        mMoodWidget->updateMood(mood, mEditMode);
     }
-
     /// getter for the bottom buttons. Only the forward button is used in this widget.
     EditBottomButtons* bottomButtons() { return mBottomButtons; }
-
-    /// getter for unique ID of the group
-    std::uint64_t uniqueID() { return mUniqueID; }
-
-    /// true if in edit mode, false if creating new group.
-    bool isEditMode() { return mEditMode; }
 
 protected:
     /*!
@@ -85,7 +77,7 @@ protected:
         mTopLabel->setGeometry(0, yPos, this->width(), buttonHeight);
         yPos += mTopLabel->height();
 
-        mGroupWidget->setGeometry(0, yPos, this->width(), buttonHeight * 8);
+        mMoodWidget->setGeometry(0, yPos, this->width(), buttonHeight * 8);
 
         auto createWidth = this->width() / 6;
         mCreateButton->setGeometry(this->width() - createWidth,
@@ -98,31 +90,27 @@ private slots:
 
     /// handles when the create button is pressed. Verifies the user wants to create a group, and if
     /// they do, it creates the group and closes the page.
-    void createGroup(bool) {
-        const auto& group = mGroupWidget->group();
+    void createMood(bool) {
+        const auto& mood = mMoodWidget->mood();
         // ask if the user is sure before creating
         QString text;
         QString title;
         if (mEditMode) {
-            text = "Are you sure you want to edit the group named " + group.name() + " with "
-                   + QString::number(group.lights().size()) + " lights?";
-            title = "Edit Group?";
+            text = "Are you sure you want to edit the mood named " + mood.name() + "with "
+                   + QString::number(mood.lights().size()) + " lights?";
+            title = "Edit Mood?";
         } else {
-            text = "Are you sure you want to save the group named " + group.name() + " with "
-                   + QString::number(group.lights().size()) + " lights?";
-            title = "Save Group?";
+            text = "Are you sure you want to save the mood named " + mood.name() + " with "
+                   + QString::number(mood.lights().size()) + " lights?";
+            title = "Save Mood?";
         }
         auto reply = QMessageBox::question(this, title, text, QMessageBox::Yes | QMessageBox::No);
         if (reply == QMessageBox::Yes) {
-            if (mEditMode) {
-                // remove the existing group
-                mGroups->removeGroup(mGroupWidget->group().uniqueID());
-                qDebug() << "INFO: editing group" << group.toJson();
-            } else {
-                qDebug() << "INFO: adding new group" << group.toJson();
-            }
-            // save the group
-            mComm->saveNewGroup(group);
+            // remove mood if it exists
+            mGroups->removeGroup(mood.uniqueID());
+
+            // make a new mood
+            mGroups->saveNewMood(mood);
             emit updateGroups();
             // close the page.
             emit closePage();
@@ -141,7 +129,7 @@ private:
     QLabel* mTopLabel;
 
     /// widget to display the group that has been created or edited
-    DisplayGroupWidget* mGroupWidget;
+    DisplayMoodWidget* mMoodWidget;
 
     /// button that creates the group
     QPushButton* mCreateButton;
@@ -153,4 +141,4 @@ private:
     std::uint64_t mUniqueID;
 };
 
-#endif // EDITREVIEWGROUPWIDGET_H
+#endif // EDITREVIEWMOODIDGET_H

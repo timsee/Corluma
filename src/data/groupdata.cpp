@@ -57,6 +57,7 @@ void GroupData::updateGroupMetadata() {
         groupIDs.emplace_back(group.uniqueID());
     }
     mParents.updateParentGroups(groupIDs, mSubgroups.subgroups());
+    mMoodParents.updateMoodParents(rooms(), moods());
 }
 
 //-------------------
@@ -85,7 +86,7 @@ void GroupData::saveNewMood(const cor::Mood& mood) {
 
             // save file
             saveJSON();
-
+            updateGroupMetadata();
             emit newMoodAdded(mood.name());
         }
     }
@@ -398,6 +399,12 @@ std::uint64_t GroupData::generateNewUniqueKey() {
     return maxKey + 1;
 }
 
+QString GroupData::groupNameFromID(std::uint64_t ID) {
+    auto group = groupFromID(ID);
+    return group.name();
+}
+
+
 std::vector<QString> GroupData::groupNamesFromIDs(std::vector<std::uint64_t> IDs) {
     std::vector<QString> nameVector;
     nameVector.reserve(IDs.size());
@@ -421,6 +428,15 @@ cor::Group GroupData::groupFromID(std::uint64_t ID) {
     // check if group is already in this list
     if (groupResult.second) {
         return groupResult.first;
+    }
+    return {};
+}
+
+cor::Mood GroupData::moodFromID(std::uint64_t ID) {
+    auto moodResult = mMoodDict.item(QString::number(ID).toStdString());
+    // check if group is already in this list
+    if (moodResult.second) {
+        return moodResult.first;
     }
     return {};
 }

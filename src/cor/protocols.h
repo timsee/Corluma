@@ -859,6 +859,8 @@ const ERoutine ERoutineSingleColorEnd = ERoutine::singleSawtoothFade;
 const static QString kUseTimeoutKey = QString("Settings_UseTimeout");
 const static QString kTimeoutValue = QString("Settings_TimeoutValue");
 
+enum class EGroupAction { edit, remove };
+
 } // namespace cor
 
 #endif // PROTOCOLS_H

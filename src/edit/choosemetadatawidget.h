@@ -34,8 +34,9 @@ class ChooseMetadataWidget : public EditPageChildWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit ChooseMetadataWidget(QWidget* parent)
+    explicit ChooseMetadataWidget(QWidget* parent, bool isMood)
         : EditPageChildWidget(parent),
+          mIsMood{isMood},
           mNameLabel{new QLabel("Name:", this)},
           mNameInput{new QLineEdit(this)},
           mDescriptionLabel{new QLabel("Description (Optional):", this)},
@@ -47,6 +48,9 @@ public:
         mNameInput->setMaxLength(kNameMaxSize);
         connect(mNameInput, SIGNAL(textEdited(QString)), this, SLOT(lineEditChanged(QString)));
 
+        if (isMood) {
+            mGroupRoomWidget->setVisible(false);
+        }
         connect(mGroupRoomWidget, SIGNAL(boxChecked()), this, SLOT(groupRoomBoxChecked()));
 
         connect(mDescriptionInput, SIGNAL(textChanged()), this, SLOT(descriptionChanged()));
@@ -69,10 +73,16 @@ public:
 
     /// prefill the metadata with existing data to edit
     void prefill(const QString& name, const QString& description, const cor::EGroupType& type) {
+        mIsMood = (type == cor::EGroupType::mood);
         mNameInput->setText(name);
         mDescriptionInput->setText(description);
         bool lockAsGroup = (type == cor::EGroupType::group);
-        mGroupRoomWidget->lockSelection(lockAsGroup);
+        if (mIsMood) {
+            mGroupRoomWidget->setVisible(false);
+        } else {
+            mGroupRoomWidget->setVisible(true);
+            mGroupRoomWidget->lockSelection(lockAsGroup);
+        }
         conditionsMet();
     }
 
@@ -98,13 +108,19 @@ protected:
         mNameInput->setGeometry(0, yPos, this->width(), heightSpacer);
         yPos += mNameInput->height();
 
-        mGroupRoomWidget->setGeometry(0, yPos, this->width(), heightSpacer * 1.5);
-        yPos += mGroupRoomWidget->height();
+        if (!mIsMood) {
+            mGroupRoomWidget->setGeometry(0, yPos, this->width(), heightSpacer * 1.5);
+            yPos += mGroupRoomWidget->height();
+        }
 
         mDescriptionLabel->setGeometry(0, yPos, this->width(), heightSpacer);
         yPos += mDescriptionLabel->height();
 
-        mDescriptionInput->setGeometry(0, yPos, this->width(), heightSpacer * 3.5);
+        if (mIsMood) {
+            mDescriptionInput->setGeometry(0, yPos, this->width(), heightSpacer * 5);
+        } else {
+            mDescriptionInput->setGeometry(0, yPos, this->width(), heightSpacer * 3.5);
+        }
         yPos += mDescriptionInput->height();
 
         // add a spacer
@@ -151,16 +167,19 @@ private:
     /// true if all fields have met the conditions needed to proceed, false if any widget has an
     /// invalid input.
     bool conditionsMet() {
-        // check if the a room or group is checked
-        if (!(mGroupRoomWidget->roomChecked() || mGroupRoomWidget->groupChecked())) {
-            emit stateChanged(mIndex, EEditProgressState::incomplete);
-            return false;
+        if (!mIsMood) {
+            // check if the a room or group is checked
+            if (!(mGroupRoomWidget->roomChecked() || mGroupRoomWidget->groupChecked())) {
+                emit stateChanged(mIndex, EEditProgressState::incomplete);
+                return false;
+            }
         }
 
         // check if name is correct
         if (mNameInput->text().size() > 2) {
             auto name = mNameInput->text();
-            if ((name != "zzzzMiscellaneous") && (name != "Miscellaneous")) {
+            if ((name != "zzzzMiscellaneous") && (name != "Miscellaneous")
+                && (name != "zzzAVAIALBLE_DEVICES")) {
                 emit stateChanged(mIndex, EEditProgressState::completed);
                 return true;
             }
@@ -168,6 +187,9 @@ private:
         emit stateChanged(mIndex, EEditProgressState::incomplete);
         return false;
     }
+
+    /// true if a mood, false if a group or room.
+    bool mIsMood;
 
     /// label for the name input
     QLabel* mNameLabel;

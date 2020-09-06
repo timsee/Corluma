@@ -28,7 +28,7 @@ equals (QT_MAJOR_VERSION, 5)  {
     error(ERROR: Qt5 is not installed. This project uses QT5.13 or later)
 }
 
-CONFIG += c++11 #adds C++11 support
+CONFIG += c++14 #adds C++14 support
 
 #----------
 # Dependencies check
@@ -160,16 +160,20 @@ SOURCES += main.cpp \
     cor/widgets/groupbutton.cpp \
     edit/chooseeditpage.cpp \
     edit/choosegroupwidget.cpp \
+    edit/choosemoodwidget.cpp \
     edit/editpage.cpp \
     edit/editprogresswidget.cpp \
+    listmoodwidget.cpp \
     menu/displaygroupmetadata.cpp \
     menu/lightslistmenu.cpp \
     menu/menugroupcontainer.cpp \
     menu/menulightcontainer.cpp \
+    menu/menumoodcontainer.cpp \
     menu/menuparentgroupcontainer.cpp \
     menu/menusubgroupcontainer.cpp \
     menu/standardlightsmenu.cpp \
-    oldeditpage.cpp \
+    menu/standardmoodsmenu.cpp \
+    menu/statelesslightslistmenu.cpp \
     parentgroupwidget.cpp \
     stateobserver.cpp \
     data/subgroupdata.cpp \
@@ -193,8 +197,6 @@ SOURCES += main.cpp \
     discoverypage.cpp \
     presetgroupwidget.cpp \
     greyoutoverlay.cpp \
-    listmoodgroupwidget.cpp \
-    editmoodpage.cpp \
     routinebuttonswidget.cpp \
     colorpage.cpp \
     singlelightbrightnesswidget.cpp \
@@ -203,7 +205,6 @@ SOURCES += main.cpp \
     globalsettingswidget.cpp \
     editablefieldwidget.cpp \
     searchwidget.cpp \
-    editpagetopmenu.cpp \
     palettepage.cpp \
     moodpage.cpp \
     lightinfolistwidget.cpp \
@@ -266,6 +267,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     colorpicker/schemegenerator.h \
     cor/lightlist.h \
     cor/widgets/expandingtextscrollarea.h \
+    data/moodparentdata.h \
     debugconnectionspoofer.h \
     discovery/discoverywidget.h \
     discovery/discoveryhuewidget.h \
@@ -280,29 +282,37 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     cor/dictionary.h \
     edit/chooseeditpage.h \
     edit/choosegroupwidget.h \
-    edit/chooselightswidget.h \
+    edit/chooselightsgroupwidget.h \
+    edit/chooselightsmoodwidget.h \
     edit/choosemetadatawidget.h \
+    edit/choosemoodwidget.h \
     edit/editbottombuttons.h \
     edit/editgrouppage.h \
+    edit/editmoodpage.h \
     edit/editpage.h \
     edit/editpagechildwidget.h \
     edit/editprogressstate.h \
     edit/editprogresswidget.h \
     edit/grouproomcheckboxwidget.h \
     edit/reviewgroupwidget.h \
+    edit/reviewmoodwidget.h \
     globalbrightnesswidget.h \
     data/orphandata.h \
     data/parentdata.h \
+    listmoodwidget.h \
     menu/displaygroupmetadata.h \
     menu/displaygroupwidget.h \
+    menu/displaymoodwidget.h \
     menu/lefthandmenutoplightwidget.h \
     menu/lightslistmenu.h \
     menu/menugroupcontainer.h \
     menu/menulightcontainer.h \
+    menu/menumoodcontainer.h \
     menu/menuparentgroupcontainer.h \
     menu/menusubgroupcontainer.h \
     menu/standardlightsmenu.h \
-    oldeditpage.h \
+    menu/standardmoodsmenu.h \
+    menu/statelesslightslistmenu.h \
     parentgroupwidget.h \
     singlelightbrightnesswidget.h \
     stateobserver.h \
@@ -332,8 +342,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     discoverypage.h \
     presetgroupwidget.h \
     greyoutoverlay.h \
-    listmoodgroupwidget.h \
-    editmoodpage.h \
     routinebuttonswidget.h \
     colorpage.h \
     topmenu.h \
@@ -341,7 +349,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     globalsettingswidget.h \
     editablefieldwidget.h \
     searchwidget.h \
-    editpagetopmenu.h \
     palettepage.h \
     moodpage.h \
     lightinfolistwidget.h \

@@ -32,7 +32,7 @@ StandardLightsMenu::StandardLightsMenu(QWidget* parent, CommLayer* comm, GroupDa
       mSubgroupContainer{
           new MenuSubgroupContainer(mSubgroupScrollArea, mGroups, cor::EWidgetType::condensed)},
       mLightScrollArea{new QScrollArea(this)},
-      mLightContainer{new MenuLightContainer(mLightScrollArea, true, true)},
+      mLightContainer{new MenuLightContainer(mLightScrollArea, true)},
       mButtonHeight{0u},
       mPositionY{0u} {
     mScrollTopWidget = new LeftHandMenuTopLightWidget(this);
@@ -119,8 +119,7 @@ void StandardLightsMenu::overrideState(const std::vector<cor::Group>& groupData)
             // lights, but its not miscellaneous
             changeStateToParentGroups();
         }
-    } else if ((groupData.size() > 1 && (mState != EState::noGroups))
-               || groupData.empty()) {
+    } else if ((groupData.size() > 1 && (mState != EState::noGroups)) || groupData.empty()) {
         // nothing needs to be done
     } else {
         qDebug() << " encountered unrecognized state";

@@ -18,8 +18,9 @@
 #include "discoverypage.h"
 #include "edit/chooseeditpage.h"
 #include "edit/choosegroupwidget.h"
+#include "edit/choosemoodwidget.h"
 #include "edit/editgrouppage.h"
-#include "editmoodpage.h"
+#include "edit/editmoodpage.h"
 #include "floatinglayout.h"
 #include "greyoutoverlay.h"
 #include "icondata.h"
@@ -103,8 +104,11 @@ public slots:
     /// hides the settings page
     void pushOutSettingsPage();
 
-    /// displays the edit page
-    void pushInEditPage(std::uint64_t key);
+    /// displays the edit group page
+    void pushInEditGroupPage(std::uint64_t key);
+
+    /// displays the edit mood page
+    void pushInEditMoodPage(std::uint64_t key);
 
     /// hides the edit page
     void pushOutEditPage();
@@ -113,17 +117,27 @@ public slots:
     /// instead.
     void editGroupSelected(std::uint64_t);
 
+    /// edit teh mood with the given key. if a 0u is provided as a key, a new mood is created
+    /// instead.
+    void editMoodSelected(std::uint64_t);
+
     /// displays the edit page
     void pushInChooseEditPage();
 
     /// hides the edit page
     void pushOutChooseEditPage();
 
-    /// displays the choose page
-    void pushInChooseGroupPage(EGroupAction action);
+    /// displays the choose group page
+    void pushInChooseGroupPage(cor::EGroupAction action);
 
     /// hides the choose group page
     void pushOutChooseGroupPage();
+
+    /// displays the choose group page
+    void pushInChooseMoodPage(cor::EGroupAction action);
+
+    /// hides the choose group page
+    void pushOutChooseMoodPage();
 
     /// handled when an edit mode is selected
     void selectedEditMode(EChosenEditMode);
@@ -131,15 +145,13 @@ public slots:
     /// updates the UI of other pages when the group info is changed from an edit page.
     void editPageUpdateGroups();
 
+    /// updates the UI of other pages when the mood info is changed from an edit page.
+    void editPageUpdateMoods();
+
     /*!
      * \brief editButtonClicked an edit button has been clicked for either a collection or mood.
      */
     void editButtonClicked(bool);
-
-    /*!
-     * \brief editClosePressed close the edit page
-     */
-    void editClosePressed();
 
     /// close the edit page
     void editPageClosePressed();
@@ -264,12 +276,12 @@ private:
     /// handles an edge case when the app is loading the first time.
     bool mFirstLoad;
 
+    /// true if editing a mood, false if editing a group or room.
+    bool mIsMoodEdit;
+
     //------------------
     // Pages
     //------------------
-
-    /// page for editing or making a new mood
-    EditMoodPage* mEditMoodPage;
 
     /// true if wifi found, false otherwise
     bool mWifiFound;
@@ -363,8 +375,14 @@ private:
     /// widget for choosing a group to either delete or edit
     ChooseGroupWidget* mChooseGroupWidget;
 
-    /// edit page for editing gorups and moods
-    cor::EditGroupPage* mEditPage;
+    /// widget for choosing a mood to either delete or edit
+    ChooseMoodWidget* mChooseMoodWidget;
+
+    /// edit page for editing groups and rooms
+    cor::EditGroupPage* mEditGroupPage;
+
+    /// edit page for editing moods
+    cor::EditMoodPage* mEditMoodPage;
 
     /// resize a widget that takes up the full page
     void resizeFullPageWidget(QWidget* widget);

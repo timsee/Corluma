@@ -2,7 +2,7 @@
 #define COR_EDITGROUPPAGE_H
 
 #include <QWidget>
-#include "edit/chooselightswidget.h"
+#include "edit/chooselightsgroupwidget.h"
 #include "edit/choosemetadatawidget.h"
 #include "edit/editpage.h"
 #include "edit/editprogressstate.h"
@@ -14,8 +14,7 @@ namespace cor {
  * Copyright (C) 2015 - 2020.
  * Released under the GNU General Public License.
  *
- * \brief The EditGroupPage class is a widget for editing and making new groups. It can make only
- * groups and cannot make rooms.
+ * \brief The EditGroupPage class is a widget for editing and making new groups.
  *
  * The metadata for the group is only stored in the app if theres no other place to store it. For
  * example, in the case of a Hue Bridge, it can store both groups and rooms, so this page sends
@@ -27,9 +26,10 @@ class EditGroupPage : public cor::EditPage {
 public:
     explicit EditGroupPage(QWidget* parent, CommLayer* comm, GroupData* groups)
         : EditPage(parent, comm, groups),
-          mMetadataWidget{new ChooseMetadataWidget(this)},
-          mLightsWidget{new ChooseLightsWidget(this, comm, groups)},
-          mReviewPage{new ReviewGroupWidget(this, comm, groups)} {
+          mMetadataWidget{new ChooseMetadataWidget(this, false)},
+          mLightsWidget{new ChooseLightsGroupWidget(this, comm, groups)},
+          mReviewPage{new ReviewGroupWidget(this, comm, groups)},
+          mGroups{groups} {
         setupWidgets({mMetadataWidget, mLightsWidget, mReviewPage});
     }
 
@@ -55,6 +55,19 @@ public:
                 break;
             }
             case 1: {
+                if (mMetadataWidget->groupType() == EGroupType::group) {
+                    mLightsWidget->setupAsGroup();
+                } else {
+                    if (mReviewPage->isEditMode()) {
+                        // get the group from its ID
+                        auto group = mGroups->groupFromID(mReviewPage->uniqueID());
+                        // setup the choose lights widget so that it knows the lights already in the
+                        // room
+                        mLightsWidget->setupAsRoom(group.lights());
+                    } else {
+                        mLightsWidget->setupAsRoom({});
+                    }
+                }
                 mLightsWidget->updateLights();
                 break;
             }
@@ -62,7 +75,7 @@ public:
                 mReviewPage->displayGroup(mMetadataWidget->name(),
                                           mMetadataWidget->groupType(),
                                           mMetadataWidget->description(),
-                                          mLightsWidget->lights());
+                                          mLightsWidget->lightIDs());
                 break;
             }
             default:
@@ -77,17 +90,17 @@ public:
     }
 
 private:
-    /// true if room, false otherwise
-    bool mIsRoom;
-
     /// widget for choosing the metadata for a group, such as its name and description.
     ChooseMetadataWidget* mMetadataWidget;
 
-    /// widget for choosing the lights in a group
-    ChooseLightsWidget* mLightsWidget;
+    /// widget for choosing the lights in a group.
+    ChooseLightsGroupWidget* mLightsWidget;
 
     /// widget for reviewing the final state of a group.
     ReviewGroupWidget* mReviewPage;
+
+    /// pointer to group data.
+    GroupData* mGroups;
 };
 
 } // namespace cor

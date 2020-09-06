@@ -12,7 +12,7 @@
 namespace cor {
 
 /// type of group
-enum class EGroupType { group, room };
+enum class EGroupType { group, room, mood };
 
 /// detects if a group is a room type, or returns that its a standard group
 inline EGroupType jsonToGroupType(const QJsonObject object) {
@@ -85,6 +85,7 @@ public:
     /// setter for description
     void description(const QString& description) noexcept { mDescription = description; }
 
+    /// getter for description
     const QString& description() const noexcept { return mDescription; }
 
     /// true if group is valid, false otherwise

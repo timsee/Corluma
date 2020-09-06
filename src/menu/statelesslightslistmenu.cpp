@@ -1,11 +1,15 @@
-#include "lightslistmenu.h"
+#include "statelesslightslistmenu.h"
 #include <QScrollBar>
 #include <QScroller>
 
-LightsListMenu::LightsListMenu(QWidget* parent, bool allowInteraction)
+StatelessLightsListMenu::StatelessLightsListMenu(QWidget* parent,
+                                                 CommLayer* comm,
+                                                 bool allowInteraction)
     : QWidget(parent),
+      mComm{comm},
       mScrollArea{new QScrollArea(this)},
       mLightContainer{new MenuLightContainer(mScrollArea, allowInteraction)} {
+    mLightContainer->displayState(false);
     mLightContainer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mLightContainer, SIGNAL(clickedLight(QString)), this, SLOT(lightClicked(QString)));
 
@@ -19,7 +23,7 @@ LightsListMenu::LightsListMenu(QWidget* parent, bool allowInteraction)
 }
 
 
-void LightsListMenu::resize(const QRect& inputRect, int buttonHeight) {
+void StatelessLightsListMenu::resize(const QRect& inputRect, int buttonHeight) {
     setGeometry(inputRect);
     int offsetY = 0u;
     mRowHeight = buttonHeight;
@@ -36,36 +40,35 @@ void LightsListMenu::resize(const QRect& inputRect, int buttonHeight) {
     mLightContainer->moveLightWidgets(QSize(this->width(), buttonHeight), QPoint(0, 0));
 }
 
-void LightsListMenu::updateLights() {
-    mLightContainer->updateLightWidgets(mLights);
+
+void StatelessLightsListMenu::updateLights() {
+    mLightContainer->updateLightWidgets(mComm->lightsByIDs(mLights));
 }
 
-void LightsListMenu::addLight(const cor::Light& light) {
-    auto vectorLight = cor::findLightInVectorByID(mLights, light);
-    if (!vectorLight.isValid()) {
-        mLights.push_back(light);
+void StatelessLightsListMenu::addLight(const QString& ID) {
+    // check if light exists
+    auto result = std::find(mLights.begin(), mLights.end(), ID);
+    if (result == mLights.end()) {
+        mLights.push_back(ID);
     }
-    mLightContainer->updateLightWidgets(mLights);
-    mLightContainer->showLights(mLights, mRowHeight);
+    mLightContainer->updateLightWidgets(mComm->lightsByIDs(mLights));
+    mLightContainer->showLights(mComm->lightsByIDs(mLights), mRowHeight);
 }
 
-void LightsListMenu::removeLight(const cor::Light& light) {
-    auto vectorLight = cor::findLightInVectorByID(mLights, light);
-    auto result = std::find(mLights.begin(), mLights.end(), vectorLight);
+void StatelessLightsListMenu::removeLight(const QString& ID) {
+    auto result = std::find(mLights.begin(), mLights.end(), ID);
     if (result != mLights.end()) {
         mLights.erase(result);
-    } else {
-        qDebug() << "ERROR: light not found, shouldn't get here " << light;
     }
-    mLightContainer->showLights(mLights, mRowHeight);
+    mLightContainer->showLights(mComm->lightsByIDs(mLights), mRowHeight);
 }
 
-void LightsListMenu::showLights(const std::vector<cor::Light>& lights) {
-    mLights = lights;
-    mLightContainer->updateLightWidgets(lights);
-    mLightContainer->showLights(lights, mRowHeight);
+void StatelessLightsListMenu::showGroup(const std::vector<QString>& IDs) {
+    mLights = IDs;
+    mLightContainer->updateLightWidgets(mComm->lightsByIDs(IDs));
+    mLightContainer->showLights(mComm->lightsByIDs(IDs), mRowHeight);
 }
 
-void LightsListMenu::clear() {
+void StatelessLightsListMenu::clear() {
     mLightContainer->showLights({}, mRowHeight);
 }
