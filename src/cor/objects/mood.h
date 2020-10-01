@@ -1,6 +1,7 @@
 #ifndef COR_MOOD_H
 #define COR_MOOD_H
 
+#include "cor/objects/groupstate.h"
 #include "cor/objects/light.h"
 
 namespace cor {
@@ -84,14 +85,10 @@ public:
     void lights(const std::vector<Light>& lights) { mLights = lights; }
 
     /// default states of groups.
-    const std::vector<std::pair<std::uint64_t, LightState>>& defaults() const noexcept {
-        return mDefaults;
-    }
+    const std::vector<cor::GroupState>& defaults() const noexcept { return mDefaults; }
 
     /// setter for default states
-    void defaults(const std::vector<std::pair<std::uint64_t, LightState>>& defaultStates) {
-        mDefaults = defaultStates;
-    }
+    void defaults(const std::vector<cor::GroupState>& defaultStates) { mDefaults = defaultStates; }
 
     /// setter for name
     void name(const QString& name) noexcept { mName = name; }
@@ -130,8 +127,8 @@ public:
 
         QJsonArray defaultStateArray;
         for (const auto& defaultState : defaults()) {
-            auto object = defaultState.second.toJson();
-            object["group"] = double(defaultState.first);
+            auto object = defaultState.state().toJson();
+            object["group"] = double(defaultState.uniqueID());
             defaultStateArray.append(object);
         }
         object["defaultStates"] = defaultStateArray;
@@ -150,7 +147,7 @@ private:
     std::uint64_t mUniqueID;
 
     /// default states of groups.
-    std::vector<std::pair<std::uint64_t, LightState>> mDefaults;
+    std::vector<cor::GroupState> mDefaults;
 
     /// list of lights
     std::vector<Light> mLights;

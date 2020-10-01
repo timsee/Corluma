@@ -199,6 +199,10 @@ public:
     /// adds meta data to a light, used when creating moods.
     cor::Light addLightMetaData(cor::Light light);
 
+    /// fills a mood with its lights metadata, as well as the metadata for its defaults. Pulls from
+    /// GroupData and CommLayer when necessary.
+    cor::Mood addMetadataToMood(const cor::Mood& mood);
+
 signals:
 
     /*!

@@ -51,7 +51,8 @@ public:
     /// displays a group in the group widget
     void displayMood(const QString& name,
                      const QString& description,
-                     const std::vector<cor::Light>& lights) {
+                     const std::vector<cor::Light>& lights,
+                     const std::vector<cor::GroupState>& defaultStates) {
         // generate a unique ID if and only if its a new group, otherwise, use the unique ID
         // provided when edit mode was turned on.
         std::uint64_t key = mUniqueID;
@@ -59,6 +60,7 @@ public:
             key = mGroups->generateNewUniqueKey();
         }
         cor::Mood mood(key, name, lights);
+        mood.defaults(defaultStates);
         mood.description(description);
         mMoodWidget->updateMood(mood, mEditMode);
     }

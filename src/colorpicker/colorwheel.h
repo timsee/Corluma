@@ -12,6 +12,9 @@
 /// type of color wheel
 enum class EWheelType { RGB, HS, CT };
 
+/// background of color wheel
+enum class EWheelBackground { light, dark };
+
 namespace cor {
 using CirclePoint = QPointF;
 }
@@ -76,6 +79,12 @@ public:
     /// bounding rect for wheel. Useful if widget is not square, since it accounts for the offset.
     QRect wheelRect();
 
+    /// set the color of the wheel background
+    void wheelBackground(EWheelBackground background) { mWheelBackground = background; }
+
+    /// getter for the wheel background color
+    EWheelBackground wheelBackground() { return mWheelBackground; }
+
     /*!
      * \brief handleMouseEvent handles all the mouse events used in the color wheel.
      *        The mousePressEvent and mouseReleaseEvent both map to this function.
@@ -137,6 +146,9 @@ private:
 
     /// true if should repaint, false otherwise
     bool mRepaint;
+
+    /// wheel background color
+    EWheelBackground mWheelBackground;
 };
 
 namespace cor {

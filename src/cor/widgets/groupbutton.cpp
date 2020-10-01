@@ -99,6 +99,7 @@ bool GroupButton::handleSelectAllButton(std::uint32_t checkedDevicesCount,
             renderFlag = true;
         }
     } else {
+        renderFlag = true;
         mButton->setVisible(false);
     }
 

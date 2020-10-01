@@ -119,6 +119,9 @@ private slots:
     void wheelCTChanged(std::uint32_t brightness, std::uint32_t temperature);
 
 private:
+    /// sets the background color for a slider widget
+    void setBackgroundForSliders(QWidget* sliders);
+
     /// bottom layout, gives 3 sliders for RGB.
     RGBSliders* mRGBSliders;
 

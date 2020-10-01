@@ -25,7 +25,6 @@ ListLightWidget::ListLightWidget(const cor::Light& light,
       mHardwareType{light.hardwareType()},
       mTypePixmap{lightHardwareTypeToPixmap(mHardwareType)},
       mState{light.state()},
-      mIsReachable{light.isReachable()},
       mShouldHighlight{setHighlightable},
       mIsChecked{false},
       mAllowInteraction{true},
@@ -60,6 +59,8 @@ void ListLightWidget::updateWidget(const cor::Light& light) {
 
     if (mHardwareType != light.hardwareType()) {
         mTypePixmap = lightHardwareTypeToPixmap(light.hardwareType());
+        mHardwareType = light.hardwareType();
+        resizeIcons();
     }
 
     if (light.name() != mName->text()) {
@@ -67,7 +68,6 @@ void ListLightWidget::updateWidget(const cor::Light& light) {
     }
 
     mState = light.state();
-    mIsReachable = light.isReachable();
     mLight = light;
     if (shouldRender) {
         mIconData.setRoutine(light.state());
@@ -136,7 +136,7 @@ void ListLightWidget::paintEvent(QPaintEvent*) {
     }
 
     QRect stateIconRect = stateIconRegion();
-    if (mIsReachable) {
+    if (mLight.isReachable()) {
         if (!mState.isOn()) {
             painter.setOpacity(0.25);
         }

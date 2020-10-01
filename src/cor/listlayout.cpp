@@ -123,17 +123,15 @@ QSize ListLayout::overallSize() {
     int height = 0;
     bool useHeight = true;
     for (const auto& widget : mWidgets) {
-        if (widget->isVisible()) {
-            if (mType == cor::EListType::grid) {
-                if (useHeight) {
-                    height += widget->height();
-                    useHeight = false;
-                } else {
-                    useHeight = true;
-                }
-            } else {
+        if (mType == cor::EListType::grid) {
+            if (useHeight) {
                 height += widget->height();
+                useHeight = false;
+            } else {
+                useHeight = true;
             }
+        } else {
+            height += widget->height();
         }
     }
 

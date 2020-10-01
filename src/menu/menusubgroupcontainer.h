@@ -52,6 +52,13 @@ public:
         return groups;
     }
 
+    /// programmatically choose to show or hide buttons
+    void showButtons(bool showButtons) {
+        for (auto button : mButtons) {
+            button->showButton(showButtons);
+            button->resize();
+        }
+    }
 
     /// highlights specific subgroups
     void highlightSubgroups(

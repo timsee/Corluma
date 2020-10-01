@@ -143,7 +143,8 @@ static std::vector<std::pair<std::string, ELightHardwareType>> vect = {
     {"LFF001", ELightHardwareType::hueLamp},       {"LDD001", ELightHardwareType::hueLamp},
     {"LTT001", ELightHardwareType::hueLamp},       {"LDT001", ELightHardwareType::hueLamp},
     {"MWM001", ELightHardwareType::hueLamp},       {"LST002", ELightHardwareType::lightStrip},
-    {"LST001", ELightHardwareType::lightStrip},    {"LLC020", ELightHardwareType::hueGo}};
+    {"LST001", ELightHardwareType::lightStrip},    {"LLC020", ELightHardwareType::hueGo},
+    {"LCT024", ELightHardwareType::huePlay}};
 
 static cor::Dictionary<ELightHardwareType> modelDict = cor::Dictionary<ELightHardwareType>(vect);
 

@@ -39,13 +39,13 @@ public:
                              QWidget* parent);
 
     /*!
-     * \brief updateWidget update the widget with a new state for the device.
+     * \brief updateWidget update the widget with a new state for the light.
      *
-     * \param device the new state of the device
-     * \param colors all the color groups in the data layer, in case the device uses
+     * \param light the new state of the light
+     * \param colors all the color groups in the data layer, in case the light uses
      * the color groups
      */
-    void updateWidget(const cor::Light& device);
+    void updateWidget(const cor::Light& light);
 
     /*!
      * \brief setHighlightChecked set the widget as checked or unchecked. When it is checked it
@@ -64,7 +64,7 @@ public:
     bool checked() { return mIsChecked; }
 
     /// true if displaying a reachable state, false otherwise
-    bool isReachable() const noexcept { return mIsReachable; }
+    bool isReachable() const noexcept { return mLight.isReachable(); }
 
     /// getter for name of light
     QString name() const noexcept { return mName->text(); }
@@ -133,9 +133,6 @@ private:
 
     /// state that is being displayed
     cor::LightState mState;
-
-    /// true if displaying a reachable light, false otherwise
-    bool mIsReachable;
 
     /// true if should highlight, false otherwise
     bool mShouldHighlight;

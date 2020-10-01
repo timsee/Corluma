@@ -51,6 +51,21 @@ public:
     /// state.
     void reset();
 
+    /// highlight a single light and switch into single light mode
+    void highlightLight(QString lightID);
+
+    /// turns on/off single light mode. In single light mode, only one light can be chosen at a
+    /// time. the top of the widget does not highlight, and the select all/none buttons are hidden.
+    /// If a new light is selected, the previous light is deslected.
+    void singleLightsMode(bool singleLightsMode) { mSingleLightMode = singleLightsMode; }
+
+    /// clears all selected lights
+    void clearSelection();
+
+    /// provides a list of lights that should be ignored when displaying lights. If a group/room
+    /// only contains ignored lights, it still displays, just empty.
+    void ignoreLights(std::vector<QString> lights);
+
 signals:
 
     /// signals when all of a group should be either selected or deselected
@@ -58,6 +73,9 @@ signals:
 
     /// signals when a light has been clicked.
     void clickedLight(QString);
+
+    /// emits when a light is unselected.
+    void unselectLight(QString);
 
 private slots:
     /// changes the state of the LeftHandLightMenu to showing parent groups
@@ -88,9 +106,16 @@ private slots:
         if (result != mSelectedLights.end()) {
             mSelectedLights.erase(result);
         } else {
-            mSelectedLights.push_back(key);
+            if (mSingleLightMode) {
+                mSelectedLights = {key};
+                mLightContainer->highlightLights(mSelectedLights);
+            } else {
+                mSelectedLights.push_back(key);
+            }
         }
-        highlightTopWidget();
+        if (!mSingleLightMode) {
+            highlightTopWidget();
+        }
         emit clickedLight(key);
     }
 
@@ -174,6 +199,12 @@ private:
 
     /// stores the selected lights for displaying highlights properly
     std::vector<QString> mSelectedLights;
+
+    /// if true, in single light mode, otherwise, in standard, multi-selection mode
+    bool mSingleLightMode;
+
+    /// list of lights to not display.
+    std::vector<QString> mIgnoredLights;
 };
 
 #endif // LEFTHANDLIGHTMENU_H

@@ -78,5 +78,6 @@
         <file>images/questionMark.png</file>
         <file>images/arrowLeft.png</file>
         <file>images/arrowRight.png</file>
+        <file>images/hue_play.png</file>
     </qresource>
 </RCC>

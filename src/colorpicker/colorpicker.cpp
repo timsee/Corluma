@@ -8,7 +8,7 @@
 
 #include "utils/color.h"
 
-ColorPicker::ColorPicker(QWidget* parent) : QWidget(parent) {
+ColorPicker::ColorPicker(QWidget* parent) : QWidget(parent), mShouldShowSliders{true} {
     mBestPossibleType = EColorPickerType::dimmable;
 
     mPlaceholder = new QWidget(this);
@@ -41,6 +41,11 @@ void ColorPicker::chooseBrightness(std::uint32_t brightness) {
     }
 }
 
+void ColorPicker::showSliders(bool shouldShowSliders) {
+    mShouldShowSliders = shouldShowSliders;
+    mPlaceholder->setVisible(false);
+}
+
 // ----------------------------
 // Resize
 // ----------------------------
@@ -52,9 +57,13 @@ void ColorPicker::resizeWheel() {
     }
 
     int yPos = 0;
-    mColorWheel->setGeometry(0, yPos, width(), height() * 14 / 20);
+    if (showSliders()) {
+        mColorWheel->setGeometry(0, yPos, width(), height() * 14 / 20);
 
-    yPos += mColorWheel->height();
-    mPlaceholder->setGeometry(0, yPos, width(), height() * 6 / 20);
+        yPos += mColorWheel->height();
+        mPlaceholder->setGeometry(0, yPos, width(), height() * 6 / 20);
+    } else {
+        mColorWheel->setGeometry(0, yPos, width(), height());
+    }
     mColorWheel->resize();
 }

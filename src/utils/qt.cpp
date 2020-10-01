@@ -26,7 +26,8 @@ bool leftHandMenuMoving() {
         if (QString(widget->metaObject()->className()) == "MainWindow") {
             // cast to mainwindow
             auto mainWindow = qobject_cast<MainWindow*>(widget);
-            return mainWindow->leftHandMenu()->geometry().x() < 0;
+            return (mainWindow->leftHandMenu()->geometry().x() < 0)
+                    &&  (mainWindow->leftHandMenu()->geometry().width() * -1  > mainWindow->leftHandMenu()->geometry().x());
         }
     }
     return false;

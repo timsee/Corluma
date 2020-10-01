@@ -39,11 +39,18 @@ public:
         mLightContainer->highlightLights(lights);
     }
 
+    /// vector of highlighted lights
+    std::vector<QString> highlightedLights() { return mLightContainer->highlightedLights(); }
+
     /// clears all data from the widget, so it is no longer showing any lights.
     void clear();
 
     /// getter for selected lights.
     std::vector<cor::Light> lights() const noexcept { return mLights; }
+
+    /// setter for whether or not this widget is in SingleLightMode. In SingleLightMode, only one
+    /// light can be highlighted at a time, and the parents and subgroups do not highlight at all.
+    void singleLightMode(bool singleLightMode) { mSingleLightMode = singleLightMode; }
 
 signals:
 
@@ -53,6 +60,11 @@ signals:
 private slots:
     /// handles when a light is clicked, emits the full cor::Light
     void lightClicked(QString light) {
+        // highlight only the light that was clicked
+        if (mSingleLightMode) {
+            mLightContainer->highlightLights({light});
+        }
+        // emit the light that was clicked
         for (auto storedLight : mLights) {
             if (storedLight.uniqueID() == light) {
                 emit clickedLight(storedLight);
@@ -72,6 +84,9 @@ private:
 
     /// stores the unique IDs of all lights being displayed.
     std::vector<cor::Light> mLights;
+
+    /// true if in single light mode, false if multiple lights can be picked.
+    bool mSingleLightMode;
 };
 
 

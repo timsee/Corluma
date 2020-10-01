@@ -84,7 +84,7 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
         }
     } else {
         if (mIsVertical) {
-            fixedWidth = size.height();
+            fixedWidth = size.width();
             fixedHeight = size.height() * int(buttons.size());
         } else {
             fixedWidth = size.height() * int(buttons.size());
@@ -118,11 +118,21 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             || mNames[i] == "Group_Lights" || mNames[i] == "Group_Details"
             || mNames[i] == "Group_Edit" || mNames[i] == "Discovery"
             || mNames[i] == "Select_Devices" || mNames[i] == "HueLightSearch"
-            || mNames[i] == "New_Group" || mNames[i] == "Plus") {
+            || mNames[i] == "New_Group" || mNames[i] == "Plus" || mNames[i] == "Close") {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(true);
             mButtons[i]->setMinimumSize(this->buttonSize());
+        } else if (mNames[i] == "Off") {
+            foundMatch = true;
+            state.routine(ERoutine::multiFade);
+            state.palette(mPalettes.palette(EPalette::poison));
+            state.speed(100);
+            state.paletteBrightness(0);
+            state.isOn(false);
+            auto lightsButton = new cor::Button(this, state);
+            mButtons[i] = static_cast<QPushButton*>(lightsButton);
+            Q_ASSERT(mButtons[i]);
         } else if (mNames[i] == "Preset") {
             foundMatch = true;
             state.routine(ERoutine::multiFade);
@@ -195,6 +205,8 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
                     cor::resizeIcon(mButtons[i], ":/images/plusIcon.png");
                 } else if (mNames[i] == "Plus") {
                     cor::resizeIcon(mButtons[i], ":/images/plusIcon.png");
+                } else if (mNames[i] == "Close") {
+                    cor::resizeIcon(mButtons[i], ":/images/disabledX.png");
                 } else if (mNames[i] == "HueLightSearch") {
                     cor::resizeIcon(mButtons[i], ":/images/plusIcon.png");
                 } else if (mNames[i] == "Group_Lights") {
@@ -293,8 +305,9 @@ bool FloatingLayout::isKeyHighlighted(const QString& key) {
 
 
 void FloatingLayout::move(QPoint topRightPoint) {
+    auto width = buttonSize().width() * mButtons.size();
     // add floating region to far right of screen under main icon menu
-    setGeometry(topRightPoint.x() - width(), topRightPoint.y(), width(), height());
+    setGeometry(topRightPoint.x() - width, topRightPoint.y(), width, height());
 }
 
 
@@ -337,11 +350,15 @@ void FloatingLayout::buttonPressed(int buttonIndex) {
 
 
 bool FloatingLayout::isALightsButton(std::uint32_t index) {
-    return (mNames[index] == "Preset" || mNames[index] == "Routine");
+    return (mNames[index] == "Preset" || mNames[index] == "Routine" || mNames[index] == "Off");
 }
 
 QSize FloatingLayout::buttonSize() {
-    return {width() / int(mButtons.size()), width() / int(mButtons.size())};
+    if (mIsVertical) {
+        return {height() / int(mButtons.size()), height() / int(mButtons.size())};
+    } else {
+        return {width() / int(mButtons.size()), width() / int(mButtons.size())};
+    }
 }
 
 void FloatingLayout::handleRectangleFontSize() {

@@ -2,8 +2,9 @@
 #define COR_EDITMOODPAGE_H
 
 #include <QWidget>
-#include "edit/chooselightsmoodwidget.h"
 #include "edit/choosemetadatawidget.h"
+#include "edit/choosemoodgroupstateswidget.h"
+#include "edit/choosemoodlightstateswidget.h"
 #include "edit/editpage.h"
 #include "edit/editprogressstate.h"
 #include "edit/reviewmoodwidget.h"
@@ -25,9 +26,10 @@ public:
         : EditPage(parent, comm, groups),
           mComm{comm},
           mMetadataWidget{new ChooseMetadataWidget(this, true)},
-          mLightsWidget{new ChooseLightsMoodWidget(this, comm, groups)},
+          mLightsStateWidget{new ChooseMoodLightStatesWidget(this, comm, groups)},
+          mGroupsStateWidget{new ChooseMoodGroupStatesWidget(this, comm, groups)},
           mReviewPage{new ReviewMoodWidget(this, comm, groups)} {
-        setupWidgets({mMetadataWidget, mLightsWidget, mReviewPage});
+        setupWidgets({mMetadataWidget, mLightsStateWidget, mGroupsStateWidget, mReviewPage});
     }
 
     /// fill the page with preexisting data to edit
@@ -44,14 +46,16 @@ public:
             light.isReachable(true);
         }
 
-        mLightsWidget->prefill(lights);
+        mLightsStateWidget->prefill(lights);
+        mGroupsStateWidget->prefill(mood.defaults());
         mReviewPage->editMode(true, mood.uniqueID());
     }
 
     /// clear all data from the page, and reset it to its default state.
     void clearGroup() {
         mMetadataWidget->clear();
-        mLightsWidget->clear();
+        mLightsStateWidget->clear();
+        mGroupsStateWidget->clear();
         mReviewPage->editMode(false, 0u);
         reset();
     }
@@ -63,13 +67,17 @@ public:
                 break;
             }
             case 1: {
-                mLightsWidget->updateLights();
                 break;
             }
             case 2: {
+                mGroupsStateWidget->addGroupsToLeftMenu();
+                break;
+            }
+            case 3: {
                 mReviewPage->displayMood(mMetadataWidget->name(),
                                          mMetadataWidget->description(),
-                                         mLightsWidget->lights());
+                                         mLightsStateWidget->lights(),
+                                         mGroupsStateWidget->defaults());
                 break;
             }
             default:
@@ -79,7 +87,8 @@ public:
 
     /// @copydoc EditPage::changeRowHeight(int)
     void changeRowHeight(int height) override {
-        mLightsWidget->changeRowHeight(height);
+        mLightsStateWidget->changeRowHeight(height);
+        mGroupsStateWidget->changeRowHeight(height);
         mReviewPage->changeRowHeight(height);
     }
 
@@ -93,8 +102,11 @@ private:
     /// widget for choosing the metadata for a group, such as its name and description.
     ChooseMetadataWidget* mMetadataWidget;
 
-    /// widget for choosing the lights in a group
-    ChooseLightsMoodWidget* mLightsWidget;
+    /// widget for choosing the lights in a mood
+    ChooseMoodLightStatesWidget* mLightsStateWidget;
+
+    /// widget for choosing default states of groups in a mood
+    ChooseMoodGroupStatesWidget* mGroupsStateWidget;
 
     /// widget for reviewing the final state of a group.
     ReviewMoodWidget* mReviewPage;

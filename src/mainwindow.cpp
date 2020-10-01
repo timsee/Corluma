@@ -570,8 +570,33 @@ void MainWindow::resize() {
     mGreyOut->resize();
 
     if (mPagesLoaded) {
-        resizeFullPageWidget(mEditGroupPage);
-        resizeFullPageWidget(mChooseEditPage);
+        if (mEditGroupPage->isOpen()) {
+            resizeFullPageWidget(mEditGroupPage);
+        } else {
+            mEditGroupPage->setGeometry(geometry().width(),
+                                        0,
+                                        mEditGroupPage->width(),
+                                        mEditGroupPage->height());
+        }
+
+        if (mEditMoodPage->isOpen()) {
+            resizeFullPageWidget(mEditMoodPage);
+        } else {
+            mEditMoodPage->setGeometry(geometry().width(),
+                                       0,
+                                       mEditMoodPage->width(),
+                                       mEditMoodPage->height());
+        }
+
+        if (mChooseEditPage->isOpen()) {
+            resizeFullPageWidget(mChooseEditPage);
+        } else {
+            mChooseEditPage->setGeometry(geometry().width(),
+                                         0,
+                                         mChooseEditPage->width(),
+                                         mChooseEditPage->height());
+        }
+
         resizeFullPageWidget(mChooseGroupWidget);
         resizeFullPageWidget(mChooseMoodWidget);
 
@@ -985,7 +1010,6 @@ void MainWindow::setupStateObserver() {
             SIGNAL(lightNameChanged(QString, QString)),
             mStateObserver,
             SLOT(lightNameChange(QString, QString)));
-
     connect(mSettingsPage->lightInfoWidget(),
             SIGNAL(deleteLight(QString)),
             mStateObserver,

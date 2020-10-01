@@ -5,7 +5,8 @@
 LightsListMenu::LightsListMenu(QWidget* parent, bool allowInteraction)
     : QWidget(parent),
       mScrollArea{new QScrollArea(this)},
-      mLightContainer{new MenuLightContainer(mScrollArea, allowInteraction)} {
+      mLightContainer{new MenuLightContainer(mScrollArea, allowInteraction)},
+      mSingleLightMode{false} {
     mLightContainer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mLightContainer, SIGNAL(clickedLight(QString)), this, SLOT(lightClicked(QString)));
 
@@ -42,9 +43,13 @@ void LightsListMenu::updateLights() {
 
 void LightsListMenu::addLight(const cor::Light& light) {
     auto vectorLight = cor::findLightInVectorByID(mLights, light);
-    if (!vectorLight.isValid()) {
-        mLights.push_back(light);
+    if (vectorLight.isValid()) {
+        auto result = std::find(mLights.begin(), mLights.end(), vectorLight);
+        if (result != mLights.end()) {
+            mLights.erase(result);
+        }
     }
+    mLights.push_back(light);
     mLightContainer->updateLightWidgets(mLights);
     mLightContainer->showLights(mLights, mRowHeight);
 }

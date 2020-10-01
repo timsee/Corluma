@@ -163,10 +163,14 @@ SOURCES += main.cpp \
     edit/choosemoodwidget.cpp \
     edit/editpage.cpp \
     edit/editprogresswidget.cpp \
+    groupstatewidget.cpp \
     listmoodwidget.cpp \
+    menu/choosestatewidget.cpp \
     menu/displaygroupmetadata.cpp \
+    menu/groupstatelistmenu.cpp \
     menu/lightslistmenu.cpp \
     menu/menugroupcontainer.cpp \
+    menu/menugroupstatecontainer.cpp \
     menu/menulightcontainer.cpp \
     menu/menumoodcontainer.cpp \
     menu/menuparentgroupcontainer.cpp \
@@ -266,6 +270,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     colorpicker/multicolorpicker.h \
     colorpicker/schemegenerator.h \
     cor/lightlist.h \
+    cor/objects/groupstate.h \
     cor/widgets/expandingtextscrollarea.h \
     data/moodparentdata.h \
     debugconnectionspoofer.h \
@@ -283,8 +288,9 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     edit/chooseeditpage.h \
     edit/choosegroupwidget.h \
     edit/chooselightsgroupwidget.h \
-    edit/chooselightsmoodwidget.h \
     edit/choosemetadatawidget.h \
+    edit/choosemoodgroupstateswidget.h \
+    edit/choosemoodlightstateswidget.h \
     edit/choosemoodwidget.h \
     edit/editbottombuttons.h \
     edit/editgrouppage.h \
@@ -299,13 +305,17 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     globalbrightnesswidget.h \
     data/orphandata.h \
     data/parentdata.h \
+    groupstatewidget.h \
     listmoodwidget.h \
+    menu/choosestatewidget.h \
     menu/displaygroupmetadata.h \
     menu/displaygroupwidget.h \
     menu/displaymoodwidget.h \
+    menu/groupstatelistmenu.h \
     menu/lefthandmenutoplightwidget.h \
     menu/lightslistmenu.h \
     menu/menugroupcontainer.h \
+    menu/menugroupstatecontainer.h \
     menu/menulightcontainer.h \
     menu/menumoodcontainer.h \
     menu/menuparentgroupcontainer.h \
@@ -445,4 +455,6 @@ RESOURCES  = resources.qrc
 
 RC_ICONS = images/icon.ico # Windows icon
 ICON = images/icon.icns    # Mac OS X icon
+
+ANDROID_ABIS = armeabi-v7a
 

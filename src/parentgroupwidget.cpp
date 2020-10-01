@@ -21,7 +21,7 @@ QColor computeHighlightColor(std::uint32_t checkedCount, std::uint32_t reachable
                       pureBlue.green() - pureBlack.green(),
                       pureBlue.blue() - pureBlack.blue());
 
-    if (reachableCount == 0u) {
+    if (reachableCount == 0u || checkedCount == 0u) {
         return pureBlack;
     } else {
         double amountOfBlue = double(checkedCount) / double(reachableCount);

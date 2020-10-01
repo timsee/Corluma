@@ -24,7 +24,9 @@ public:
                                cor::EWidgetType type,
                                bool hideEdit,
                                QWidget* parent)
-        : DropdownTopWidget(key, name, type, hideEdit, parent) {}
+        : DropdownTopWidget(key, name, type, hideEdit, parent),
+          mReachableCount{0u},
+          mCheckedCount{0u} {}
 
     /// change the text of the dropdownwidget
     void changeText(const QString& text) { mName->setText(text); }

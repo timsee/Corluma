@@ -68,6 +68,17 @@ public:
      */
     void chooseAmbient(std::uint32_t temperature, std::uint32_t brightness);
 
+    /// true to show the sliders, false to hide them
+    void showSliders(bool shouldShowSliders);
+
+    /// getter for whether or not the sliders are showing
+    bool showSliders() { return mShouldShowSliders; }
+
+    /// change the background of the color wheel
+    void changeColorWheelBackground(EWheelBackground background) {
+        mColorWheel->wheelBackground(background);
+    }
+
 signals:
     /*!
      * \brief colorUpdate should be connected to the slot of any other elements
@@ -142,6 +153,9 @@ protected:
      * ColorGrid get placed over  this mPlaceholder widget.
      */
     QWidget* mPlaceholder;
+
+    /// true if should show sliders, false otherwise
+    bool mShouldShowSliders;
 };
 
 #endif // COLORPICKER_H

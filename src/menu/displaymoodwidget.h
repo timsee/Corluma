@@ -9,6 +9,7 @@
 #include "cor/objects/group.h"
 #include "cor/widgets/expandingtextscrollarea.h"
 #include "menu/displaygroupmetadata.h"
+#include "menu/groupstatelistmenu.h"
 #include "menu/lightslistmenu.h"
 
 /*!
@@ -26,10 +27,14 @@ public:
     explicit DisplayMoodWidget(QWidget* parent, CommLayer* comm, GroupData* groups)
         : QWidget(parent),
           mComm{comm},
+          mGroups{groups},
           mName{new QLabel(this)},
+          mLightsLabel{new QLabel("Lights:", this)},
+          mGroupsLabel{new QLabel("Groups:", this)},
           mDescription{new cor::ExpandingTextScrollArea(this)},
           mMetadata{new DisplayGroupMetadata(this, groups)},
-          mLights{new LightsListMenu(this, false)} {
+          mLights{new LightsListMenu(this, false)},
+          mGroupDefaults{new GroupStateListMenu(this, false)} {
         auto font = mName->font();
         font.setPointSize(20);
         mName->setFont(font);
@@ -42,22 +47,23 @@ public:
 
     /// updates the group's UI elements.
     void updateMood(const cor::Mood& mood, bool moodExistsAlready) {
-        mMood = mood;
-        mName->setText(mood.name());
-        if (mood.description().isEmpty()) {
+        mMood = mComm->addMetadataToMood(mood);
+        mName->setText(mMood.name());
+        if (mMood.description().isEmpty()) {
             mDescription->setVisible(false);
         } else {
             mDescription->setVisible(true);
-            mDescription->updateText(mood.description());
+            mDescription->updateText(mMood.description());
+        }
+
+        if (mMood.defaults().empty()) {
+            mGroupDefaults->setVisible(false);
+        } else {
+            mGroupDefaults->setVisible(true);
+            mGroupDefaults->showStates(mMood.defaults());
         }
         mLights->updateLights();
-        auto lights = mood.lights();
-        for (auto&& light : lights) {
-            light = mComm->addLightMetaData(light);
-            // since we are displaying a mood, mark the light as reachable even when it isn't.
-            light.isReachable(true);
-        }
-        mLights->showLights(lights);
+        mLights->showLights(mMood.lights());
         // mMetadata->update(mood, groupExistsAlready);
         resize();
     }
@@ -72,6 +78,7 @@ public:
         mDescription->setVisible(false);
         mLights->showLights({});
         mMetadata->reset();
+        mGroupDefaults->clear();
         resize();
     }
 
@@ -106,31 +113,51 @@ private:
         yPosColumn2 += mName->height();
 
         // column 1
-        QRect selectedLightsRect(xSpacer, yPosColumn1, columnWidth - xSpacer, buttonHeight * 7);
+        mLightsLabel->setGeometry(xSpacer, yPosColumn1, columnWidth - xSpacer, buttonHeight);
+        yPosColumn1 += mLightsLabel->height();
+
+        QRect selectedLightsRect(xSpacer, yPosColumn1, columnWidth - xSpacer, buttonHeight * 6);
         mLights->resize(selectedLightsRect, mRowHeight);
         yPosColumn1 += mLights->height();
 
         // column 2
+        mGroupsLabel->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, buttonHeight);
+        yPosColumn2 += mGroupsLabel->height();
+        if (mGroupDefaults->isVisible()) {
+            QRect groupStatesRect(xSecondColumnStart, yPosColumn2, columnWidth, 4 * buttonHeight);
+            mGroupDefaults->resize(groupStatesRect, mRowHeight);
+            yPosColumn2 += mGroupDefaults->height();
+        }
+
         if (mDescription->isVisible()) {
             mDescription->setGeometry(xSecondColumnStart,
                                       yPosColumn2,
                                       columnWidth,
-                                      3 * buttonHeight);
+                                      2 * buttonHeight);
+
             // add an additional spacer
             yPosColumn2 += mDescription->height() + buttonHeight;
         }
-
-        mMetadata->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, 6 * buttonHeight);
+        mMetadata->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, 2 * buttonHeight);
     }
 
     /// pointer to comm data
     CommLayer* mComm;
+
+    /// pointer to group data
+    GroupData* mGroups;
 
     /// stores the group that is being displayed
     cor::Mood mMood;
 
     /// name of the group
     QLabel* mName;
+
+    /// label for lights
+    QLabel* mLightsLabel;
+
+    /// label for groups
+    QLabel* mGroupsLabel;
 
     /// description text box
     cor::ExpandingTextScrollArea* mDescription;
@@ -140,6 +167,9 @@ private:
 
     /// displays the lights that are part of this group and their current states.
     LightsListMenu* mLights;
+
+    /// list of group defaults
+    GroupStateListMenu* mGroupDefaults;
 
     /// the height of a row in a scroll area
     int mRowHeight;

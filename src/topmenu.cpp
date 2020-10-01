@@ -298,7 +298,8 @@ void TopMenu::floatingLayoutButtonPressed(const QString& button) {
             if (mPalettePage->isOpen()) {
                 widgetGroup = EWidgetGroup::multiRoutines;
             }
-            mMainWindow->routineWidget()->pushIn(widgetGroup);
+            mMainWindow->routineWidget()->changeRoutines(widgetGroup);
+            mMainWindow->routineWidget()->pushIn();
         }
     } else if (button == "Settings") {
         emit buttonPressed("Settings");

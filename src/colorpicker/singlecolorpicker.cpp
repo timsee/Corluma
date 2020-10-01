@@ -140,11 +140,13 @@ void SingleColorPicker::changeMode(ESingleColorPickerMode mode) {
             mHSVSliders->setVisible(true);
             mHSVSliders->changeColor(oldColor, oldBrightness);
             mColorWheel->updateBrightness(oldBrightness);
+            setBackgroundForSliders(mHSVSliders);
         } else if (mCurrentMode == ESingleColorPickerMode::ambient) {
             mColorWheel->changeType(EWheelType::CT);
             mTempBrightSliders->setVisible(true);
             mTempBrightSliders->changeBrightness(oldBrightness);
             mColorWheel->updateBrightness(oldBrightness);
+            setBackgroundForSliders(mTempBrightSliders);
         }
 
         mSelectionCircle->hideCircles();
@@ -257,6 +259,17 @@ void SingleColorPicker::tempBrightSlidersChanged(std::uint32_t temperature,
     update();
 }
 
+void SingleColorPicker::setBackgroundForSliders(QWidget* sliders) {
+    if (mColorWheel->wheelBackground() == EWheelBackground::dark) {
+        const QString stylesheet = "background-color:rgb(33, 32, 32);";
+        sliders->setStyleSheet(stylesheet);
+        this->setStyleSheet(stylesheet);
+    } else if (mColorWheel->wheelBackground() == EWheelBackground::light) {
+        const QString stylesheet = "background-color:rgb(48, 47, 47);";
+        sliders->setStyleSheet(stylesheet);
+        this->setStyleSheet(stylesheet);
+    }
+}
 
 //----------
 // Resize
@@ -267,10 +280,19 @@ void SingleColorPicker::resizeEvent(QResizeEvent*) {
 }
 
 void SingleColorPicker::resize() {
-    if (mCurrentMode == ESingleColorPickerMode::HSV) {
-        mHSVSliders->setGeometry(mPlaceholder->geometry());
-    } else if (mCurrentMode == ESingleColorPickerMode::ambient) {
-        mTempBrightSliders->setGeometry(mPlaceholder->geometry());
+    if (showSliders()) {
+        if (mCurrentMode == ESingleColorPickerMode::HSV) {
+            mHSVSliders->setVisible(true);
+            mHSVSliders->setGeometry(mPlaceholder->geometry());
+            setBackgroundForSliders(mHSVSliders);
+        } else if (mCurrentMode == ESingleColorPickerMode::ambient) {
+            mTempBrightSliders->setVisible(true);
+            mTempBrightSliders->setGeometry(mPlaceholder->geometry());
+            setBackgroundForSliders(mTempBrightSliders);
+        }
+    } else {
+        mHSVSliders->setVisible(false);
+        mTempBrightSliders->setVisible(false);
     }
 
     mSelectionCircle->setGeometry(0,

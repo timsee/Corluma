@@ -634,6 +634,7 @@ enum class ELightHardwareType {
     hueGo,
     hueAura,
     hueLamp,
+    huePlay,
     cube,
     rectangle,
     lightStrip,
@@ -676,6 +677,8 @@ inline QString hardwareTypeToString(ELightHardwareType hardwareType) {
             return "Hue Go";
         case ELightHardwareType::hueAura:
             return "Hue Aura";
+        case ELightHardwareType::huePlay:
+            return "Hue Play";
         case ELightHardwareType::hueLamp:
             return "Hue Lamp";
         case ELightHardwareType::cube:
@@ -718,6 +721,8 @@ inline ELightHardwareType stringToHardwareType(QString hardwareType) {
         return ELightHardwareType::hueStorylight;
     } else if (hardwareType == "Hue Storylight") {
         return ELightHardwareType::hueBulb;
+    } else if (hardwareType == "Hue Play") {
+        return ELightHardwareType::huePlay;
     } else if (hardwareType == "Hue Go") {
         return ELightHardwareType::hueGo;
     } else if (hardwareType == "Hue Aura") {
@@ -776,6 +781,9 @@ inline QPixmap lightHardwareTypeToPixmap(ELightHardwareType type) {
             break;
         case ELightHardwareType::hueDownlight:
             typeResource = QString(":/images/hue_downlight.png");
+            break;
+        case ELightHardwareType::huePlay:
+            typeResource = QString(":/images/hue_play.png");
             break;
         case ELightHardwareType::hueLamp:
             typeResource = QString(":/images/hue_lamp.png");

@@ -66,8 +66,6 @@ void EditProgressWidget::mouseReleaseEvent(QMouseEvent* event) {
         auto buttonPage = std::uint32_t(event->x()) / buttonRegionWidth;
         if (mPageState[buttonPage] != EEditProgressState::locked) {
             emit changePage(buttonPage);
-        } else {
-            qDebug() << " button locked";
         }
     }
     event->ignore();

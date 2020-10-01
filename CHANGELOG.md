@@ -917,3 +917,11 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Updated to C++14
 - Fixed a bug with Nanoleaf discovery.
 - Fixed miscellaneous bugs.
+
+### **v0.20.0**
+### The ChooseStateWidget Update
+- Added the `ChooseStateWidget` for choosing a `LightState`.
+- Added the ability to choose default states for groups to `EditMoodPage`.
+- Added widgets to support displaying default states for groups in moods.
+- Added support for Hue Plays.
+- Fixed miscellaneous bugs.

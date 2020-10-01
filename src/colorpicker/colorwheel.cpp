@@ -191,7 +191,8 @@ ColorWheel::ColorWheel(QWidget* parent)
       mWheelType{EWheelType::HS},
       mBrightness{100},
       mIsEnabled{false},
-      mRepaint{true} {
+      mRepaint{true},
+      mWheelBackground{EWheelBackground::light} {
 #ifdef RENDER_WHEELS_AS_IMAGES
     renderBackgroundWheels();
 #endif
@@ -233,7 +234,11 @@ void ColorWheel::paintEvent(QPaintEvent*) {
         painter.setRenderHint(QPainter::Antialiasing, true);
         painter.setPen(Qt::NoPen);
         painter.eraseRect(rect());
-        painter.fillRect(rect(), QBrush(QColor(48, 47, 47)));
+        if (mWheelBackground == EWheelBackground::light) {
+            painter.fillRect(rect(), QBrush(QColor(48, 47, 47)));
+        } else if (mWheelBackground == EWheelBackground::dark) {
+            painter.fillRect(rect(), QBrush(QColor(33, 32, 32)));
+        }
 
         const auto& wheelRect = this->wheelRect();
         const auto& wheelRadius = this->wheelRect().height() / 2;

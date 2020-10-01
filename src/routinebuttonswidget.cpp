@@ -211,23 +211,44 @@ void RoutineButtonsWidget::singleRoutineColorChanged(const QColor& color) {
 }
 
 void RoutineButtonsWidget::routineChanged(const cor::LightState& routineObject) {
+    // reverse search the label from the routine
+    auto label = labelFromState(routineObject);
+    highlightRoutineButton(label);
+
     if (mWidgetGroup == EWidgetGroup::singleRoutines) {
-        for (const auto& pair : mSingleRoutines) {
-            if (pair.second == routineObject) {
-                highlightRoutineButton(pair.first);
-            }
-        }
         mSingleState = routineObject;
     } else {
-        for (const auto& pair : mMultiRoutines) {
-            if (pair.second == routineObject) {
-                highlightRoutineButton(pair.first);
-            }
-        }
         mMultiState = routineObject;
     }
 
     emit newRoutineSelected(routineObject.routine());
+}
+
+QString RoutineButtonsWidget::labelFromState(const cor::LightState& state) {
+    for (const auto& singleRoutine : mSingleRoutines) {
+        if (singleRoutine.second.routine() == state.routine()) {
+            // fades use parameters, so these are needed to differentiate
+            if (state.routine() == ERoutine::singleFade
+                || state.routine() == ERoutine::singleSawtoothFade) {
+                if (singleRoutine.second.param() == state.param()) {
+                    return singleRoutine.first;
+                }
+            } else {
+                return singleRoutine.first;
+            }
+        }
+    }
+    for (const auto& multiRoutine : mMultiRoutines) {
+        if (multiRoutine.second.routine() == state.routine()) {
+            return multiRoutine.first;
+        }
+    }
+    return "NO_LABEL_FOUND";
+}
+
+void RoutineButtonsWidget::resizeStaticPage() {
+    mSingleWidget->setGeometry(0, 0, this->width(), this->height() / 2);
+    mMultiWidget->setGeometry(0, mSingleWidget->height(), this->width(), this->height() / 2);
 }
 
 void RoutineButtonsWidget::resize(int x, QSize size) {
@@ -243,18 +264,24 @@ void RoutineButtonsWidget::resize(int x, QSize size) {
     mMultiWidget->setFixedSize(geometry().size());
 }
 
-
-void RoutineButtonsWidget::pushIn(EWidgetGroup group) {
+void RoutineButtonsWidget::changeRoutines(EWidgetGroup group) {
     if (mWidgetGroup != group) {
         mWidgetGroup = group;
         if (group == EWidgetGroup::singleRoutines) {
             mSingleWidget->setVisible(true);
             mMultiWidget->setVisible(false);
-        } else {
+        } else if (group == EWidgetGroup::multiRoutines) {
             mSingleWidget->setVisible(false);
             mMultiWidget->setVisible(true);
+        } else if (group == EWidgetGroup::both) {
+            mSingleWidget->setVisible(true);
+            mMultiWidget->setVisible(true);
+            resizeStaticPage();
         }
     }
+}
+
+void RoutineButtonsWidget::pushIn() {
     if (!mIsOpen) {
         // update colors of single color routine
         cor::moveWidget(this, pos(), QPoint(x(), parentWidget()->height() - height()));

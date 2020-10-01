@@ -160,6 +160,24 @@ cor::Light CommLayer::addLightMetaData(cor::Light light) {
     return light;
 }
 
+cor::Mood CommLayer::addMetadataToMood(const cor::Mood& originalMood) {
+    auto mood = originalMood;
+    auto lights = mood.lights();
+    for (auto&& light : lights) {
+        light = addLightMetaData(light);
+        // since we are displaying a mood, mark the light as reachable even when it isn't.
+        light.isReachable(true);
+    }
+    mood.lights(lights);
+
+    auto groupStates = mood.defaults();
+    for (auto&& group : groupStates) {
+        group.name(mGroups->groupNameFromID(group.uniqueID()));
+    }
+    mood.defaults(groupStates);
+    return mood;
+}
+
 std::vector<cor::Light> CommLayer::commLightsFromVector(const std::vector<cor::Light>& lights) {
     std::vector<cor::Light> retVector = lights;
     for (auto&& light : retVector) {
@@ -231,16 +249,16 @@ cor::Dictionary<cor::Light> CommLayer::makeMood(const cor::Mood& mood) {
     std::vector<std::pair<cor::Group, cor::LightState>> groups;
     for (const auto& defaultState : mood.defaults()) {
         for (const auto& collection : mGroups->groups()) {
-            if (defaultState.first == collection.uniqueID()) {
-                groups.emplace_back(collection, defaultState.second);
+            if (defaultState.uniqueID() == collection.uniqueID()) {
+                groups.emplace_back(collection, defaultState.state());
             }
         }
     }
 
     for (const auto& defaultState : mood.defaults()) {
         for (const auto& collection : mGroups->rooms()) {
-            if (defaultState.first == collection.uniqueID()) {
-                rooms.emplace_back(collection, defaultState.second);
+            if (defaultState.uniqueID() == collection.uniqueID()) {
+                rooms.emplace_back(collection, defaultState.state());
             }
         }
     }

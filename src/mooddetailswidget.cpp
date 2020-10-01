@@ -53,14 +53,13 @@ void MoodDetailsWidget::display(const cor::Mood& mood, const QSize& size) {
 
     // split into groups and rooms
     std::vector<cor::Light> groupStates;
-    for (const auto& defaultPair : mood.defaults()) {
+    for (const auto& groupState : mood.defaults()) {
         // look up group
-        auto groupResult =
-            mGroups->groupDict().item(QString::number(defaultPair.first).toStdString());
+        auto groupResult = mGroups->groupDict().item(groupState.stringUniqueID().toStdString());
         if (groupResult.second) {
             if (groupResult.first.type() == cor::EGroupType::group) {
-                auto defaultState = defaultPair.second;
-                auto name = mGroups->nameFromID(defaultPair.first);
+                auto defaultState = groupState.state();
+                auto name = mGroups->nameFromID(groupState.uniqueID());
                 cor::Light light(name, ECommType::hue);
                 light.isReachable(true);
                 light.name(name);
@@ -71,14 +70,13 @@ void MoodDetailsWidget::display(const cor::Mood& mood, const QSize& size) {
     }
 
     std::vector<cor::Light> roomStates;
-    for (const auto& defaultPair : mood.defaults()) {
+    for (const auto& groupState : mood.defaults()) {
         // look up group
-        auto groupResult =
-            mGroups->groupDict().item(QString::number(defaultPair.first).toStdString());
+        auto groupResult = mGroups->groupDict().item(groupState.stringUniqueID().toStdString());
         if (groupResult.second) {
             if (groupResult.first.type() == cor::EGroupType::room) {
-                auto defaultState = defaultPair.second;
-                auto name = mGroups->nameFromID(defaultPair.first);
+                auto defaultState = groupState.state();
+                auto name = mGroups->nameFromID(groupState.uniqueID());
                 cor::Light light(name, ECommType::hue);
                 light.isReachable(true);
                 light.name(name);

@@ -1,5 +1,5 @@
-#ifndef SINGLECOLORROUTINEWIDGET_H
-#define SINGLECOLORROUTINEWIDGET_H
+#ifndef ROUTINEBUTTONSWIDGET_H
+#define ROUTINEBUTTONSWIDGET_H
 
 #include <QWidget>
 
@@ -8,7 +8,7 @@
 
 
 /// different types of routinebuttonswidgets
-enum class EWidgetGroup { singleRoutines, multiRoutines };
+enum class EWidgetGroup { singleRoutines, multiRoutines, both };
 
 /*!
  * \copyright
@@ -63,8 +63,14 @@ public:
      */
     void resize(int x, QSize size);
 
+    /// resize the widget when it is a static page. no arguments needed
+    void resizeStaticPage();
+
+    /// change the routines being shown by the widget
+    void changeRoutines(EWidgetGroup);
+
     /// push widget in, displaying one of the widget groups
-    void pushIn(EWidgetGroup);
+    void pushIn();
 
     /// push widget out
     void pushOut();
@@ -109,6 +115,9 @@ private:
 
     /// initailizes the widgets used in the multi routine version of the widget
     void initMultiRoutinesButtons();
+
+    /// find the label for a button given its state
+    QString labelFromState(const cor::LightState& state);
 
     /// true if showing, false if hidden
     bool mIsOpen;
@@ -161,4 +170,4 @@ private:
     EWidgetGroup mWidgetGroup;
 };
 
-#endif // SINGLECOLORROUTINEWIDGET_H
+#endif // ROUTINEBUTTONSWIDGET_H

@@ -63,6 +63,8 @@ public:
     /// set whether the button should show select all or deselect all
     void setSelectAll(bool shoudlSelect);
 
+    /// resizes widget programmatically
+    void resize();
 signals:
 
     /// emits when the group button is pressed
@@ -90,9 +92,6 @@ private slots:
     void buttonPressed(bool);
 
 private:
-    /// resizes widget programmatically
-    void resize();
-
     /*!
      * \brief computeHighlightColor compute the color of the highlight of the widget. The highlight
      * is based on the number of devices and the number that are currently selected. If all
