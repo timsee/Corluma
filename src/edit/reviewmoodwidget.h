@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QScrollBar>
 #include <QWidget>
+#include "cor/lightlist.h"
 #include "edit/editpagechildwidget.h"
 #include "menu/displaymoodwidget.h"
 #include "menu/statelesslightslistmenu.h"
@@ -22,10 +23,14 @@
 class ReviewMoodWidget : public EditPageChildWidget {
     Q_OBJECT
 public:
-    explicit ReviewMoodWidget(QWidget* parent, CommLayer* comm, GroupData* groups)
+    explicit ReviewMoodWidget(QWidget* parent,
+                              CommLayer* comm,
+                              GroupData* groups,
+                              cor::LightList* data)
         : EditPageChildWidget(parent),
           mComm{comm},
           mGroups{groups},
+          mData{data},
           mTopLabel{new QLabel("Review:", this)},
           mMoodWidget{new DisplayMoodWidget(this, comm, groups)},
           mCreateButton{new QPushButton("Create", this)} {
@@ -44,6 +49,9 @@ public:
         }
         mUniqueID = uniqueID;
     }
+
+    /// always false, no edits happen from this page
+    bool hasEdits() override { return false; }
 
     /// change the height of rows in scroll widgets
     void changeRowHeight(int height) { mMoodWidget->changeRowHeight(height); }
@@ -64,6 +72,10 @@ public:
         mood.description(description);
         mMoodWidget->updateMood(mood, mEditMode);
     }
+
+    /// return the mood represented by the page.
+    cor::Mood mood() { return mMoodWidget->mood(); }
+
     /// getter for the bottom buttons. Only the forward button is used in this widget.
     EditBottomButtons* bottomButtons() { return mBottomButtons; }
 
@@ -71,7 +83,7 @@ protected:
     /*!
      * \brief resizeEvent called whenever the widget resizes so that assets can be updated.
      */
-    void resizeEvent(QResizeEvent*) {
+    void resizeEvent(QResizeEvent*) override {
         int yPos = 0;
         int buttonHeight = this->height() / 10;
 
@@ -88,6 +100,7 @@ protected:
                                    buttonHeight);
         mBottomButtons->setGeometry(0, this->height() - buttonHeight, this->width(), buttonHeight);
     }
+
 private slots:
 
     /// handles when the create button is pressed. Verifies the user wants to create a group, and if
@@ -119,13 +132,15 @@ private slots:
         }
     }
 
-
 private:
     /// pointer to comm layer
     CommLayer* mComm;
 
     /// pointer to group data
     GroupData* mGroups;
+
+    /// data layer
+    cor::LightList* mData;
 
     /// label for top of widget
     QLabel* mTopLabel;

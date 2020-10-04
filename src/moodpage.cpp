@@ -26,7 +26,6 @@ MoodPage::MoodPage(QWidget* parent, GroupData* groups, CommLayer* comm)
     mMoodDetailedWidget = new ListMoodDetailedWidget(parent, mGroups, mComm);
     connect(mMoodDetailedWidget, SIGNAL(pressedClose()), this, SLOT(detailedClosePressed()));
 
-
     mMoodDetailedWidget->setGeometry(0, -1 * height(), width(), height());
     mMoodDetailedWidget->setVisible(false);
 

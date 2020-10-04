@@ -27,9 +27,15 @@ public:
     /// setter for the index of the page. This is emitted when its state changes.
     void index(std::uint32_t i) noexcept { mIndex = i; }
 
+    /// true if the page has had any changes, false if it is in its original state.
+    virtual bool hasEdits() = 0;
+
 signals:
     /// signals that the state of one of its widgets has changed.
     void stateChanged(std::uint32_t index, EEditProgressState state);
+
+    /// emits that any data changed.
+    void dataChanged();
 
     /// signals that the UI elements on other pages should update to new group information. Use this
     /// when a new group is made, or a group is deleted, or an existing group is altered.

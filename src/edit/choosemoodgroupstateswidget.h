@@ -28,7 +28,6 @@ public:
         : EditPageChildWidget(parent),
           mChooseLabel{new QLabel("Choose Groups:", this)},
           mSelectedLabel{new QLabel("Group Defaults:", this)},
-          mComm{comm},
           mGroups{groups},
           mGroupsWidget{new GroupStateListMenu(this, true)},
           mGroupStates{new GroupStateListMenu(this, true)},
@@ -70,6 +69,7 @@ public:
 
     /// clears all data currently on the page.
     void clear() {
+        mOriginalDefaults = {};
         auto groupStates = mGroupStates->groupStates();
         for (const auto& state : groupStates) {
             mGroupStates->removeState(state);
@@ -82,14 +82,19 @@ public:
     void prefill(const std::vector<cor::GroupState>& defaults) {
         clear();
 
+        mOriginalDefaults = defaults;
         auto defaultGroups = defaults;
         for (auto&& defaultGroup : defaultGroups) {
             defaultGroup.name(mGroups->groupNameFromID(defaultGroup.uniqueID()));
         }
         mGroupStates->showStates(defaultGroups);
         addGroupsToLeftMenu();
+        hideState();
         conditionsMet();
     }
+
+    /// true if any information does not match the original information, false otherwise
+    bool hasEdits() override { return !(mOriginalDefaults == defaults()); }
 
     /// getter for all default states of groups.
     std::vector<cor::GroupState> defaults() { return mGroupStates->groupStates(); }
@@ -119,7 +124,7 @@ protected:
     /*!
      * \brief resizeEvent called whenever the widget resizes so that assets can be updated.
      */
-    void resizeEvent(QResizeEvent*) { resize(); }
+    void resizeEvent(QResizeEvent*) override { resize(); }
 
 private slots:
 
@@ -345,9 +350,6 @@ private:
     /// label for right hand column
     QLabel* mSelectedLabel;
 
-    /// pointer to comm data
-    CommLayer* mComm;
-
     /// pointer to group data
     GroupData* mGroups;
 
@@ -371,6 +373,9 @@ private:
 
     /// state of the widget
     EChooseMoodGroupsState mState;
+
+    /// stores the original defaults when the widget was initialized, used to check for changes.
+    std::vector<cor::GroupState> mOriginalDefaults;
 
     /// height of rows in scroll areas.
     int mRowHeight;

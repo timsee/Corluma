@@ -45,6 +45,9 @@ public:
         mUniqueID = uniqueID;
     }
 
+    /// always false, no edits happen from this page
+    bool hasEdits() override { return false; }
+
     /// change the height of rows in scroll widgets
     void changeRowHeight(int height) { mGroupWidget->changeRowHeight(height); }
 
@@ -77,7 +80,7 @@ protected:
     /*!
      * \brief resizeEvent called whenever the widget resizes so that assets can be updated.
      */
-    void resizeEvent(QResizeEvent*) {
+    void resizeEvent(QResizeEvent*) override {
         int yPos = 0;
         int buttonHeight = this->height() / 10;
 

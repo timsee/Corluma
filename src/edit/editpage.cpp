@@ -13,13 +13,16 @@
 
 namespace cor {
 
-EditPage::EditPage(QWidget* parent, CommLayer* comm, GroupData* groups)
+EditPage::EditPage(QWidget* parent, CommLayer* comm, GroupData* groups, bool showPreviewButton)
     : QWidget(parent),
+      mPreviewButton{new QPushButton("Preview", this)},
       mComm(comm),
       mGroups(groups),
       mPlaceholder{new QWidget(this)},
-      mCloseButton{new QPushButton(this)} {
+      mCloseButton{new QPushButton(this)},
+      mUsePreviewButton{showPreviewButton} {
     connect(mCloseButton, SIGNAL(clicked(bool)), this, SLOT(closePressed(bool)));
+    mPreviewButton->setVisible(mUsePreviewButton);
 
 #ifdef MOBILE_BUILD
     mTopHeight = cor::applicationSize().height() * 0.075;
@@ -124,7 +127,7 @@ void EditPage::computeStateOfReviewPage() {
     auto editIndex = editProgressWidget()->numberOfPages() - 1;
     bool allWidgetsComplete = true;
     bool noWidgetsLocked = true;
-    for (auto i = 0; i < editIndex; ++i) {
+    for (auto i = 0u; i < editIndex; ++i) {
         if (editProgressWidget()->state(i) != EEditProgressState::completed) {
             allWidgetsComplete = false;
         }
@@ -171,7 +174,16 @@ void EditPage::resizeEvent(QResizeEvent*) {
 
     auto placeholderWidthPadding = this->width() / 20;
     auto placeholderHeightPadding = this->height() / 20;
-    yPos += placeholderHeightPadding;
+    if (mUsePreviewButton) {
+        auto previewButtonWidth = this->width() * 1 / 4;
+        mPreviewButton->setGeometry(this->width() - previewButtonWidth,
+                                    yPos,
+                                    previewButtonWidth,
+                                    placeholderHeightPadding);
+        yPos += mPreviewButton->height();
+    } else {
+        yPos += placeholderHeightPadding;
+    }
     mPlaceholder->setGeometry(placeholderWidthPadding,
                               yPos,
                               this->width() - placeholderWidthPadding * 2,
@@ -189,11 +201,29 @@ void EditPage::paintEvent(QPaintEvent*) {
 }
 
 void EditPage::closePressed(bool) {
+    // check if any edits have been made.
+    if (hasAnyEdits()) {
+        QString text = "You have unsaved edit data. Are you sure you want to close? ";
+        auto reply =
+            QMessageBox::question(this, "Close?", text, QMessageBox::Yes | QMessageBox::No);
+        if (reply == QMessageBox::No) {
+            return;
+        }
+    }
     emit pressedClose();
 }
 
 void EditPage::updateGroupsFromPagePressed() {
     emit updateGroups();
+}
+
+bool EditPage::hasAnyEdits() {
+    for (auto widget : widgets()) {
+        if (widget->hasEdits()) {
+            return true;
+        }
+    }
+    return false;
 }
 
 } // namespace cor

@@ -14,26 +14,17 @@
 #include "mainwindow.h"
 #include "utils/qt.h"
 
-FloatingLayout::FloatingLayout(bool makeVertical, QWidget* parent) : QWidget(parent) {
-    mIsVertical = makeVertical;
+FloatingLayout::FloatingLayout(QWidget* parent) : QWidget(parent) {
     mRoutineIsTranslucent = false;
     mRoutineIsHighlighted = false;
 
     setContentsMargins(0, 0, 0, 0);
     // setup up the layout
-    if (mIsVertical) {
-        mVerticalLayout = new QVBoxLayout;
-        mVerticalLayout->setContentsMargins(0, 0, 0, 0);
-        mVerticalLayout->setSpacing(0);
+    mLayout = new QHBoxLayout;
+    mLayout->setContentsMargins(0, 0, 0, 0);
+    mLayout->setSpacing(0);
 
-        setLayout(mVerticalLayout);
-    } else {
-        mHorizontalLayout = new QHBoxLayout;
-        mHorizontalLayout->setContentsMargins(0, 0, 0, 0);
-        mHorizontalLayout->setSpacing(0);
-
-        setLayout(mHorizontalLayout);
-    }
+    setLayout(mLayout);
 
     mOriginalSize = cor::applicationSize();
 }
@@ -75,32 +66,18 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
     int fixedWidth;
     int fixedHeight;
     if (buttonSize == EButtonSize::rectangle) {
-        if (mIsVertical) {
-            fixedWidth = size.width();
-            fixedHeight = size.height() * int(buttons.size());
-        } else {
-            fixedWidth = size.width() * int(buttons.size());
-            fixedHeight = size.height();
-        }
+        fixedWidth = size.width() * int(buttons.size());
+        fixedHeight = size.height();
     } else {
-        if (mIsVertical) {
-            fixedWidth = size.width();
-            fixedHeight = size.height() * int(buttons.size());
-        } else {
-            fixedWidth = size.height() * int(buttons.size());
-            fixedHeight = size.height();
-        }
+        fixedWidth = size.height() * int(buttons.size());
+        fixedHeight = size.height();
     }
     setFixedSize(QSize(fixedWidth, fixedHeight));
 
     // setup the horizontal buttons
     if (!mButtons.empty()) {
         for (auto button : mButtons) {
-            if (mIsVertical) {
-                mVerticalLayout->removeWidget(button);
-            } else {
-                mHorizontalLayout->removeWidget(button);
-            }
+            mLayout->removeWidget(button);
             delete button;
         }
     }
@@ -179,11 +156,7 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             mButtons[i]->setMaximumHeight(this->buttonSize().height());
 
             mButtons[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-            if (mIsVertical) {
-                mVerticalLayout->addWidget(mButtons[i]);
-            } else {
-                mHorizontalLayout->addWidget(mButtons[i]);
-            }
+            mLayout->addWidget(mButtons[i]);
 
             connect(mButtons[i], &QPushButton::clicked, [this, i]() { buttonPressed(int(i)); });
 
@@ -305,9 +278,8 @@ bool FloatingLayout::isKeyHighlighted(const QString& key) {
 
 
 void FloatingLayout::move(QPoint topRightPoint) {
-    auto width = buttonSize().width() * mButtons.size();
     // add floating region to far right of screen under main icon menu
-    setGeometry(topRightPoint.x() - width, topRightPoint.y(), width, height());
+    setGeometry(topRightPoint.x() - width(), topRightPoint.y(), width(), height());
 }
 
 
@@ -354,11 +326,7 @@ bool FloatingLayout::isALightsButton(std::uint32_t index) {
 }
 
 QSize FloatingLayout::buttonSize() {
-    if (mIsVertical) {
-        return {height() / int(mButtons.size()), height() / int(mButtons.size())};
-    } else {
-        return {width() / int(mButtons.size()), width() / int(mButtons.size())};
-    }
+    return {width() / int(mButtons.size()), height()};
 }
 
 void FloatingLayout::handleRectangleFontSize() {

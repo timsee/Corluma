@@ -26,6 +26,19 @@ public:
     /// getter for all parents
     const RoomMoodMap& moodParents() const noexcept { return mParents; }
 
+    /// search for the parent of a given mood
+    std::uint64_t parentFromMoodID(std::uint64_t uniqueID) const {
+        for (const auto& parentMoods : mParents) {
+            // find the unique ID in a parent
+            auto moods = parentMoods.second;
+            auto moodResult = std::find(moods.begin(), moods.end(), uniqueID);
+            if (moodResult != moods.end()) {
+                return parentMoods.first;
+            }
+        }
+        return 0u;
+    }
+
     /// takes a vector of all rooms and a dictionary of all moods and converts them into an
     /// unordered_map that sorts all moods into the rooms that they are part of.
     void updateMoodParents(const std::vector<cor::Group>& rooms,

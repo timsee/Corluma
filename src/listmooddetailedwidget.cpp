@@ -17,103 +17,51 @@
 
 ListMoodDetailedWidget::ListMoodDetailedWidget(QWidget* parent, GroupData* groups, CommLayer* comm)
     : QWidget(parent),
-      mKey{0},
       mComm{comm} {
-    mTopLabel = new QLabel("Default", this);
-    mTopLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mTopLabel->setAlignment(Qt::AlignBottom);
-    mTopLabel->setStyleSheet("font-size:18pt;");
-
     mOnOffSwitch = new cor::Switch(this);
     mOnOffSwitch->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     connect(mOnOffSwitch, SIGNAL(switchChanged(bool)), this, SLOT(changedSwitchState(bool)));
     mOnOffSwitch->setSwitchState(ESwitchState::off);
     mOnOffSwitch->setVisible(true);
 
-    mSimpleGroupWidget = new ListSimpleGroupWidget(this, cor::EListType::grid);
-    mSimpleGroupWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(mSimpleGroupWidget, SIGNAL(deviceClicked(QString)), this, SLOT(clickedDevice(QString)));
-    QScroller::grabGesture(mSimpleGroupWidget->viewport(), QScroller::LeftMouseButtonGesture);
-    mSimpleGroupWidget->setStyleSheet("background-color:rgba(33,32,32,255);");
-
-    mFloatingMenu = new FloatingLayout(false, parent);
+    mFloatingMenu = new FloatingLayout(parent);
     connect(mFloatingMenu,
             SIGNAL(buttonPressed(QString)),
             this,
             SLOT(floatingLayoutButtonPressed(QString)));
-    std::vector<QString> buttons = {QString("Group_Lights"),
-                                    QString("Group_Details"),
-                                    QString("Group_Edit")};
+    std::vector<QString> buttons = {QString("Group_Edit")};
     mFloatingMenu->setupButtons(buttons, EButtonSize::small);
 
     //------------
     // ScrollArea Widget
     //------------
-
-    mScrollArea = new QScrollArea(this);
-    mScrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-    mAdditionalDetailsWidget = new MoodDetailsWidget(groups, this);
-    mAdditionalDetailsWidget->setObjectName("contentWidget");
-    QScroller::grabGesture(mScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
-    mAdditionalDetailsWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mAdditionalDetailsWidget->setContentsMargins(0, 0, 0, 0);
-    mAdditionalDetailsWidget->setStyleSheet("QWidget#contentWidget{ background-color: #201F1F; } "
-                                            "QLabel { background-color: #201F1F; } ");
-
-    mScrollArea->setWidget(mAdditionalDetailsWidget);
-
-    mPlaceholder = new QWidget(this);
-    mPlaceholder->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-    mTopLayout = new QHBoxLayout;
-    mTopLayout->addWidget(mTopLabel, 8);
+    mMoodWidget = new DisplayMoodWidget(this, mComm, groups);
+    mMoodWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     mLayout = new QVBoxLayout(this);
     mLayout->setContentsMargins(4, 4, 4, 4);
     mLayout->setSpacing(2);
 
     mLayout->addWidget(mOnOffSwitch, 1);
-    mLayout->addLayout(mTopLayout, 1);
-    mLayout->addWidget(mPlaceholder, 8);
+    mLayout->addWidget(mMoodWidget, 8);
+
+    resize();
 }
 
 void ListMoodDetailedWidget::update(const cor::Mood& mood) {
-    mSimpleGroupWidget->removeWidgets();
-    mKey = mood.uniqueID();
-    mTopLabel->setText(mood.name());
-    auto lights = mood.lights();
-    // since this is displaying desired states of lights, override the state of the lights to show
-    // they are reachable even if they aren't.
-    for (auto& light : lights) {
-        light.isReachable(true);
-    }
-    mSimpleGroupWidget->updateDevices(lights, cor::EWidgetType::full, false, true);
+    auto moodCopy = mComm->addMetadataToMood(mood);
 
     mOnOffSwitch->setSwitchState(ESwitchState::off);
-    mAdditionalDetailsWidget->display(mood, mPlaceholder->size());
-}
-
-void ListMoodDetailedWidget::clickedDevice(const QString&) {
-    // qDebug() << " device clicked " << key << " vs" << deviceName;
+    mMoodWidget->updateMood(moodCopy, true);
 }
 
 void ListMoodDetailedWidget::resize() {
+    mMoodWidget->changeRowHeight(this->height() / 10);
     QSize size = parentWidget()->size();
     setFixedSize(int(size.width() * 0.75f), int(size.height() * 0.75f));
     mOnOffSwitch->setFixedWidth(int(size.width() * 0.2));
-
-    mSimpleGroupWidget->setGeometry(mPlaceholder->geometry());
-    mScrollArea->setGeometry(mPlaceholder->geometry());
-
-    if (mPageKey == "Group_Details") {
-        mAdditionalDetailsWidget->setFixedWidth(mScrollArea->viewport()->width());
-        mAdditionalDetailsWidget->resize(mPlaceholder->geometry().size());
-    } else if (mPageKey == "Group_Lights") {
-        mSimpleGroupWidget->resizeWidgets();
-    } else if (mPageKey == "Group_Edit") {
-    }
+    QPoint topRight(this->x() + this->width(), this->y());
+    mFloatingMenu->move(topRight);
 }
 
 void ListMoodDetailedWidget::paintEvent(QPaintEvent*) {
@@ -126,40 +74,24 @@ void ListMoodDetailedWidget::paintEvent(QPaintEvent*) {
 }
 
 void ListMoodDetailedWidget::floatingLayoutButtonPressed(const QString& key) {
-    if (key != mPageKey) {
-        mPageKey = key;
-        if (key == "Group_Details") {
-            mScrollArea->setVisible(true);
-            mSimpleGroupWidget->setVisible(false);
-            mScrollArea->raise();
-        } else if (key == "Group_Lights") {
-            mScrollArea->setVisible(false);
-            mSimpleGroupWidget->setVisible(true);
-            mSimpleGroupWidget->raise();
-        } else if (key == "Group_Edit") {
-            // TODO: either implement edit mode from this page, or remove it entirely.
-            mScrollArea->setVisible(false);
-            mSimpleGroupWidget->setVisible(false);
-        }
-        resize();
+    if (key == "Group_Edit") {
+        emit pressedClose();
+        emit editMood(mMoodWidget->mood().uniqueID());
     }
+    mFloatingMenu->highlightButton("");
 }
 
 void ListMoodDetailedWidget::changedSwitchState(bool state) {
     if (state) {
-        emit enableGroup(mKey);
+        emit enableMood(mMoodWidget->mood().uniqueID());
     }
 }
 
 void ListMoodDetailedWidget::resizeEvent(QResizeEvent*) {
     resize();
-    QPoint topRight(this->x() + this->width(), this->y());
-    mFloatingMenu->move(topRight);
 }
 
 void ListMoodDetailedWidget::pushIn() {
-    mFloatingMenu->highlightButton("Group_Lights");
-    floatingLayoutButtonPressed("Group_Lights");
     isOpen(true);
 
     moveWidget(
@@ -180,7 +112,6 @@ void ListMoodDetailedWidget::pushIn() {
 
 void ListMoodDetailedWidget::pushOut() {
     isOpen(false);
-    mPageKey = "";
 
     moveWidget(
         this,

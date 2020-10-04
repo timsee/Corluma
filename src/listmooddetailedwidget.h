@@ -7,7 +7,7 @@
 #include "cor/widgets/switch.h"
 #include "floatinglayout.h"
 #include "listsimplegroupwidget.h"
-#include "mooddetailswidget.h"
+#include "menu/displaymoodwidget.h"
 
 /*!
  * \copyright
@@ -50,7 +50,10 @@ signals:
     void pressedClose();
 
     /// signals when the mood is going to be selected
-    void enableGroup(std::uint64_t);
+    void enableMood(std::uint64_t);
+
+    /// edit mood clicked
+    void editMood(std::uint64_t);
 
 protected:
     /*!
@@ -66,9 +69,6 @@ protected:
 
 private slots:
 
-    /// called device is clicked
-    void clickedDevice(const QString&);
-
     /// called when floating layout has been clicked.
     void floatingLayoutButtonPressed(const QString&);
 
@@ -76,26 +76,11 @@ private slots:
     void changedSwitchState(bool);
 
 private:
-    /// stores the current key for a page
-    QString mPageKey;
-
-    /// scroll area that contains all the information in the widget
-    QScrollArea* mScrollArea;
-
-    /// widget used to display additional info
-    MoodDetailsWidget* mAdditionalDetailsWidget;
-
-    /// used for positioning widgets
-    QWidget* mPlaceholder;
+    /// widget to display the group that has been created or edited
+    DisplayMoodWidget* mMoodWidget;
 
     /// switch for turning on the mood
     cor::Switch* mOnOffSwitch;
-
-    /// key for the mood
-    std::uint64_t mKey;
-
-    /// label for the name of the mood
-    QLabel* mTopLabel;
 
     /// menu for the widget
     FloatingLayout* mFloatingMenu;
@@ -106,14 +91,8 @@ private:
     /// pointer to commlayer for updates
     CommLayer* mComm;
 
-    /// layout for top of widget
-    QHBoxLayout* mTopLayout;
-
     /// vertical layout for widget
     QVBoxLayout* mLayout;
-
-    /// widget used for scroll area.
-    ListSimpleGroupWidget* mSimpleGroupWidget;
 };
 
 #endif // LISTMOODDETAILEDWIDGET_H

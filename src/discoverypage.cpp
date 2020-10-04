@@ -56,7 +56,7 @@ DiscoveryPage::DiscoveryPage(QWidget* parent,
 
     mStartButton->setStyleSheet("background-color: #222222;");
 
-    mOptionalFloatingLayout = new FloatingLayout(true, this);
+    mOptionalFloatingLayout = new FloatingLayout(this);
     connect(mOptionalFloatingLayout,
             SIGNAL(buttonPressed(QString)),
             this,
@@ -64,7 +64,7 @@ DiscoveryPage::DiscoveryPage(QWidget* parent,
     std::vector<QString> verticalButtons = {QString("Plus")};
     mOptionalFloatingLayout->setupButtons(verticalButtons, EButtonSize::small);
 
-    mVerticalFloatingLayout = new FloatingLayout(true, this);
+    mVerticalFloatingLayout = new FloatingLayout(this);
     connect(mVerticalFloatingLayout,
             SIGNAL(buttonPressed(QString)),
             this,
@@ -72,7 +72,7 @@ DiscoveryPage::DiscoveryPage(QWidget* parent,
     verticalButtons = {QString("Settings")};
     mVerticalFloatingLayout->setupButtons(verticalButtons, EButtonSize::small);
 
-    mHorizontalFloatingLayout = new FloatingLayout(false, this);
+    mHorizontalFloatingLayout = new FloatingLayout(this);
     connect(mHorizontalFloatingLayout,
             SIGNAL(buttonPressed(QString)),
             this,

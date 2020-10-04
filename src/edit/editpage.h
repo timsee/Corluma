@@ -24,7 +24,7 @@ class EditPage : public QWidget, public cor::Page {
     Q_OBJECT
 public:
     /// constructor
-    explicit EditPage(QWidget* parent, CommLayer* layer, GroupData* parser);
+    explicit EditPage(QWidget* parent, CommLayer* layer, GroupData* parser, bool showPreviewButton);
 
     /// displays the discovery page
     void pushIn(const QPoint& startPoint, const QPoint& endPoint);
@@ -120,6 +120,12 @@ private slots:
     /// handles changing the page when signaled from the progress widget
     void changePageFromProgressWidget(std::uint32_t index);
 
+protected:
+    /// Optional button to preview the settings the user is currently using. If clicked, settings
+    /// will sync to the lights. If not clicked or not available, the user is only editing data, it
+    /// will not show on the lights.
+    QPushButton* mPreviewButton;
+
 private:
     /// handles sizing the close button
     void resizeCloseButton();
@@ -130,6 +136,9 @@ private:
     /// computes the state of the review page. the review page's state is based off of the state of
     /// the other widgets.
     void computeStateOfReviewPage();
+
+    /// true if any page shows edits, false if all pages have no edits
+    bool hasAnyEdits();
 
     /// top height doesnt change as the app resizes, so this is the cached version of the top height
     int mTopHeight;
@@ -154,6 +163,9 @@ private:
 
     /// stores all the widgets that the user flips through on the EditPage.
     std::vector<EditPageChildWidget*> mWidgets;
+
+    /// if true, show a preview button, otherwise, don't.
+    bool mUsePreviewButton;
 };
 
 } // namespace cor

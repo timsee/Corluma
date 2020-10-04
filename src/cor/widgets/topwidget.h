@@ -36,8 +36,8 @@ public:
 
         mResource = resource;
 
-        mLayout->addWidget(mTitle, 10);
         mLayout->addWidget(mButton, 1);
+        mLayout->addWidget(mTitle, 10);
         mLayout->setContentsMargins(0, 0, 0, 0);
         mLayout->setSpacing(6);
         setLayout(mLayout);

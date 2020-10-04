@@ -29,12 +29,11 @@ public:
           mChooseLabel{new QLabel("Choose Lights:", this)},
           mSelectedLabel{new QLabel("Selected Lights:", this)},
           mComm{comm},
-          mGroups{groups},
           mLightsMenu{new StandardLightsMenu(this, comm, groups)},
           mMoodLights{new LightsListMenu(this, true)},
           mLeftButton{new QPushButton(this)},
           mRightButton{new QPushButton(this)},
-          mLightWidget{new ListLightWidget({}, false, cor::EWidgetType::condensed, this)},
+          mLightWidget{new ListLightWidget({}, false, EListLightWidgetType::standard, this)},
           mStateWidget{new ChooseStateWidget(this)} {
         mBottomButtons->enableForward(false);
 
@@ -67,6 +66,7 @@ public:
 
     /// clears all data currently on the page.
     void clear() {
+        mOriginalLights = {};
         // TODO: why does this need to be called for mLightContainer to show lights?
         mLightsMenu->reset();
 
@@ -81,11 +81,15 @@ public:
     /// prefill selected lights and their states.
     void prefill(const std::vector<cor::Light>& lights) {
         clear();
+        mOriginalLights = lights;
         for (const auto& light : lights) {
             mMoodLights->addLight(light);
         }
         conditionsMet();
     }
+
+    /// true if any information does not match the original information, false otherwise
+    bool hasEdits() override { return !(mOriginalLights == lights()); }
 
     /// getter for all selected lights.
     std::vector<cor::Light> lights() { return mMoodLights->lights(); }
@@ -94,7 +98,7 @@ protected:
     /*!
      * \brief resizeEvent called whenever the widget resizes so that assets can be updated.
      */
-    void resizeEvent(QResizeEvent*) { resize(); }
+    void resizeEvent(QResizeEvent*) override { resize(); }
 
 private slots:
 
@@ -336,9 +340,6 @@ private:
     /// pointer to comm data
     CommLayer* mComm;
 
-    /// pointer to group data
-    GroupData* mGroups;
-
     /// widget for showing all available lights.
     StandardLightsMenu* mLightsMenu;
 
@@ -359,6 +360,9 @@ private:
 
     /// state of the widget
     EChooseLightsMoodState mState;
+
+    /// stores the original lights, to check for changes.
+    std::vector<cor::Light> mOriginalLights;
 
     /// height of rows in scroll areas.
     int mRowHeight;

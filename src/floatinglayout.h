@@ -27,10 +27,9 @@ class FloatingLayout : public QWidget {
 public:
     /*!
      * Constructor
-     * \param makeVertical makes a vertical layout if true, makes a horizontal layout if false.
      * \param parent parent
      */
-    explicit FloatingLayout(bool makeVertical, QWidget* parent);
+    explicit FloatingLayout(QWidget* parent);
 
     /*!
      * \brief setupButtons takees the vector of names and the size given and updates the buttons
@@ -155,17 +154,9 @@ private:
     std::vector<QString> mNames;
 
     /*!
-     * \brief mHorizontalLayout layout for horizontal widgets
+     * \brief mLayout layout for horizontal widgets
      */
-    QHBoxLayout* mHorizontalLayout;
-
-    /*!
-     * \brief mVerticalLayout layout for vertical widgets
-     */
-    QVBoxLayout* mVerticalLayout;
-
-    /// true if vertical floating layout, false if horizontal.
-    bool mIsVertical;
+    QHBoxLayout* mLayout;
 
     /// the routine button is made translucent if somethings not in sync, this is true if that is
     /// the case.

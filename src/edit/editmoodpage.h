@@ -22,14 +22,17 @@ namespace cor {
 class EditMoodPage : public cor::EditPage {
     Q_OBJECT
 public:
-    explicit EditMoodPage(QWidget* parent, CommLayer* comm, GroupData* groups)
-        : EditPage(parent, comm, groups),
+    explicit EditMoodPage(QWidget* parent, CommLayer* comm, GroupData* groups, cor::LightList* data)
+        : EditPage(parent, comm, groups, true),
           mComm{comm},
+          mData{data},
           mMetadataWidget{new ChooseMetadataWidget(this, true)},
           mLightsStateWidget{new ChooseMoodLightStatesWidget(this, comm, groups)},
           mGroupsStateWidget{new ChooseMoodGroupStatesWidget(this, comm, groups)},
-          mReviewPage{new ReviewMoodWidget(this, comm, groups)} {
+          mReviewPage{new ReviewMoodWidget(this, comm, groups, data)} {
         setupWidgets({mMetadataWidget, mLightsStateWidget, mGroupsStateWidget, mReviewPage});
+
+        connect(mPreviewButton, SIGNAL(clicked(bool)), this, SLOT(previewPressed(bool)));
     }
 
     /// fill the page with preexisting data to edit
@@ -92,12 +95,27 @@ public:
         mReviewPage->changeRowHeight(height);
     }
 
+private slots:
+
+    /// handle when preview is pressed, creates the mood and syncs it.
+    void previewPressed(bool) {
+        auto mood = mReviewPage->mood();
+        mood.lights(mLightsStateWidget->lights());
+        mood.defaults(mGroupsStateWidget->defaults());
+        const auto& moodDict = mComm->makeMood(mood);
+        mData->clearLights();
+        mData->addLights(moodDict.items());
+    }
+
 private:
     /// true if room, false otherwise
     bool mIsRoom;
 
     /// pointer to comm data.
     CommLayer* mComm;
+
+    /// data layer
+    cor::LightList* mData;
 
     /// widget for choosing the metadata for a group, such as its name and description.
     ChooseMetadataWidget* mMetadataWidget;

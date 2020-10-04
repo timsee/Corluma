@@ -17,7 +17,7 @@
 
 ListLightWidget::ListLightWidget(const cor::Light& light,
                                  bool setHighlightable,
-                                 cor::EWidgetType type,
+                                 EListLightWidgetType type,
                                  QWidget* parent)
     : cor::ListItemWidget(light.uniqueID(), parent),
       mNoConnectionPixmap(":/images/questionMark.png"),
@@ -33,7 +33,8 @@ ListLightWidget::ListLightWidget(const cor::Light& light,
       mFontPtSize(16),
       mLight{light},
       mName{new QLabel(this)},
-      mTypeIcon{new QLabel(this)} {
+      mTypeIcon{new QLabel(this)},
+      mCondenseStandardWidget{false} {
     mTypeIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mTypeIcon->setStyleSheet("background-color:rgba(0,0,0,0);");
 
@@ -145,7 +146,7 @@ void ListLightWidget::paintEvent(QPaintEvent*) {
         // icon stretches to fill free space with a black widget. then the state icon is overlaid
         // over a percentage of that black rectangele. IE, if brightness is 50%, the state icon is
         // extended over 50% of the black rectangle
-        if (mType == cor::EWidgetType::full) {
+        if (mType == EListLightWidgetType::fullBrightnessBar) {
             // paint the background of the brightness bar
             paintLightBarBackground(painter, mState, stateIconRect);
 
@@ -170,7 +171,7 @@ void ListLightWidget::paintEvent(QPaintEvent*) {
 }
 
 void ListLightWidget::mouseReleaseEvent(QMouseEvent* event) {
-    if ((mType == cor::EWidgetType::condensed) && cor::leftHandMenuMoving()) {
+    if ((mType == EListLightWidgetType::standard) && cor::leftHandMenuMoving()) {
         event->ignore();
         return;
     }
@@ -188,38 +189,66 @@ void ListLightWidget::mouseReleaseEvent(QMouseEvent* event) {
 }
 
 QString ListLightWidget::createName(QString nameText) {
-    if (mType == cor::EWidgetType::full) {
-        if (nameText.size() > 20) {
-            nameText = nameText.mid(0, 17) + "...";
-        }
-    } else {
-        if (nameText.size() > 17) {
-            nameText = nameText.mid(0, 14) + "...";
-        }
-    }
+//    if (mType == EListLightWidgetType::fullBrightnessBar) {
+//        if (nameText.size() > 20) {
+//            nameText = nameText.mid(0, 17) + "...";
+//        }
+//    } else {
+//        if (nameText.size() > 17) {
+//            nameText = nameText.mid(0, 14) + "...";
+//        }
+//    }
     return nameText;
 }
 
-void ListLightWidget::resize() {
-    auto typeIconSide = this->height() * 0.8;
-    mTypeIcon->setGeometry(spacer(), this->height() * 0.1, typeIconSide, typeIconSide);
 
-    if (mType == cor::EWidgetType::full) {
+namespace {
+
+/// logic to determine if the widget should be condensed or not
+bool shouldCondenseWidget(QSize size, bool displayState) {
+    auto iconSide = size.height() * 0.8;
+    if (displayState) {
+       iconSide = iconSide * 2;
+    }
+    if (iconSide > size.width() * 0.4) {
+        return true;
+    }
+    return false;
+}
+
+}
+void ListLightWidget::resize() {
+    if (mType == EListLightWidgetType::fullBrightnessBar) {
+        auto typeIconSide = this->height() * 0.8;
+        mTypeIcon->setGeometry(spacer(), this->height() * 0.1, typeIconSide, typeIconSide);
         mName->setGeometry(stateIconRegion().x(),
                            stateIconRegion().y() + stateIconRegion().height(),
                            stateIconRegion().width(),
                            stateIconRegion().height());
-    } else {
+    } else if (mType == EListLightWidgetType::standard) {
+        mCondenseStandardWidget = shouldCondenseWidget(this->size(), mDisplayState);
+
         int nameX = 0;
-        if (mDisplayState) {
-            nameX = stateIconRegion().x() + stateIconRegion().width() + spacer();
+        if (!mCondenseStandardWidget) {
+            auto typeIconSide = this->height() * 0.8;
+            mTypeIcon->setGeometry(spacer(), this->height() * 0.1, typeIconSide, typeIconSide);
+            if (mDisplayState) {
+                nameX = stateIconRegion().x() + stateIconRegion().width() + spacer();
+            } else {
+                nameX = stateIconRegion().x() + spacer();
+            }
+            mName->setGeometry(nameX,
+                               stateIconRegion().y(),
+                               width() - nameX,
+                               stateIconRegion().height());
         } else {
-            nameX = stateIconRegion().x() + spacer();
+            auto typeIconSide = this->height() * 0.4;
+            mTypeIcon->setGeometry(spacer(), this->height() * 0.1, typeIconSide, typeIconSide);
+            mName->setGeometry(nameX,
+                               stateIconRegion().y() + stateIconRegion().height(),
+                               width() - nameX,
+                               stateIconRegion().height());
         }
-        mName->setGeometry(nameX,
-                           stateIconRegion().y(),
-                           width() - nameX,
-                           stateIconRegion().height());
     }
 
     // resize icons only if necessary
@@ -251,13 +280,17 @@ int ListLightWidget::spacer() {
 QRect ListLightWidget::stateIconRegion() {
     int x = mTypeIcon->width() + mTypeIcon->pos().x() + spacer();
     int y = mTypeIcon->pos().y();
-    if (mType == cor::EWidgetType::full) {
+    if (mType == EListLightWidgetType::fullBrightnessBar) {
         int width = this->width() - spacer() * 3 - mTypeIcon->width();
         int height = int(this->height() / 3);
         return QRect(x, y, width, height);
-
     } else {
-        int side = int(height() * 0.8);
-        return QRect(x, y, side, side);
+        if (mCondenseStandardWidget) {
+            int side = int(height() * 0.4);
+            return QRect(x, y, side, side);
+        } else {
+            int side = int(height() * 0.8);
+            return QRect(x, y, side, side);
+        }
     }
 }

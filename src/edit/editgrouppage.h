@@ -25,7 +25,7 @@ class EditGroupPage : public cor::EditPage {
     Q_OBJECT
 public:
     explicit EditGroupPage(QWidget* parent, CommLayer* comm, GroupData* groups)
-        : EditPage(parent, comm, groups),
+        : EditPage(parent, comm, groups, false),
           mMetadataWidget{new ChooseMetadataWidget(this, false)},
           mLightsWidget{new ChooseLightsGroupWidget(this, comm, groups)},
           mReviewPage{new ReviewGroupWidget(this, comm, groups)},

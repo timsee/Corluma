@@ -925,3 +925,12 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Added widgets to support displaying default states for groups in moods.
 - Added support for Hue Plays.
 - Fixed miscellaneous bugs.
+
+### **v0.20.1**
+### The Edit Mood Fixes Update
+- Added `DisplayMoodMetadata` to display metadata on `DisplayMoodWidget`.
+- Removed `MoodDetailsWidget` in favor of `DisplayMoodWidget`.
+- On an `EditPage`, if you have unsaved changes, a popup will now verify you are alright with losing the changes.
+- Added a button to preview a mood as you are setting it.
+- Made the `ListLightWidget` show clearer in thin widgets.  
+- Fixed miscellaneous bugs.

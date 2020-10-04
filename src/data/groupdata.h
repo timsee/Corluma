@@ -114,6 +114,12 @@ public:
     /// moods that span multiple rooms are stored in the key '0'.
     const RoomMoodMap& moodParents() const { return mMoodParents.moodParents(); }
 
+    /// searches for the ID of the parent of a mood. If no parent is found, or the given ID is not a
+    /// valid mood, 0u is returned.
+    std::uint64_t parentFromMood(std::uint64_t uniqueID) {
+        return mMoodParents.parentFromMoodID(uniqueID);
+    }
+
     /// getter for name from ID
     QString nameFromID(std::uint64_t ID);
 

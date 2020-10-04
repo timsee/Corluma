@@ -42,8 +42,14 @@ void ListSimpleGroupWidget::updateDevices(const std::vector<cor::Light>& devices
             // Create Widget, if not found
             //----------------
             if (!foundDevice) {
+                EListLightWidgetType type;
+                if (listWidgetType == cor::EWidgetType::condensed) {
+                    type = EListLightWidgetType::standard;
+                } else {
+                    type = EListLightWidgetType::fullBrightnessBar;
+                }
                 auto widget =
-                    new ListLightWidget(inputLight, canHighlight, listWidgetType, mainWidget());
+                    new ListLightWidget(inputLight, canHighlight, type, mainWidget());
                 connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleClicked(QString)));
                 connect(widget,
                         SIGNAL(switchToggled(QString, bool)),

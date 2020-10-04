@@ -21,7 +21,7 @@ void MenuLightContainer::updateLightWidgets(const std::vector<cor::Light>& light
             Q_ASSERT(existingWidget);
             existingWidget->updateWidget(light);
         } else {
-            auto widget = new ListLightWidget(light, true, cor::EWidgetType::condensed, this);
+            auto widget = new ListLightWidget(light, true, EListLightWidgetType::standard, this);
             if (!mAllowInteraction) {
                 widget->allowInteraction(false);
             }

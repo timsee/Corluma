@@ -46,12 +46,16 @@ public:
     /// preexisting selection
     void prefill(const std::vector<QString>& keys) {
         clear();
+        mOriginalKeys = keys;
         for (const auto& key : keys) {
             auto light = mComm->lightByID(key);
             mSelectedLightsMenu->addLight(key);
         }
         conditionsMet();
     }
+
+    /// true if any information does not match the original information, false otherwise
+    bool hasEdits() override { return !(mOriginalKeys == lightIDs()); }
 
     /// setup the the page as choosing for groups, showing all available lights
     void setupAsGroup() {
@@ -85,6 +89,7 @@ public:
 
     /// clears all data currently on the page.
     void clear() {
+        mOriginalKeys = {};
         // TODO: why does this need to be called for mLightContainer to show lights?
         mLightsMenu->reset();
 
@@ -105,7 +110,7 @@ protected:
     /*!
      * \brief resizeEvent called whenever the widget resizes so that assets can be updated.
      */
-    void resizeEvent(QResizeEvent*) { resize(); }
+    void resizeEvent(QResizeEvent*) override { resize(); }
 
 private slots:
 
@@ -154,7 +159,7 @@ private:
     /// invalid input.
     bool conditionsMet() {
         bool allLightsValid = true;
-        if (mSelectedLightsMenu->lightIDs().size() > 1 && allLightsValid) {
+        if (!mSelectedLightsMenu->lightIDs().empty() && allLightsValid) {
             mBottomButtons->enableForward(true);
             emit stateChanged(mIndex, EEditProgressState::completed);
             return true;
@@ -214,6 +219,9 @@ private:
 
     /// widget for showing all selected lights
     StatelessLightsListMenu* mSelectedLightsMenu;
+
+    /// original keys when the page was initialized, used to check for changes.
+    std::vector<QString> mOriginalKeys;
 
     /// true if room, false if group
     bool mIsRoom;

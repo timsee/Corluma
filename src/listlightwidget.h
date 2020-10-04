@@ -11,6 +11,11 @@
 #include "cor/widgets/statusicon.h"
 #include "icondata.h"
 
+enum class EListLightWidgetType {
+    standard,
+    fullBrightnessBar
+};
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2020.
@@ -35,7 +40,7 @@ public:
      */
     explicit ListLightWidget(const cor::Light& light,
                              bool setHighlightable,
-                             cor::EWidgetType type,
+                             EListLightWidgetType type,
                              QWidget* parent);
 
     /*!
@@ -123,7 +128,7 @@ private:
     QPixmap mNoConnectionPixmap;
 
     /// type of ListLightWidget
-    cor::EWidgetType mType;
+    EListLightWidgetType mType;
 
     /// hardware type for the light we're displaying
     ELightHardwareType mHardwareType;
@@ -176,6 +181,9 @@ private:
 
     /// stores the last icon size, to check if the pixmaps need to be recomputed.
     QSize mLastIconSize;
+
+    /// true if standard widget does not have room to display, false if theres enough room
+    bool mCondenseStandardWidget;
 };
 
 

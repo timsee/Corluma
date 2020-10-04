@@ -71,8 +71,15 @@ public:
         }
     }
 
+    /// true if any information does not match the original information, false otherwise;
+    bool hasEdits() override {
+        return !(mOriginalName == name() && mOriginalDescription == description());
+    }
+
     /// prefill the metadata with existing data to edit
     void prefill(const QString& name, const QString& description, const cor::EGroupType& type) {
+        mOriginalName = name;
+        mOriginalDescription = description;
         mIsMood = (type == cor::EGroupType::mood);
         mNameInput->setText(name);
         mDescriptionInput->setText(description);
@@ -88,6 +95,8 @@ public:
 
     /// clears all data currently on the page.
     void clear() {
+        mOriginalName = "";
+        mOriginalDescription = "";
         mNameInput->setText("");
         mDescriptionInput->setText("");
         mGroupRoomWidget->unlockSelection();
@@ -98,7 +107,7 @@ protected:
     /*!
      * \brief resizeEvent called whenever the widget resizes so that assets can be updated.
      */
-    void resizeEvent(QResizeEvent*) {
+    void resizeEvent(QResizeEvent*) override {
         int yPos = 0;
         int heightSpacer = this->height() / 10;
 
@@ -202,6 +211,12 @@ private:
 
     /// text field for the description
     QTextEdit* mDescriptionInput;
+
+    /// stores the original name, used to check for changes
+    QString mOriginalName;
+
+    /// stores the original description, used to check for changes
+    QString mOriginalDescription;
 
     /// widget for choosing whether it is a group or a room.
     GroupRoomCheckboxWidget* mGroupRoomWidget;

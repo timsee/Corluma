@@ -8,7 +8,7 @@
 #include "comm/commlayer.h"
 #include "cor/objects/group.h"
 #include "cor/widgets/expandingtextscrollarea.h"
-#include "menu/displaygroupmetadata.h"
+#include "menu/displaymoodmetadata.h"
 #include "menu/groupstatelistmenu.h"
 #include "menu/lightslistmenu.h"
 
@@ -32,7 +32,7 @@ public:
           mLightsLabel{new QLabel("Lights:", this)},
           mGroupsLabel{new QLabel("Groups:", this)},
           mDescription{new cor::ExpandingTextScrollArea(this)},
-          mMetadata{new DisplayGroupMetadata(this, groups)},
+          mMetadata{new DisplayMoodMetadata(this, groups)},
           mLights{new LightsListMenu(this, false)},
           mGroupDefaults{new GroupStateListMenu(this, false)} {
         auto font = mName->font();
@@ -64,7 +64,7 @@ public:
         }
         mLights->updateLights();
         mLights->showLights(mMood.lights());
-        // mMetadata->update(mood, groupExistsAlready);
+        mMetadata->update(mood, moodExistsAlready);
         resize();
     }
 
@@ -116,15 +116,16 @@ private:
         mLightsLabel->setGeometry(xSpacer, yPosColumn1, columnWidth - xSpacer, buttonHeight);
         yPosColumn1 += mLightsLabel->height();
 
-        QRect selectedLightsRect(xSpacer, yPosColumn1, columnWidth - xSpacer, buttonHeight * 6);
+        QRect selectedLightsRect(xSpacer, yPosColumn1, columnWidth - xSpacer, buttonHeight * 8);
         mLights->resize(selectedLightsRect, mRowHeight);
         yPosColumn1 += mLights->height();
 
         // column 2
         mGroupsLabel->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, buttonHeight);
         yPosColumn2 += mGroupsLabel->height();
+
         if (mGroupDefaults->isVisible()) {
-            QRect groupStatesRect(xSecondColumnStart, yPosColumn2, columnWidth, 4 * buttonHeight);
+            QRect groupStatesRect(xSecondColumnStart, yPosColumn2, columnWidth, 5 * buttonHeight);
             mGroupDefaults->resize(groupStatesRect, mRowHeight);
             yPosColumn2 += mGroupDefaults->height();
         }
@@ -133,7 +134,7 @@ private:
             mDescription->setGeometry(xSecondColumnStart,
                                       yPosColumn2,
                                       columnWidth,
-                                      2 * buttonHeight);
+                                      3 * buttonHeight);
 
             // add an additional spacer
             yPosColumn2 += mDescription->height() + buttonHeight;
@@ -162,8 +163,8 @@ private:
     /// description text box
     cor::ExpandingTextScrollArea* mDescription;
 
-    /// metadata, displays info like the group's parent, subgroups, etc.
-    DisplayGroupMetadata* mMetadata;
+    /// metadata, displays info like the mood's parent, subgroups, etc.
+    DisplayMoodMetadata* mMetadata;
 
     /// displays the lights that are part of this group and their current states.
     LightsListMenu* mLights;

@@ -12,7 +12,7 @@ ChooseStateWidget::ChooseStateWidget(QWidget* parent)
       mColorPicker{new SingleColorPicker(this)},
       mPaletteScrollArea{new PaletteScrollArea(this)},
       mRoutinesWidget{new RoutineButtonsWidget(this)},
-      mTopFloatingLayout{new FloatingLayout(false, this)} {
+      mTopFloatingLayout{new FloatingLayout(this)} {
     mTopFloatingLayout->setVisible(false);
     mPaletteScrollArea->setVisible(false);
     connect(mTopFloatingLayout,

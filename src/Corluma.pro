@@ -167,6 +167,7 @@ SOURCES += main.cpp \
     listmoodwidget.cpp \
     menu/choosestatewidget.cpp \
     menu/displaygroupmetadata.cpp \
+    menu/displaymoodmetadata.cpp \
     menu/groupstatelistmenu.cpp \
     menu/lightslistmenu.cpp \
     menu/menugroupcontainer.cpp \
@@ -219,7 +220,6 @@ SOURCES += main.cpp \
     listmooddetailedwidget.cpp \
     listmoodpreviewwidget.cpp \
     data/groupdata.cpp \
-    mooddetailswidget.cpp \
     menu/lefthandmenu.cpp \
     selectlightsbutton.cpp \
     mainviewport.cpp \
@@ -310,6 +310,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     menu/choosestatewidget.h \
     menu/displaygroupmetadata.h \
     menu/displaygroupwidget.h \
+    menu/displaymoodmetadata.h \
     menu/displaymoodwidget.h \
     menu/groupstatelistmenu.h \
     menu/lefthandmenutoplightwidget.h \
@@ -369,7 +370,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     listmooddetailedwidget.h \
     listmoodpreviewwidget.h \
     data/groupdata.h \
-    mooddetailswidget.h \
     utils/reachability.h \
     utils/color.h \
     utils/qt.h \

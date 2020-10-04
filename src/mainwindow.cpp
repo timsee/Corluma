@@ -243,12 +243,17 @@ void MainWindow::loadPages() {
         connect(mEditGroupPage, SIGNAL(updateGroups()), this, SLOT(editPageUpdateGroups()));
         mEditGroupPage->changeRowHeight(mLeftHandMenu->height() / 18);
 
-        mEditMoodPage = new cor::EditMoodPage(this, mComm, mGroups);
+        mEditMoodPage = new cor::EditMoodPage(this, mComm, mGroups, mData);
         mEditMoodPage->setVisible(false);
         mEditMoodPage->isOpen(false);
         connect(mEditMoodPage, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
         connect(mEditMoodPage, SIGNAL(updateGroups()), this, SLOT(editPageUpdateGroups()));
         mEditMoodPage->changeRowHeight(mLeftHandMenu->height() / 18);
+
+        connect(mMainViewport->moodPage()->moodDetailedWidget(),
+                SIGNAL(editMood(std::uint64_t)),
+                this,
+                SLOT(editMoodSelected(std::uint64_t)));
 
         mChooseEditPage = new ChooseEditPage(this);
         mChooseEditPage->setVisible(false);
@@ -983,7 +988,7 @@ void MainWindow::setupStateObserver() {
 
     // mood page
     connect(mMainViewport->moodPage()->moodDetailedWidget(),
-            SIGNAL(enableGroup(std::uint64_t)),
+            SIGNAL(enableMood(std::uint64_t)),
             mStateObserver,
             SLOT(moodChanged(std::uint64_t)));
 
