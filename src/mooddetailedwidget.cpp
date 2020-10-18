@@ -4,27 +4,28 @@
  * Released under the GNU General Public License.
  */
 
-#include "listmooddetailedwidget.h"
+#include "mooddetailedwidget.h"
 
 #include <QGraphicsOpacityEffect>
 #include <QScrollBar>
 #include <QScroller>
-#include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
 
 #include "utils/qt.h"
 
-ListMoodDetailedWidget::ListMoodDetailedWidget(QWidget* parent, GroupData* groups, CommLayer* comm)
+MoodDetailedWidget::MoodDetailedWidget(QWidget* parent, GroupData* groups, CommLayer* comm)
     : QWidget(parent),
-      mComm{comm} {
-    mOnOffSwitch = new cor::Switch(this);
+      mComm{comm},
+      mMoodWidget{new DisplayMoodWidget(this, mComm, groups)},
+      mMoodSyncWidget{new MoodSyncWidget(this, mComm)},
+      mOnOffSwitch{new cor::Switch(this)},
+      mFloatingMenu{new FloatingLayout(parent)} {
     mOnOffSwitch->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     connect(mOnOffSwitch, SIGNAL(switchChanged(bool)), this, SLOT(changedSwitchState(bool)));
     mOnOffSwitch->setSwitchState(ESwitchState::off);
     mOnOffSwitch->setVisible(true);
 
-    mFloatingMenu = new FloatingLayout(parent);
     connect(mFloatingMenu,
             SIGNAL(buttonPressed(QString)),
             this,
@@ -35,7 +36,6 @@ ListMoodDetailedWidget::ListMoodDetailedWidget(QWidget* parent, GroupData* group
     //------------
     // ScrollArea Widget
     //------------
-    mMoodWidget = new DisplayMoodWidget(this, mComm, groups);
     mMoodWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     mLayout = new QVBoxLayout(this);
@@ -48,23 +48,32 @@ ListMoodDetailedWidget::ListMoodDetailedWidget(QWidget* parent, GroupData* group
     resize();
 }
 
-void ListMoodDetailedWidget::update(const cor::Mood& mood) {
+void MoodDetailedWidget::update(const cor::Mood& mood) {
     auto moodCopy = mComm->addMetadataToMood(mood);
 
     mOnOffSwitch->setSwitchState(ESwitchState::off);
     mMoodWidget->updateMood(moodCopy, true);
+    // TODO check if the mood is pre-synced
+    mMoodSyncWidget->changeState(ESyncState::notSynced, moodCopy);
 }
 
-void ListMoodDetailedWidget::resize() {
+void MoodDetailedWidget::resize() {
     mMoodWidget->changeRowHeight(this->height() / 10);
     QSize size = parentWidget()->size();
     setFixedSize(int(size.width() * 0.75f), int(size.height() * 0.75f));
     mOnOffSwitch->setFixedWidth(int(size.width() * 0.2));
     QPoint topRight(this->x() + this->width(), this->y());
     mFloatingMenu->move(topRight);
+    auto spacer = mOnOffSwitch->width() / 8;
+    auto syncWidth = this->width() - mFloatingMenu->width() - mOnOffSwitch->width()
+                     - mOnOffSwitch->geometry().x() - spacer;
+    mMoodSyncWidget->setGeometry(mOnOffSwitch->width() + mOnOffSwitch->geometry().x(),
+                                 mOnOffSwitch->geometry().y(),
+                                 syncWidth,
+                                 mOnOffSwitch->height());
 }
 
-void ListMoodDetailedWidget::paintEvent(QPaintEvent*) {
+void MoodDetailedWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
@@ -73,7 +82,7 @@ void ListMoodDetailedWidget::paintEvent(QPaintEvent*) {
     painter.fillRect(rect(), QBrush(QColor(48, 47, 47)));
 }
 
-void ListMoodDetailedWidget::floatingLayoutButtonPressed(const QString& key) {
+void MoodDetailedWidget::floatingLayoutButtonPressed(const QString& key) {
     if (key == "Group_Edit") {
         emit pressedClose();
         emit editMood(mMoodWidget->mood().uniqueID());
@@ -81,17 +90,22 @@ void ListMoodDetailedWidget::floatingLayoutButtonPressed(const QString& key) {
     mFloatingMenu->highlightButton("");
 }
 
-void ListMoodDetailedWidget::changedSwitchState(bool state) {
-    if (state) {
+void MoodDetailedWidget::changedSwitchState(bool isOn) {
+    if (isOn) {
         emit enableMood(mMoodWidget->mood().uniqueID());
+        updateSyncStatus(ESyncState::notSynced);
     }
 }
 
-void ListMoodDetailedWidget::resizeEvent(QResizeEvent*) {
+void MoodDetailedWidget::updateSyncStatus(ESyncState state) {
+    mMoodSyncWidget->changeState(state, mMoodWidget->mood());
+}
+
+void MoodDetailedWidget::resizeEvent(QResizeEvent*) {
     resize();
 }
 
-void ListMoodDetailedWidget::pushIn() {
+void MoodDetailedWidget::pushIn() {
     isOpen(true);
 
     moveWidget(
@@ -110,7 +124,7 @@ void ListMoodDetailedWidget::pushIn() {
     resize();
 }
 
-void ListMoodDetailedWidget::pushOut() {
+void MoodDetailedWidget::pushOut() {
     isOpen(false);
 
     moveWidget(

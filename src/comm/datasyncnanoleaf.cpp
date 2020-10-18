@@ -129,7 +129,16 @@ namespace {
 
 bool compareTwoPalettes(const cor::Palette& commPalette, const cor::Palette& dataPalette) {
     if (dataPalette.colors().size() == commPalette.colors().size()) {
-        auto lambda = [](const QColor& a, const QColor& b) -> bool { return a.hueF() < b.hueF(); };
+        auto lambda = [](const QColor& a, const QColor& b) -> bool {
+            // account for -1 hues that are sometimes returned, sort at top
+            if (!b.isValid()) {
+                return a.hueF();
+            }
+            if (!a.isValid()) {
+                return b.hueF();
+            }
+            return a.hueF() < b.hueF();
+        };
         auto sortedDataColors = dataPalette.colors();
         std::sort(sortedDataColors.begin(), sortedDataColors.end(), lambda);
         auto sortedCommColors = commPalette.colors();
@@ -138,8 +147,8 @@ bool compareTwoPalettes(const cor::Palette& commPalette, const cor::Palette& dat
         bool palettesAreClose = true;
         std::uint32_t i = 0;
         for (auto color : sortedDataColors) {
-            auto commColor = commPalette.colors()[i];
-            if (cor::colorDifference(color, commColor) > 0.25f && (color.value() != 0u)) {
+            auto commColor = sortedCommColors[i];
+            if (cor::colorDifference(color, commColor) > 0.28f && (color.value() != 0u)) {
                 palettesAreClose = false;
             }
             ++i;

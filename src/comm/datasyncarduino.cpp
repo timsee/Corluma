@@ -201,7 +201,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
     if (!result.second) {
         return false;
     }
-    auto arduCorLight = mComm->arducor()->arduCorLightFromLight(inputDevice);
+    auto metadata = mComm->arducor()->metadataFromLight(inputDevice);
     auto dataDevice = inputDevice;
     QString packet;
 
@@ -211,7 +211,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
     // On/Off Sync
     //-------------------
     if (dataState.isOn() != commState.isOn()) {
-        QString message = mParser->turnOnPacket(arduCorLight.index(), dataState.isOn());
+        QString message = mParser->turnOnPacket(metadata.index(), dataState.isOn());
         appendToPacket(packet, message, controller.maxPacketSize());
         countOutOfSync++;
         //        qDebug() << "ON/OFF not in sync" << dataDevice.isOn << " for " << commDevice.name
@@ -294,12 +294,12 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
                 //                qDebug() << "brightness not in sync" <<
                 //                commState.palette().brightness() << "vs "
                 //                         << dataState.palette().brightness();
-                QString message = mParser->brightnessPacket(arduCorLight.index(),
-                                                            dataState.palette().brightness());
+                QString message =
+                    mParser->brightnessPacket(metadata.index(), dataState.palette().brightness());
                 appendToPacket(packet, message, controller.maxPacketSize());
                 countOutOfSync++;
             } else {
-                QString message = mParser->routinePacket(arduCorLight.index(), routineObject);
+                QString message = mParser->routinePacket(metadata.index(), routineObject);
                 appendToPacket(packet, message, controller.maxPacketSize());
                 countOutOfSync++;
             }
@@ -314,7 +314,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
         if (commState.customCount() != dataState.palette().colors().size()) {
             // qDebug() << "Custom color count not in sync";
             QString message =
-                mParser->changeCustomArraySizePacket(arduCorLight.index(),
+                mParser->changeCustomArraySizePacket(metadata.index(),
                                                      int(commState.palette().colors().size()));
             appendToPacket(packet, message, controller.maxPacketSize());
             countOutOfSync++;
@@ -332,7 +332,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
                 //                                 commDevice.palette.colors()[i]
                 //                                 << "data: " <<
                 //                                 dataDevice.palette.colors()[i];
-                QString message = mParser->arrayColorChangePacket(arduCorLight.index(),
+                QString message = mParser->arrayColorChangePacket(metadata.index(),
                                                                   int(i),
                                                                   dataState.palette().colors()[i]);
                 appendToPacket(packet, message, controller.maxPacketSize());
@@ -346,18 +346,18 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
     //-------------------
     if (mAppSettings->timeoutEnabled()) {
         // timeout is enabled
-        if (arduCorLight.timeout() != mAppSettings->timeout()) {
+        if (metadata.timeout() != mAppSettings->timeout()) {
             //            qDebug() << "time out not in sync" << commDevice.timeout << " vs "
             //                     << mAppSettings->timeout() << commDevice;
-            QString message = mParser->timeoutPacket(arduCorLight.index(), mAppSettings->timeout());
+            QString message = mParser->timeoutPacket(metadata.index(), mAppSettings->timeout());
             appendToPacket(packet, message, controller.maxPacketSize());
             countOutOfSync++;
         }
     } else {
         // disable the timeout
-        if (arduCorLight.timeout() != 0) {
+        if (metadata.timeout() != 0) {
             // qDebug() << "time out not disabled!" << commDevice.timeout;
-            QString message = mParser->timeoutPacket(arduCorLight.index(), 0);
+            QString message = mParser->timeoutPacket(metadata.index(), 0);
             appendToPacket(packet, message, controller.maxPacketSize());
             countOutOfSync++;
         }
@@ -368,10 +368,10 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
         for (const auto& message : messageArray) {
             // look if the key already exists.
             if (!message.isEmpty()) {
-                auto messageGroup = mMessages.find(arduCorLight.controller().toStdString());
+                auto messageGroup = mMessages.find(metadata.controller().toStdString());
                 if (messageGroup == mMessages.end()) {
                     std::vector<QString> list = {message};
-                    mMessages.insert(std::make_pair(arduCorLight.controller().toStdString(), list));
+                    mMessages.insert(std::make_pair(metadata.controller().toStdString(), list));
                 } else {
                     messageGroup->second.push_back(message);
                 }

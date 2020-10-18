@@ -43,6 +43,14 @@ public:
     /// update the selected lights with the given color
     void updateSelected(const QColor& color);
 
+    /// true to allow interaction, false to not allow interaction
+    void allowInteraction(bool shouldAllowInteraction) {
+        mAllowInteraction = shouldAllowInteraction;
+        for (auto&& swatch : mSwatches) {
+            swatch->setCheckable(shouldAllowInteraction);
+        }
+    }
+
 signals:
     /*!
      * \brief multiColorCountChanged number of colors to use during multi color routines changed.
@@ -85,6 +93,9 @@ private:
      * \brief mLayout layout used to arrange the slider and the buttons.
      */
     QGridLayout* mLayout;
+
+    /// true to allow interaction, false to not allow interaction.
+    bool mAllowInteraction;
 };
 
 #endif // SWATCH_VECTOR_WIDGET_H

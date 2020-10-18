@@ -165,6 +165,8 @@ void StateObserver::dataInSync(bool inSync) {
         mTopMenu->singleColorStateWidget()->updateSyncStatus(state);
     } else if (mMainViewport->currentPage() == EPage::palettePage) {
         mTopMenu->multiColorStateWidget()->updateSyncStatus(state);
+    } else if (mMainViewport->currentPage() == EPage::moodPage) {
+        mMoodPage->moodDetailedWidget()->updateSyncStatus(state);
     }
 }
 

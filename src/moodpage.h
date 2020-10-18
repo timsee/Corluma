@@ -8,7 +8,7 @@
 
 #include "cor/objects/mood.h"
 #include "greyoutoverlay.h"
-#include "listmooddetailedwidget.h"
+#include "mooddetailedwidget.h"
 #include "listmoodwidget.h"
 #include "menu/standardmoodsmenu.h"
 
@@ -40,7 +40,7 @@ public:
     void updateMoods();
 
     /// getter for mood detailed widget
-    ListMoodDetailedWidget* moodDetailedWidget() { return mMoodDetailedWidget; }
+    MoodDetailedWidget* moodDetailedWidget() { return mMoodDetailedWidget; }
 
     /// called when the widget is hidden
     void hide();
@@ -107,7 +107,7 @@ private:
     /*!
      * \brief mMoodDetailedWidget widget for displaying detailed information about a mood.
      */
-    ListMoodDetailedWidget* mMoodDetailedWidget;
+    MoodDetailedWidget* mMoodDetailedWidget;
 
     /// greyout for mood detailed widget
     GreyOutOverlay* mGreyOut;

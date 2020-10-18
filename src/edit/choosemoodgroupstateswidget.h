@@ -24,7 +24,7 @@ enum class EChooseMoodGroupsState { disabled, addGroup, changeState, removeGroup
 class ChooseMoodGroupStatesWidget : public EditPageChildWidget {
     Q_OBJECT
 public:
-    explicit ChooseMoodGroupStatesWidget(QWidget* parent, CommLayer* comm, GroupData* groups)
+    explicit ChooseMoodGroupStatesWidget(QWidget* parent, GroupData* groups)
         : EditPageChildWidget(parent),
           mChooseLabel{new QLabel("Choose Groups:", this)},
           mSelectedLabel{new QLabel("Group Defaults:", this)},

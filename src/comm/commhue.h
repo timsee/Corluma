@@ -211,6 +211,10 @@ public:
     /// get the hue bridge that controls a cor::Light
     hue::Bridge bridgeFromLight(const cor::Light& light);
 
+    /// returns 0 if light is off or has no timeout, or how many minutes until it times out if a
+    /// timeout exists
+    std::uint32_t timeoutFromLight(const cor::Light& light);
+
     //---------------
     // Discovery And Maintence
     //---------------

@@ -179,6 +179,8 @@ SOURCES += main.cpp \
     menu/standardlightsmenu.cpp \
     menu/standardmoodsmenu.cpp \
     menu/statelesslightslistmenu.cpp \
+    mooddetailedwidget.cpp \
+    moodsyncwidget.cpp \
     parentgroupwidget.cpp \
     stateobserver.cpp \
     data/subgroupdata.cpp \
@@ -217,7 +219,6 @@ SOURCES += main.cpp \
     listsimplegroupwidget.cpp \
     dropdowntopwidget.cpp \
     nowifiwidget.cpp \
-    listmooddetailedwidget.cpp \
     listmoodpreviewwidget.cpp \
     data/groupdata.cpp \
     menu/lefthandmenu.cpp \
@@ -324,6 +325,8 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     menu/standardlightsmenu.h \
     menu/standardmoodsmenu.h \
     menu/statelesslightslistmenu.h \
+    mooddetailedwidget.h \
+    moodsyncwidget.h \
     parentgroupwidget.h \
     singlelightbrightnesswidget.h \
     stateobserver.h \
@@ -367,7 +370,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     listsimplegroupwidget.h \
     dropdowntopwidget.h \
     nowifiwidget.h \
-    listmooddetailedwidget.h \
     listmoodpreviewwidget.h \
     data/groupdata.h \
     utils/reachability.h \

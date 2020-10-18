@@ -81,7 +81,7 @@ public:
     std::vector<ArduCorMetadata> arduCorLights() const noexcept { return mArduCorLights.items(); }
 
     /// converts a cor::Light into a arducor light
-    ArduCorMetadata arduCorLightFromLight(const cor::Light& light);
+    ArduCorMetadata metadataFromLight(const cor::Light& light);
 
     /// returns the last time any CommType owned by CommArduCor received an update.
     QTime lastUpdateTime();

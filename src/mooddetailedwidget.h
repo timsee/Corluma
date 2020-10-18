@@ -8,6 +8,7 @@
 #include "floatinglayout.h"
 #include "listsimplegroupwidget.h"
 #include "menu/displaymoodwidget.h"
+#include "moodsyncwidget.h"
 
 /*!
  * \copyright
@@ -21,14 +22,17 @@
  * meta information and default states for specific groups. The third page can be used for
  * editing a mood.
  */
-class ListMoodDetailedWidget : public QWidget, public cor::Page {
+class MoodDetailedWidget : public QWidget, public cor::Page {
     Q_OBJECT
 public:
     /// constructor
-    explicit ListMoodDetailedWidget(QWidget* parent, GroupData* groups, CommLayer* comm);
+    explicit MoodDetailedWidget(QWidget* parent, GroupData* groups, CommLayer* comm);
 
     /// update the mood in the widget
     void update(const cor::Mood& group);
+
+    /// update sync status of the widget
+    void updateSyncStatus(ESyncState state);
 
     /// resizes widget programmatically
     void resize();
@@ -76,8 +80,14 @@ private slots:
     void changedSwitchState(bool);
 
 private:
+    /// pointer to commlayer for updates
+    CommLayer* mComm;
+
     /// widget to display the group that has been created or edited
     DisplayMoodWidget* mMoodWidget;
+
+    /// sync widget for the mood
+    MoodSyncWidget* mMoodSyncWidget;
 
     /// switch for turning on the mood
     cor::Switch* mOnOffSwitch;
@@ -87,9 +97,6 @@ private:
 
     /// pixmap for icon for the edit button
     QPixmap mEditIcon;
-
-    /// pointer to commlayer for updates
-    CommLayer* mComm;
 
     /// vertical layout for widget
     QVBoxLayout* mLayout;

@@ -934,3 +934,8 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Added a button to preview a mood as you are setting it.
 - Made the `ListLightWidget` show clearer in thin widgets.  
 - Fixed miscellaneous bugs.
+
+### **v0.20.2**
+### The MoodSyncWidget Update
+- Added `MoodSyncWidget` to display the state of syncing moods.
+- Fixed miscellaneous bugs.

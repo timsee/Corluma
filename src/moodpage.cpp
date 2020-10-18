@@ -23,7 +23,7 @@ MoodPage::MoodPage(QWidget* parent, GroupData* groups, CommLayer* comm)
       mCurrentMood{0} {
     connect(mMoodMenu, SIGNAL(moodClicked(std::uint64_t)), this, SLOT(moodSelected(std::uint64_t)));
 
-    mMoodDetailedWidget = new ListMoodDetailedWidget(parent, mGroups, mComm);
+    mMoodDetailedWidget = new MoodDetailedWidget(parent, mGroups, mComm);
     connect(mMoodDetailedWidget, SIGNAL(pressedClose()), this, SLOT(detailedClosePressed()));
 
     mMoodDetailedWidget->setGeometry(0, -1 * height(), width(), height());

@@ -214,7 +214,7 @@ void CommArduCor::deleteLight(const cor::Light& light) {
     }
 }
 
-ArduCorMetadata CommArduCor::arduCorLightFromLight(const cor::Light& light) {
+ArduCorMetadata CommArduCor::metadataFromLight(const cor::Light& light) {
     auto result = mArduCorLights.item(light.uniqueID().toStdString());
     return result.first;
 }
@@ -270,7 +270,8 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                 return;
             }
         }
-        //qDebug() << "the sender: " << sender << "packet:" << packet << "type:" << commTypeToString(type);
+        // qDebug() << "the sender: " << sender << "packet:" << packet << "type:" <<
+        // commTypeToString(type);
         for (const auto& intVector : intVectors) {
             if (intVector.size() > 2) {
                 if (intVector[0] < int(EPacketHeader::MAX)) {
@@ -349,8 +350,8 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                     }
                                 }
                             } else {
-                                 qDebug() << "WARNING: Invalid packet for light index" <<
-                                 intVector[x];
+                                qDebug()
+                                    << "WARNING: Invalid packet for light index" << intVector[x];
                             }
                         } else if (packetHeader == EPacketHeader::customArrayUpdateRequest) {
                             if (verifyCustomColorUpdatePacket(intVector)) {

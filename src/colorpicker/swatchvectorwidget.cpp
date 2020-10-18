@@ -8,6 +8,7 @@
 
 SwatchVectorWidget::SwatchVectorWidget(std::uint32_t width, uint32_t height, QWidget* parent)
     : QWidget(parent) {
+    mAllowInteraction = false;
     mWidth = width;
     mHeight = height;
     mMaximumSize = width * height;
@@ -31,7 +32,6 @@ SwatchVectorWidget::SwatchVectorWidget(std::uint32_t width, uint32_t height, QWi
         for (std::uint32_t w = 0; w < mWidth; ++w) {
             mSwatches[i] = new QPushButton(this);
             mSwatches[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-            mSwatches[i]->setCheckable(false);
             connect(mSwatches[i], SIGNAL(clicked()), this, SLOT(toggleArrayColor()));
 
             QSizePolicy sizePolicy = mSwatches[i]->sizePolicy();
@@ -81,7 +81,9 @@ uint32_t SwatchVectorWidget::selectedCount() {
 }
 
 void SwatchVectorWidget::toggleArrayColor() {
-    emit selectedCountChanged(int(selectedCount()));
+    if (mAllowInteraction) {
+        emit selectedCountChanged(int(selectedCount()));
+    }
 }
 
 void SwatchVectorWidget::updateSelected(const QColor& color) {

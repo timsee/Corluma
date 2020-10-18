@@ -88,12 +88,12 @@ void DisplayGroupMetadata::update(const cor::Group& group, bool groupExistsAlrea
         // check for errors first
         if (groupMetadata.hasIdenticalName || !groupMetadata.identicalGroups.empty()) {
             mErrorsExist = true;
-            returnString << "<b><ul>ERROR:</ul></b>";
+            returnString << "<b><ul>ERROR:</ul></b><br>";
             if (groupMetadata.hasIdenticalName) {
-                returnString << "  - Another group already has the same name\r\n";
+                returnString << "  - Another group already has the same name<br>";
             }
             if (!groupMetadata.identicalGroups.empty()) {
-                returnString << "  - Another group already has the same exact set of lights\r\n";
+                returnString << "  - Another group already has the same exact set of lights<br>";
             }
             returnString << "<hr>";
         } else {
@@ -103,10 +103,10 @@ void DisplayGroupMetadata::update(const cor::Group& group, bool groupExistsAlrea
 
     // now fill in non errors
     if (!groupMetadata.roomParent.isEmpty()) {
-        returnString << "<b>Room:</b> " << groupMetadata.roomParent.toStdString() << "\r\n";
+        returnString << "<b>Room:</b> " << groupMetadata.roomParent.toStdString() << "<br>";
     }
     if (!groupMetadata.groupParents.empty()) {
-        returnString << "<b>Parents:</b> ";
+        returnString << "<b>Parents:</b> <br>";
         bool firstPass = true;
         for (auto parent : groupMetadata.groupParents) {
             if (!firstPass) {
@@ -115,15 +115,15 @@ void DisplayGroupMetadata::update(const cor::Group& group, bool groupExistsAlrea
             firstPass = false;
             returnString << parent.toStdString();
         }
-        returnString << "\r\n";
+        returnString << "<br>";
     }
     if (group.type() == cor::EGroupType::room) {
-        returnString << "Room\r\n";
+        returnString << "Room<br>";
     } else if (groupMetadata.roomParent.isEmpty() && groupMetadata.groupParents.empty()) {
-        returnString << "Parent Group\r\n";
+        returnString << "Parent Group<br>";
     }
     if (!groupMetadata.subgroups.empty()) {
-        returnString << "<b>Subgroups:</b>";
+        returnString << "<b>Subgroups:</b><br>";
         bool firstPass = true;
         for (auto subgroup : groupMetadata.subgroups) {
             if (!firstPass) {
@@ -132,7 +132,7 @@ void DisplayGroupMetadata::update(const cor::Group& group, bool groupExistsAlrea
             firstPass = false;
             returnString << subgroup.toStdString();
         }
-        returnString << "\n";
+        returnString << "<br>";
     }
     std::string result = returnString.str();
     updateText(QString(result.c_str()));

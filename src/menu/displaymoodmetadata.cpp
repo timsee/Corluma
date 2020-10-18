@@ -36,8 +36,9 @@ struct MoodMetadataFlags {
 } // namespace
 
 
-DisplayMoodMetadata::DisplayMoodMetadata(QWidget* parent, GroupData* groups)
+DisplayMoodMetadata::DisplayMoodMetadata(QWidget* parent, CommLayer* comm, GroupData* groups)
     : ExpandingTextScrollArea(parent),
+      mComm{comm},
       mGroups{groups} {}
 
 
@@ -50,9 +51,9 @@ void DisplayMoodMetadata::update(const cor::Mood& mood, bool moodExistsAlready) 
         // check for errors first
         if (moodMetadata.hasIdenticalName) {
             mErrorsExist = true;
-            returnString << "<b><ul>ERROR:</ul></b>";
+            returnString << "<b><ul>ERROR:</ul></b><br>";
             if (moodMetadata.hasIdenticalName) {
-                returnString << "  - Another mood already has the same name\r\n";
+                returnString << "  - Another mood already has the same name<br>";
             }
             returnString << "<hr>";
         } else {
@@ -62,8 +63,28 @@ void DisplayMoodMetadata::update(const cor::Mood& mood, bool moodExistsAlready) 
 
     if (moodMetadata.parentID != 0u) {
         returnString << "<b>Parent:</b> "
-                     << mGroups->groupNameFromID(moodMetadata.parentID).toStdString() << "\r\n";
+                     << mGroups->groupNameFromID(moodMetadata.parentID).toStdString() << "<br>";
     }
+
+    // verify if all lights are reachable
+    auto commLights = mComm->lightsByIDs(cor::lightVectorToIDs(mood.lights()));
+    bool anyLightsNotReachable = false;
+    for (auto light : commLights) {
+        if (!light.isReachable()) {
+            anyLightsNotReachable = true;
+            break;
+        }
+    }
+
+    if (anyLightsNotReachable) {
+        returnString << "<b>Not Reachable Lights:</b> <br>";
+        for (auto light : commLights) {
+            if (!light.isReachable()) {
+                returnString << "- " << light.name().toStdString() << " <br>";
+            }
+        }
+    }
+
     std::string result = returnString.str();
     updateText(QString(result.c_str()));
 }

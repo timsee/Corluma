@@ -28,7 +28,7 @@ public:
           mData{data},
           mMetadataWidget{new ChooseMetadataWidget(this, true)},
           mLightsStateWidget{new ChooseMoodLightStatesWidget(this, comm, groups)},
-          mGroupsStateWidget{new ChooseMoodGroupStatesWidget(this, comm, groups)},
+          mGroupsStateWidget{new ChooseMoodGroupStatesWidget(this, groups)},
           mReviewPage{new ReviewMoodWidget(this, comm, groups, data)} {
         setupWidgets({mMetadataWidget, mLightsStateWidget, mGroupsStateWidget, mReviewPage});
 

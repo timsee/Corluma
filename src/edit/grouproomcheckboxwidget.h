@@ -25,20 +25,22 @@ class GroupRoomCheckboxWidget : public QWidget {
 public:
     explicit GroupRoomCheckboxWidget(QWidget* parent)
         : QWidget(parent),
-          mGroupCheckbox{new cor::CheckBox(this, "Group")},
-          mRoomCheckbox{new cor::CheckBox(this, "Room")},
+          mGroupButton{new QPushButton("Group", this)},
+          mRoomButton{new QPushButton("Room", this)},
           mDescription{new QLabel(this)} {
         mDescription->setWordWrap(true);
+        mGroupButton->setCheckable(true);
+        mRoomButton->setCheckable(true);
 
-        connect(mGroupCheckbox, SIGNAL(boxChecked(bool)), this, SLOT(groupCheckboxPressed(bool)));
-        connect(mRoomCheckbox, SIGNAL(boxChecked(bool)), this, SLOT(roomCheckboxPressed(bool)));
+        connect(mGroupButton, SIGNAL(clicked(bool)), this, SLOT(groupCheckboxPressed(bool)));
+        connect(mRoomButton, SIGNAL(clicked(bool)), this, SLOT(roomCheckboxPressed(bool)));
     }
 
     /// true if group is checked
-    bool groupChecked() { return mGroupCheckbox->checked(); }
+    bool groupChecked() { return mGroupButton->isChecked(); }
 
     /// true if room is checked
-    bool roomChecked() { return mRoomCheckbox->checked(); }
+    bool roomChecked() { return mRoomButton->isChecked(); }
 
     /// true if editing and making changes is locked
     bool isLocked() { return mLock; }
@@ -47,23 +49,23 @@ public:
     void lockSelection(bool groupShouldBeChecked) {
         mLock = true;
         if (groupShouldBeChecked) {
-            mGroupCheckbox->setChecked(true);
-            mRoomCheckbox->setChecked(false);
+            mGroupButton->setChecked(true);
+            mRoomButton->setChecked(false);
         } else {
-            mGroupCheckbox->setChecked(false);
-            mRoomCheckbox->setChecked(true);
+            mGroupButton->setChecked(false);
+            mRoomButton->setChecked(true);
         }
         updateDescription();
-        mGroupCheckbox->setEnabled(false);
-        mRoomCheckbox->setEnabled(false);
+        mGroupButton->setEnabled(false);
+        mRoomButton->setEnabled(false);
     }
 
     /// unlocks selection, resetting the widget for creating new groups
     void unlockSelection() {
-        mGroupCheckbox->setEnabled(true);
-        mRoomCheckbox->setEnabled(true);
-        mGroupCheckbox->setChecked(false);
-        mRoomCheckbox->setChecked(false);
+        mGroupButton->setEnabled(true);
+        mRoomButton->setEnabled(true);
+        mGroupButton->setChecked(false);
+        mRoomButton->setChecked(false);
         mLock = false;
     }
 
@@ -76,14 +78,16 @@ private slots:
 
     /// handles when the group checkbox is pressed
     void groupCheckboxPressed(bool checked) {
-        mRoomCheckbox->setChecked(!checked);
+        mRoomButton->setChecked(!checked);
+        mGroupButton->setChecked(checked);
         updateDescription();
         emit boxChecked();
     }
 
     /// handles when the room checkbox is pressed
     void roomCheckboxPressed(bool checked) {
-        mGroupCheckbox->setChecked(!checked);
+        mGroupButton->setChecked(!checked);
+        mRoomButton->setChecked(checked);
         updateDescription();
         emit boxChecked();
     }
@@ -98,9 +102,9 @@ private:
         int yPos = 0;
         int widgetHeight = this->height() / 3;
 
-        mGroupCheckbox->setGeometry(0, yPos, this->width() / 2, widgetHeight);
-        mRoomCheckbox->setGeometry(this->width() / 2, yPos, this->width() / 2, widgetHeight);
-        yPos += mGroupCheckbox->height();
+        mGroupButton->setGeometry(0, yPos, this->width() / 2, widgetHeight);
+        mRoomButton->setGeometry(this->width() / 2, yPos, this->width() / 2, widgetHeight);
+        yPos += mGroupButton->height();
 
         mDescription->setGeometry(0, yPos, this->width(), widgetHeight * 2);
     }
@@ -123,11 +127,9 @@ private:
         mDescription->setText(string);
     }
 
-    /// the checkbox for the group
-    cor::CheckBox* mGroupCheckbox;
+    QPushButton* mGroupButton;
 
-    /// the checkbox for the room
-    cor::CheckBox* mRoomCheckbox;
+    QPushButton* mRoomButton;
 
     /// the label for showing a description
     QLabel* mDescription;

@@ -1,5 +1,6 @@
 #include "commhue.h"
 
+#include <QDateTime>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonValue>
@@ -239,6 +240,29 @@ void CommHue::timeOutChange(int deviceIndex, int timeout) {
     Q_UNUSED(deviceIndex);
     Q_UNUSED(timeout);
     // TODO: implement
+}
+
+std::uint32_t CommHue::timeoutFromLight(const cor::Light& light) {
+    auto hue = hueLightFromLight(light);
+    auto bridge = bridgeFromLight(light);
+    auto timeoutName = "Corluma_timeout_" + QString::number(hue.index());
+    // search schedules for a schedule with the timeout name
+    auto timeoutResult = bridge.schedules().item(timeoutName.toStdString());
+    if (timeoutResult.second) {
+        // if a schedule exists, use the schedule to determine minutes left for timeout
+        auto schedule = timeoutResult.first;
+        auto localTime = schedule.localtime();
+        // convert timeout string to minutes
+        QRegExp regExp("[\D]");
+        QStringList stringList = localTime.split(regExp);
+        // TODO: NYI
+        //        for (auto string : stringList) {
+        //            qDebug() << " string " << string;
+        //        }
+        return 0u;
+    } else {
+        return 0u;
+    }
 }
 
 //--------------------

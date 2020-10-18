@@ -8,6 +8,7 @@
 
 #include <QWidget>
 #include <sstream>
+#include "comm/commlayer.h"
 #include "cor/widgets/expandingtextscrollarea.h"
 #include "data/groupdata.h"
 
@@ -18,7 +19,7 @@
 class DisplayMoodMetadata : public cor::ExpandingTextScrollArea {
     Q_OBJECT
 public:
-    explicit DisplayMoodMetadata(QWidget* parent, GroupData* groups);
+    explicit DisplayMoodMetadata(QWidget* parent, CommLayer* comm, GroupData* groups);
 
     /// true if errors that would prevent the mood from being valid exist, false if the mood can
     /// be or is a valid mood. Errors include identical moods being detected, or moods that share
@@ -36,6 +37,9 @@ private:
     /// be or is a valid mood. Errors include identical moods being detected, or moods that share
     /// the same name.
     bool mErrorsExist;
+
+    /// pointer to comm data
+    CommLayer* mComm;
 
     /// pointer to group data
     GroupData* mGroups;

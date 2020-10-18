@@ -32,7 +32,7 @@ public:
           mLightsLabel{new QLabel("Lights:", this)},
           mGroupsLabel{new QLabel("Groups:", this)},
           mDescription{new cor::ExpandingTextScrollArea(this)},
-          mMetadata{new DisplayMoodMetadata(this, groups)},
+          mMetadata{new DisplayMoodMetadata(this, comm, groups)},
           mLights{new LightsListMenu(this, false)},
           mGroupDefaults{new GroupStateListMenu(this, false)} {
         auto font = mName->font();
@@ -56,10 +56,13 @@ public:
             mDescription->updateText(mMood.description());
         }
 
+
         if (mMood.defaults().empty()) {
             mGroupDefaults->setVisible(false);
+            mGroupsLabel->setVisible(false);
         } else {
             mGroupDefaults->setVisible(true);
+            mGroupsLabel->setVisible(true);
             mGroupDefaults->showStates(mMood.defaults());
         }
         mLights->updateLights();
@@ -121,11 +124,33 @@ private:
         yPosColumn1 += mLights->height();
 
         // column 2
-        mGroupsLabel->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, buttonHeight);
-        yPosColumn2 += mGroupsLabel->height();
+        if (mGroupsLabel->isVisible()) {
+            mGroupsLabel->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, buttonHeight);
+        }
+        yPosColumn2 += mLightsLabel->height();
 
+        int defaultsHeight;
+        int descriptionHeight;
+        int metadataHeight;
+        if (mGroupDefaults->isVisible() && mDescription->isVisible()) {
+            defaultsHeight = buttonHeight * 5;
+            descriptionHeight = buttonHeight * 2;
+            metadataHeight = buttonHeight * 3;
+        } else if (mGroupDefaults->isVisible() && !mDescription->isVisible()) {
+            defaultsHeight = buttonHeight * 5;
+            descriptionHeight = 0;
+            metadataHeight = buttonHeight * 5;
+        } else if (!mGroupDefaults->isVisible() && mDescription->isVisible()) {
+            defaultsHeight = 0;
+            descriptionHeight = buttonHeight * 5;
+            metadataHeight = buttonHeight * 5;
+        } else {
+            defaultsHeight = 0;
+            descriptionHeight = 0;
+            metadataHeight = buttonHeight * 10;
+        }
         if (mGroupDefaults->isVisible()) {
-            QRect groupStatesRect(xSecondColumnStart, yPosColumn2, columnWidth, 5 * buttonHeight);
+            QRect groupStatesRect(xSecondColumnStart, yPosColumn2, columnWidth, defaultsHeight);
             mGroupDefaults->resize(groupStatesRect, mRowHeight);
             yPosColumn2 += mGroupDefaults->height();
         }
@@ -134,12 +159,12 @@ private:
             mDescription->setGeometry(xSecondColumnStart,
                                       yPosColumn2,
                                       columnWidth,
-                                      3 * buttonHeight);
+                                      descriptionHeight);
 
             // add an additional spacer
             yPosColumn2 += mDescription->height() + buttonHeight;
         }
-        mMetadata->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, 2 * buttonHeight);
+        mMetadata->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, metadataHeight);
     }
 
     /// pointer to comm data

@@ -3,7 +3,6 @@
 
 #include <QJsonObject>
 #include <QString>
-
 #include "comm/hue/command.h"
 
 namespace hue {

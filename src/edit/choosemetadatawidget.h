@@ -142,20 +142,12 @@ private slots:
 
     /// QLineEdit had its text changed, check if its a valid name or not.
     void lineEditChanged(QString) {
-        if (conditionsMet()) {
-            mBottomButtons->enableForward(true);
-        } else {
-            mBottomButtons->enableForward(false);
-        }
+        conditionsMet();
     }
 
     /// called when the groupRoom widget has a box that is checked.
     void groupRoomBoxChecked() {
-        if (conditionsMet()) {
-            mBottomButtons->enableForward(true);
-        } else {
-            mBottomButtons->enableForward(false);
-        }
+        conditionsMet();
     }
 
     /// the description text changed, verify that its less than the maximum length
@@ -180,6 +172,7 @@ private:
             // check if the a room or group is checked
             if (!(mGroupRoomWidget->roomChecked() || mGroupRoomWidget->groupChecked())) {
                 emit stateChanged(mIndex, EEditProgressState::incomplete);
+                mBottomButtons->enableForward(false);
                 return false;
             }
         }
@@ -190,10 +183,12 @@ private:
             if ((name != "zzzzMiscellaneous") && (name != "Miscellaneous")
                 && (name != "zzzAVAIALBLE_DEVICES")) {
                 emit stateChanged(mIndex, EEditProgressState::completed);
+                mBottomButtons->enableForward(true);
                 return true;
             }
         }
         emit stateChanged(mIndex, EEditProgressState::incomplete);
+        mBottomButtons->enableForward(false);
         return false;
     }
 
