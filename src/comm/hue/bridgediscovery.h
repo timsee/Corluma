@@ -60,6 +60,13 @@ public:
     /// updates the schedules stored in a bridge
     void updateSchedules(const Bridge& bridge, const std::vector<Schedule>& schedules);
 
+    /// update an individual schedule stored in a bridge
+    void updateSchedule(const hue::Bridge& bridge, const hue::Schedule& schedule);
+
+    /// returns a schedule based off of a bridge and index. the pair's bool is whether or not the
+    /// operation was successful.
+    std::pair<hue::Schedule, bool> scheduleByBridgeAndIndex(const hue::Bridge& bridge, int index);
+
     /// updates the groups stored in a bridge
     void updateGroupsAndRooms(const Bridge& bridge, const BridgeGroupVector& groups);
 

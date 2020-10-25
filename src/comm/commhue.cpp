@@ -236,12 +236,6 @@ void CommHue::brightnessChange(const hue::Bridge& bridge, int deviceIndex, int b
     putJson(bridge, "/lights/" + QString::number(deviceIndex) + "/state", json);
 }
 
-void CommHue::timeOutChange(int deviceIndex, int timeout) {
-    Q_UNUSED(deviceIndex);
-    Q_UNUSED(timeout);
-    // TODO: implement
-}
-
 std::uint32_t CommHue::timeoutFromLight(const cor::Light& light) {
     auto hue = hueLightFromLight(light);
     auto bridge = bridgeFromLight(light);
@@ -263,6 +257,7 @@ std::uint32_t CommHue::timeoutFromLight(const cor::Light& light) {
     } else {
         return 0u;
     }
+    return 0u;
 }
 
 //--------------------
@@ -370,16 +365,20 @@ void CommHue::parseJSONArray(const hue::Bridge& bridge, const QJsonArray& array)
             } else if (object["success"].isObject()) {
                 QJsonObject successObject = object["success"].toObject();
                 if (successObject["id"].isString()) {
-                    qDebug() << "success is just an id, so its a schedule or a group!"
-                             << successObject["id"].toString();
+                    // when a group or schedule is created, its response packet is an id with its
+                    // index. This isn't very useful by itself, so sync both groups and schedules.
                     getGroups();
                     getSchedules();
+                    // qDebug() << "success is just an id" << successObject["id"].toString();
                 } else {
                     QStringList keys = successObject.keys();
+                    // qDebug() << keys;
                     for (auto& key : keys) {
                         handleSuccessPacket(bridge, key, successObject.value(key));
                     }
                 }
+            } else {
+                qDebug() << "unrecognized hue packet:" << object;
             }
         }
     }
@@ -389,74 +388,120 @@ void CommHue::handleSuccessPacket(const hue::Bridge& bridge,
                                   const QString& key,
                                   const QJsonValue& value) {
     QStringList list = key.split("/");
-    if (list.size() > 1) {
+    /**
+     * packets come in formatted by type/index/function. For example, for light state changes to
+     * light at index 1, it would be light/1/state. For a localtime schedule update to schedule
+     * index 5, it is schedule/index/locatime.
+     */
+    if (list.size() > 2) {
+        auto index = list[2].toInt();
         if (list[1] == "lights") {
-            if (list.size() > 2) {
-                HueMetadata metadata =
-                    mDiscovery->lightFromBridgeIDAndIndex(bridge.id(), list[2].toInt());
-                HueLight light(metadata);
-                if (fillLight(light)) {
-                    auto state = light.state();
+            // get the hue metadata based off of the bridge and the hue's index
+            HueMetadata metadata = mDiscovery->lightFromBridgeIDAndIndex(bridge.id(), index);
+            // create a hue light based off of the metadata
+            HueLight light(metadata);
+            // fill the light with known data
+            if (fillLight(light)) {
+                if (list.size() > 2) {
                     if (list[3] == "state") {
-                        QString key = list[4];
-                        bool valueChanged = false;
-                        if (key == "on") {
-                            state.isOn(value.toBool());
-                            valueChanged = true;
-                        } else if (key == "sat") {
-                            auto saturation = int(value.toDouble());
-                            QColor color;
-                            color.setHsv(state.color().hue(), saturation, state.color().value());
-                            state.color(color);
-                            valueChanged = true;
-                        } else if (key == "hue") {
-                            auto hue = int(value.toDouble());
-                            QColor color;
-                            color.setHsv(hue / 182,
-                                         state.color().saturation(),
-                                         state.color().value());
-                            state.color(color);
-                            metadata.colorMode(EColorMode::HSV);
-                            valueChanged = true;
-                        } else if (key == "bri") {
-                            auto brightness = int(value.toDouble());
-                            QColor color;
-                            color.setHsv(state.color().hue(),
-                                         state.color().saturation(),
-                                         brightness);
-                            state.color(color);
-                            valueChanged = true;
-                        } else if (key == "colormode") {
-                            QString mode = value.toString();
-                            EColorMode colorMode = stringtoColorMode(mode);
-                            metadata.colorMode(colorMode);
-                            valueChanged = true;
-                        } else if (key == "ct") {
-                            auto ct = int(value.toDouble());
-                            state.color(cor::colorTemperatureToRGB(ct));
-                            metadata.colorMode(EColorMode::CT);
-                            valueChanged = true;
-                        }
-
-                        light.state(state);
-                        if (valueChanged) {
-                            updateLight(light);
-                            mDiscovery->updateLight(metadata);
-                        }
+                        handleStateSuccess(light, metadata, list[4], value);
                     } else if (list[3] == "name") {
-                        // fill device
-                        if (fillLight(light)) {
-                            updateLight(light);
-                        }
+                        // TODO: sync the data for the name update
                         qDebug() << "found the nanme update!";
+                    } else {
+                        qDebug() << " unrecognized hue light state: " << key;
                     }
+                } else {
+                    qDebug() << " response size too small in hue packets: " << key;
                 }
-            } else {
-                qDebug() << " searching for new lights success packet" << value;
             }
+        } else if (list[1] == "schedules") {
+            handleScheduleSuccess(bridge, index, list[3], value);
         }
+    } else {
+        // qDebug() << "not recognzied " << key << "value" << value;
     }
 }
+
+void CommHue::handleStateSuccess(cor::Light light,
+                                 HueMetadata metadata,
+                                 const QString& key,
+                                 const QJsonValue& value) {
+    auto state = light.state();
+    bool valueChanged = false;
+    if (key == "on") {
+        state.isOn(value.toBool());
+        valueChanged = true;
+    } else if (key == "sat") {
+        auto saturation = int(value.toDouble());
+        QColor color;
+        color.setHsv(state.color().hue(), saturation, state.color().value());
+        state.color(color);
+        valueChanged = true;
+    } else if (key == "hue") {
+        auto hue = int(value.toDouble());
+        QColor color;
+        color.setHsv(hue / 182, state.color().saturation(), state.color().value());
+        state.color(color);
+        metadata.colorMode(EColorMode::HSV);
+        valueChanged = true;
+    } else if (key == "bri") {
+        auto brightness = int(value.toDouble());
+        QColor color;
+        color.setHsv(state.color().hue(), state.color().saturation(), brightness);
+        state.color(color);
+        valueChanged = true;
+    } else if (key == "colormode") {
+        QString mode = value.toString();
+        EColorMode colorMode = stringtoColorMode(mode);
+        metadata.colorMode(colorMode);
+        valueChanged = true;
+    } else if (key == "ct") {
+        auto ct = int(value.toDouble());
+        state.color(cor::colorTemperatureToRGB(ct));
+        metadata.colorMode(EColorMode::CT);
+        valueChanged = true;
+    }
+
+    if (valueChanged) {
+        light.state(state);
+        updateLight(light);
+        mDiscovery->updateLight(metadata);
+    }
+}
+
+void CommHue::handleScheduleSuccess(const hue::Bridge& bridge,
+                                    int index,
+                                    const QString& key,
+                                    const QJsonValue& value) {
+    auto scheduleResult = mDiscovery->scheduleByBridgeAndIndex(bridge, index);
+    if (scheduleResult.second) {
+        bool valueChanged = false;
+        auto schedule = scheduleResult.first;
+        if (key == "localtime") {
+            auto localtime = value.toString();
+            valueChanged = true;
+            schedule.localtime(localtime);
+        } else if (key == "status") {
+            valueChanged = true;
+            auto statusValue = value.toString();
+            schedule.status(statusValue == "enabled");
+        } else {
+            qDebug() << "schedule update not recognized" << key;
+        }
+        if (valueChanged) {
+            // success packets may have a created time change, but its not reflected in the success.
+            // Mock a update to the created time, and allow a full sync of schedule data to override
+            // our mocked version.
+            schedule.updateCreatedTime();
+            mDiscovery->updateSchedule(bridge, schedule);
+            qDebug() << " UPDATE SCHEUDEL " << index;
+        }
+    } else {
+        qDebug() << " schedule should update but not found";
+    }
+}
+
 
 void CommHue::handleErrorPacket(QJsonObject object) {
     if (object["type"].isDouble() && object["address"].isString()

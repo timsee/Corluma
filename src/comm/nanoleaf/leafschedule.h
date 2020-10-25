@@ -40,13 +40,11 @@ public:
     LeafSchedule(bool enabled,
                  ERepeat type,
                  int intervalType,
-                 LeafDate endDate,
                  LeafDate startDate,
                  LeafAction action)
         : mRepeatType{type},
           mIsEnabled{enabled},
           mRepeatValue{intervalType},
-          mEndDate{endDate},
           mStartDate{startDate},
           mAction{action} {}
 
@@ -110,10 +108,7 @@ public:
 
     bool operator==(const LeafSchedule& rhs) const {
         bool result = true;
-        if (mSetID == rhs.setID()) {
-            result = false;
-        }
-        if (mID == rhs.ID()) {
+        if (mID != rhs.ID()) {
             result = false;
         }
         return result;
@@ -151,7 +146,7 @@ namespace std {
 template <>
 struct hash<::nano::LeafSchedule> {
     size_t operator()(const ::nano::LeafSchedule& k) const {
-        return std::hash<std::string>{}(QString(k.ID()).toStdString());
+        return std::hash<std::string>{}(QString::number(k.ID()).toStdString());
     }
 };
 } // namespace std

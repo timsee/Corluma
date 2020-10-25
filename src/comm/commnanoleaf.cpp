@@ -107,27 +107,29 @@ void CommNanoleaf::updateSchedule(const nano::LeafMetadata& light,
                                   const nano::LeafSchedule& schedule) {
     auto result = mSchedules.find(light.serialNumber().toStdString());
     if (result != mSchedules.end()) {
-        auto scheduleResult = result->second;
-        const auto& scheduleSearch = scheduleResult.item(QString(schedule.ID()).toStdString());
-        if (scheduleSearch.second) { // found in schedule
+        auto scheduleDict = result->second;
+        const auto& existingSchedule =
+            scheduleDict.item(QString::number(schedule.ID()).toStdString());
+        if (existingSchedule.second) { // found in schedule
 #ifdef DEBUG_LEAF_SCHEDULES
             qDebug() << " updating existing schedule: " << schedule.ID() << " for "
-                     << light.serialNumber();
+                     << light.serialNumber() << "time for schedule"
+                     << schedule.startDate().toString();
 #endif
-            scheduleResult.update(QString(schedule.ID()).toStdString(), schedule);
+            scheduleDict.update(QString::number(schedule.ID()).toStdString(), schedule);
         } else {
 #ifdef DEBUG_LEAF_SCHEDULES
             qDebug() << " inserting new schedule: " << schedule.ID() << " for "
                      << light.serialNumber();
 #endif
-            scheduleResult.insert(QString(schedule.ID()).toStdString(), schedule);
+            scheduleDict.insert(QString::number(schedule.ID()).toStdString(), schedule);
         }
         // update the unorded map
-        result->second = scheduleResult;
+        result->second = scheduleDict;
     } else {
         // no schedules for this light found, create a dictionary
         cor::Dictionary<nano::LeafSchedule> schedules;
-        schedules.insert(QString(schedule.ID()).toStdString(), schedule);
+        schedules.insert(QString::number(schedule.ID()).toStdString(), schedule);
 #ifdef DEBUG_LEAF_SCHEDULES
         qDebug() << " adding first schedule: " << schedule.ID()
                  << " for light: " << light.serialNumber();
@@ -199,9 +201,8 @@ nano::LeafSchedule CommNanoleaf::createTimeoutSchedule(int minutesTimeout) {
     time += 60 * minutesTimeout;
     nano::LeafDate startDate(*std::localtime(&time));
 
-    nano::LeafDate endDate;
     nano::LeafAction action(nano::EActionType::off);
-    return nano::LeafSchedule(true, nano::ERepeat::once, 1, endDate, startDate, action);
+    return nano::LeafSchedule(true, nano::ERepeat::once, 1, startDate, action);
 }
 
 void CommNanoleaf::stopBackgroundTimers() {
@@ -1060,10 +1061,6 @@ void CommNanoleaf::brightnessChange(const nano::LeafMetadata& leafLight, int bri
     brightObject["value"] = brightness;
     json["brightness"] = brightObject;
     putJSON(request, json);
-}
-
-void CommNanoleaf::timeOutChange(const nano::LeafMetadata&, int) {
-    // TODO: implement
 }
 
 void CommNanoleaf::deleteLight(const cor::Light& leafLight) {

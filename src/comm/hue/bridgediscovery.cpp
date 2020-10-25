@@ -82,6 +82,42 @@ void BridgeDiscovery::startupTimerTimeout() {
 // Main Routine
 //-----------------
 
+void BridgeDiscovery::updateSchedule(const hue::Bridge& bridge, const hue::Schedule& schedule) {
+    const auto& bridgeResult = mFoundBridges.item(bridge.id().toStdString());
+    if (bridgeResult.second) {
+        auto foundBridge = bridgeResult.first;
+        auto scheduleDict = foundBridge.schedules();
+        auto scheduleResult = scheduleDict.item(schedule.name().toStdString());
+        if (scheduleResult.second) {
+            scheduleDict.update(schedule.name().toStdString(), schedule);
+        } else {
+            scheduleDict.insert(schedule.name().toStdString(), schedule);
+        }
+        foundBridge.schedules(scheduleDict);
+        mFoundBridges.update(bridge.id().toStdString(), foundBridge);
+    } else {
+        qDebug() << " bridge not found";
+    }
+}
+
+std::pair<hue::Schedule, bool> BridgeDiscovery::scheduleByBridgeAndIndex(const hue::Bridge& bridge,
+                                                                         int index) {
+    const auto& bridgeResult = mFoundBridges.item(bridge.id().toStdString());
+    if (bridgeResult.second) {
+        auto foundBridge = bridgeResult.first;
+        auto scheduleDict = foundBridge.schedules();
+        for (auto schedule : scheduleDict.items()) {
+            if (schedule.index() == index) {
+                return std::make_pair(schedule, true);
+            }
+        }
+        qDebug() << " index not found for scheduleByBridgeAndIndex";
+    } else {
+        qDebug() << "invalid bridge for scheduleByBridgeAndIndex";
+    }
+    return std::make_pair(hue::Schedule(), false);
+}
+
 void BridgeDiscovery::updateSchedules(const hue::Bridge& bridge,
                                       const std::vector<hue::Schedule>& schedules) {
     const auto& bridgeResult = mFoundBridges.item(bridge.id().toStdString());

@@ -43,7 +43,7 @@ public:
         m_date.tm_mday = int(object["day"].toDouble());
         m_date.tm_hour = int(object["hour"].toDouble());
         m_date.tm_min = int(object["minute"].toDouble());
-        m_date.tm_mon = int(object["month"].toDouble());
+        m_date.tm_mon = int(object["month"].toDouble()) - 1.0;
         auto year = int(object["year"].toDouble());
         if (year > 1900) {
             m_date.tm_year = year - 1900;
@@ -68,7 +68,7 @@ public:
             object["month"] = 0;
         } else {
             object["time_zone"] = 0; //-14400;
-            object["month"] = m_date.tm_mon + 1;
+            object["month"] = m_date.tm_mon;
         }
         auto year = m_date.tm_year;
         if (year < 1900) {

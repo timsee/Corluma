@@ -10,6 +10,7 @@
 #include "comm/datasyncarduino.h"
 #include "comm/datasynchue.h"
 #include "comm/datasyncnanoleaf.h"
+#include "comm/datasynctimeout.h"
 #include "comm/hue/lightdiscovery.h"
 #include "comm/syncstatus.h"
 #include "cor/objects/page.h"
@@ -356,6 +357,11 @@ private:
      * \brief mDataSyncNanoLeaf sync thread for data coming from NanoLeaf
      */
     DataSyncNanoLeaf* mDataSyncNanoLeaf;
+
+    /*!
+     * \brief mDataSyncTimeout sync therad for handling timeouts for lights.
+     */
+    DataSyncTimeout* mDataSyncTimeout;
 
     /// tracks whether all the DataSync threads are in sync or not
     SyncStatus* mSyncStatus;

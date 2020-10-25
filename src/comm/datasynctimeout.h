@@ -1,9 +1,7 @@
-#ifndef DATASYNCNANOLEAF_H
-#define DATASYNCNANOLEAF_H
+#ifndef DATASYNCTIMEOUT_H
+#define DATASYNCTIMEOUT_H
 
 #include <QObject>
-
-#include "comm/commnanoleaf.h"
 #include "datasync.h"
 
 class CommLayer;
@@ -14,26 +12,24 @@ class CommLayer;
  * Released under the GNU General Public License.
  *
  *
- * \brief The DataSyncNanoLeaf class compares the data layer's representation of devices with the
- * commlayer's understanding of devices and tries to sync them up. The DataLayer's representation is
- * used as the "desired" state of lights. The CommLayer's understanding is used as the current
- * state. If the desired state and current state do not match, the commlayer is requested to send
- * packets to try to update the devices.
+ * \brief The DataSyncTimeout class syncs timeout settings for lights that need it. Not all lights
+ * support timeouts out of the box, and some need to mock the functionality with a schedule that
+ * runs an action that turns the light off. This DataSync runs slower than other data syncs, and
+ * does not need to be in sync for widgets to show that everything is in sync.
  */
-class DataSyncNanoLeaf : public QObject, DataSync {
+class DataSyncTimeout : public QObject, DataSync {
     Q_OBJECT
 public:
-    /*!
-     * \brief DataSyncNanoLeaf Constructor for DataSyncNanoLeaf.
-     * \param data pointer to the app's data layer.
-     * \param comm pointer to the app's comm layer.
-     */
-    DataSyncNanoLeaf(cor::LightList* data, CommLayer* comm, AppSettings* appSettings);
+    explicit DataSyncTimeout(cor::LightList* data,
+                             CommLayer* comm,
+                             AppSettings* appSettings,
+                             QObject* parent);
 
     /*!
      * \brief cancelSync cancel the data sync, regardless of it successfully completed.
      */
     void cancelSync() override;
+
 signals:
 
     /// emits its correpsonding enum and whether or not it is in sync when its sync status changes
@@ -41,7 +37,7 @@ signals:
 
 public slots:
     /*!
-     * \brief resetSync Tells the DataSyncArduino object that the commlayer and the datalayer are
+     * \brief resetSync Tells the DataSyncTimeout object that the commlayer and the datalayer are
      * potentially no longer in sync and the syncData() function needs to get called on the timer
      * again.
      */
@@ -65,7 +61,7 @@ private slots:
     /*!
      * \brief cleanupSync After the sync is complete, certain actions need to be ran. For example,
      * Hues require a schedule to be kept synced to timeout properly. The cleanup thread starts
-     * after the DataSyncArduino to run the routines needed to keep data in sync in the long term.
+     * after the DataSyncTimeout to run the routines needed to keep data in sync in the long term.
      * This function contains all those routines.
      */
     void cleanupSync() override;
@@ -77,7 +73,13 @@ private:
      * \param commDevice device from the comm layer
      * \return true if they match, false otherwise
      */
-    bool sync(const cor::Light& dataDevice, const cor::Light& commDevice) override;
+    bool sync(const cor::Light& dataLight, const cor::Light& commLight) override;
+
+    /// handle a hue's timeout. This is done by creating a schedule on the hue bridge
+    bool handleHueTimeout(const cor::Light& light);
+
+    /// handle a nanoleaf's timeout. This is done by creating a schedule for the nanoleaf.
+    bool handleNanoleafTimeout(const cor::Light& light);
 
     /*!
      * \brief endOfSync end the sync thread and start the cleanup thread.
@@ -88,4 +90,4 @@ private:
     AppSettings* mAppSettings;
 };
 
-#endif // DATASYNCNANOLEAF_H
+#endif // DATASYNCTIMEOUT_H

@@ -6,8 +6,8 @@
 #include <QTimer>
 
 #include "cor/lightlist.h"
-#include "datasync.h"
 #include "data/groupdata.h"
+#include "datasync.h"
 
 /*!
  * \copyright
@@ -115,14 +115,6 @@ private:
      * \brief endOfSync end the sync thread and start the cleanup thread.
      */
     void endOfSync() override;
-
-    /*!
-     * \brief handleIdleTimeout creates or updates an idle timeout, depending on if it already
-     * exists
-     * \param bridge the bridge that the light is attached to
-     * \param light the light that is getting its idle timeout changed
-     */
-    bool handleIdleTimeout(const hue::Bridge& bridge, const HueMetadata& light);
 
     /// message buffer
     std::unordered_map<std::string, std::vector<HueMessage>> mMessages;

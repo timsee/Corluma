@@ -126,17 +126,6 @@ private slots:
      */
     void routineChange(const nano::LeafMetadata& light, QJsonObject);
 
-    /*!
-     * \brief timeOutChange connected to CommPacketParser, this changes the idle timeout.
-     *        A value of 0 will disable the timeout, each other value will be the number
-     *        of minutes it takes to time out.
-     * \param deviceIndex 0 for all indices, a specific index for a specific light.
-     *        Will do nothing if index doesn't exist.
-     * \param timeOut value between 0 and 1000. number represents number of minutes before
-     *        lights automatically turn off. 0 disables this feature.
-     */
-    void timeOutChange(const nano::LeafMetadata& light, int timeout);
-
     /// requests the state of the lights
     void stateUpdate();
 

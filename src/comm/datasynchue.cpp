@@ -202,16 +202,9 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
     // On/Off Sync
     //-------------------
     if (dataState.isOn() != commState.isOn()) {
-        // qDebug() << "hue ON/OFF not in sync" << dataDevice.isOn;
+        // qDebug() << "hue ON/OFF not in sync" << dataDevice.isOn();
         object["isOn"] = dataState.isOn();
         countOutOfSync++;
-    }
-
-    //-------------------
-    // Turn off Hue timers
-    //-------------------
-    if (mAppSettings->timeoutEnabled() && countOutOfSync == 0) {
-        handleIdleTimeout(bridge, hueLight);
     }
 
     if (countOutOfSync) {
@@ -227,52 +220,11 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
             result->second = vector;
         }
     }
-
     return (countOutOfSync == 0);
 }
 
 void DataSyncHue::cleanupSync() {
-    // repeats until things are synced up.
-    if (mAppSettings->timeoutEnabled()) {
-        for (const auto& device : mData->lights()) {
-            if (device.commType() == ECommType::hue) {
-                // get bridge
-                const auto bridge = mComm->hue()->bridgeFromLight(device);
-                auto hueLight = mComm->hue()->hueLightFromLight(device);
-                handleIdleTimeout(bridge, hueLight);
-            }
-        }
-    }
-
     if (mCleanupStartTime.elapsed() > 15000) {
         mCleanupTimer->stop();
     }
-}
-
-
-
-bool DataSyncHue::handleIdleTimeout(const hue::Bridge& bridge, const HueMetadata& light) {
-    bool foundTimeout = false;
-    for (const auto& schedule : mComm->hue()->schedules(bridge)) {
-        // qDebug() << "  scheudel name" << schedule.name;
-        // if a device doesnt have a schedule, add it.
-        if (schedule.name().contains("Corluma_timeout")) {
-            QString indexString = schedule.name().split("_").last();
-            int givenIndex = indexString.toInt();
-            if (givenIndex == light.index() && mAppSettings->timeout() != 0) {
-                foundTimeout = true;
-                // qDebug() << " update idle timeout " << schedule;
-                mComm->hue()->updateIdleTimeout(bridge,
-                                                true,
-                                                schedule.index(),
-                                                mAppSettings->timeout());
-            }
-        }
-    }
-
-    if (!foundTimeout) {
-        // qDebug() << " create idle timeout " << light.index;
-        mComm->hue()->createIdleTimeout(bridge, light.index(), mAppSettings->timeout());
-    }
-    return foundTimeout;
 }

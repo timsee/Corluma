@@ -129,6 +129,7 @@ SOURCES += main.cpp \
     comm/datasynchue.cpp \
     comm/datasyncarduino.cpp \
     comm/datasyncnanoleaf.cpp \
+    comm/datasynctimeout.cpp \
     comm/nanoleaf/leaflightinfowidget.cpp \
     comm/nanoleaf/leafmetadata.cpp \
     comm/upnpdiscovery.cpp \
@@ -252,6 +253,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     comm/datasynchue.h \
     comm/datasyncarduino.h \
     comm/datasyncnanoleaf.h \
+    comm/datasynctimeout.h \
     comm/hue/command.h \
     comm/hue/huemetadata.h \
     comm/hue/schedule.h \

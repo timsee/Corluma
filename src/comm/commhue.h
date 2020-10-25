@@ -287,17 +287,6 @@ private slots:
     void updateLightStates();
 
     /*!
-     * \brief timeOutChange connected to CommPacketParser, this changes the idle timeout.
-     *        A value of 0 will disable the timeout, each other value will be the number
-     *        of minutes it takes to time out.
-     * \param deviceIndex 0 for all indices, a specific index for a specific light.
-     *        Will do nothing if index doesn't exist.
-     * \param timeOut value between 0 and 1000. number represents number of minutes before
-     *        lights automatically turn off. 0 disables this feature.
-     */
-    void timeOutChange(int deviceIndex, int timeout);
-
-    /*!
      * \brief getSchedules request schedules updates.
      */
     void getSchedules();
@@ -395,6 +384,32 @@ private:
     void handleSuccessPacket(const hue::Bridge& bridge,
                              const QString& key,
                              const QJsonValue& value);
+
+    /*!
+     * \brief handleStateSuccess handles a success packet that changes a light state.
+     *
+     * \param light light to update
+     * \param metadata metadta for light to update
+     * \param key what is being updated
+     * \param value the value is updated
+     */
+    void handleStateSuccess(cor::Light light,
+                            HueMetadata metadata,
+                            const QString& key,
+                            const QJsonValue& value);
+
+    /*!
+     * \brief handleScheduleSuccess handles a success packet that changes a schedule
+     *
+     * \param bridge the bridge that is being updated
+     * \param index the index of the new schedule
+     * \param key what is beign updated
+     * \param value the value that is updated
+     */
+    void handleScheduleSuccess(const hue::Bridge& bridge,
+                               int index,
+                               const QString& key,
+                               const QJsonValue& value);
 
     /*!
      * \brief handleErrorPacket handle errors received from the Hue Bridge. In most cases, we just

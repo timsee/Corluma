@@ -42,6 +42,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
       mDataSyncArduino{new DataSyncArduino(mData, mComm, mAppSettings)},
       mDataSyncHue{new DataSyncHue(mData, mComm, mAppSettings)},
       mDataSyncNanoLeaf{new DataSyncNanoLeaf(mData, mComm, mAppSettings)},
+      mDataSyncTimeout{new DataSyncTimeout(mData, mComm, mAppSettings, this)},
       mSyncStatus{new SyncStatus(this)},
       mShareUtils{new ShareUtils(this)},
       mSettingsPage{new SettingsPage(this, mGroups, mComm, mAppSettings, mShareUtils)},
@@ -80,6 +81,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
             SIGNAL(statusChanged(EDataSyncType, bool)),
             mSyncStatus,
             SLOT(syncStatusChanged(EDataSyncType, bool)));
+    // timeout does not announce its sync status since its background.
 
     // --------------
     // Settings Page
@@ -372,6 +374,7 @@ void MainWindow::changeEvent(QEvent* event) {
         mDataSyncArduino->cancelSync();
         mDataSyncHue->cancelSync();
         mDataSyncNanoLeaf->cancelSync();
+        mDataSyncTimeout->cancelSync();
     }
 }
 

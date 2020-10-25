@@ -939,3 +939,10 @@ _This is the first of a series of updates to address design issues in the `ListR
 ### The MoodSyncWidget Update
 - Added `MoodSyncWidget` to display the state of syncing moods.
 - Fixed miscellaneous bugs.
+
+### **v0.20.3**
+### The Timeout Backend Update
+- Fixed bugs with updating Nanoleaf schedules.
+- Fixed bugs with updating Hue schedules.
+- Added `DataSyncTimeout` for handling the syncing timeouts.
+- Fixed miscellaneous bugs.

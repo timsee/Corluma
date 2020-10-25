@@ -112,6 +112,7 @@ CommType* CommLayer::commByType(ECommType type) const {
     return ptr;
 }
 
+
 bool CommLayer::removeLight(const cor::Light& light) {
     return commByType(light.commType())->removeLight(light);
 }
@@ -436,6 +437,7 @@ void CommLayer::lightNameChange(const QString& key, const QString& name) {
         }
     }
 }
+
 std::uint32_t CommLayer::minutesUntilTimeout(const QString& key) {
     auto light = lightByID(key);
     if (light.protocol() == EProtocolType::arduCor) {

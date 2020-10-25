@@ -255,7 +255,9 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
             //            qDebug() << " routine in sync: " << routineInSync << " speed in sync" <<
             //            speedInSync
             //                     << " params in sycn" << paramsInSync;
+
             object["routine"] = routineObject;
+
             //            qDebug() << " Nanoleaf routine not in sync data "
             //                     << routineToString(dataState.routine()) << " vs comm "
             //                     << routineToString(commState.routine());
@@ -263,51 +265,14 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
         }
     }
 
-    bool timeoutInSync = true;
-    if (mAppSettings->timeoutEnabled() && countOutOfSync == 0) {
-        handleIdleTimeout(leafLight);
-        timeoutInSync = false;
-    }
-
     if (countOutOfSync) {
         mComm->nanoleaf()->sendPacket(object);
         resetThrottle(dataDevice.uniqueID(), dataDevice.commType());
     }
 
-    return (countOutOfSync == 0) && timeoutInSync;
+    return (countOutOfSync == 0);
 }
 
-void DataSyncNanoLeaf::handleIdleTimeout(const nano::LeafMetadata& metadata) {
-    bool foundTimeout = false;
-    int timeoutValue = mAppSettings->timeout();
-    auto result = mComm->nanoleaf()->findSchedules(metadata);
-    if (result.second) {
-        auto schedules = result.first;
-        for (const auto& schedule : schedules.items()) {
-            // check for idle schedule
-            if (schedule.ID() == nano::kTimeoutID) {
-                // check schedule is enabled
-                if (schedule.enabled()) {
-                    auto scheduleTimeout = schedule.startDate().date();
-                    auto scheduleAsTime = std::mktime(&scheduleTimeout);
-                    auto currentTimeout = nano::LeafDate::currentTime().date();
-                    auto currentAsTime = std::mktime(&currentTimeout);
-                    currentAsTime += 60 * timeoutValue;
-                    if (scheduleAsTime == currentAsTime) {
-                        foundTimeout = true;
-                    }
-                }
-            }
-        }
-    } else {
-        qDebug() << " could not find schedules for " << metadata.name();
-    }
-
-
-    if (!foundTimeout) {
-        mComm->nanoleaf()->sendTimeout(metadata, timeoutValue);
-    }
-}
 
 void DataSyncNanoLeaf::endOfSync() {
     if (!mCleanupTimer->isActive()) {

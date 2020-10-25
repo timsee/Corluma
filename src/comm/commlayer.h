@@ -275,7 +275,7 @@ private:
 
     /*!
      * \brief commByType returns the raw CommPtr based off the given commType
-     * \param type the comm type to get a point two
+     * \param type the comm type to get a pointer to
      * \return the raw CommType ptr based off the given commType
      */
     CommType* commByType(ECommType type) const;

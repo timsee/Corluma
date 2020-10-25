@@ -34,7 +34,7 @@ struct SThrottle {
 
 
 /// type of datasync thread
-enum class EDataSyncType { arducor, hue, nanoleaf, settings };
+enum class EDataSyncType { arducor, hue, nanoleaf, timeout, settings };
 Q_DECLARE_METATYPE(EDataSyncType)
 
 class CommLayer;

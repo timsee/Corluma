@@ -1,8 +1,12 @@
 #ifndef HUE_SCHEDULE_H
 #define HUE_SCHEDULE_H
 
+#include <QDebug>
 #include <QJsonObject>
+#include <QRegExp>
 #include <QString>
+#include <QStringList>
+#include <QTime>
 #include "comm/hue/command.h"
 
 namespace hue {
@@ -20,6 +24,8 @@ namespace hue {
  */
 class Schedule {
 public:
+    Schedule() : mName{"INVALID"}, mDescription{"INVALID"}, mIndex{0u} {}
+
     /// constructor
     Schedule(QJsonObject object, int i) {
         // check if valid packet
@@ -70,6 +76,9 @@ public:
     /// true if active and valid, false if there are any issues.
     bool status() const noexcept { return mStatus; }
 
+    /// setter for status
+    void status(bool status) { mStatus = status; }
+
     /// true if schedule should delete when its done, false if it should stick around
     bool autodelete() const noexcept { return mAutodelete; }
 
@@ -82,8 +91,72 @@ public:
     /// the time the schedule was created in localtime
     const QString& localtime() const noexcept { return mLocaltime; }
 
+    /// setter for localtime.
+    void localtime(const QString& time) { mLocaltime = time; }
+
     /// the index of the schedule
     int index() const noexcept { return mIndex; }
+
+    void updateCreatedTime() {
+        auto currentTimeUtc = QDateTime::currentDateTimeUtc();
+        auto date = currentTimeUtc.date();
+        auto time = currentTimeUtc.time();
+        auto dateString = QString::number(date.year()) + "-" + QString::number(date.month()) + "-"
+                          + QString::number(date.day());
+        auto timeString = QString::number(time.hour()) + ":" + QString::number(time.minute()) + ":"
+                          + QString::number(time.second());
+        auto finalString = dateString + "T" + timeString;
+        mCreated = finalString;
+    }
+
+    /// returns how many seconds its been since the schedule was created. Will return 0u if there
+    /// are any errors.
+    std::uint64_t secondsSinceCreation() {
+        QRegExp nonDigitRegex("(\\D)");
+        QRegExp tRegex("(T)");
+        QStringList createdStringList = created().split(tRegex);
+        createdStringList.removeAll("");
+        if (createdStringList.size() != 2) {
+            // exit out if the string is in the wrong size
+            return 0u;
+        }
+        auto createdTimes = createdStringList[1].split(nonDigitRegex);
+        createdTimes.removeAll("");
+        if (createdTimes.size() != 3) {
+            // exit out if the string is in the wrong size
+            return 0u;
+        }
+        QTime creationTime(createdTimes[0].toInt(),
+                           createdTimes[1].toInt(),
+                           createdTimes[2].toInt());
+        QTime currentTime = QDateTime::currentDateTimeUtc().time();
+        return creationTime.msecsTo(currentTime) / 1000;
+    }
+
+    /// returns the number of minutes until a timeout, if the schedule is a tiemout schedule. If it
+    /// is not a timeout schedule, or if there are any errors, this returns -1.
+    int minutesUntilTimeout() {
+        // not all schedules are timeouts, return -1 if no timeout could exist
+        if (!autodelete() || !name().contains("Corluma_timeout_")) {
+            return -1;
+        }
+        QRegExp nonDigitRegex("(\\D)");
+        auto minutesSinceCreation = secondsSinceCreation() / 60;
+        // convert timeout string to minutes
+        auto localTimeStringList = localtime().split(nonDigitRegex);
+        localTimeStringList.removeAll("");
+        if (localTimeStringList.size() != 3) {
+            // exit out if the string is in the wrong size
+            return -1;
+        }
+        // convert hours to minutes
+        int timeLeft = localTimeStringList[0].toInt() * 60;
+        // add in the minutes
+        timeLeft += localTimeStringList[1].toInt();
+        // subtract time since creation
+        timeLeft -= minutesSinceCreation;
+        return timeLeft;
+    }
 
     operator QString() const {
         QString result = "SHueCommand ";
