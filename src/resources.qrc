@@ -79,5 +79,7 @@
         <file>images/arrowLeft.png</file>
         <file>images/arrowRight.png</file>
         <file>images/hue_play.png</file>
+        <file>images/schedule-icon.png</file>
+        <file>images/timer.png</file>
     </qresource>
 </RCC>

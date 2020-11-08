@@ -946,3 +946,12 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed bugs with updating Hue schedules.
 - Added `DataSyncTimeout` for handling the syncing timeouts.
 - Fixed miscellaneous bugs.
+
+### **v0.20.4**
+### The Timeout UI Update Part 1
+- Added a `TimeoutPage`.
+- Added a `KitchenTimerWidget` for choosing timeouts.
+- Switched the Timeout's backend functions from operating in minutes to seconds.
+- Added a `TimeoutButton` that displays timeout information on the `LeftHandMenu`.
+- Fixed miscellaneous bugs.
+- Updated to C++17.

@@ -237,27 +237,23 @@ void CommHue::brightnessChange(const hue::Bridge& bridge, int deviceIndex, int b
 }
 
 std::uint32_t CommHue::timeoutFromLight(const cor::Light& light) {
-    auto hue = hueLightFromLight(light);
-    auto bridge = bridgeFromLight(light);
-    auto timeoutName = "Corluma_timeout_" + QString::number(hue.index());
     // search schedules for a schedule with the timeout name
-    auto timeoutResult = bridge.schedules().item(timeoutName.toStdString());
+    auto timeoutResult = timeoutSchedule(light);
     if (timeoutResult.second) {
         // if a schedule exists, use the schedule to determine minutes left for timeout
         auto schedule = timeoutResult.first;
-        auto localTime = schedule.localtime();
-        // convert timeout string to minutes
-        QRegExp regExp("[\D]");
-        QStringList stringList = localTime.split(regExp);
-        // TODO: NYI
-        //        for (auto string : stringList) {
-        //            qDebug() << " string " << string;
-        //        }
-        return 0u;
+        return schedule.secondsUntilTimeout();
     } else {
         return 0u;
     }
     return 0u;
+}
+
+std::pair<hue::Schedule, bool> CommHue::timeoutSchedule(const cor::Light& light) {
+    auto hue = hueLightFromLight(light);
+    auto bridge = bridgeFromLight(light);
+    auto timeoutName = "Corluma_timeout_" + QString::number(hue.index());
+    return bridge.schedules().item(timeoutName.toStdString());
 }
 
 //--------------------
@@ -495,7 +491,6 @@ void CommHue::handleScheduleSuccess(const hue::Bridge& bridge,
             // our mocked version.
             schedule.updateCreatedTime();
             mDiscovery->updateSchedule(bridge, schedule);
-            qDebug() << " UPDATE SCHEUDEL " << index;
         }
     } else {
         qDebug() << " schedule should update but not found";
@@ -570,9 +565,9 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge,
                             b = b <= 0.0031308 ? 12.92 * b
                                                : (1.0 + 0.055) * std::pow(b, (1.0 / 2.4)) - 0.055;
 
-                            r = cor::clamp(r, 0.0, 1.0);
-                            g = cor::clamp(g, 0.0, 1.0);
-                            b = cor::clamp(b, 0.0, 1.0);
+                            r = std::clamp(r, 0.0, 1.0);
+                            g = std::clamp(g, 0.0, 1.0);
+                            b = std::clamp(b, 0.0, 1.0);
 
                             QColor color;
                             color.setRgbF(r, g, b);
@@ -961,11 +956,6 @@ void CommHue::getSchedules() {
         mNetworkManager->get(QNetworkRequest(QUrl(urlString)));
     }
 }
-
-
-//---------------
-// Schedules
-//---------------
 
 void CommHue::deleteSchedule(hue::Schedule schedule) {
     for (const auto& bridge : mDiscovery->bridges().items()) {

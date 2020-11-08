@@ -11,6 +11,7 @@
 #include "data/groupdata.h"
 #include "lefthandbutton.h"
 #include "standardlightsmenu.h"
+#include "timeoutbutton.h"
 
 /*!
  * \copyright
@@ -66,6 +67,9 @@ public:
 
     /// called when the number of lights selected changed
     void lightCountChanged();
+
+    /// update the state of the timeout button
+    void updateTimeoutButton(bool timeoutEnabled, std::uint32_t timeoutValue);
 
 signals:
     /// signals when a page button is pressed
@@ -148,6 +152,9 @@ private:
 
     /// settings button
     LeftHandButton* mSettingsButton;
+
+    /// timeout button
+    TimeoutButton* mTimeoutButton;
 
     /// update the single color button based off of what is selected
     void updateSingleColorButton();

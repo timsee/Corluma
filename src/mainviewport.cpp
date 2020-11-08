@@ -40,6 +40,11 @@ MainViewport::MainViewport(MainWindow* parent,
     mMoodPage->isOpen(false);
     mMoodPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mMoodPage, SIGNAL(clickedEditButton(bool)), parent, SLOT(editButtonClicked(bool)));
+
+
+    mTimeoutPage = new TimeoutPage(parent);
+    mTimeoutPage->isOpen(false);
+    mTimeoutPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
 
@@ -64,6 +69,10 @@ void MainViewport::resize(const QRect& geometry) {
     if (mPageIndex != EPage::moodPage) {
         mMoodPage->setGeometry(offsetGeometry);
     }
+
+    if (mPageIndex != EPage::timeoutPage) {
+        mTimeoutPage->setGeometry(offsetGeometry);
+    }
 }
 
 void MainViewport::pageChanged(EPage pageIndex, bool skipTransition) {
@@ -86,6 +95,9 @@ QWidget* MainViewport::mainWidget(EPage page) {
         case EPage::palettePage:
             widget = qobject_cast<QWidget*>(mPalettePage);
             break;
+        case EPage::timeoutPage:
+            widget = qobject_cast<QWidget*>(mTimeoutPage);
+            break;
         default:
             THROW_EXCEPTION("Widget not supported by main widget");
     }
@@ -104,6 +116,9 @@ cor::Page* MainViewport::mainPage(EPage page) {
             break;
         case EPage::palettePage:
             widget = mPalettePage;
+            break;
+        case EPage::timeoutPage:
+            widget = mTimeoutPage;
             break;
         default:
             THROW_EXCEPTION("Widget not recognized by mainviewport");
@@ -137,6 +152,9 @@ void MainViewport::showMainPage(EPage page, bool skipTransition) {
         mPalettePage->resize();
         mPalettePage->update(mData->lightCount(), mData->colorScheme());
         mPalettePage->setVisible(true);
+    } else if (page == EPage::timeoutPage) {
+        mTimeoutPage->update(mAppSettings->timeoutEnabled(), mAppSettings->timeout());
+        mTimeoutPage->setVisible(true);
     }
 }
 

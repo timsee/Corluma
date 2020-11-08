@@ -13,6 +13,7 @@ namespace cor {
 StateObserver::StateObserver(cor::LightList* data,
                              CommLayer* comm,
                              GroupData* groups,
+                             AppSettings* appSettings,
                              MainWindow* mainWindow,
                              TopMenu* topMenu,
                              QObject* parent)
@@ -20,13 +21,15 @@ StateObserver::StateObserver(cor::LightList* data,
       mData{data},
       mComm{comm},
       mGroups{groups},
+      mAppSettings{appSettings},
       mMainWindow{mainWindow},
       mTopMenu{topMenu},
       mMainViewport{mMainWindow->viewport()},
       mColorPage{mMainViewport->colorPage()},
       mPalettePage{mMainViewport->palettePage()},
       mMoodPage{mMainViewport->moodPage()},
-      mSpeed{100} {}
+      mSpeed{100},
+      mTimeObserver{new TimeObserver(this)} {}
 
 
 void StateObserver::globalBrightnessChanged(std::uint32_t brightness) {
@@ -36,6 +39,7 @@ void StateObserver::globalBrightnessChanged(std::uint32_t brightness) {
     // selection from the color page or palette page. This is bad for moods, or for just dimming the
     // lights a bit. This function will modify the brightness of all selected lights.
     mData->updateBrightness(brightness);
+    updateTime();
 
     // UI updates. These shouldn't signal any further changes, but since a UI element has updated
     if (mMainViewport->currentPage() == EPage::colorPage) {
@@ -68,6 +72,7 @@ void StateObserver::singleLightBrightnessChanged(std::uint32_t brightness) {
         // update the states of the color picker widget as well, since this state change is coming
         // from another widget
         mPalettePage->updateBrightness(brightness);
+        updateTime();
     }
 }
 
@@ -77,10 +82,12 @@ void StateObserver::ambientColorChanged(std::uint32_t temperature, std::uint32_t
     mData->isOn(true);
 
     computeState();
+    updateTime();
 }
 
 void StateObserver::colorChanged(QColor color) {
     computeState();
+    updateTime();
     mData->isOn(true);
 
     // UI update
@@ -91,11 +98,13 @@ void StateObserver::routineChanged(ERoutine) {
     mData->isOn(true);
 
     computeState();
+    updateTime();
 }
 
 void StateObserver::isOnChanged(bool isOn) {
     mData->isOn(isOn);
     computeState();
+    updateTime();
 }
 
 
@@ -103,6 +112,25 @@ void StateObserver::paletteChanged(EPalette) {
     mData->isOn(true);
 
     computeState();
+    updateTime();
+}
+
+void StateObserver::timeoutChanged(bool enabled, std::uint32_t value) {
+    bool shouldUpdate = false;
+    if (enabled != mAppSettings->timeoutEnabled()) {
+        shouldUpdate = true;
+        mAppSettings->enableTimeout(enabled);
+    }
+
+    if (value != std::uint32_t(mAppSettings->timeout())) {
+        shouldUpdate = true;
+        mAppSettings->updateTimeout(value);
+    }
+
+    if (shouldUpdate) {
+        mMainWindow->leftHandMenu()->updateTimeoutButton(enabled, value);
+    }
+    updateTime();
 }
 
 void StateObserver::multiColorSelectionChange(std::uint32_t, const QColor& color) {
@@ -117,6 +145,7 @@ void StateObserver::multiColorSelectionChange(std::uint32_t, const QColor& color
 
 void StateObserver::updateScheme(const std::vector<QColor>& colors, std::uint32_t index) {
     mData->isOn(true);
+    updateTime();
 
     mData->updateColorScheme(colors);
     mTopMenu->updateScheme(colors, index);
@@ -227,10 +256,15 @@ void StateObserver::computeState() {
         case EPage::moodPage:
         case EPage::settingsPage:
         case EPage::discoveryPage:
+        case EPage::timeoutPage:
         case EPage::MAX:
-            // for all of these cases, theres no universal state for teh page.
+            // for all of these cases, theres no universal state for the page.
             break;
     }
+}
+
+void StateObserver::updateTime() {
+    mTimeObserver->updateTime();
 }
 
 void StateObserver::lightNameChange(const QString& key, const QString& name) {

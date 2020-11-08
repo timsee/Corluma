@@ -203,11 +203,11 @@ public:
     /// GroupData and CommLayer when necessary.
     cor::Mood addMetadataToMood(const cor::Mood& mood);
 
-    /// minutes until a specific light times out
-    std::uint32_t minutesUntilTimeout(const QString& lights);
+    /// seconds until a specific light times out
+    std::uint32_t secondsUntilTimeout(const QString& lights);
 
-    /// minutes until a group of lights timeout
-    std::vector<std::uint32_t> minutesUntilTimeout(const std::vector<QString>& lights);
+    /// seconds until a group of lights timeout
+    std::vector<std::uint32_t> secondsUntilTimeout(const std::vector<QString>& lights);
 
 signals:
 

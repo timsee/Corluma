@@ -161,7 +161,6 @@ void SettingsPage::show() {
     auto mainWindow = qobject_cast<MainWindow*>(parentWidget());
     Q_ASSERT(mainWindow);
     bool anyDiscovered = mainWindow->anyDiscovered();
-    mGlobalWidget->hideTimeout(!anyDiscovered);
     // view/edit lights
     mButtons[1]->shouldEnable(anyDiscovered);
     // add new group

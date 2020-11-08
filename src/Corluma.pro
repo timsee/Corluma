@@ -28,7 +28,7 @@ equals (QT_MAJOR_VERSION, 5)  {
     error(ERROR: Qt5 is not installed. This project uses QT5.13 or later)
 }
 
-CONFIG += c++14 #adds C++14 support
+CONFIG += c++17 #adds C++17 support
 
 #----------
 # Dependencies check
@@ -80,7 +80,9 @@ android {
    ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
    # adds prebuilt libcrypto and libssl from https://github.com/KDAB/android_openssl
    # you can also build your own, see here: https://doc.qt.io/qt-5/android-openssl-support.html
-   include($$PWD/../../../Libraries/android_openssl/openssl.pri)
+   OPENSSL_PATH = $$PWD/../../../Libraries/android_openssl/openssl.pri
+   include($$OPENSSL_PATH)
+   message("DEBUG: looking Android openssl at: $$OPENSSL_PATH")
 
    # Android Play Store requires different version numbers for armv7 and arm64
    # https://www.qt.io/blog/2019/06/28/comply-upcoming-requirements-google-play
@@ -170,6 +172,7 @@ SOURCES += main.cpp \
     menu/displaygroupmetadata.cpp \
     menu/displaymoodmetadata.cpp \
     menu/groupstatelistmenu.cpp \
+    menu/kitchentimerwidget.cpp \
     menu/lightslistmenu.cpp \
     menu/menugroupcontainer.cpp \
     menu/menugroupstatecontainer.cpp \
@@ -185,7 +188,9 @@ SOURCES += main.cpp \
     parentgroupwidget.cpp \
     stateobserver.cpp \
     data/subgroupdata.cpp \
+    timeoutpage.cpp \
     utils/qt.cpp \
+    utils/cormath.cpp \
     comm/hue/bridgeinfowidget.cpp \
     comm/hue/lightdiscovery.cpp \
     comm/hue/bridgediscovery.cpp \
@@ -232,7 +237,6 @@ SOURCES += main.cpp \
     syncwidget.cpp \
     singlecolorstatewidget.cpp \
     multicolorstatewidget.cpp \
-    timeoutwidget.cpp \
     lightinfoscrollarea.cpp \
     touchlistener.cpp
 
@@ -316,6 +320,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     menu/displaymoodmetadata.h \
     menu/displaymoodwidget.h \
     menu/groupstatelistmenu.h \
+    menu/kitchentimerwidget.h \
     menu/lefthandmenutoplightwidget.h \
     menu/lightslistmenu.h \
     menu/menugroupcontainer.h \
@@ -327,12 +332,15 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     menu/standardlightsmenu.h \
     menu/standardmoodsmenu.h \
     menu/statelesslightslistmenu.h \
+    menu/timeoutbutton.h \
     mooddetailedwidget.h \
     moodsyncwidget.h \
     parentgroupwidget.h \
     singlelightbrightnesswidget.h \
     stateobserver.h \
     data/subgroupdata.h \
+    timeobserver.h \
+    timeoutpage.h \
     utils/exception.h \
     comm/hue/lightdiscovery.h \
     comm/hue/bridgediscovery.h \
@@ -388,7 +396,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     singlecolorstatewidget.h \
     multicolorstatewidget.h \
     utils/cormath.h \
-    timeoutwidget.h \
     lightinfoscrollarea.h \
     touchlistener.h
 
@@ -448,6 +455,8 @@ android {
     OTHER_FILES += android/src/org/corluma/utils/QShareUtils.java \
         android/src/org/corluma/utils/QSharePathResolver.java \
         android/src/org/corluma/activity/QShareActivity.java
+
+    ANDROID_ABIS = armeabi-v7a arm64-v8a
 }
 
 
@@ -459,6 +468,4 @@ RESOURCES  = resources.qrc
 
 RC_ICONS = images/icon.ico # Windows icon
 ICON = images/icon.icns    # Mac OS X icon
-
-ANDROID_ABIS = armeabi-v7a
 

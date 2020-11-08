@@ -5,6 +5,7 @@
 #include "cor/lightlist.h"
 #include "mainwindow.h"
 #include "palettepage.h"
+#include "timeobserver.h"
 
 #include <QObject>
 
@@ -39,6 +40,7 @@ public:
     explicit StateObserver(cor::LightList* data,
                            CommLayer* comm,
                            GroupData* groups,
+                           AppSettings* appSettings,
                            MainWindow* mainWindow,
                            TopMenu* topMenu,
                            QObject* parent);
@@ -68,6 +70,11 @@ public slots:
 
     /// speed changed from a speed widget
     void speedChanged(std::uint32_t);
+
+    void timeoutChanged(bool, std::uint32_t);
+
+    /// getter for the time observer
+    TimeObserver* timeObserver() { return mTimeObserver; }
 
     /*!
      * \brief updateScheme update the color scheme chosen by the app
@@ -108,6 +115,9 @@ private:
     /// computes the state based off of the various states of the widget
     void computeState();
 
+    /// update the time that the last update occurred
+    void updateTime();
+
     /// desired state of the lights. Although this can be seen from many parts of the app, the
     /// StateObserver is the only class that uses the setters for cor::LightList
     cor::LightList* mData;
@@ -117,6 +127,9 @@ private:
 
     /// app group data
     GroupData* mGroups;
+
+    /// app settings
+    AppSettings* mAppSettings;
 
     /// main window of the app
     MainWindow* mMainWindow;
@@ -144,6 +157,9 @@ private:
 
     /// speed for routines.
     std::uint32_t mSpeed;
+
+    /// observes the last time a state is changed
+    TimeObserver* mTimeObserver;
 };
 
 } // namespace cor

@@ -113,7 +113,15 @@ inline EProtocolType stringToProtocol(const QString& protocol) {
  * \brief The EPage enum The main pages of the application, as they are ordered
  * in their QStackedWidget.
  */
-enum class EPage { colorPage, palettePage, moodPage, discoveryPage, settingsPage, MAX };
+enum class EPage {
+    colorPage,
+    palettePage,
+    moodPage,
+    timeoutPage,
+    discoveryPage,
+    settingsPage,
+    MAX
+};
 Q_DECLARE_METATYPE(EPage)
 
 
@@ -128,6 +136,8 @@ inline QString pageToString(EPage page) {
             return "Palette";
         case EPage::discoveryPage:
             return "Discovery";
+        case EPage::timeoutPage:
+            return "Timeout";
         case EPage::settingsPage:
             return "Settings";
         default:
@@ -147,6 +157,8 @@ inline EPage stringToPage(const QString& string) {
         return EPage::settingsPage;
     } else if (string == "Discovery") {
         return EPage::discoveryPage;
+    } else if (string == "Timeout") {
+        return EPage::timeoutPage;
     } else {
         return EPage::MAX;
     }

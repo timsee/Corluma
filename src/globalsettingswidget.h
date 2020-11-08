@@ -10,7 +10,6 @@
 #include "cor/widgets/checkbox.h"
 #include "cor/widgets/slider.h"
 #include "data/groupdata.h"
-#include "timeoutwidget.h"
 
 /*!
  * \copyright
@@ -34,9 +33,6 @@ public:
      */
     void updateUI();
 
-    /// true if timeout is enabled, false if not
-    bool useTimeout() { return mTimeoutWidget->isTimoutEnabled(); }
-
     /*!
      * \brief checkBoxClicked helper for checking if a checkbox is checked. checkmate!
      *
@@ -50,9 +46,6 @@ public:
 
     /// resizes the contents in the widget
     void resize();
-
-    /// true if timeout should be hidden, false otherwise
-    void hideTimeout(bool shouldHide) { mHideTimeout = shouldHide; }
 
 signals:
 
@@ -89,9 +82,6 @@ public slots:
      */
     void timeoutCheckboxPressed(bool isChecked);
 
-    /// value set for how long it takes the lights to timeout.
-    int timeoutValue();
-
 protected:
     /*!
      * \brief paintEvent used to draw the background of the widget.
@@ -124,9 +114,6 @@ private:
      */
     QLabel* mEnabledConnectionsLabel;
 
-    /// widget for controlling the timeout mode
-    TimeoutWidget* mTimeoutWidget;
-
     //----------------
     // Enabled Connections
     //----------------
@@ -158,9 +145,6 @@ private:
     /// pointer to the app states that determine if a protocol (such as arducor or nanoleaf) is
     /// currently enabled
     AppSettings* mAppSettings;
-
-    /// true if timeout should be hidden, false otherwise
-    bool mHideTimeout;
 };
 
 #endif // GLOBALSETTINGSWIDGET_H

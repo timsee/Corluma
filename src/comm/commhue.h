@@ -201,6 +201,10 @@ public:
      */
     std::vector<hue::Schedule> schedules(const hue::Bridge& bridge);
 
+    /// gets the timeout schedule, if one exists, for a given light. bool in the pair is whether or
+    /// not the schedule exists.
+    std::pair<hue::Schedule, bool> timeoutSchedule(const cor::Light& light);
+
     /*!
      * \brief groups getter for a list of all know groups
      * \param bridge bridge to get all groups from
@@ -211,7 +215,7 @@ public:
     /// get the hue bridge that controls a cor::Light
     hue::Bridge bridgeFromLight(const cor::Light& light);
 
-    /// returns 0 if light is off or has no timeout, or how many minutes until it times out if a
+    /// returns 0 if light is off or has no timeout, or how many seconds until it times out if a
     /// timeout exists
     std::uint32_t timeoutFromLight(const cor::Light& light);
 

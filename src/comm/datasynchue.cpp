@@ -6,9 +6,9 @@
 
 #include "datasynchue.h"
 
+#include <random>
 #include "comm/commlayer.h"
 #include "utils/color.h"
-
 
 DataSyncHue::DataSyncHue(cor::LightList* data, CommLayer* comm, AppSettings* appSettings)
     : mAppSettings(appSettings) {
@@ -86,8 +86,11 @@ void DataSyncHue::syncData() {
                         mComm->hue()->sendPacket(message.message());
                         resetThrottle(key, ECommType::hue);
                     } else {
+#ifndef MOBILE_BUILD
                         // TODO: combine equivalent messages, for now just take a random new message
-                        std::random_shuffle(messages.begin(), messages.end());
+                        std::mt19937 g(std::random_device{}());
+                        std::shuffle(messages.begin(), messages.end(), g);
+#endif
                         // find bridge for key
                         auto message = messages.front();
                         // get bridge

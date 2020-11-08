@@ -5,9 +5,8 @@
  * Copyright (C) 2015 - 2020.
  * Released under the GNU General Public License.
  */
-
-#include <algorithm>
-#include <cmath>
+#include <cstdint>
+#include <vector>
 
 namespace cor {
 
@@ -25,24 +24,11 @@ inline float map(float x, float in_min, float in_max, float out_min, float out_m
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-
 /// rounds doubles to N significant digits, for readability.
-inline double roundToNDigits(double x, int n) {
-    if (x == 0.0) {
-        return 0.0;
-    }
-    double factor = pow(10.0, n - ceil(log10(fabs(x))));
-    return round(x * factor) / factor;
-}
+double roundToNDigits(double x, int n);
 
-/*!
- * \brief clamps a value between the lower and upper values given. So it can never be lower than
- * the lower value or higher than the higher value.
- */
-template <typename T>
-T clamp(const T& n, const T& lower, const T& upper) {
-    return std::max(lower, std::min(n, upper));
-}
+/// most frequently used value in a vector of values
+std::uint32_t mode(std::vector<std::uint32_t> values);
 
 } // namespace cor
 

@@ -28,15 +28,13 @@ public:
     LeftHandButton(const QString& text,
                    EPage page,
                    const QString& iconResource,
-                   LeftHandMenu* menu,
-                   QWidget* parent);
+                   LeftHandMenu* parent);
 
     /// constructor with Light State
     LeftHandButton(const QString& text,
                    EPage page,
                    const cor::LightState& state,
-                   LeftHandMenu* menu,
-                   QWidget* parent);
+                   LeftHandMenu* parent);
 
     /// returns the title of the button
     QString text() { return mTitle->text(); }
@@ -76,6 +74,9 @@ protected:
     /// handles when the widget is resized
     void resizeEvent(QResizeEvent*);
 
+    /// title for button
+    QLabel* mTitle;
+
 private:
     /// renders the icon of the button
     void renderButton();
@@ -94,9 +95,6 @@ private:
 
     /// copy of the json data for the icon.
     cor::LightState mState;
-
-    /// title for button
-    QLabel* mTitle;
 
     /// true if highlight, false if not
     bool mIsHighlighted;

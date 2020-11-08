@@ -180,6 +180,28 @@ void CommNanoleaf::sendTimeout(const nano::LeafMetadata& light, int minutes) {
     sendSchedule(light, createTimeoutSchedule(minutes));
 }
 
+std::uint32_t CommNanoleaf::timeoutFromLight(const QString& light) {
+    auto timeoutScheduleResult = timeoutSchedule(light);
+    if (timeoutScheduleResult.second) {
+        // found an existing timeout
+        auto existingTimeoutSchedule = timeoutScheduleResult.first;
+        // check schedule is enabled
+        if (existingTimeoutSchedule.enabled()) {
+            return existingTimeoutSchedule.secondsUntilExecution();
+        }
+    }
+    return 0u;
+}
+
+std::pair<nano::LeafSchedule, bool> CommNanoleaf::timeoutSchedule(const QString& uniqueID) {
+    auto result = findSchedules(uniqueID);
+    if (result.second) {
+        auto schedules = result.first;
+        return schedules.item(QString::number(nano::kTimeoutID).toStdString());
+    }
+    return std::make_pair(nano::LeafSchedule{}, false);
+}
+
 void CommNanoleaf::sendSchedule(const nano::LeafMetadata& light,
                                 const nano::LeafSchedule& schedule) {
     QNetworkRequest request = networkRequest(light, "effects");
@@ -622,9 +644,9 @@ void CommNanoleaf::parseCommandRequestUpdatePacket(const nano::LeafMetadata& lea
 
         auto light = nano::LeafLight(leafLight);
         fillLight(light);
-        // NOTE: because nanoleaf, it requires two separate updates to get full data about the
-        // light. This update runs after stateUpdate, so this one marks the light as reachable but
-        // state update does not.
+        // NOTE: because nanoleaf, it requires two separate updates to get full data about
+        // the light. This update runs after stateUpdate, so this one marks the light as
+        // reachable but state update does not.
         light.isReachable(true);
         auto state = light.state();
 

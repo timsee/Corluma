@@ -135,19 +135,17 @@ bool DataSyncTimeout::handleHueTimeout(const cor::Light& light) {
     auto hueLight = mComm->hue()->hueLightFromLight(light);
     // get bridge
     auto bridge = mComm->hue()->bridgeFromLight(light);
-    auto timeoutName = "Corluma_timeout_" + QString::number(hueLight.index());
-    // search schedules for a schedule with the timeout name
-    auto timeoutResult = bridge.schedules().item(timeoutName.toStdString());
+    // search schedules
+    auto timeoutResult = mComm->hue()->timeoutSchedule(light);
     if (mAppSettings->timeoutEnabled() && (mAppSettings->timeout() > 0)) {
         // if timeouts are enabled, look for timeouts
         if (timeoutResult.second) {
             // existing schedule was found
             auto schedule = timeoutResult.first;
-            auto minutesLeft = schedule.minutesUntilTimeout();
+            auto minutesLeft = schedule.secondsUntilTimeout() / 60;
 
             if (std::abs(minutesLeft - mAppSettings->timeout()) > 1) {
                 // existing schedule is more than 1 second out of sync
-                // qDebug() << " timeout NOT in sync";
                 mComm->hue()->updateIdleTimeout(bridge,
                                                 true,
                                                 schedule.index(),
@@ -166,7 +164,6 @@ bool DataSyncTimeout::handleHueTimeout(const cor::Light& light) {
     } else {
         // if timeouts are not enabled, verify timeout does not exist
         if (timeoutResult.second) {
-            //  qDebug() << " DELET SCHEDULE " << timeoutResult.first.index();
             // timeout does exist, delete it.
             mComm->hue()->deleteSchedule(timeoutResult.first);
             return false;
@@ -188,38 +185,23 @@ bool DataSyncTimeout::handleNanoleafTimeout(const cor::Light& light) {
 
     int timeoutValue = mAppSettings->timeout();
     bool foundTimeout = false;
-    auto result = mComm->nanoleaf()->findSchedules(metadata.serialNumber());
-    if (result.second) {
-        auto schedules = result.first;
-        auto timeoutScheduleResult =
-            schedules.item(QString::number(nano::kTimeoutID).toStdString());
-        if (timeoutScheduleResult.second) {
-            // found an existing timeout
-            auto existingTimeoutSchedule = timeoutScheduleResult.first;
-            // check schedule is enabled
-            if (existingTimeoutSchedule.enabled()) {
-                // store the schedule's pre-existing timeout
-                auto scheduleTimeout = existingTimeoutSchedule.startDate();
-                // make the new, ideal timeout time
-                auto newTimeout = nano::LeafDate::currentTime().date();
-                auto newTimeoutMk = std::mktime(&newTimeout);
-                newTimeoutMk += 60 * timeoutValue;
-                auto newTimeoutFinal = nano::LeafDate(*std::localtime(&newTimeoutMk));
-                // compare the timeouts as strings
-                if (scheduleTimeout.toString() == newTimeoutFinal.toString()) {
-                    foundTimeout = true;
-                    // qDebug() << " schedule time is as expected";
-                } else {
-                    //                    qDebug() << " should update the timeout, current timeout:
-                    //                    "
-                    //                             << scheduleTimeout.toString() << " expected
-                    //                             timeout "
-                    //                             << newTimeoutFinal.toString();
-                }
-            }
+    auto timeoutScheduleResult = mComm->nanoleaf()->timeoutSchedule(light.uniqueID());
+    // found an existing timeout
+    auto existingTimeoutSchedule = timeoutScheduleResult.first;
+    // check schedule is enabled
+    if (existingTimeoutSchedule.enabled()) {
+        // store the schedule's pre-existing timeout
+        auto scheduleTimeout = existingTimeoutSchedule.startDate();
+        // make the new, ideal timeout time
+        auto newTimeout = nano::LeafDate::currentTime().date();
+        auto newTimeoutMk = std::mktime(&newTimeout);
+        newTimeoutMk += 60 * timeoutValue;
+        auto newTimeoutFinal = nano::LeafDate(*std::localtime(&newTimeoutMk));
+        // compare the timeouts as strings
+        if (scheduleTimeout.toString() == newTimeoutFinal.toString()) {
+            foundTimeout = true;
+            // qDebug() << " schedule time is as expected";
         }
-    } else {
-        // qDebug() << " could not find schedules for " << metadata.name();
     }
 
     if (!foundTimeout) {

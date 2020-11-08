@@ -135,13 +135,13 @@ public:
 
     /// returns the number of minutes until a timeout, if the schedule is a tiemout schedule. If it
     /// is not a timeout schedule, or if there are any errors, this returns -1.
-    int minutesUntilTimeout() {
+    int secondsUntilTimeout() {
         // not all schedules are timeouts, return -1 if no timeout could exist
         if (!autodelete() || !name().contains("Corluma_timeout_")) {
             return -1;
         }
         QRegExp nonDigitRegex("(\\D)");
-        auto minutesSinceCreation = secondsSinceCreation() / 60;
+        auto creationSeconds = secondsSinceCreation();
         // convert timeout string to minutes
         auto localTimeStringList = localtime().split(nonDigitRegex);
         localTimeStringList.removeAll("");
@@ -150,11 +150,13 @@ public:
             return -1;
         }
         // convert hours to minutes
-        int timeLeft = localTimeStringList[0].toInt() * 60;
+        int timeLeft = localTimeStringList[0].toInt() * 3600;
         // add in the minutes
-        timeLeft += localTimeStringList[1].toInt();
+        timeLeft += localTimeStringList[1].toInt() * 60;
+        // add in the seconds
+        timeLeft += localTimeStringList[2].toInt();
         // subtract time since creation
-        timeLeft -= minutesSinceCreation;
+        timeLeft -= creationSeconds;
         return timeLeft;
     }
 

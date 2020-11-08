@@ -1,9 +1,9 @@
 #ifndef LEAFDATE_H
 #define LEAFDATE_H
 
+#include <time.h>
 #include <QDebug>
 #include <QJsonObject>
-#include <ctime>
 
 namespace nano {
 
@@ -40,6 +40,11 @@ public:
     LeafDate(std::tm time) : m_date(time) {}
 
     LeafDate(const QJsonObject& object) {
+        // use localtime to fill in non-defined objects
+        auto t = std::time(nullptr);
+        auto now = std::localtime(&t);
+        now->tm_sec = 0;
+        m_date = *now;
         m_date.tm_mday = int(object["day"].toDouble());
         m_date.tm_hour = int(object["hour"].toDouble());
         m_date.tm_min = int(object["minute"].toDouble());
@@ -48,6 +53,14 @@ public:
         if (year > 1900) {
             m_date.tm_year = year - 1900;
         }
+    }
+
+    /// helper to print out all helper values, for debugging
+    static void printAllTimeValues(tm tm) {
+        qDebug() << " tm_gmtoff: " << tm.tm_gmtoff << " tm_hour: " << tm.tm_hour
+                 << " isdst: " << tm.tm_isdst << " mday: " << tm.tm_mday << " min: " << tm.tm_min
+                 << " mon: " << tm.tm_mon << " sec: " << tm.tm_sec << " wday: " << tm.tm_wday
+                 << " yday: " << tm.tm_yday << " year: " << tm.tm_year << " zone: " << tm.tm_zone;
     }
 
     /// checks if JSON represents a LeafDate

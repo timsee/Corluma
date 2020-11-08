@@ -20,9 +20,8 @@
 LeftHandButton::LeftHandButton(const QString& text,
                                EPage page,
                                const QString& iconResource,
-                               LeftHandMenu* menu,
-                               QWidget* parent)
-    : QWidget(parent) {
+                               LeftHandMenu* menu)
+    : QWidget(menu) {
     mPage = page;
     mMenu = menu;
     mIsHighlighted = false;
@@ -45,9 +44,8 @@ LeftHandButton::LeftHandButton(const QString& text,
 LeftHandButton::LeftHandButton(const QString& text,
                                EPage page,
                                const cor::LightState& state,
-                               LeftHandMenu* menu,
-                               QWidget* parent)
-    : QWidget(parent) {
+                               LeftHandMenu* menu)
+    : QWidget(menu) {
     mPage = page;
     mMenu = menu;
     mIsHighlighted = false;

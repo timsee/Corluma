@@ -49,6 +49,7 @@ TopMenu::TopMenu(QWidget* parent,
       mPaletteFloatingLayout{new FloatingLayout(mMainWindow)},
       mMoodsFloatingLayout{new FloatingLayout(mMainWindow)},
       mColorFloatingLayout{new FloatingLayout(mMainWindow)},
+      mTimeoutFloatingLayout{new FloatingLayout(mMainWindow)},
       mRoutineFloatingLayout{new FloatingLayout(mMainWindow)},
       mSingleColorStateWidget{new SingleColorStateWidget(mMainWindow)},
       mMultiColorStateWidget{new MultiColorStateWidget(mMainWindow)},
@@ -116,6 +117,12 @@ TopMenu::TopMenu(QWidget* parent,
     mColorFloatingLayout->setupButtons({QString("HSV"), QString("Temperature")},
                                        EButtonSize::small);
     mColorFloatingLayout->highlightButton("HSV");
+
+    connect(mTimeoutFloatingLayout,
+            SIGNAL(buttonPressed(QString)),
+            this,
+            SLOT(floatingLayoutButtonPressed(QString)));
+    mTimeoutFloatingLayout->setupButtons({}, EButtonSize::small);
 
     mSingleColorStateWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mSingleColorStateWidget->setFixedSize(mSize.width(), mSize.height() / 2);
@@ -205,6 +212,7 @@ void TopMenu::highlightButton(const QString& key) {
     mPaletteFloatingLayout->highlightButton(key);
     mMoodsFloatingLayout->highlightButton(key);
     mColorFloatingLayout->highlightButton(key);
+    mTimeoutFloatingLayout->highlightButton(key);
 }
 
 void TopMenu::showMenu() {
@@ -215,6 +223,7 @@ void TopMenu::showMenu() {
     mColorFloatingLayout->raise();
     mPaletteFloatingLayout->raise();
     mMoodsFloatingLayout->raise();
+    mTimeoutFloatingLayout->raise();
     mRoutineFloatingLayout->raise();
     mSingleColorStateWidget->raise();
     mMultiColorStateWidget->raise();
@@ -400,6 +409,9 @@ FloatingLayout* TopMenu::currentFloatingLayout() {
         case EPage::colorPage:
             layout = mColorFloatingLayout;
             break;
+        case EPage::timeoutPage:
+            layout = mTimeoutFloatingLayout;
+            break;
         default:
             break;
     }
@@ -522,6 +534,12 @@ void TopMenu::moveHiddenLayouts() {
                                           topRight.y(),
                                           mMoodsFloatingLayout->width(),
                                           mMoodsFloatingLayout->height());
+    }
+    if (layout != mTimeoutFloatingLayout) {
+        mTimeoutFloatingLayout->setGeometry(topRight.x(),
+                                            topRight.y(),
+                                            mMoodsFloatingLayout->width(),
+                                            mMoodsFloatingLayout->height());
     }
     if (layout != mPaletteFloatingLayout) {
         mPaletteFloatingLayout->setGeometry(topRight.x(),
@@ -663,6 +681,7 @@ void TopMenu::handleButtonLayouts() {
             mColorFloatingLayout->setVisible(true);
             mMoodsFloatingLayout->setVisible(false);
             mPaletteFloatingLayout->setVisible(false);
+            mTimeoutFloatingLayout->setVisible(false);
             pushRightFloatingLayout(mMoodsFloatingLayout);
             pushRightFloatingLayout(mPaletteFloatingLayout);
             break;
@@ -670,6 +689,7 @@ void TopMenu::handleButtonLayouts() {
             mColorFloatingLayout->setVisible(false);
             mMoodsFloatingLayout->setVisible(true);
             mPaletteFloatingLayout->setVisible(false);
+            mTimeoutFloatingLayout->setVisible(false);
             pushRightFloatingLayout(mColorFloatingLayout);
             pullLeftFloatingLayout(mMoodsFloatingLayout);
             pushRightFloatingLayout(mPaletteFloatingLayout);
@@ -683,8 +703,22 @@ void TopMenu::handleButtonLayouts() {
             mColorFloatingLayout->setVisible(false);
             mMoodsFloatingLayout->setVisible(false);
             mPaletteFloatingLayout->setVisible(true);
+            mTimeoutFloatingLayout->setVisible(false);
             pushRightFloatingLayout(mColorFloatingLayout);
             pushRightFloatingLayout(mMoodsFloatingLayout);
+            break;
+        case EPage::timeoutPage:
+            if (mData->empty()) {
+                pushRightFloatingLayout(mTimeoutFloatingLayout);
+            } else {
+                pullLeftFloatingLayout(mTimeoutFloatingLayout);
+            }
+            mColorFloatingLayout->setVisible(false);
+            mMoodsFloatingLayout->setVisible(false);
+            mPaletteFloatingLayout->setVisible(false);
+            mTimeoutFloatingLayout->setVisible(true);
+            pushRightFloatingLayout(mMoodsFloatingLayout);
+            pushRightFloatingLayout(mPaletteFloatingLayout);
             break;
         case EPage::settingsPage:
         case EPage::discoveryPage:

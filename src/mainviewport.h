@@ -10,6 +10,7 @@
 #include "data/groupdata.h"
 #include "moodpage.h"
 #include "palettepage.h"
+#include "timeoutpage.h"
 
 class MainWindow;
 
@@ -51,6 +52,9 @@ public:
     /// getter for mood page
     MoodPage* moodPage() { return mMoodPage; }
 
+    /// getter for timeout page
+    TimeoutPage* timeoutPage() { return mTimeoutPage; }
+
     /// loads the mood page programmatically
     void loadMoodPage();
 
@@ -86,6 +90,9 @@ private:
 
     /// page for choosing moods
     MoodPage* mMoodPage;
+
+    /// page for managing timeouts
+    TimeoutPage* mTimeoutPage;
 
     /// groups parser
     GroupData* mGroups;

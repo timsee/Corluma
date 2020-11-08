@@ -97,6 +97,14 @@ public:
      */
     void sendTimeout(const nano::LeafMetadata& light, int minutes);
 
+    /// returns the number of seconds until a light times out, if a timeout exists. if no timeout
+    /// exists, 0u is returned
+    std::uint32_t timeoutFromLight(const QString& light);
+
+    /// returns the timeout schedule, if one exists. The second flag is true if it does exist and
+    /// false if it does not.
+    std::pair<nano::LeafSchedule, bool> timeoutSchedule(const QString& uniqueID);
+
 private slots:
     /*!
      * \brief replyFinished called by the mNetworkManager, receives HTTP replies to packets

@@ -14,8 +14,7 @@
 
 GlobalSettingsWidget::GlobalSettingsWidget(QWidget* parent, AppSettings* appSettings)
     : QWidget(parent),
-      mAppSettings(appSettings),
-      mHideTimeout{false} {
+      mAppSettings(appSettings) {
     mSpacerPixels = 5;
 
     // set margins as spacer * 2
@@ -30,12 +29,6 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget* parent, AppSettings* appSett
 
     mEnabledConnectionsLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mEnabledConnectionsLabel->setStyleSheet(labelStyleSheet);
-
-
-    mTimeoutWidget = new TimeoutWidget(this,
-                                       mAppSettings->timeout(),
-                                       mAppSettings->timeoutEnabled(),
-                                       mSpacerPixels);
 
     mMinHeight = height() / 8;
 
@@ -148,27 +141,11 @@ void GlobalSettingsWidget::paintEvent(QPaintEvent*) {
 
 void GlobalSettingsWidget::timeoutCheckboxPressed(bool isChecked) {
     mAppSettings->enableTimeout(isChecked);
-    mTimeoutWidget->show(isChecked);
-    if (isChecked) {
-        mTimeoutWidget->changeTimeoutLabel("Timeout Enabled");
-    } else {
-        mTimeoutWidget->changeTimeoutLabel("Timeout Disabled");
-    }
     resize();
-}
-
-int GlobalSettingsWidget::timeoutValue() {
-    return mTimeoutWidget->timeoutValue();
 }
 
 void GlobalSettingsWidget::resize() {
     int currentY = mSpacerPixels;
-    if (mHideTimeout) {
-        mTimeoutWidget->setVisible(false);
-    } else {
-        mTimeoutWidget->setVisible(true);
-        currentY += mTimeoutWidget->resize(mEnabledConnectionsLabel->height());
-    }
 
     if (mEnabledConnectionsLabel->isVisible()) {
         mEnabledConnectionsLabel->setGeometry(mSpacerPixels,
@@ -200,10 +177,6 @@ void GlobalSettingsWidget::resize() {
         buttonHeight);
 
     currentY += mHueButton->height() + 2 * mSpacerPixels;
-
-    if (mTimeoutWidget->isTimoutEnabled()) {
-        currentY += mSpacerPixels;
-    }
 
     setFixedHeight(currentY);
     parentWidget()->adjustSize();

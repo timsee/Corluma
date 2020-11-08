@@ -141,6 +141,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     }
     mLeftHandMenu = new LeftHandMenu(alwaysOpen, mData, mComm, mData, mGroups, this);
     mLeftHandMenu->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mLeftHandMenu->updateTimeoutButton(mAppSettings->timeoutEnabled(), mAppSettings->timeout());
     connect(mLeftHandMenu,
             SIGNAL(pressedButton(EPage)),
             this,
@@ -939,7 +940,8 @@ void MainWindow::reorderWidgets() {
 }
 
 void MainWindow::setupStateObserver() {
-    mStateObserver = new cor::StateObserver(mData, mComm, mGroups, this, mTopMenu, this);
+    mStateObserver =
+        new cor::StateObserver(mData, mComm, mGroups, mAppSettings, this, mTopMenu, this);
     // color page setup
     connect(mMainViewport->colorPage(),
             SIGNAL(colorUpdate(QColor)),
@@ -971,6 +973,12 @@ void MainWindow::setupStateObserver() {
             SIGNAL(schemeUpdated(EColorSchemeType)),
             mStateObserver,
             SLOT(colorSchemeTypeChanged(EColorSchemeType)));
+
+    // timeout setup
+    connect(mMainViewport->timeoutPage(),
+            SIGNAL(timeoutUpdated(bool, std::uint32_t)),
+            mStateObserver,
+            SLOT(timeoutChanged(bool, std::uint32_t)));
 
     // brightness slider
     connect(mTopMenu->globalBrightness(),

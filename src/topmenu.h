@@ -8,9 +8,9 @@
 #include "cor/lightlist.h"
 #include "cor/objects/page.h"
 #include "cor/widgets/button.h"
+#include "data/groupdata.h"
 #include "floatinglayout.h"
 #include "globalbrightnesswidget.h"
-#include "data/groupdata.h"
 #include "moodpage.h"
 #include "multicolorstatewidget.h"
 #include "palettepage.h"
@@ -237,6 +237,9 @@ private:
 
     /// floating layout for color page.
     FloatingLayout* mColorFloatingLayout;
+
+    /// floating layout for timeout widget.
+    FloatingLayout* mTimeoutFloatingLayout;
 
     /// routine widget for ColorPage and PalettePage
     FloatingLayout* mRoutineFloatingLayout;

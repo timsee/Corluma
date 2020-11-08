@@ -438,26 +438,26 @@ void CommLayer::lightNameChange(const QString& key, const QString& name) {
     }
 }
 
-std::uint32_t CommLayer::minutesUntilTimeout(const QString& key) {
+std::uint32_t CommLayer::secondsUntilTimeout(const QString& key) {
     auto light = lightByID(key);
     if (light.protocol() == EProtocolType::arduCor) {
         auto metadata = mArduCor->metadataFromLight(light);
-        return metadata.minutesUntilTimeout();
+        return metadata.minutesUntilTimeout() * 60;
     } else if (light.protocol() == EProtocolType::hue) {
-        return 0u;
+        return mHue->timeoutFromLight(light);
     } else if (light.protocol() == EProtocolType::nanoleaf) {
-        return 0u;
+        return mNanoleaf->timeoutFromLight(key);
     } else {
         return 0u;
     }
 }
 
-std::vector<std::uint32_t> CommLayer::minutesUntilTimeout(const std::vector<QString>& IDs) {
+std::vector<std::uint32_t> CommLayer::secondsUntilTimeout(const std::vector<QString>& IDs) {
     // get all the timeouts for all the lights
     std::vector<std::uint32_t> timeoutLeft;
     timeoutLeft.reserve(IDs.size());
     for (const auto& light : IDs) {
-        timeoutLeft.emplace_back(minutesUntilTimeout(light));
+        timeoutLeft.emplace_back(secondsUntilTimeout(light));
     }
     return timeoutLeft;
 }
