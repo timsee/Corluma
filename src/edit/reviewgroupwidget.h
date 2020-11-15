@@ -128,7 +128,7 @@ private slots:
             mComm->saveNewGroup(group);
             emit updateGroups();
             // close the page.
-            emit closePage();
+            emit forceClosePage();
         }
     }
 

@@ -88,3 +88,24 @@ void MenuLightContainer::highlightLights(const std::vector<QString>& selectedLig
         }
     }
 }
+
+void MenuLightContainer::showTimeouts(bool shouldShowTimeouts) {
+    for (const auto& existingWidget : mLightLayout.widgets()) {
+        auto widget = qobject_cast<ListLightWidget*>(existingWidget);
+        Q_ASSERT(widget);
+        widget->displayTimeout(shouldShowTimeouts);
+    }
+}
+
+void MenuLightContainer::updateTimeouts(
+    const std::vector<std::pair<QString, std::uint32_t>> keyTimeoutPairs) {
+    for (const auto& existingWidget : mLightLayout.widgets()) {
+        auto widget = qobject_cast<ListLightWidget*>(existingWidget);
+        Q_ASSERT(widget);
+        for (const auto& keyTimeoutPair : keyTimeoutPairs) {
+            if (keyTimeoutPair.first == widget->light().uniqueID()) {
+                widget->updateTimeout(keyTimeoutPair.second);
+            }
+        }
+    }
+}

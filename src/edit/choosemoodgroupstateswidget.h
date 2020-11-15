@@ -75,6 +75,7 @@ public:
             mGroupStates->removeState(state);
         }
         mBottomButtons->enableForward(false);
+        hideState();
         conditionsMet();
     }
 

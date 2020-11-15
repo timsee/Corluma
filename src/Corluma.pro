@@ -323,6 +323,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     menu/kitchentimerwidget.h \
     menu/lefthandmenutoplightwidget.h \
     menu/lightslistmenu.h \
+    menu/lightstimeoutmenu.h \
     menu/menugroupcontainer.h \
     menu/menugroupstatecontainer.h \
     menu/menulightcontainer.h \

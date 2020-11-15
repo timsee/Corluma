@@ -59,6 +59,7 @@ void MoodDetailedWidget::update(const cor::Mood& mood) {
 
 void MoodDetailedWidget::resize() {
     mMoodWidget->changeRowHeight(this->height() / 10);
+    mMoodWidget->resize();
     QSize size = parentWidget()->size();
     setFixedSize(int(size.width() * 0.75f), int(size.height() * 0.75f));
     mOnOffSwitch->setFixedWidth(int(size.width() * 0.2));

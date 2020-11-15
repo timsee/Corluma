@@ -15,7 +15,7 @@
  * \brief The ProtocolSettings class manages which CommTypes are enabled and disabled. It manages
  * the settings between application sessions by saving to a QSettings instance.
  */
-class AppSettings : QObject {
+class AppSettings : public QObject {
     Q_OBJECT
 
 public:
@@ -101,6 +101,9 @@ signals:
      * speed of routines.
      */
     void settingsUpdate();
+
+    /// signals when the timeout updates
+    void timeoutUpdate();
 
 private:
     /*!

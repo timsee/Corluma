@@ -11,10 +11,7 @@
 #include "cor/widgets/statusicon.h"
 #include "icondata.h"
 
-enum class EListLightWidgetType {
-    standard,
-    fullBrightnessBar
-};
+enum class EListLightWidgetType { standard, fullBrightnessBar };
 
 /*!
  * \copyright
@@ -84,6 +81,15 @@ public:
     /// true if the state of the widget should display, false if it should display the metadata
     /// (name of light, type of light)
     void displayState(bool shouldDisplayState) { mDisplayState = shouldDisplayState; }
+
+    /// true if should show timeouts, false if should not display timeout. off by default.
+    void displayTimeout(bool shouldShowTimeout) {
+        mDisplayTimeout = shouldShowTimeout;
+        mTimeoutLabel->setVisible(mDisplayTimeout);
+    }
+
+    /// update the timeout label
+    void updateTimeout(std::uint32_t secondsUntilTimeout);
 
 signals:
     /*!
@@ -159,6 +165,9 @@ private:
     /// true if state should be displayed, false if just the metadata should be displayed
     bool mDisplayState;
 
+    /// true if should show how many minutes to timeout, false if not
+    bool mDisplayTimeout;
+
     /// forces initial update to render
     bool mHasRendered;
 
@@ -178,6 +187,9 @@ private:
 
     /// displays the type of light, such as a lightbulb or a light cube.
     QLabel* mTypeIcon;
+
+    /// displays the timeout settings.
+    QLabel* mTimeoutLabel;
 
     /// stores the last icon size, to check if the pixmaps need to be recomputed.
     QSize mLastIconSize;

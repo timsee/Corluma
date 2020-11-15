@@ -128,7 +128,7 @@ private slots:
             mGroups->saveNewMood(mood);
             emit updateGroups();
             // close the page.
-            emit closePage();
+            emit forceClosePage();
         }
     }
 

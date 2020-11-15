@@ -341,28 +341,6 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
         }
     }
 
-    //-------------------
-    // Timeout Sync
-    //-------------------
-    if (mAppSettings->timeoutEnabled()) {
-        // timeout is enabled
-        if (metadata.timeout() != mAppSettings->timeout()) {
-            //            qDebug() << "time out not in sync" << commDevice.timeout << " vs "
-            //                     << mAppSettings->timeout() << commDevice;
-            QString message = mParser->timeoutPacket(metadata.index(), mAppSettings->timeout());
-            appendToPacket(packet, message, controller.maxPacketSize());
-            countOutOfSync++;
-        }
-    } else {
-        // disable the timeout
-        if (metadata.timeout() != 0) {
-            // qDebug() << "time out not disabled!" << commDevice.timeout;
-            QString message = mParser->timeoutPacket(metadata.index(), 0);
-            appendToPacket(packet, message, controller.maxPacketSize());
-            countOutOfSync++;
-        }
-    }
-
     if (countOutOfSync) {
         QStringList messageArray = packet.split("&");
         for (const auto& message : messageArray) {

@@ -115,6 +115,8 @@ void StandardLightsMenu::updateLights(const std::vector<QString>& lightIDs) {
 }
 
 void StandardLightsMenu::reset() {
+    mSelectedLights = {};
+    mIgnoredLights = {};
     mParentGroupContainer->clear();
     mSubgroupContainer->clear();
     mLightContainer->clear();
@@ -307,7 +309,7 @@ void StandardLightsMenu::shouldShowButtons(std::uint64_t key, bool show) {
                     mButtonHeight);
                 mLightContainer->highlightLights(mSelectedLights);
             } else {
-                qDebug() << " got a gorup we don't recongize here.... " << group.name();
+                qDebug() << " got a group we don't recongize here.... " << group.name();
             }
             auto subgroup = mGroups->groupDict().item(QString::number(key).toStdString());
         } else {

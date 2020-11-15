@@ -85,22 +85,6 @@ public:
         resize();
     }
 
-protected:
-    /*!
-     * \brief resizeEvent called whenever the widget resizes so that assets can be updated.
-     */
-    void resizeEvent(QResizeEvent*) { resize(); }
-
-    /// paints the dark grey background
-    void paintEvent(QPaintEvent*) {
-        QStyleOption opt;
-        opt.init(this);
-        QPainter painter(this);
-        painter.fillRect(rect(), QBrush(QColor(32, 31, 31, 255)));
-    }
-
-
-private:
     /// programmatically resize
     void resize() {
         int yPosColumn1 = 0;
@@ -167,6 +151,22 @@ private:
         mMetadata->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, metadataHeight);
     }
 
+protected:
+    /*!
+     * \brief resizeEvent called whenever the widget resizes so that assets can be updated.
+     */
+    void resizeEvent(QResizeEvent*) { resize(); }
+
+    /// paints the dark grey background
+    void paintEvent(QPaintEvent*) {
+        QStyleOption opt;
+        opt.init(this);
+        QPainter painter(this);
+        painter.fillRect(rect(), QBrush(QColor(32, 31, 31, 255)));
+    }
+
+
+private:
     /// pointer to comm data
     CommLayer* mComm;
 

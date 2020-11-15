@@ -5,6 +5,7 @@
  */
 
 #include "datasynctimeout.h"
+#include "comm/commarducor.h"
 #include "comm/commlayer.h"
 #include "comm/commnanoleaf.h"
 
@@ -16,6 +17,7 @@ DataSyncTimeout::DataSyncTimeout(cor::LightList* data,
       mAppSettings(appSettings) {
     mData = data;
     mComm = comm;
+    mArduCorParser = new ArduCorPacketParser();
     mType = EDataSyncType::timeout;
     mUpdateInterval = 1000;
     connect(mComm,
@@ -23,6 +25,7 @@ DataSyncTimeout::DataSyncTimeout(cor::LightList* data,
             this,
             SLOT(commPacketReceived(EProtocolType)));
     connect(mData, SIGNAL(dataUpdate()), this, SLOT(resetSync()));
+    connect(appSettings, SIGNAL(timeoutUpdate()), this, SLOT(resetSync()));
 
     mSyncTimer = new QTimer(this);
     connect(mSyncTimer, SIGNAL(timeout()), this, SLOT(syncData()));
@@ -42,7 +45,8 @@ void DataSyncTimeout::cancelSync() {
 }
 
 void DataSyncTimeout::commPacketReceived(EProtocolType type) {
-    if (type == EProtocolType::hue || type == EProtocolType::nanoleaf) {
+    if (type == EProtocolType::hue || type == EProtocolType::nanoleaf
+        || type == EProtocolType::arduCor) {
         if (!mDataIsInSync) {
             resetSync();
         }
@@ -68,11 +72,8 @@ void DataSyncTimeout::syncData() {
         for (const auto& light : mData->lights()) {
             cor::Light commLight = light;
             if (mComm->fillLight(commLight)) {
-                if (commLight.commType() == ECommType::hue
-                    || commLight.commType() == ECommType::nanoleaf) {
-                    if (!sync(light, commLight)) {
-                        countOutOfSync++;
-                    }
+                if (!sync(light, commLight)) {
+                    countOutOfSync++;
                 }
             }
         }
@@ -115,10 +116,12 @@ void DataSyncTimeout::endOfSync() {
 }
 
 bool DataSyncTimeout::sync(const cor::Light&, const cor::Light& light) {
-    if (light.commType() == ECommType::hue) {
+    if (light.protocol() == EProtocolType::hue) {
         return handleHueTimeout(light);
-    } else if (light.commType() == ECommType::nanoleaf) {
+    } else if (light.protocol() == EProtocolType::nanoleaf) {
         return handleNanoleafTimeout(light);
+    } else if (light.protocol() == EProtocolType::arduCor) {
+        return handleArduCorTimeout(light);
     }
     return true;
 }
@@ -128,7 +131,6 @@ void DataSyncTimeout::cleanupSync() {
         mCleanupTimer->stop();
     }
 }
-
 
 bool DataSyncTimeout::handleHueTimeout(const cor::Light& light) {
     // get hue light
@@ -208,5 +210,31 @@ bool DataSyncTimeout::handleNanoleafTimeout(const cor::Light& light) {
         mComm->nanoleaf()->sendTimeout(metadata, timeoutValue);
         return false;
     }
+    return true;
+}
+
+bool DataSyncTimeout::handleArduCorTimeout(const cor::Light& light) {
+    auto result = mComm->arducor()->discovery()->findControllerByDeviceName(light.name());
+    auto controller = result.first;
+    if (!result.second) {
+        return false;
+    }
+    auto metadata = mComm->arducor()->metadataFromLight(light);
+    //-------------------
+    // Timeout Sync
+    //-------------------
+    if (mAppSettings->timeoutEnabled() && (metadata.timeout() != mAppSettings->timeout())) {
+        //        qDebug() << "time out not in sync" << metadata.timeout() << " vs "
+        //                 << mAppSettings->timeout();
+        QString message = mArduCorParser->timeoutPacket(metadata.index(), mAppSettings->timeout());
+        mComm->arducor()->sendPacket(controller, message);
+        return false;
+    } else if (!mAppSettings->timeoutEnabled() && (metadata.timeout() != 0)) {
+        // qDebug() << "time out not disabled!" << metadata.timeout();
+        QString message = mArduCorParser->timeoutPacket(metadata.index(), 0);
+        mComm->arducor()->sendPacket(controller, message);
+        return false;
+    }
+
     return true;
 }

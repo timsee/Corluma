@@ -2,6 +2,7 @@
 #define DATASYNCTIMEOUT_H
 
 #include <QObject>
+#include "comm/arducor/arducorpacketparser.h"
 #include "datasync.h"
 
 class CommLayer;
@@ -17,7 +18,7 @@ class CommLayer;
  * runs an action that turns the light off. This DataSync runs slower than other data syncs, and
  * does not need to be in sync for widgets to show that everything is in sync.
  */
-class DataSyncTimeout : public QObject, DataSync {
+class DataSyncTimeout : public QObject, public DataSync {
     Q_OBJECT
 public:
     explicit DataSyncTimeout(cor::LightList* data,
@@ -81,6 +82,9 @@ private:
     /// handle a nanoleaf's timeout. This is done by creating a schedule for the nanoleaf.
     bool handleNanoleafTimeout(const cor::Light& light);
 
+    /// handle an arducor's timeout. This is done by sending a timeout packet.
+    bool handleArduCorTimeout(const cor::Light& light);
+
     /*!
      * \brief endOfSync end the sync thread and start the cleanup thread.
      */
@@ -88,6 +92,9 @@ private:
 
     /// poiner to app settings
     AppSettings* mAppSettings;
+
+    /// parses variables for a packet and turns it into ArduCor compatible packets
+    ArduCorPacketParser* mArduCorParser;
 };
 
 #endif // DATASYNCTIMEOUT_H

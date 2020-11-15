@@ -45,7 +45,7 @@ void EditPage::setupWidgets(std::vector<EditPageChildWidget*> widgets) {
                 SIGNAL(stateChanged(std::uint32_t, EEditProgressState)),
                 this,
                 SLOT(widgetChangedState(std::uint32_t, EEditProgressState)));
-        connect(widget, SIGNAL(closePage()), this, SLOT(closeFromPagePressed()));
+        connect(widget, SIGNAL(forceClosePage()), this, SLOT(closeFromPagePressed()));
         connect(widget, SIGNAL(updateGroups()), this, SLOT(updateGroupsFromPagePressed()));
     }
 
@@ -103,7 +103,8 @@ void EditPage::pageBackwards() {
 }
 
 void EditPage::closeFromPagePressed() {
-    emit closePressed(true);
+    clearGroup();
+    emit pressedClose();
 }
 
 void EditPage::widgetChangedState(std::uint32_t i, EEditProgressState state) {

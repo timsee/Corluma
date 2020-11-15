@@ -90,11 +90,8 @@ void MoodPage::detailedMoodDisplay(std::uint64_t key) {
     mGreyOut->greyOut(true);
 
     const auto& moodResult = mGroups->moods().item(QString::number(key).toStdString());
-    cor::Mood detailedMood = moodResult.first;
     if (moodResult.second) {
-        auto moodLights = mComm->makeMood(detailedMood);
-        detailedMood.lights(moodLights.items());
-        mMoodDetailedWidget->update(detailedMood);
+        mMoodDetailedWidget->update(moodResult.first);
     }
 
     mMoodDetailedWidget->pushIn();

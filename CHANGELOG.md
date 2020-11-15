@@ -955,3 +955,12 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Added a `TimeoutButton` that displays timeout information on the `LeftHandMenu`.
 - Fixed miscellaneous bugs.
 - Updated to C++17.
+
+### **v0.20.5**
+### The Timeout UI Update Part 2
+- Added a `SyncWidget` to the `TimeoutPage`.
+- Added a list widget on the `TimeoutPage` that displays each selected light's timeout.
+- Moved ArduCor timeout syncing into `DataSyncTimeout`.
+- Fixed a bug where edit pages prompted you there was unsaved data after saving.
+- Fixed a bug in displaying the lights in a mood.
+- Fixed miscellaneous bugs.

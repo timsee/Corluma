@@ -225,8 +225,10 @@ void MainWindow::loadPages() {
         // Setup main widget space
         // --------------
 
-        mMainViewport = new MainViewport(this, mComm, mData, mGroups, mAppSettings);
+        mMainViewport =
+            new MainViewport(this, mComm, mData, mGroups, mAppSettings, mDataSyncTimeout);
         mMainViewport->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        mMainViewport->timeoutPage()->changeRowHeight(mLeftHandMenu->height() / 18);
 
         mRoutineWidget = new RoutineButtonsWidget(this);
         auto x = 0;

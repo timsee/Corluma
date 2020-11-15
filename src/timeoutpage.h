@@ -2,9 +2,14 @@
 #define TIMEOUTPAGE_H
 
 #include <QWidget>
+#include "comm/commlayer.h"
+#include "comm/datasynctimeout.h"
+#include "cor/lightlist.h"
 #include "cor/objects/page.h"
 #include "cor/widgets/switch.h"
 #include "menu/kitchentimerwidget.h"
+#include "menu/lightstimeoutmenu.h"
+#include "syncwidget.h"
 
 /*!
  * \copyright
@@ -17,11 +22,20 @@
 class TimeoutPage : public QWidget, public cor::Page {
     Q_OBJECT
 public:
-    explicit TimeoutPage(QWidget* parent);
+    explicit TimeoutPage(QWidget* parent,
+                         CommLayer* comm,
+                         cor::LightList* lights,
+                         DataSyncTimeout* dataSyncTimeout);
 
     /// update whether or not timeouts are enabled, and the value of the number of minutes for a
     /// timeout
     void update(bool timeoutEnabled, int timeoutValue);
+
+    /// update the lights.
+    void updateLights();
+
+    /// update the row height in lists.
+    void changeRowHeight(int rowHeight) { mRowHeight = rowHeight; }
 
 signals:
 
@@ -42,7 +56,16 @@ private slots:
     /// handles when the timeout value is changed
     void timerChanged(int);
 
+    /// renders the timeout menu
+    void renderUI();
+
 private:
+    /// pointer to the datasync timeout, used to check its status.
+    DataSyncTimeout* mDataSyncTimeout;
+
+    /// pointer to selected lights.
+    cor::LightList* mData;
+
     /// switch for turning all selected lights on and off.
     cor::Switch* mOnOffSwitch;
 
@@ -51,6 +74,18 @@ private:
 
     /// kitchen timer for choosing the timeout values
     KitchenTimerWidget* mTimeChooserWidget;
+
+    /// sync widget showing the sync state
+    SyncWidget* mSyncWidget;
+
+    /// displays the lights that are part of this group and their current states.
+    LightsTimeoutMenu* mLights;
+
+    /// render timer, renders the page
+    QTimer* mRenderTimer;
+
+    /// height of a row.
+    int mRowHeight;
 };
 
 #endif // TIMEOUTPAGE_H

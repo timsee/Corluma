@@ -55,7 +55,7 @@ public:
     }
 
     /// clear all data from the page, and reset it to its default state.
-    void clearGroup() {
+    void clearGroup() override {
         mMetadataWidget->clear();
         mLightsStateWidget->clear();
         mGroupsStateWidget->clear();

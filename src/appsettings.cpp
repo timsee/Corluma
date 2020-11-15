@@ -73,12 +73,14 @@ void AppSettings::updateTimeout(int timeout) {
     mTimeout = timeout;
     mSettings->setValue(cor::kTimeoutValue, QString::number(timeout));
     emit settingsUpdate();
+    emit timeoutUpdate();
 }
 
 void AppSettings::enableTimeout(bool timeout) {
     mTimeoutEnabled = timeout;
     mSettings->setValue(cor::kUseTimeoutKey, QString::number(int(timeout)));
     emit settingsUpdate();
+    emit timeoutUpdate();
 }
 
 

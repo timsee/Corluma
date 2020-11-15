@@ -69,12 +69,14 @@ public:
         mOriginalLights = {};
         // TODO: why does this need to be called for mLightContainer to show lights?
         mLightsMenu->reset();
+        mLightsMenu->ignoreLights({});
 
         auto lights = mMoodLights->lights();
         for (const auto& light : lights) {
             mMoodLights->removeLight(light);
         }
         mBottomButtons->enableForward(false);
+        hideState();
         conditionsMet();
     }
 
@@ -85,6 +87,7 @@ public:
         for (const auto& light : lights) {
             mMoodLights->addLight(light);
         }
+        mLightsMenu->ignoreLights(cor::lightVectorToIDs(mMoodLights->lights()));
         conditionsMet();
     }
 

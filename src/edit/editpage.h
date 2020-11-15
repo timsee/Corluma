@@ -56,6 +56,9 @@ public:
     /// programmatically set the height of rows in scroll widgets.
     virtual void changeRowHeight(int height) = 0;
 
+    /// clear all data from the page, and reset it to its default state.
+    virtual void clearGroup() = 0;
+
 signals:
 
     /*!

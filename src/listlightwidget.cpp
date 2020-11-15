@@ -29,12 +29,17 @@ ListLightWidget::ListLightWidget(const cor::Light& light,
       mIsChecked{false},
       mAllowInteraction{true},
       mDisplayState{true},
+      mDisplayTimeout{false},
       mHasRendered{false},
       mFontPtSize(16),
       mLight{light},
       mName{new QLabel(this)},
       mTypeIcon{new QLabel(this)},
+      mTimeoutLabel{new QLabel(this)},
       mCondenseStandardWidget{false} {
+    mTimeoutLabel->setVisible(false);
+    mTimeoutLabel->setStyleSheet("background-color:rgba(0,0,0,0);");
+
     mTypeIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mTypeIcon->setStyleSheet("background-color:rgba(0,0,0,0);");
 
@@ -189,18 +194,26 @@ void ListLightWidget::mouseReleaseEvent(QMouseEvent* event) {
 }
 
 QString ListLightWidget::createName(QString nameText) {
-//    if (mType == EListLightWidgetType::fullBrightnessBar) {
-//        if (nameText.size() > 20) {
-//            nameText = nameText.mid(0, 17) + "...";
-//        }
-//    } else {
-//        if (nameText.size() > 17) {
-//            nameText = nameText.mid(0, 14) + "...";
-//        }
-//    }
+    //    if (mType == EListLightWidgetType::fullBrightnessBar) {
+    //        if (nameText.size() > 20) {
+    //            nameText = nameText.mid(0, 17) + "...";
+    //        }
+    //    } else {
+    //        if (nameText.size() > 17) {
+    //            nameText = nameText.mid(0, 14) + "...";
+    //        }
+    //    }
     return nameText;
 }
 
+void ListLightWidget::updateTimeout(std::uint32_t secondsUntilTimeout) {
+    if (!mLight.state().isOn()) {
+        mTimeoutLabel->setText("Off");
+    } else {
+        mTimeoutLabel->setText(QString::number(secondsUntilTimeout / 60));
+    }
+    resize();
+}
 
 namespace {
 
@@ -208,7 +221,7 @@ namespace {
 bool shouldCondenseWidget(QSize size, bool displayState) {
     auto iconSide = size.height() * 0.8;
     if (displayState) {
-       iconSide = iconSide * 2;
+        iconSide = iconSide * 2;
     }
     if (iconSide > size.width() * 0.4) {
         return true;
@@ -216,7 +229,7 @@ bool shouldCondenseWidget(QSize size, bool displayState) {
     return false;
 }
 
-}
+} // namespace
 void ListLightWidget::resize() {
     if (mType == EListLightWidgetType::fullBrightnessBar) {
         auto typeIconSide = this->height() * 0.8;
@@ -237,10 +250,25 @@ void ListLightWidget::resize() {
             } else {
                 nameX = stateIconRegion().x() + spacer();
             }
-            mName->setGeometry(nameX,
-                               stateIconRegion().y(),
-                               width() - nameX,
-                               stateIconRegion().height());
+
+            if (mDisplayTimeout) {
+                auto nameWidth = (width() - nameX) * 0.7;
+                auto timeoutWidth = (width() - nameX) * 0.3;
+                mName->setGeometry(nameX,
+                                   stateIconRegion().y(),
+                                   nameWidth,
+                                   stateIconRegion().height());
+                nameX += mName->width();
+                mTimeoutLabel->setGeometry(nameX,
+                                           stateIconRegion().y(),
+                                           timeoutWidth,
+                                           stateIconRegion().height());
+            } else {
+                mName->setGeometry(nameX,
+                                   stateIconRegion().y(),
+                                   width() - nameX,
+                                   stateIconRegion().height());
+            }
         } else {
             auto typeIconSide = this->height() * 0.4;
             mTypeIcon->setGeometry(spacer(), this->height() * 0.1, typeIconSide, typeIconSide);

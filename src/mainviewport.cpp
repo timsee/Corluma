@@ -13,7 +13,8 @@ MainViewport::MainViewport(MainWindow* parent,
                            CommLayer* comm,
                            cor::LightList* data,
                            GroupData* groups,
-                           AppSettings* settings)
+                           AppSettings* settings,
+                           DataSyncTimeout* dataSyncTimeout)
     : QWidget(parent),
       mGroups{groups},
       mComm{comm},
@@ -41,8 +42,7 @@ MainViewport::MainViewport(MainWindow* parent,
     mMoodPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mMoodPage, SIGNAL(clickedEditButton(bool)), parent, SLOT(editButtonClicked(bool)));
 
-
-    mTimeoutPage = new TimeoutPage(parent);
+    mTimeoutPage = new TimeoutPage(parent, comm, data, dataSyncTimeout);
     mTimeoutPage->isOpen(false);
     mTimeoutPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }

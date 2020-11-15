@@ -76,14 +76,16 @@ private:
     /// scroll area for showing the MenuLightContainer
     QScrollArea* mScrollArea;
 
+protected:
     /// shows the light widgets
     MenuLightContainer* mLightContainer;
 
-    /// stores the height of each row in the scroll area.
-    int mRowHeight;
-
     /// stores the unique IDs of all lights being displayed.
     std::vector<cor::Light> mLights;
+
+private:
+    /// stores the height of each row in the scroll area.
+    int mRowHeight;
 
     /// true if in single light mode, false if multiple lights can be picked.
     bool mSingleLightMode;

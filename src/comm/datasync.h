@@ -60,6 +60,9 @@ public:
      */
     virtual void cancelSync() = 0;
 
+    /// true if in sync, false if not in sync
+    bool inSync() { return mDataIsInSync; }
+
 public slots:
     /*!
      * \brief resetSync Tells the DataSync object that the commlayer and the datalayer are

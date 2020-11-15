@@ -55,6 +55,12 @@ public:
     /// getter for currently highlighted lights.
     std::vector<QString> highlightedLights();
 
+    /// true to show timeouts, false to hide them.
+    void showTimeouts(bool shouldShowTimeouts);
+
+    /// update the timeout values.
+    void updateTimeouts(const std::vector<std::pair<QString, std::uint32_t>> keyTimeoutPairs);
+
 signals:
 
     /// emits when a light is clicked

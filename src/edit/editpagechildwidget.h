@@ -43,7 +43,7 @@ signals:
 
     /// signals that it wants to close its parent's page. This reverts the app back to whatever it
     /// was doing before it opened the edit page.
-    void closePage();
+    void forceClosePage();
 
 protected:
     /// buttons for going forward and backward on the bottom of the page.

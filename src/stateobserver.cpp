@@ -183,6 +183,7 @@ void StateObserver::moodChanged(std::uint64_t moodID) {
 
 void StateObserver::lightCountChanged() {
     mTopMenu->lightCountChanged();
+    mMainViewport->timeoutPage()->updateLights();
 }
 
 void StateObserver::dataInSync(bool inSync) {
