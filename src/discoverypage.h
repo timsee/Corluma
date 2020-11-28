@@ -14,6 +14,7 @@
 class DiscoveryArduCorWidget;
 class DiscoveryHueWidget;
 class DiscoveryNanoLeafWidget;
+class ControllerPage;
 
 /*!
  * \copyright
@@ -41,7 +42,8 @@ public:
     explicit DiscoveryPage(QWidget* parent,
                            cor::LightList* data,
                            CommLayer* layer,
-                           AppSettings* appSettings);
+                           AppSettings* appSettings,
+                           ControllerPage* controllerPage);
 
     /// debug function
     void openStartForDebug() { mForceStartOpen = true; }

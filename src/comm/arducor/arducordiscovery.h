@@ -89,6 +89,9 @@ public:
     /// removes controller from data and saved data
     void removeController(const QString& controller);
 
+    /// returns true if the IP already exists in either not found or found controllers.
+    bool doesIPExist(const QString& ip);
+
     /// string at the beginning of each discovery packet.
     const static QString kDiscoveryPacketIdentifier;
 

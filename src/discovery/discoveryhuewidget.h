@@ -4,12 +4,12 @@
 #include <QScrollArea>
 
 #include "comm/hue/bridgegroupswidget.h"
-#include "comm/hue/bridgeinfowidget.h"
 #include "comm/hue/bridgescheduleswidget.h"
 #include "comm/hue/lightdiscovery.h"
 #include "cor/widgets/listwidget.h"
 #include "cor/widgets/textinputwidget.h"
 #include "discovery/discoverywidget.h"
+#include "display/displaypreviewbridgewidget.h"
 #include "editablefieldwidget.h"
 #include "greyoutoverlay.h"
 
@@ -33,10 +33,10 @@ public:
      *
      * \param parent
      */
-    explicit DiscoveryHueWidget(CommLayer* comm, QWidget* parent);
+    explicit DiscoveryHueWidget(QWidget* parent, CommLayer* comm, ControllerPage* controllerPage);
 
     /// See DiscoveryWidget.h
-    void handleDiscovery(bool isActive);
+    void handleDiscovery(bool isActive) override;
 
     /*!
      * \brief resize size the widget programmatically
@@ -46,10 +46,18 @@ public:
      */
     void resize();
 
-    /// opens the IP widget
-    void openIPWidget();
+    /// check if an IP exists
+    void checkIfIPExists(const QString& IP) override;
+
+    /// prompt for the IP widget
+    QString IPWidgetPrompt() override { return "Add an IP Address for the Bridge:"; }
+
+    /// default value for the IP widget
+    QString IPWidgetDefaultValue() override { return "192.168.0.100"; }
 
 private slots:
+    /// handles when the greyout is clicked
+    void greyOutClicked() override;
 
     /// handles when a discover hue buttons is pressed
     void discoverHuesPressed(const QString&);
@@ -59,9 +67,6 @@ private slots:
 
     /// handles an IP from the IP widget, giving a warning if necessary
     void textInputAddedIP(const QString& IP);
-
-    /// closes IP widget
-    void closeIPWidget();
 
     /// handles when the close button is pressed
     void hueDiscoveryClosePressed();
@@ -84,12 +89,9 @@ private slots:
     /// handles when a bridge is deleted from a BridgeInfoWidget
     void deleteBridgeFromAppData(hue::Bridge);
 
-    /// handles when the greyout is clicked
-    void greyOutClicked();
-
 protected:
     /// called when the widget resizes
-    virtual void resizeEvent(QResizeEvent*);
+    virtual void resizeEvent(QResizeEvent*) override;
 
 private:
     /*!
@@ -125,9 +127,6 @@ private:
 
     /// scaling value for size of pngs
     float mScale;
-
-    /// widget for greying out widgets in the background
-    GreyOutOverlay* mGreyout;
 
     /*!
      * \brief updateHueStatusIcon update the main image for the hue discovery page which

@@ -3,6 +3,7 @@
 
 #include <QHBoxLayout>
 
+#include "cor/widgets/listwidget.h"
 #include "discoverywidget.h"
 #include "editablefieldwidget.h"
 #include "searchwidget.h"
@@ -26,37 +27,46 @@ public:
      *
      * \param parent
      */
-    explicit DiscoveryNanoLeafWidget(CommLayer* comm, QWidget* parent);
+    explicit DiscoveryNanoLeafWidget(QWidget* parent,
+                                     CommLayer* comm,
+                                     ControllerPage* controllerPage);
 
     /// See DiscoveryWidget.h
-    void handleDiscovery(bool isActive);
+    void handleDiscovery(bool isActive) override;
+
+    /// check if IP exists
+    void checkIfIPExists(const QString& IP) override;
+
+    /// prompt for an IP widget
+    QString IPWidgetPrompt() override { return "Add an IP Address for the Nanoleaf:"; }
+
+    /// default value for the IP widget.
+    QString IPWidgetDefaultValue() override { return "192.168.0.100"; }
+
+protected:
+    /// called when the widget resizes
+    virtual void resizeEvent(QResizeEvent*) override;
 
 private slots:
 
-    /// adds a new IP address to the discovery routines for the NanoLeaf
-    void plusButtonClicked();
+    /// handles when the greyout is clicked
+    void greyOutClicked() override;
 
-    /// stop looking for a NanoLeaf at the given IP address.
-    void minusButtonClicked();
+    /// handles when a nanoleaf is clicked
+    void nanoleafClicked(QString);
 
 private:
-    /// widget that is used for searching for IP addresses and listing the connected ones.
-    SearchWidget* mSearchWidget;
+    /// programmatically resize
+    void resize();
+
+    /// widget for displaying a scrollable list of other widgets
+    cor::ListWidget* mListWidget;
 
     /// buffer for last IP address used
     QString mLastIP;
 
     /// label to prompt the user through the application.
     QLabel* mLabel;
-
-    /// spacer so that label doesn't extend under the floating layouts
-    QWidget* mSpacer;
-
-    /// layout for label and spacer
-    QHBoxLayout* mTopLayout;
-
-    /// layout for widget
-    QVBoxLayout* mLayout;
 };
 
 #endif // DISCOVERYNANOLEAFWIDGET_H

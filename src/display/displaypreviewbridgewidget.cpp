@@ -4,7 +4,7 @@
  * Released under the GNU General Public License.
  */
 
-#include "bridgeinfowidget.h"
+#include "displaypreviewbridgewidget.h"
 
 #include <QGraphicsOpacityEffect>
 #include <QScroller>
@@ -14,7 +14,9 @@
 
 namespace hue {
 
-BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, const QString& key, QWidget* parent)
+DisplayPreviewBridgeWidget::DisplayPreviewBridgeWidget(const hue::Bridge& bridge,
+                                                       const QString& key,
+                                                       QWidget* parent)
     : cor::ListItemWidget(key, parent),
       mState{EBridgeDiscoveryState::unknown} {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
@@ -123,7 +125,7 @@ BridgeInfoWidget::BridgeInfoWidget(const hue::Bridge& bridge, const QString& key
     calculateButtonFontSize();
 }
 
-void BridgeInfoWidget::updateBridge(const hue::Bridge& bridge) {
+void DisplayPreviewBridgeWidget::updateBridge(const hue::Bridge& bridge) {
     mNameWidget->setText(bridge.customName());
     mIPAddress->setText("<b>IP:</b>  " + bridge.IP());
     mAPI->setText("<b>API:</b>  " + bridge.API());
@@ -132,7 +134,7 @@ void BridgeInfoWidget::updateBridge(const hue::Bridge& bridge) {
     mBridge = bridge;
 }
 
-void BridgeInfoWidget::handleBridgeState(EBridgeDiscoveryState state) {
+void DisplayPreviewBridgeWidget::handleBridgeState(EBridgeDiscoveryState state) {
     auto min = width();
     auto width = int(min * 0.333f);
     if (state == EBridgeDiscoveryState::connected) {
@@ -156,12 +158,12 @@ void BridgeInfoWidget::handleBridgeState(EBridgeDiscoveryState state) {
     adjustSize();
 }
 
-void BridgeInfoWidget::setChecked(bool checked) {
+void DisplayPreviewBridgeWidget::setChecked(bool checked) {
     mIsChecked = checked;
     update();
 }
 
-void BridgeInfoWidget::paintEvent(QPaintEvent*) {
+void DisplayPreviewBridgeWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);
@@ -183,11 +185,11 @@ void BridgeInfoWidget::paintEvent(QPaintEvent*) {
     linePainter.drawLine(spacerLine);
 }
 
-void BridgeInfoWidget::mouseReleaseEvent(QMouseEvent*) {
+void DisplayPreviewBridgeWidget::mouseReleaseEvent(QMouseEvent*) {
     emit clicked(mBridge.id());
 }
 
-void BridgeInfoWidget::resize() {
+void DisplayPreviewBridgeWidget::resize() {
     handleBridgeState(mBridge.state());
     auto yPos = 0;
 
@@ -198,28 +200,28 @@ void BridgeInfoWidget::resize() {
     calculateButtonFontSize();
 }
 
-void BridgeInfoWidget::resizeEvent(QResizeEvent*) {
+void DisplayPreviewBridgeWidget::resizeEvent(QResizeEvent*) {
     resize();
 }
 
 
-void BridgeInfoWidget::pressedDiscoverHues() {
+void DisplayPreviewBridgeWidget::pressedDiscoverHues() {
     emit discoverHuesPressed(mBridge.id());
 }
 
-void BridgeInfoWidget::groupsListPressed() {
+void DisplayPreviewBridgeWidget::groupsListPressed() {
     emit groupsPressed(mBridge.id());
 }
 
-void BridgeInfoWidget::schedulesListPressed() {
+void DisplayPreviewBridgeWidget::schedulesListPressed() {
     emit schedulesPressed(mBridge.id());
 }
 
-void BridgeInfoWidget::changedName(const QString& newName) {
+void DisplayPreviewBridgeWidget::changedName(const QString& newName) {
     emit nameChanged(mBridge.id(), newName);
 }
 
-void BridgeInfoWidget::setTitleFontPointSize(int pt) {
+void DisplayPreviewBridgeWidget::setTitleFontPointSize(int pt) {
     if (pt <= 0) {
         pt = 1;
     }
@@ -231,12 +233,12 @@ void BridgeInfoWidget::setTitleFontPointSize(int pt) {
     mIPAddress->setMinimumHeight(fm.height());
 }
 
-void BridgeInfoWidget::deleteButtonPressed() {
+void DisplayPreviewBridgeWidget::deleteButtonPressed() {
     emit deleteBridge(mBridge);
 }
 
 
-void BridgeInfoWidget::calculateButtonFontSize() {
+void DisplayPreviewBridgeWidget::calculateButtonFontSize() {
     const auto& text = mGroupsButton->text();
     auto widget = mDiscoverHueButton;
     // calcuate the text's size

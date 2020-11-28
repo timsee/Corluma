@@ -52,6 +52,9 @@ public:
     /// true if the provided light is fully connected, false otherwise
     bool isLightConnected(const nano::LeafMetadata& light);
 
+    /// true if IP already exists in either the searching or connected list, false if it does not.
+    bool doesIPExist(const QString& IP);
+
     /// used for manual discovery, add an IP to the unknowLights list
     void addIP(const QString& ip);
 

@@ -27,7 +27,8 @@ bool leftHandMenuMoving() {
             // cast to mainwindow
             auto mainWindow = qobject_cast<MainWindow*>(widget);
             return (mainWindow->leftHandMenu()->geometry().x() < 0)
-                    &&  (mainWindow->leftHandMenu()->geometry().width() * -1  > mainWindow->leftHandMenu()->geometry().x());
+                   && (mainWindow->leftHandMenu()->geometry().width() * -1
+                       > mainWindow->leftHandMenu()->geometry().x());
         }
     }
     return false;
@@ -44,5 +45,14 @@ bool leftHandMenuAlwaysOpen() {
     return false;
 }
 
+MainWindow* mainWindow() {
+    for (auto widget : QApplication::topLevelWidgets()) {
+        if (QString(widget->metaObject()->className()) == "MainWindow") {
+            // cast to mainwindow
+            return qobject_cast<MainWindow*>(widget);
+        }
+    }
+    return nullptr;
+}
 
 } // namespace cor

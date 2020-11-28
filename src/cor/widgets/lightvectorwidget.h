@@ -37,6 +37,13 @@ public:
     /// set whether or not to hide off lights
     void hideOffLights(bool shouldHide) { mHideOffLights = shouldHide; }
 
+    /// set the percent of an icon that each button should take up.
+    void setButtonIconPercent(float percent) {
+        for (auto button : mArrayColorsButtons) {
+            button->setIconPercent(percent);
+        }
+    }
+
     /*!
      * \brief enableButtonInteraction true to allow button interaction, false to
      *        ignore buttons and treat them as images instead. Clicks will go through buttons

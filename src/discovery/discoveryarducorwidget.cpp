@@ -5,103 +5,89 @@
  */
 
 #include "discoveryarducorwidget.h"
+#include <QMessageBox>
+#include <QScroller>
+#include "controllerpage.h"
+#include "display/displaypreviewarducorwidget.h"
+#include "mainwindow.h"
+#include "utils/qt.h"
 
-DiscoveryArduCorWidget::DiscoveryArduCorWidget(CommLayer* comm, QWidget* parent)
-    : DiscoveryWidget(parent) {
-    mComm = comm;
-
-    mSearchWidget = new SearchWidget("192.168.0.101", this);
-    connect(mSearchWidget, SIGNAL(plusClicked()), this, SLOT(plusButtonClicked()));
-    connect(mSearchWidget, SIGNAL(minusClicked()), this, SLOT(minusButtonClicked()));
+DiscoveryArduCorWidget::DiscoveryArduCorWidget(QWidget* parent,
+                                               CommLayer* comm,
+                                               ControllerPage* controllerPage)
+    : DiscoveryWidget(parent, comm, controllerPage) {
+    mListWidget = new cor::ListWidget(this, cor::EListType::linear);
+    mListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mListWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    QScroller::grabGesture(mListWidget->viewport(), QScroller::LeftMouseButtonGesture);
 
     mTopLabel = new QLabel(this);
-    mTopLabel->setText("Add or remove IP Addresses:");
-    mTopLabel->setWordWrap(true);
     mTopLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mTopLabel->setAlignment(Qt::AlignLeft | Qt::AlignBottom);
-
-    mSpacer = new QWidget(this);
-    mSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-    mTopLayout = new QHBoxLayout;
-    mTopLayout->addWidget(mTopLabel, 7);
-    mTopLayout->addWidget(mSpacer, 3);
-
-
-    //----------
-    // Main Layout
-    //----------
-
-    mLayout = new QVBoxLayout;
-    mLayout->addLayout(mTopLayout, 4);
-    mLayout->addWidget(mSearchWidget, 28);
-    setLayout(mLayout);
 }
 
+void DiscoveryArduCorWidget::checkIfIPExists(const QString& IP) {
+    if (!mComm->arducor()->discovery()->doesIPExist(IP)) {
+        mComm->arducor()->discovery()->addManualIP(IP);
+        closeIPWidget();
+    } else {
+        QMessageBox reply;
+        reply.setText("IP Address already exists.");
+        reply.exec();
+    }
+}
 
-void DiscoveryArduCorWidget::handleDiscovery(bool isCurrentCommType) {
-    const auto& controllers = mComm->arducor()->discovery()->controllers().items();
+void DiscoveryArduCorWidget::handleDiscovery(bool) {
+    const auto& foundControllers = mComm->arducor()->discovery()->controllers().items();
+    for (const auto& controller : foundControllers) {
+        handleController(controller, cor::EArduCorStatus::connected);
+    }
+
     const auto& undiscoveredControllers = mComm->arducor()->discovery()->undiscoveredControllers();
-
-    if (isCurrentCommType) {
-        for (const auto& controller : controllers) {
-            mSearchWidget->addToConnectedList(controller.name());
-        }
-
-        for (auto undiscoveredController : undiscoveredControllers) {
-            mSearchWidget->addToSearchList(undiscoveredController.name());
-        }
+    for (const auto& controller : undiscoveredControllers) {
+        handleController(controller, cor::EArduCorStatus::searching);
     }
 
     // handle button updates
     if (mComm->discoveryErrorsExist(EProtocolType::arduCor)) {
         emit connectionStatusChanged(EProtocolType::arduCor, EConnectionState::connectionError);
-    } else if (undiscoveredControllers.empty() && !controllers.empty()) {
+    } else if (undiscoveredControllers.empty() && !foundControllers.empty()) {
         emit connectionStatusChanged(EProtocolType::arduCor, EConnectionState::discovered);
-    } else if (!controllers.empty()) {
+    } else if (!foundControllers.empty()) {
         emit connectionStatusChanged(EProtocolType::arduCor, EConnectionState::discovering);
     } else {
         emit connectionStatusChanged(EProtocolType::arduCor, EConnectionState::off);
     }
 }
 
-// ----------------------------
-// Plus/Minus/Line Edit
-// ----------------------------
 
+void DiscoveryArduCorWidget::handleController(const cor::Controller& controller,
+                                              cor::EArduCorStatus status) {
+    // check if light already exists in list
+    bool foundWidget = false;
+    int i = 0;
+    for (const auto& widget : mListWidget->widgets()) {
+        auto arduCorWidget = dynamic_cast<DisplayPreviewArduCorWidget*>(widget);
+        if (arduCorWidget->controller().name().isEmpty() && widget->key() == controller.name()) {
+        } else if (widget->key() == controller.name()) {
+            // standard case, theres a unique ID for this bridge
+            foundWidget = true;
+            auto lights = mComm->arducor()->lightsFromNames(controller.names());
+            arduCorWidget->updateController(controller, lights, status);
+        }
+        ++i;
+    }
 
-void DiscoveryArduCorWidget::plusButtonClicked() {
-    if (!doesYunControllerExistAlready(mSearchWidget->lineEditText())) {
-        QString controller = mSearchWidget->lineEditText();
-        mComm->arducor()->discovery()->addManualIP(controller);
-        //        if (!isSuccessful) qDebug() << "WARNING: failure adding" << controller << "to HTTP
-        //        discovery list";
-    } else {
-        qDebug() << "WARNING: trying to add controller that already exists: "
-                 << mSearchWidget->lineEditText();
+    // if it doesnt exist, add it
+    if (!foundWidget) {
+        auto widget =
+            new DisplayPreviewArduCorWidget(controller, status, mListWidget->mainWidget());
+        widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        connect(widget, SIGNAL(clicked(QString)), this, SLOT(controllerClicked(QString)));
+        mListWidget->insertWidget(widget);
+        resize();
     }
 }
-
-void DiscoveryArduCorWidget::minusButtonClicked() {
-    if (doesYunControllerExistAlready(mSearchWidget->lineEditText())) {
-        cor::Light light(mSearchWidget->lineEditText(), ECommType::UDP);
-        auto isSuccessful = mComm->removeLight(light);
-        if (!isSuccessful) {
-            qDebug() << "WARNING: failure removing" << light.uniqueID()
-                     << "from UDP discovery list";
-        }
-        cor::Light light2(mSearchWidget->lineEditText(), ECommType::HTTP);
-        isSuccessful = mComm->removeLight(light2);
-        if (!isSuccessful) {
-            qDebug() << "WARNING: failure removing" << light.uniqueID()
-                     << "from HTTP discovery list";
-        }
-    } else {
-        qDebug() << "WARNING: trying to remove controller that doesn't exist: "
-                 << mSearchWidget->lineEditText();
-    }
-}
-
 
 // ----------------------------
 // Helpers
@@ -121,4 +107,54 @@ bool DiscoveryArduCorWidget::doesYunControllerExistAlready(const QString& name) 
         }
     }
     return deviceFound;
+}
+
+void DiscoveryArduCorWidget::resizeEvent(QResizeEvent*) {
+    resize();
+}
+
+void DiscoveryArduCorWidget::resize() {
+    auto yPos = 0u;
+    mTopLabel->setGeometry(0, 0, int(width() * 0.7), int(height() * 0.25));
+    yPos += mTopLabel->height();
+    mListWidget->setGeometry(int(width() * 0.025),
+                             yPos,
+                             int(width() * 0.95),
+                             int(height() * 0.735));
+    mGreyout->resize();
+
+    // call resize function of each widget
+    auto yHeight = 0u;
+    QSize widgetSize(mListWidget->width(), int(mListWidget->height() * 0.33));
+    for (auto widget : mListWidget->widgets()) {
+        auto arduCorWidget = dynamic_cast<DisplayPreviewArduCorWidget*>(widget);
+        arduCorWidget->setGeometry(0, yHeight, widgetSize.width(), widgetSize.height());
+        arduCorWidget->resize();
+        yHeight += arduCorWidget->height();
+    }
+    mListWidget->mainWidget()->setFixedHeight(yHeight);
+    mListWidget->mainWidget()->setFixedWidth(width());
+}
+
+void DiscoveryArduCorWidget::controllerClicked(QString controller) {
+    for (auto widget : mListWidget->widgets()) {
+        auto arduCorWidget = dynamic_cast<DisplayPreviewArduCorWidget*>(widget);
+        if (arduCorWidget->controller().name() == controller) {
+            if (arduCorWidget->status() == cor::EArduCorStatus::connected) {
+                cor::mainWindow()->showControllerPage();
+                mControllerPage->showArduCor(arduCorWidget->controller());
+            } else {
+                QMessageBox::StandardButton warning;
+                QString text = "Light not discovered yet.";
+                warning = QMessageBox::warning(this, "Not Discovered", text);
+            }
+        }
+    }
+}
+
+void DiscoveryArduCorWidget::greyOutClicked() {
+    mGreyout->greyOut(false);
+    if (mIPWidget->isOpen()) {
+        closeIPWidget();
+    }
 }

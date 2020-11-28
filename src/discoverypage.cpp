@@ -23,7 +23,8 @@
 DiscoveryPage::DiscoveryPage(QWidget* parent,
                              cor::LightList* data,
                              CommLayer* comm,
-                             AppSettings* appSettings)
+                             AppSettings* appSettings,
+                             ControllerPage* controllerPage)
     : QWidget(parent),
       mComm(comm),
       mAppSettings(appSettings) {
@@ -83,21 +84,21 @@ DiscoveryPage::DiscoveryPage(QWidget* parent,
     mLastFloatingHeight = mHorizontalFloatingLayout->height();
     resizeButtonIcons();
 
-    mArduCorWidget = new DiscoveryArduCorWidget(mComm, this);
+    mArduCorWidget = new DiscoveryArduCorWidget(this, mComm, controllerPage);
     connect(mArduCorWidget,
             SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)),
             this,
             SLOT(widgetConnectionStateChanged(EProtocolType, EConnectionState)));
     mArduCorWidget->setVisible(false);
 
-    mHueWidget = new DiscoveryHueWidget(mComm, this);
+    mHueWidget = new DiscoveryHueWidget(this, mComm, controllerPage);
     connect(mHueWidget,
             SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)),
             this,
             SLOT(widgetConnectionStateChanged(EProtocolType, EConnectionState)));
     mHueWidget->setVisible(false);
 
-    mNanoLeafWidget = new DiscoveryNanoLeafWidget(mComm, this);
+    mNanoLeafWidget = new DiscoveryNanoLeafWidget(this, mComm, controllerPage);
     connect(mNanoLeafWidget,
             SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)),
             this,
@@ -399,15 +400,21 @@ void DiscoveryPage::floatingLayoutButtonPressed(const QString& button) {
         emit settingsButtonClicked();
     } else if (button == "Discovery_ArduCor") {
         protocolTypeSelected(EProtocolType::arduCor);
-        mOptionalFloatingLayout->setVisible(false);
+        mOptionalFloatingLayout->setVisible(true);
     } else if (button == "Discovery_Hue") {
         protocolTypeSelected(EProtocolType::hue);
         mOptionalFloatingLayout->setVisible(true);
     } else if (button == "Discovery_NanoLeaf") {
         protocolTypeSelected(EProtocolType::nanoleaf);
-        mOptionalFloatingLayout->setVisible(false);
+        mOptionalFloatingLayout->setVisible(true);
     } else if (button == "Plus") {
-        mHueWidget->openIPWidget();
+        if (mType == EProtocolType::hue) {
+            mHueWidget->openIPWidget();
+        } else if (mType == EProtocolType::arduCor) {
+            mArduCorWidget->openIPWidget();
+        } else if (mType == EProtocolType::nanoleaf) {
+            mNanoLeafWidget->openIPWidget();
+        }
         mOptionalFloatingLayout->highlightButton("");
     }
 }

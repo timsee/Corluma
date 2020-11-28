@@ -4,8 +4,9 @@
 #include <QPushButton>
 
 #include "comm/commarducor.h"
+#include "cor/widgets/listwidget.h"
 #include "discovery/discoverywidget.h"
-#include "searchwidget.h"
+#include "display/displaypreviewarducorwidget.h"
 
 /*!
  * \copyright
@@ -27,22 +28,33 @@ public:
      *
      * \param parent
      */
-    explicit DiscoveryArduCorWidget(CommLayer* comm, QWidget* parent);
+    explicit DiscoveryArduCorWidget(QWidget* parent,
+                                    CommLayer* comm,
+                                    ControllerPage* controllerPage);
 
     /// See DiscoveryWidget.h
-    void handleDiscovery(bool isActive);
+    void handleDiscovery(bool isActive) override;
+
+    /// check if an IP already exists for a light
+    void checkIfIPExists(const QString& IP) override;
+
+    /// prompt for the IP widget
+    QString IPWidgetPrompt() override { return "Add an IP Address for the ArduCor:"; }
+
+    /// default value for the IP widget
+    QString IPWidgetDefaultValue() override { return "192.168.0.101"; }
 
 private slots:
 
-    /*!
-     * \brief plusButtonClicked called whenever the plus button is clicked
-     */
-    void plusButtonClicked();
+    /// handles when the greyout is clicked
+    void greyOutClicked() override;
 
-    /*!
-     * \brief minusButtonClicked called whenever the minus button is clicked
-     */
-    void minusButtonClicked();
+    /// handles when a controller is clicked.
+    void controllerClicked(QString);
+
+protected:
+    /// called when the widget resizes
+    virtual void resizeEvent(QResizeEvent*) override;
 
 private:
     /*!
@@ -54,23 +66,20 @@ private:
      */
     bool doesYunControllerExistAlready(const QString& controller);
 
-    /// widget that is used for searching for IP addresses and listing the connected ones.
-    SearchWidget* mSearchWidget;
+    /// programmatically resized
+    void resize();
+
+    /// handle how to display or update a controller
+    void handleController(const cor::Controller& controller, cor::EArduCorStatus status);
+
+    /// widget for displaying a scrollable list of other widgets
+    cor::ListWidget* mListWidget;
 
     /// buffer for last IP address used
     QString mLastIP;
 
     /// top label that explains the widget
     QLabel* mTopLabel;
-
-    /// spacer so that label doesn't extend under the floating layouts
-    QWidget* mSpacer;
-
-    /// layout for label and spacer
-    QHBoxLayout* mTopLayout;
-
-    /// layout for widget
-    QVBoxLayout* mLayout;
 };
 
 #endif // DISCOVERYARDUCORWIDGET_H

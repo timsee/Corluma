@@ -219,6 +219,20 @@ ArduCorMetadata CommArduCor::metadataFromLight(const cor::Light& light) {
     return result.first;
 }
 
+std::vector<cor::Light> CommArduCor::lightsFromNames(const std::vector<QString>& lightNames) {
+    std::vector<cor::Light> retVector;
+
+    auto storedLights = lights();
+    for (const auto& lightName : lightNames) {
+        for (const auto& storedLight : storedLights) {
+            if (lightName == storedLight.uniqueID()) {
+                retVector.emplace_back(storedLight);
+            }
+        }
+    }
+    return retVector;
+}
+
 void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECommType type) {
     // split into vector of strings
     std::vector<std::string> packetVector;

@@ -86,6 +86,9 @@ public:
     /// returns the last time any CommType owned by CommArduCor received an update.
     QTime lastUpdateTime();
 
+    /// convert a list of names of lights into their full cor::Light representation.
+    std::vector<cor::Light> lightsFromNames(const std::vector<QString>&);
+
 signals:
 
     /*!

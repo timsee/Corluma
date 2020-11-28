@@ -96,9 +96,17 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     connect(mSettingsPage, SIGNAL(enableDebugMode()), this, SLOT(debugModeClicked()));
 
     // --------------
+    // Setup Controller Page
+    // --------------
+    mControllerPage = new ControllerPage(this, mComm);
+    mControllerPage->hide();
+    mControllerPage->isOpen(false);
+    connect(mControllerPage, SIGNAL(backButtonPressed()), this, SLOT(hideControllerPage()));
+
+    // --------------
     // Setup Discovery Page
     // --------------
-    mDiscoveryPage = new DiscoveryPage(this, mData, mComm, mAppSettings);
+    mDiscoveryPage = new DiscoveryPage(this, mData, mComm, mAppSettings, mControllerPage);
     mDiscoveryPage->show();
     mDiscoveryPage->isOpen(true);
     connect(mDiscoveryPage, SIGNAL(startButtonClicked()), this, SLOT(pushOutDiscovery()));
@@ -153,6 +161,8 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     // --------------
     mGreyOut = new GreyOutOverlay(!mLeftHandMenu->alwaysOpen(), this);
     connect(mGreyOut, SIGNAL(clicked()), this, SLOT(greyoutClicked()));
+
+    mControllerPage->changeRowHeight(mLeftHandMenu->height() / 18);
 
     // --------------
     // Finish up wifi check
@@ -428,6 +438,21 @@ void MainWindow::pushInDiscovery() {
     }
 }
 
+void MainWindow::showControllerPage() {
+    mControllerPage->setFixedSize(mDiscoveryPage->size());
+
+    if (mLeftHandMenu->alwaysOpen() && !mFirstLoad) {
+        mControllerPage->showPage(QPoint(mLeftHandMenu->width(), 0));
+    } else {
+        mControllerPage->showPage(QPoint(0u, 0));
+    }
+    mControllerPage->isOpen(true);
+}
+
+void MainWindow::hideControllerPage() {
+    mControllerPage->hidePage();
+}
+
 void MainWindow::switchToColorPage() {
     if (mLeftHandMenu->isIn()) {
         pushOutLeftHandMenu();
@@ -568,6 +593,20 @@ void MainWindow::resize() {
                                     mDiscoveryPage->geometry().y(),
                                     fullScreenSize.width(),
                                     fullScreenSize.height());
+    }
+
+    if (mControllerPage->isOpen()) {
+        mControllerPage->setFixedSize(mDiscoveryPage->size());
+        mControllerPage->setGeometry(mDiscoveryPage->geometry());
+
+        if (mWifiFound) {
+            mControllerPage->raise();
+        }
+    } else {
+        mControllerPage->setGeometry(geometry().width() * -1,
+                                     mDiscoveryPage->geometry().y(),
+                                     mDiscoveryPage->width(),
+                                     mDiscoveryPage->height());
     }
 
     if (mSettingsPage->isOpen()) {

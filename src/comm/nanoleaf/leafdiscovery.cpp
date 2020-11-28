@@ -332,6 +332,21 @@ void LeafDiscovery::addIP(const QString& ip) {
     mUnknownLights.push_back(controller);
 }
 
+bool LeafDiscovery::doesIPExist(const QString& IP) {
+    for (const auto& notFoundLight : mNotFoundLights) {
+        if (notFoundLight.IP() == IP) {
+            return true;
+        }
+    }
+    for (const auto& foundLight : mFoundLights.items()) {
+        if (foundLight.IP() == IP) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
 nano::LeafMetadata LeafDiscovery::findLightByIP(const QString& IP) {
     QStringList pieces = IP.split("/");
     // 7 pieces are expected for status packets

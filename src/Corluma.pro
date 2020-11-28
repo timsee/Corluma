@@ -147,6 +147,7 @@ SOURCES += main.cpp \
     colorpicker/singlecolorpicker.cpp \
     colorpicker/multicolorpicker.cpp \
     colorpicker/schemegenerator.cpp \
+    controllerpage.cpp \
     cor/lightlist.cpp \
     debugconnectionspoofer.cpp \
     discovery/discoverywidget.cpp \
@@ -154,6 +155,7 @@ SOURCES += main.cpp \
     discovery/discoverynanoleafwidget.cpp \
     discovery/hardwareconnectionwidget.cpp \
     discovery/discoveryarducorwidget.cpp \
+    display/displaypreviewbridgewidget.cpp \
     cor/widgets/slider.cpp \
     cor/widgets/listwidget.cpp \
     cor/presetpalettes.cpp \
@@ -191,7 +193,6 @@ SOURCES += main.cpp \
     timeoutpage.cpp \
     utils/qt.cpp \
     utils/cormath.cpp \
-    comm/hue/bridgeinfowidget.cpp \
     comm/hue/lightdiscovery.cpp \
     comm/hue/bridgediscovery.cpp \
     comm/hue/bridge.cpp \
@@ -276,6 +277,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     colorpicker/singlecolorpicker.h \
     colorpicker/multicolorpicker.h \
     colorpicker/schemegenerator.h \
+    controllerpage.h \
     cor/lightlist.h \
     cor/objects/groupstate.h \
     cor/widgets/expandingtextscrollarea.h \
@@ -292,6 +294,12 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     cor/jsonsavedata.h \
     cor/listlayout.h \
     cor/dictionary.h \
+    display/displayarducorcontrollerwidget.h \
+    display/displayhuebridgewidget.h \
+    display/displaynanoleafcontrollerwidget.h \
+    display/displaypreviewarducorwidget.h \
+    display/displaypreviewnanoleafwidget.h \
+    display/displaypreviewbridgewidget.h \
     edit/chooseeditpage.h \
     edit/choosegroupwidget.h \
     edit/chooselightsgroupwidget.h \
@@ -348,7 +356,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     comm/hue/hueprotocols.h \
     comm/hue/bridge.h \
     comm/hue/hueinfowidget.h \
-    comm/hue/bridgeinfowidget.h \
     comm/hue/bridgegroupswidget.h \
     comm/hue/bridgescheduleswidget.h \
     comm/hue/huegroupwidget.h \

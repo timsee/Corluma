@@ -19,6 +19,8 @@
 
 #define TRANSITION_TIME_MSEC 150
 
+class MainWindow;
+
 namespace cor {
 
 //-------------
@@ -128,6 +130,9 @@ QSize applicationSize();
  * \return true if left hand menu is moving, false otherwise
  */
 bool leftHandMenuMoving();
+
+/// getter for the MainWindow
+MainWindow* mainWindow();
 
 } // namespace cor
 

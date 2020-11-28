@@ -7,7 +7,11 @@
 #include <QWidget>
 
 #include "comm/commlayer.h"
+#include "cor/widgets/textinputwidget.h"
+#include "greyoutoverlay.h"
 
+
+class ControllerPage;
 
 /*!
  * \copyright
@@ -24,7 +28,7 @@ class DiscoveryWidget : public QWidget {
 
 public:
     /// constructor
-    explicit DiscoveryWidget(QWidget* parent);
+    explicit DiscoveryWidget(QWidget* parent, CommLayer* comm, ControllerPage* controllerPage);
 
     /*!
      * \brief ~DiscoveryWidget Deconstructor
@@ -40,6 +44,18 @@ public:
      */
     virtual void handleDiscovery(bool isActive) = 0;
 
+    /// check if an IP exists in the protocol
+    virtual void checkIfIPExists(const QString& IP) = 0;
+
+    /// prompt for IP widget
+    virtual QString IPWidgetPrompt() = 0;
+
+    /// default value for the IP widget
+    virtual QString IPWidgetDefaultValue() = 0;
+
+    /// opens the IP widget
+    void openIPWidget();
+
 signals:
     /*!
      * \brief connectionStatusChanged emitted whenever the connection status changes
@@ -50,9 +66,28 @@ signals:
      */
     void connectionStatusChanged(EProtocolType type, EConnectionState status);
 
+protected slots:
+    /// closes IP widget
+    void closeIPWidget();
+
+    /// handles an IP from the IP widget, giving a warning if necessary
+    void textInputAddedIP(const QString& IP);
+
+    /// handles when the greyout is clicked
+    virtual void greyOutClicked() = 0;
+
 protected:
     /// pointer to commlayer, used for discovery
     CommLayer* mComm;
+
+    /// pointer to controller page.
+    ControllerPage* mControllerPage;
+
+    /// widget for entering an IP manually
+    cor::TextInputWidget* mIPWidget;
+
+    /// widget for greying out widgets in the background
+    GreyOutOverlay* mGreyout;
 
     /*!
      * \brief fillList helper to fill a list with cor::Controllers

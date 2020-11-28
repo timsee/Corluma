@@ -36,6 +36,7 @@ public:
      */
     explicit Button(QWidget* parent, const cor::LightState& state)
         : QPushButton(parent),
+          mIconPercent{0.6},
           mShouldResizeIcon{true},
           mLabelMode{false},
           mState(state) {
@@ -85,7 +86,7 @@ public:
      */
     void resizeIcon() {
         int size = std::min(this->size().height(), this->size().width());
-        mIconSize = QSize(int(size * 0.6f), int(size * 0.6f));
+        mIconSize = QSize(int(size * mIconPercent), int(size * mIconPercent));
         QPixmap pixmap = mIconData.renderAsQPixmap();
         pixmap = pixmap.scaled(mIconSize.width(),
                                mIconSize.height(),
@@ -97,6 +98,9 @@ public:
 
     /// set to true to resize automatically, set to false to not resize automatically
     void resizeIconAutomatically(bool shouldResize) { mShouldResizeIcon = shouldResize; }
+
+    /// set the percent of the button that an icon should take up.
+    void setIconPercent(float iconPercent) { mIconPercent = iconPercent; }
 
 signals:
     /*!
@@ -123,6 +127,9 @@ protected:
 private:
     /// size for icon
     QSize mIconSize;
+
+    /// the percent of a button an icon should take up.
+    float mIconPercent;
 
     /// true if should automatically resize, false otherwise.
     bool mShouldResizeIcon;

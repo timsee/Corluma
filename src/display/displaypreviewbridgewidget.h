@@ -7,10 +7,10 @@
 #include <QPushButton>
 #include <QWidget>
 
-#include "bridge.h"
+#include "comm/hue/bridge.h"
+#include "comm/hue/huemetadata.h"
 #include "cor/widgets/listitemwidget.h"
 #include "editablefieldwidget.h"
-#include "huemetadata.h"
 
 namespace hue {
 
@@ -22,11 +22,13 @@ namespace hue {
  * \brief The BridgeInfoWidget class is a simple widget that shows the metadata of a bridge and
  *        provides a button to discover new hues for the bridge.
  */
-class BridgeInfoWidget : public cor::ListItemWidget {
+class DisplayPreviewBridgeWidget : public cor::ListItemWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit BridgeInfoWidget(const hue::Bridge& bridge, const QString& key, QWidget* parent);
+    explicit DisplayPreviewBridgeWidget(const hue::Bridge& bridge,
+                                        const QString& key,
+                                        QWidget* parent);
 
     /// update the bridge being shown
     void updateBridge(const hue::Bridge& bridge);

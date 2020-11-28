@@ -7,8 +7,8 @@
 #include <QPushButton>
 #include <QWidget>
 
-#include "utils/qt.h"
 #include "cor/objects/page.h"
+#include "utils/qt.h"
 
 namespace cor {
 
@@ -29,21 +29,22 @@ public:
     /*!
      * \brief Constructor
      */
-    explicit TextInputWidget(QWidget* parent,
-                             const QString& inputPrompt,
-                             const QString& defaultInput)
+    explicit TextInputWidget(QWidget* parent)
         : QWidget(parent),
           mButtonOK(new QPushButton("OK", this)),
           mButtonCancel(new QPushButton("X", this)),
-          mInputPromptLabel(new QLabel(inputPrompt, this)),
-          mLineEdit(new QLineEdit(defaultInput, this)) {
+          mInputPromptLabel(new QLabel(this)),
+          mLineEdit(new QLineEdit(this)) {
         mInputPromptLabel->setWordWrap(true);
         connect(mButtonOK, SIGNAL(clicked()), this, SLOT(clickedOK()));
         connect(mButtonCancel, SIGNAL(clicked()), this, SLOT(clickedCancel()));
     }
 
     /// pushes widget in
-    void pushIn() {
+    void pushIn(const QString& inputPrompt, const QString& defaultInput) {
+        mInputPromptLabel->setText(inputPrompt);
+        mLineEdit->setText(defaultInput);
+
         auto size = cor::applicationSize();
         float sizeRatio = size.width() / float(size.height());
         if (sizeRatio > 1.0f) {
@@ -91,11 +92,9 @@ public:
         auto appSize = cor::applicationSize();
         float sizeRatio = appSize.width() / float(appSize.height());
         if (sizeRatio > 1.0f) {
-            setFixedSize(int(size.width() * 0.333f),
-                         int(size.height() * 0.333f));
+            setFixedSize(int(size.width() * 0.333f), int(size.height() * 0.333f));
         } else {
-            setFixedSize(int(size.width() * 0.75f),
-                         int(size.height() * 0.2f));
+            setFixedSize(int(size.width() * 0.75f), int(size.height() * 0.2f));
         }
 
         int yPos = 0;

@@ -147,7 +147,7 @@ std::pair<cor::Controller, bool> ArduCorDiscovery::controllerFromDiscoveryString
             nameIndex = 2;
         } else if (nameIndex == 2) {
             bool conversionSuccessful;
-            int productTypeIndex = QString(name.c_str()).toInt(&conversionSuccessful);
+            QString(name.c_str()).toInt(&conversionSuccessful);
             if (!conversionSuccessful) {
                 qDebug() << "Received an incorrect value when expecting a product type";
                 return std::make_pair(cor::Controller{}, false);
@@ -180,7 +180,13 @@ std::pair<cor::Controller, bool> ArduCorDiscovery::controllerFromDiscoveryString
         // get the USE_CRC
         int crc = intVector[2];
         if (!(crc == 1 || crc == 0)) {
-            qDebug() << "INFO: crc in invalid raange";
+            qDebug() << "INFO: crc in invalid range";
+            return std::make_pair(cor::Controller{}, false);
+        }
+
+        int capabilities = intVector[3];
+        if (!(capabilities == 1 || capabilities == 0)) {
+            qDebug() << "INFO: capabailities in invalid range";
             return std::make_pair(cor::Controller{}, false);
         }
         cor::Controller controller(controllerName,
@@ -190,7 +196,7 @@ std::pair<cor::Controller, bool> ArduCorDiscovery::controllerFromDiscoveryString
                                    intVector[4],
                                    intVector[0],
                                    intVector[1],
-                                   intVector[3],
+                                   capabilities,
                                    nameVector,
                                    hardwareTypeVector);
 
@@ -461,6 +467,21 @@ bool ArduCorDiscovery::loadJSON() {
     return false;
 }
 
+bool ArduCorDiscovery::doesIPExist(const QString& ip) {
+    for (const auto& notFound : mNotFoundControllers) {
+        if (notFound.name() == ip) {
+            return true;
+        }
+    }
+
+    for (const auto& found : mFoundControllers.items()) {
+        if (found.name() == ip) {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 
 //---------------------

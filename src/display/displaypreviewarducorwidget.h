@@ -1,0 +1,223 @@
+#ifndef DISPLAYPREVIEWARDUCORWIDGET_H
+#define DISPLAYPREVIEWARDUCORWIDGET_H
+
+#include <QLabel>
+#include <QPainter>
+#include <QStyleOption>
+#include <QWidget>
+#include "comm/arducor/controller.h"
+#include "cor/widgets/lightvectorwidget.h"
+#include "cor/widgets/listitemwidget.h"
+#include "syncwidget.h"
+#include "utils/qt.h"
+
+
+/*!
+ * \copyright
+ * Copyright (C) 2015 - 2020.
+ * Released under the GNU General Public License.
+ *
+ *
+ * \brief The DisplayPreviewArduCorWidget class displays a preview of an ArduCor Controller on the
+ * Discovery Page.
+ */
+class DisplayPreviewArduCorWidget : public cor::ListItemWidget {
+    Q_OBJECT
+public:
+    /// constructor
+    explicit DisplayPreviewArduCorWidget(const cor::Controller& controller,
+                                         cor::EArduCorStatus status,
+                                         QWidget* parent)
+        : cor::ListItemWidget(controller.name(), parent),
+          mName{new QLabel(cor::controllerToGenericName(controller, status), this)},
+          mSyncWidget{new SyncWidget(this)},
+          mLightVector{nullptr},
+          mController{controller},
+          mStatusType{status} {
+        createIcons(controller, status);
+    }
+
+    /// getter for controller
+    const cor::Controller& controller() { return mController; }
+
+    /// getter for the status
+    cor::EArduCorStatus status() { return mStatusType; }
+
+    /// update the controller
+    void updateController(const cor::Controller& controller,
+                          const std::vector<cor::Light>& lights,
+                          cor::EArduCorStatus status) {
+        mController = controller;
+        mStatusType = status;
+        mName->setText(cor::controllerToGenericName(controller, status));
+        createIcons(controller, status);
+        updateLights(lights);
+    }
+
+    /// programmatically resize.
+    void resize() {
+        auto labelHeight = this->height() / 3;
+        auto yPos = 0u;
+
+        if (mStatusType == cor::EArduCorStatus::searching) {
+            auto iconHeight = this->height() / 2;
+            mSyncWidget->setGeometry(0, yPos, iconHeight, iconHeight);
+            yPos += mSyncWidget->height();
+        } else {
+            if (!mIcons.empty()) {
+                if (mIcons.size() == 1) {
+                    auto iconHeight = this->height() / 2;
+                    auto i = 0;
+                    if (mIconPixmaps[i].size() != QSize(iconHeight, iconHeight)) {
+                        mIcons[i]->setGeometry(i * (1.1 * iconHeight),
+                                               yPos,
+                                               iconHeight,
+                                               iconHeight);
+                        mIconPixmaps[i] = lightHardwareTypeToPixmap(mController.hardwareTypes()[i]);
+                        mIconPixmaps[i] = mIconPixmaps[i].scaled(iconHeight,
+                                                                 iconHeight,
+                                                                 Qt::IgnoreAspectRatio,
+                                                                 Qt::SmoothTransformation);
+                        mIcons[i]->setPixmap(mIconPixmaps[i]);
+                        mIcons[i]->setVisible(true);
+                    }
+                    mLightVector->setGeometry(iconHeight * 1.1, yPos, iconHeight, iconHeight);
+                    mLightVector->setVisible(true);
+                } else {
+                    auto iconHeight = this->height() / 3;
+                    for (auto i = 0u; i < mIcons.size(); ++i) {
+                        if (mIconPixmaps[i].size() != QSize(iconHeight, iconHeight)) {
+                            mIcons[i]->setGeometry(i * (1.1 * iconHeight),
+                                                   yPos,
+                                                   iconHeight,
+                                                   iconHeight);
+                            mIconPixmaps[i] =
+                                lightHardwareTypeToPixmap(mController.hardwareTypes()[i]);
+                            mIconPixmaps[i] = mIconPixmaps[i].scaled(iconHeight,
+                                                                     iconHeight,
+                                                                     Qt::IgnoreAspectRatio,
+                                                                     Qt::SmoothTransformation);
+                            mIcons[i]->setPixmap(mIconPixmaps[i]);
+                            mIcons[i]->setVisible(true);
+                        }
+                    }
+                    mLightVector->setGeometry(0u,
+                                              yPos + iconHeight,
+                                              (iconHeight * 1.1) * mIcons.size(),
+                                              iconHeight);
+                    mLightVector->setVisible(true);
+                    yPos += mLightVector->height();
+                }
+                yPos += mIcons[0]->height();
+            }
+        }
+        mName->setGeometry(0, yPos, this->width(), labelHeight);
+        yPos += mName->height();
+    }
+
+signals:
+
+    /// emits when the widget is clicked
+    void clicked(QString);
+
+protected:
+    /*!
+     * \brief resizeEvent called every time the main window is resized.
+     */
+    void resizeEvent(QResizeEvent*) { resize(); }
+
+    /*!
+     * \brief paintEvent used to draw the background of the widget.
+     */
+    void paintEvent(QPaintEvent*) {
+        QStyleOption opt;
+        opt.init(this);
+        QPainter painter(this);
+
+        painter.setRenderHint(QPainter::Antialiasing);
+        painter.fillRect(rect(), QBrush(QColor(32, 31, 31, 255)));
+
+        // draw line at bottom of widget
+        QRect area(x(), y(), width(), height());
+        QPainter linePainter(this);
+        linePainter.setRenderHint(QPainter::Antialiasing);
+        linePainter.setBrush(QBrush(QColor(255, 255, 255)));
+        QLine spacerLine(QPoint(area.x(), area.height() - 3),
+                         QPoint(area.width(), area.height() - 3));
+        linePainter.drawLine(spacerLine);
+    }
+
+    /*!
+     * \brief mouseReleaseEvent picks up when a click (or a tap on mobile) is released.
+     */
+    virtual void mouseReleaseEvent(QMouseEvent*) { emit clicked(mController.name()); }
+
+private:
+    /// create the icons for the the contgroller.
+    void createIcons(const cor::Controller& controller, cor::EArduCorStatus status) {
+        if (status == cor::EArduCorStatus::searching) {
+            // show a syncing widget, we haven't found it yet
+            mSyncWidget->setVisible(true);
+            mSyncWidget->changeState(ESyncState::syncing);
+        } else {
+            mSyncWidget->setVisible(false);
+            auto numOfLights = std::min(controller.names().size(), 6ul);
+            if (mIcons.size() != numOfLights || mIconPixmaps.size() != numOfLights) {
+                clearIconMemory();
+                mIconPixmaps = std::vector<QPixmap>(numOfLights);
+                mIcons = std::vector<QLabel*>(numOfLights, nullptr);
+                for (auto i = 0u; i < numOfLights; ++i) {
+                    mIcons[i] = new QLabel(this);
+                    mIcons[i]->setVisible(true);
+                }
+            }
+        }
+        resize();
+    }
+
+    /// update the lights for the controller
+    void updateLights(const std::vector<cor::Light>& lights) {
+        // allocate the widgets when we know how many lights there are
+        if (mLightVector == nullptr) {
+            mLightVector = new cor::LightVectorWidget(lights.size(), 1, true, this);
+            mLightVector->enableButtonInteraction(false);
+            if (lights.size() == 1) {
+                mLightVector->setButtonIconPercent(0.8f);
+            } else {
+                mLightVector->setButtonIconPercent(1.0f);
+            }
+        }
+        mLightVector->updateLights(lights);
+    }
+
+    /// clear the memory of the pre-existing icons
+    void clearIconMemory() {
+        for (auto icon : mIcons) {
+            delete icon;
+        }
+        mIcons.clear();
+        mIconPixmaps.clear();
+    }
+
+    /// label to display name
+    QLabel* mName;
+
+    /// sync widget to display when searching for the light
+    SyncWidget* mSyncWidget;
+
+    /// vector of icons for the lights attached to the controller
+    std::vector<QLabel*> mIcons;
+
+    /// vector of pixmaps for mIcons
+    std::vector<QPixmap> mIconPixmaps;
+
+    /// light vector for displaying the state of the lights.
+    cor::LightVectorWidget* mLightVector;
+
+    /// controller being displayed
+    cor::Controller mController;
+
+    /// status of the controller (whether it is connected or searching)
+    cor::EArduCorStatus mStatusType;
+};
+#endif // DISPLAYPREVIEWARDUCORWIDGET_H

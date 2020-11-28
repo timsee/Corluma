@@ -141,14 +141,10 @@ protected:
 private slots:
 
     /// QLineEdit had its text changed, check if its a valid name or not.
-    void lineEditChanged(QString) {
-        conditionsMet();
-    }
+    void lineEditChanged(QString) { conditionsMet(); }
 
     /// called when the groupRoom widget has a box that is checked.
-    void groupRoomBoxChecked() {
-        conditionsMet();
-    }
+    void groupRoomBoxChecked() { conditionsMet(); }
 
     /// the description text changed, verify that its less than the maximum length
     void descriptionChanged() {

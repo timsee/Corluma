@@ -964,3 +964,11 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed a bug where edit pages prompted you there was unsaved data after saving.
 - Fixed a bug in displaying the lights in a mood.
 - Fixed miscellaneous bugs.
+
+### **v0.20.6**
+### The ControllerPage Update
+- Added a `ControllerPage` for displaying light controllers.
+- Refactored `DiscoveryWidget` to be more uniform across light protocols.
+- Added full page widgets for displaying each type of controller.
+- Added widgets for previewing a controller in a list.
+- Fixed miscellaneous bugs.

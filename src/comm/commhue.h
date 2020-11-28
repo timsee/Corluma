@@ -98,6 +98,22 @@ public:
     HueMetadata hueLightFromLight(const cor::Light& device);
 
     /*!
+     * \brief lightFromMetadata converts a vector of HueMetadata into a cor::Light.
+     *
+     * \param metadata the metadata to convert to hue::Light
+     * \return the cor::Light that was represented by the metadata
+     */
+    cor::Light lightFromMetadata(const HueMetadata& metadata);
+
+    /*!
+     * \brief lightsFromMetadata converts a vector of HueMetadata into a vector of cor::Lights.
+     *
+     * \param metadata the vector of metadata to convert to hue::Lights
+     * \return the vector of cor::Lights that were represented by the vector of metadata
+     */
+    std::vector<cor::Light> lightsFromMetadata(const std::vector<HueMetadata>& metadata);
+
+    /*!
      * \brief sendSchedule send a schedule to the Hue Bridge. This schedule gets kept on the bridge
      * and will not be deleted unless explicitly asked to be deleted.
      * \param schedule the new schedule for the bridge.

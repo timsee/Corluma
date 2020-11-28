@@ -15,21 +15,14 @@
 #include "mainwindow.h"
 #include "utils/qt.h"
 
-DiscoveryHueWidget::DiscoveryHueWidget(CommLayer* comm, QWidget* parent)
-    : DiscoveryWidget(parent),
+DiscoveryHueWidget::DiscoveryHueWidget(QWidget* parent,
+                                       CommLayer* comm,
+                                       ControllerPage* controllerPage)
+    : DiscoveryWidget(parent, comm, controllerPage),
       mBridgeDiscovered{false},
-      mIPWidget(new cor::TextInputWidget(parentWidget()->parentWidget(),
-                                         "Add an IP Address for a Bridge:",
-                                         "192.168.0.100")),
-      mGreyout{new GreyOutOverlay(true, parentWidget()->parentWidget())},
       mHueDiscoveryState{EHueDiscoveryState::findingIpAddress} {
     mScale = 0.4f;
 
-    connect(mIPWidget, SIGNAL(textAdded(QString)), this, SLOT(textInputAddedIP(QString)));
-    connect(mIPWidget, SIGNAL(cancelClicked()), this, SLOT(closeIPWidget()));
-    mIPWidget->setVisible(false);
-
-    mComm = comm;
     auto mainWidget = parentWidget()->parentWidget();
 
     mLabel = new QLabel(this);
@@ -41,8 +34,6 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer* comm, QWidget* parent)
     mListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mListWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     QScroller::grabGesture(mListWidget->viewport(), QScroller::LeftMouseButtonGesture);
-
-    connect(mGreyout, SIGNAL(clicked()), this, SLOT(greyOutClicked()));
 
     // --------------
     // Set up HueLightInfoDiscovery
@@ -67,8 +58,6 @@ DiscoveryHueWidget::DiscoveryHueWidget(CommLayer* comm, QWidget* parent)
     mBridgeSchedulesWidget->setVisible(false);
     mBridgeSchedulesWidget->isOpen(false);
     connect(mBridgeSchedulesWidget, SIGNAL(closePressed()), this, SLOT(schedulesClosePressed()));
-
-    mGreyout->greyOut(false);
 }
 
 void DiscoveryHueWidget::hueDiscoveryUpdate(EHueDiscoveryState newState) {
@@ -120,6 +109,17 @@ void DiscoveryHueWidget::handleDiscovery(bool) {
     updateBridgeGUI();
 }
 
+void DiscoveryHueWidget::checkIfIPExists(const QString& IP) {
+    if (!mComm->hue()->discovery()->doesIPExist(IP)) {
+        mComm->hue()->discovery()->addManualIP(IP);
+        closeIPWidget();
+    } else {
+        QMessageBox reply;
+        reply.setText("IP Address already exists.");
+        reply.exec();
+    }
+}
+
 void DiscoveryHueWidget::updateBridgeGUI() {
     auto bridgeList = mComm->hue()->bridges().items();
     // get all not found bridges
@@ -133,7 +133,7 @@ void DiscoveryHueWidget::updateBridgeGUI() {
         int widgetIndex = -1;
         int i = 0;
         for (const auto& widget : mListWidget->widgets()) {
-            auto bridgeInfoWidget = dynamic_cast<hue::BridgeInfoWidget*>(widget);
+            auto bridgeInfoWidget = dynamic_cast<hue::DisplayPreviewBridgeWidget*>(widget);
             if (bridgeInfoWidget->bridge().id().isEmpty() && widget->key() == bridge.IP()) {
                 // if theres no unique ID yet for this bridge, check if we can add a username
                 if (!bridge.username().isEmpty()) {
@@ -163,7 +163,8 @@ void DiscoveryHueWidget::updateBridgeGUI() {
             if (key.isEmpty()) {
                 key = bridge.IP();
             }
-            auto widget = new hue::BridgeInfoWidget(bridge, key, mListWidget->mainWidget());
+            auto widget =
+                new hue::DisplayPreviewBridgeWidget(bridge, key, mListWidget->mainWidget());
             widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
             connect(widget,
                     SIGNAL(nameChanged(QString, QString)),
@@ -210,19 +211,6 @@ void DiscoveryHueWidget::schedulesClosePressed() {
     mBridgeSchedulesWidget->setVisible(false);
     mBridgeSchedulesWidget->resize();
     mBridgeSchedulesWidget->hide();
-}
-
-void DiscoveryHueWidget::closeIPWidget() {
-    mGreyout->greyOut(false);
-    mIPWidget->pushOut();
-    mIPWidget->setVisible(false);
-}
-
-void DiscoveryHueWidget::openIPWidget() {
-    mGreyout->greyOut(true);
-    mIPWidget->pushIn();
-    mIPWidget->raise();
-    mIPWidget->setVisible(true);
 }
 
 void DiscoveryHueWidget::changedName(const QString& key, const QString& newName) {
@@ -300,7 +288,8 @@ void DiscoveryHueWidget::greyOutClicked() {
 void DiscoveryHueWidget::bridgePressed(const QString& key) {
     const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
     if (bridgeResult.second) {
-        qDebug() << "bridge pressed" << bridgeResult.first;
+        mControllerPage->showHueBridge(bridgeResult.first);
+        cor::mainWindow()->showControllerPage();
     }
 }
 
@@ -345,7 +334,7 @@ void DiscoveryHueWidget::resize() {
     mHueLightDiscovery->resize();
     // call resize function of each widget
     for (auto widget : mListWidget->widgets()) {
-        auto bridgeInfoWidget = dynamic_cast<hue::BridgeInfoWidget*>(widget);
+        auto bridgeInfoWidget = dynamic_cast<hue::DisplayPreviewBridgeWidget*>(widget);
         bridgeInfoWidget->resize();
     }
 }

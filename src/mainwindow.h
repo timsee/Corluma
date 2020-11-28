@@ -13,6 +13,7 @@
 #include "comm/datasynctimeout.h"
 #include "comm/hue/lightdiscovery.h"
 #include "comm/syncstatus.h"
+#include "controllerpage.h"
 #include "cor/objects/page.h"
 #include "cor/widgets/button.h"
 #include "debugconnectionspoofer.h"
@@ -95,6 +96,12 @@ public slots:
 
     /// hides the discovery page
     void pushOutDiscovery();
+
+    /// show the controller page
+    void showControllerPage();
+
+    /// hide the controller page
+    void hideControllerPage();
 
     /// displays the color page
     void switchToColorPage();
@@ -404,6 +411,9 @@ private:
      * are saved so this page should only be used for configuring.
      */
     DiscoveryPage* mDiscoveryPage;
+
+    /// page that displays a light controller.
+    ControllerPage* mControllerPage;
 
     /*!
      * \brief mGreyOut overlay that greys out the entire main window. Used in conjunction with the

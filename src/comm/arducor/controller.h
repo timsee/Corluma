@@ -9,6 +9,9 @@
 #include "cor/protocols.h"
 
 namespace cor {
+
+enum class EArduCorStatus { searching, connected };
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2020.
@@ -62,7 +65,7 @@ public:
     /// getter for max hardware index
     int maxHardwareIndex() const noexcept { return mMaxHardwareIndex; }
 
-    /// getetr for using CRC
+    /// getter for using CRC
     bool isUsingCRC() const noexcept { return mIsUsingCRC; }
 
     std::uint32_t maxPacketSize() const noexcept { return mMaxPacketSize; }
@@ -152,6 +155,22 @@ cor::Controller jsonToController(const QJsonObject& object);
 
 /// converts a controller to a json object
 QJsonObject controllerToJson(const cor::Controller& controller);
+
+/// convert a controller name to a user-friendly name.
+inline QString controllerToGenericName(const cor::Controller& controller, EArduCorStatus status) {
+    if (status == EArduCorStatus::searching) {
+        return controller.name();
+    }
+
+    if (controller.maxHardwareIndex() == 1) {
+        return controller.names()[0];
+    }
+
+    if (controller.hardwareCapabilities() == 1) {
+        return "Raspberry Pi: " + controller.name();
+    }
+    return controller.name();
+}
 
 } // namespace cor
 

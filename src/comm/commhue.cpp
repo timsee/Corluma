@@ -711,6 +711,27 @@ HueMetadata CommHue::hueLightFromLight(const cor::Light& light) {
                     + light.uniqueID().toStdString());
 }
 
+
+cor::Light CommHue::lightFromMetadata(const HueMetadata& metadata) {
+    auto result = lightDict().item(metadata.uniqueID().toStdString());
+    if (result.second) {
+        return result.first;
+    }
+}
+
+std::vector<cor::Light> CommHue::lightsFromMetadata(
+    const std::vector<HueMetadata>& metadataVector) {
+    std::vector<cor::Light> lightVector;
+    lightVector.reserve(metadataVector.size());
+    for (auto metadata : metadataVector) {
+        auto light = lightFromMetadata(metadata);
+        if (light.isValid()) {
+            lightVector.emplace_back(light);
+        }
+    }
+    return lightVector;
+}
+
 void CommHue::createIdleTimeout(const hue::Bridge& bridge, int i, int minutes) {
     QJsonObject object;
     object["name"] = "Corluma_timeout_" + QString::number(i);
