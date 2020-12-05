@@ -84,21 +84,21 @@ DiscoveryPage::DiscoveryPage(QWidget* parent,
     mLastFloatingHeight = mHorizontalFloatingLayout->height();
     resizeButtonIcons();
 
-    mArduCorWidget = new DiscoveryArduCorWidget(this, mComm, controllerPage);
+    mArduCorWidget = new DiscoveryArduCorWidget(this, mComm, data, controllerPage);
     connect(mArduCorWidget,
             SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)),
             this,
             SLOT(widgetConnectionStateChanged(EProtocolType, EConnectionState)));
     mArduCorWidget->setVisible(false);
 
-    mHueWidget = new DiscoveryHueWidget(this, mComm, controllerPage);
+    mHueWidget = new DiscoveryHueWidget(this, mComm, data, controllerPage);
     connect(mHueWidget,
             SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)),
             this,
             SLOT(widgetConnectionStateChanged(EProtocolType, EConnectionState)));
     mHueWidget->setVisible(false);
 
-    mNanoLeafWidget = new DiscoveryNanoLeafWidget(this, mComm, controllerPage);
+    mNanoLeafWidget = new DiscoveryNanoLeafWidget(this, mComm, data, controllerPage);
     connect(mNanoLeafWidget,
             SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)),
             this,
@@ -450,6 +450,18 @@ void DiscoveryPage::startClicked() {
         mComm->hue()->discovery()->stopDiscovery();
     }
     emit startButtonClicked();
+}
+
+void DiscoveryPage::deleteLight(QString light) {
+    mArduCorWidget->deleteLight(light);
+    mHueWidget->deleteLight(light);
+    mNanoLeafWidget->deleteLight(light);
+}
+
+void DiscoveryPage::highlightLights() {
+    mArduCorWidget->highlightLights();
+    mNanoLeafWidget->highlightLights();
+    mHueWidget->highlightLights();
 }
 
 void DiscoveryPage::pushIn(const QPoint& startPoint, const QPoint& endPoint) {

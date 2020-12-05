@@ -92,8 +92,7 @@ SettingsPage::SettingsPage(QWidget* parent,
 
     mSectionTitles = {"Data", "About"};
 
-    mTitles = {"Find New Lights",
-               "View/Edit Lights",
+    mTitles = {"View/Edit Lights",
                "Add or Edit Group",
                "Backup Save Data",
 #ifndef MOBILE_BUILD
@@ -282,8 +281,6 @@ void SettingsPage::settingsButtonPressed(const QString& title) {
         lightInfoWidgetClicked();
     } else if (title == "Add or Edit Group") {
         addOrEditGroupPressed();
-    } else if (title == "Find New Lights") {
-        emit clickedDiscovery();
     }
 #ifdef USE_DEBUG_OPTIONS
     else if (title == kDebugSpoof) {
@@ -380,7 +377,7 @@ void SettingsPage::enableButtons(bool enable) {
         }
     } else {
         for (auto button : mButtons) {
-            if (button->text() == "Copyright" || button->text() == "Find New Lights") {
+            if (button->text() == "Copyright") {
                 button->shouldEnable(true);
             } else {
                 button->shouldEnable(false);

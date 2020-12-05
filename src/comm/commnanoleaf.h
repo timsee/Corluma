@@ -54,6 +54,9 @@ public:
     /// search for a nanoleaf light based off of serial number
     std::pair<nano::LeafMetadata, bool> findNanoLeafLight(const QString& serialNumber);
 
+    /// light from metadata
+    std::pair<nano::LeafLight, bool> lightFromMetadata(const nano::LeafMetadata& metadata);
+
     /// tests if an IP address is valid by sending a network request to it.
     void testIP(const nano::LeafMetadata& light);
 

@@ -21,7 +21,6 @@ namespace cor {
 
 GroupButton::GroupButton(QWidget* parent, const QString& text)
     : QWidget(parent),
-      mButtonState{EGroupButtonState::selectAll},
       mIsSelected{false},
       mShowButton{true},
       mHighlightByCountOfLights{true},
@@ -29,7 +28,7 @@ GroupButton::GroupButton(QWidget* parent, const QString& text)
       mReachableCount{0},
       mCheckedCount{0},
       mTitle{new QLabel(text, this)},
-      mButton{new QLabel(this)} {
+      mCheckBox{new cor::CheckBox(this)} {
     const QString transparentStyleSheet = "background-color: rgba(0,0,0,0);";
 
     mTitle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -37,9 +36,7 @@ GroupButton::GroupButton(QWidget* parent, const QString& text)
     mTitle->setAlignment(Qt::AlignVCenter);
     mTitle->setAttribute(Qt::WA_TransparentForMouseEvents);
 
-    mButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mButton->setStyleSheet(transparentStyleSheet);
-    mButton->setAttribute(Qt::WA_TransparentForMouseEvents);
+    connect(mCheckBox, SIGNAL(checkBoxClicked(bool)), this, SLOT(buttonPressed(bool)));
 
     handleSelectAllButton(0u, 0u);
 }
@@ -50,28 +47,11 @@ void GroupButton::resize() {
     // spacer is going to be applied twice, but adds 10% of the space overall.
     auto spaceWidth = (width() / 20);
     auto titleWidth = width() - size.width() - spaceWidth * 2;
-    mClearAllPixmap = QPixmap(":/images/selectAllIcon.png");
-    mClearAllPixmap = mClearAllPixmap.scaled(size.width(),
-                                             size.height(),
-                                             Qt::IgnoreAspectRatio,
-                                             Qt::SmoothTransformation);
-
-    mSelectAllPixmap = QPixmap(":/images/uncheckedBox.png");
-    mSelectAllPixmap = mSelectAllPixmap.scaled(size.width(),
-                                               size.height(),
-                                               Qt::IgnoreAspectRatio,
-                                               Qt::SmoothTransformation);
-
-    mDisabledPixmap = QPixmap(":/images/disabledX.png");
-    mDisabledPixmap = mDisabledPixmap.scaled(size.width(),
-                                             size.height(),
-                                             Qt::IgnoreAspectRatio,
-                                             Qt::SmoothTransformation);
 
     mTitle->setGeometry(spaceWidth, 0, titleWidth, height());
     if (mShowButton) {
-        mButton->setGeometry(titleWidth + spaceWidth, 0, width() - titleWidth, height());
-        mButton->setPixmap(currentPixmap());
+        mCheckBox->setGeometry(titleWidth + spaceWidth, 0, width() - titleWidth, height());
+        mCheckBox->resize();
     }
 
     if (handleSelectAllButton(mCheckedCount, mReachableCount)) {
@@ -82,25 +62,24 @@ void GroupButton::resize() {
 bool GroupButton::handleSelectAllButton(std::uint32_t checkedDevicesCount,
                                         uint32_t reachableDevicesCount) {
     bool renderFlag = false;
-    EGroupButtonState state;
+    cor::ECheckboxState state;
     if (reachableDevicesCount == 0) {
-        state = EGroupButtonState::disabled;
+        state = cor::ECheckboxState::disabled;
     } else if (checkedDevicesCount > 0) {
-        state = EGroupButtonState::clearAll;
+        state = cor::ECheckboxState::clearAll;
     } else {
-        state = EGroupButtonState::selectAll;
+        state = cor::ECheckboxState::selectAll;
     }
 
     if (mShowButton) {
-        mButton->setVisible(true);
-        if (mButtonState != state) {
-            mButtonState = state;
-            mButton->setPixmap(currentPixmap());
+        mCheckBox->setVisible(true);
+        if (mCheckBox->checkboxState() != state) {
+            mCheckBox->checkboxState(state);
             renderFlag = true;
         }
     } else {
         renderFlag = true;
-        mButton->setVisible(false);
+        mCheckBox->setVisible(false);
     }
 
     if (mCheckedCount != checkedDevicesCount || mReachableCount != reachableDevicesCount) {
@@ -119,40 +98,21 @@ void GroupButton::setSelectAll(bool shouldSelect) {
 }
 
 void GroupButton::buttonPressed(bool) {
-    if (mButtonState != EGroupButtonState::disabled) {
+    if (mCheckBox->checkboxState() != cor::ECheckboxState::disabled) {
         if (mCheckedCount > 0) {
-            mButtonState = EGroupButtonState::selectAll;
+            mCheckBox->checkboxState(cor::ECheckboxState::selectAll);
             mCheckedCount = 0;
             mShouldHighlight = false;
         } else {
             mCheckedCount = mReachableCount;
-            mButtonState = EGroupButtonState::clearAll;
+            mCheckBox->checkboxState(cor::ECheckboxState::clearAll);
             mShouldHighlight = true;
         }
 
-        mButton->setPixmap(currentPixmap());
-
-        emit groupSelectAllToggled(mTitle->text(), EGroupButtonState::clearAll == mButtonState);
+        emit groupSelectAllToggled(mTitle->text(),
+                                   cor::ECheckboxState::clearAll == mCheckBox->checkboxState());
         update();
     }
-}
-
-QColor GroupButton::computeHighlightColor(std::uint32_t checkedDeviceCount,
-                                          uint32_t reachableDeviceCount) {
-    QColor pureBlue(61, 142, 201);
-    QColor pureBlack(32, 31, 31);
-    QColor difference(pureBlue.red() - pureBlack.red(),
-                      pureBlue.green() - pureBlack.green(),
-                      pureBlue.blue() - pureBlack.blue());
-
-
-    if (checkedDeviceCount == 0 || reachableDeviceCount == 0) {
-        return {32, 31, 31, 255};
-    }
-    auto amountOfBlue = checkedDeviceCount / float(reachableDeviceCount);
-    return {int(amountOfBlue * difference.red() + pureBlack.red()),
-            int(amountOfBlue * difference.green() + pureBlack.green()),
-            int(amountOfBlue * difference.blue() + pureBlack.blue())};
 }
 
 void GroupButton::resizeEvent(QResizeEvent*) {
@@ -183,7 +143,7 @@ void GroupButton::paintEvent(QPaintEvent*) {
 
 void GroupButton::mouseReleaseEvent(QMouseEvent* event) {
     if (cor::isMouseEventTouchUpInside(event, this, true)) {
-        if (mShowButton && cor::isMouseEventTouchUpInside(event, mButton, false)) {
+        if (mShowButton && cor::isMouseEventTouchUpInside(event, mCheckBox, false)) {
             auto groupButtonsWidget = qobject_cast<MenuSubgroupContainer*>(parentWidget());
             if (groupButtonsWidget != nullptr) {
                 if (groupButtonsWidget->type() == cor::EWidgetType::condensed) {
@@ -198,19 +158,6 @@ void GroupButton::mouseReleaseEvent(QMouseEvent* event) {
         }
     }
     event->ignore();
-}
-
-
-const QPixmap& GroupButton::currentPixmap() {
-    switch (mButtonState) {
-        case EGroupButtonState::disabled:
-            return mDisabledPixmap;
-        case EGroupButtonState::clearAll:
-            return mClearAllPixmap;
-        case EGroupButtonState::selectAll:
-            return mSelectAllPixmap;
-    }
-    THROW_EXCEPTION("Do not recognize pixmap");
 }
 
 QSize GroupButton::iconSize() {

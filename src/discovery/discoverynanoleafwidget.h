@@ -3,6 +3,8 @@
 
 #include <QHBoxLayout>
 
+#include "comm/commnanoleaf.h"
+#include "cor/lightlist.h"
 #include "cor/widgets/listwidget.h"
 #include "discoverywidget.h"
 #include "editablefieldwidget.h"
@@ -29,6 +31,7 @@ public:
      */
     explicit DiscoveryNanoLeafWidget(QWidget* parent,
                                      CommLayer* comm,
+                                     cor::LightList* selectedLights,
                                      ControllerPage* controllerPage);
 
     /// See DiscoveryWidget.h
@@ -43,6 +46,12 @@ public:
     /// default value for the IP widget.
     QString IPWidgetDefaultValue() override { return "192.168.0.100"; }
 
+    /// delete a light from the discovery page.
+    void deleteLight(const QString&) override;
+
+    /// handles how to higlight lights.
+    void highlightLights() override;
+
 protected:
     /// called when the widget resizes
     virtual void resizeEvent(QResizeEvent*) override;
@@ -56,8 +65,18 @@ private slots:
     void nanoleafClicked(QString);
 
 private:
+    /// handle how to display or update a nanoleaf
+    void handleNanoleaf(const nano::LeafMetadata& leafMetadata, nano::ELeafDiscoveryState status);
+
+    /// handle when nanoleafs are duplicated (such as when one was in discovery but was now fully
+    /// discovered)
+    void removeDuplicatedNanoleafs();
+
     /// programmatically resize
     void resize();
+
+    /// list of selected lights.
+    cor::LightList* mSelectedLights;
 
     /// widget for displaying a scrollable list of other widgets
     cor::ListWidget* mListWidget;

@@ -53,8 +53,8 @@ public:
     /// true if this is currently active, false if its not.
     bool isActive();
 
-    /// deletes light from device table and triggers deleting it from discovery data
-    void deleteLight(const cor::Light& light);
+    /// delete a controller, and all of its associated lights.
+    void deleteController(const QString& controller);
 
     /*!
      * \brief commByType returns the raw CommPtr based off the given commType
@@ -149,12 +149,10 @@ private:
     cor::Dictionary<ArduCorMetadata> mArduCorLights;
 
     /*!
-     * \brief preparePacketForTransmission prepare internal states and variables for sending a new
-     * packet and adjust packet
-     *        to fix issues with sending it, if needed
-     * \param controller the controller to send the packet the to
-     * \param packet the packet that is about to be sent
-     * \return true to reset state timeout, false to do nothing
+     * \brief preparePacketForTransmission prepare internal states and variables for sending a
+     * new packet and adjust packet to fix issues with sending it, if needed \param controller
+     * the controller to send the packet the to \param packet the packet that is about to be
+     * sent \return true to reset state timeout, false to do nothing
      */
     bool preparePacketForTransmission(const cor::Controller& controller, QString& packet);
 
@@ -170,10 +168,9 @@ private:
 
     /*!
      * \brief verifyCustomColorUpdatePacket takes a vector and checks that all vlaues
-     *        are wirthing the proper range for a custom color update. Returns true if the packet
-     *        can be used.
-     * \param packetIntVector The packet for testing
-     * \return true if its a valid packet, false othwerise.
+     *        are wirthing the proper range for a custom color update. Returns true if the
+     * packet can be used. \param packetIntVector The packet for testing \return true if its a
+     * valid packet, false othwerise.
      */
     bool verifyCustomColorUpdatePacket(const std::vector<int>& packetIntVector);
 

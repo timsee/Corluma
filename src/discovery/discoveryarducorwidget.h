@@ -30,6 +30,7 @@ public:
      */
     explicit DiscoveryArduCorWidget(QWidget* parent,
                                     CommLayer* comm,
+                                    cor::LightList* selectedLights,
                                     ControllerPage* controllerPage);
 
     /// See DiscoveryWidget.h
@@ -43,6 +44,12 @@ public:
 
     /// default value for the IP widget
     QString IPWidgetDefaultValue() override { return "192.168.0.101"; }
+
+    /// delete a light from the discovery page.
+    void deleteLight(const QString&) override;
+
+    /// handles how to higlight lights.
+    void highlightLights() override;
 
 private slots:
 
@@ -71,6 +78,9 @@ private:
 
     /// handle how to display or update a controller
     void handleController(const cor::Controller& controller, cor::EArduCorStatus status);
+
+    /// list of selected lights.
+    cor::LightList* mSelectedLights;
 
     /// widget for displaying a scrollable list of other widgets
     cor::ListWidget* mListWidget;

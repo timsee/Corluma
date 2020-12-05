@@ -13,7 +13,7 @@
 #include "comm/commnanoleaf.h"
 #include "utils/reachability.h"
 
-// #define DEBUG_LEAF_DISCOVERY
+//#define DEBUG_LEAF_DISCOVERY
 
 namespace nano {
 
@@ -138,7 +138,7 @@ void LeafDiscovery::removeNanoleaf(const nano::LeafMetadata& controllerToRemove)
 }
 
 void LeafDiscovery::receivedUPnP(const QHostAddress&, const QString& payload) {
-    if (payload.contains("nanoleaf_aurora")) {
+    if (payload.contains("nanoleaf") || payload.contains("Nanoleaf_aurora")) {
 #ifdef DEBUG_LEAF_DISCOVERY
         qDebug() << __func__ << payload;
 #endif
@@ -163,8 +163,9 @@ void LeafDiscovery::receivedUPnP(const QHostAddress&, const QString& payload) {
                 deviceName = paramCopy.remove("nl-devicename: ");
             }
         }
-        nano::LeafMetadata light("", deviceName);
+        nano::LeafMetadata light("Unknown--" + ip, deviceName);
         light.addConnectionInfo(ip, port);
+        light.IPVerified(true);
         light.name(deviceName);
 
         // search if its found already
@@ -176,15 +177,16 @@ void LeafDiscovery::receivedUPnP(const QHostAddress&, const QString& payload) {
             }
         }
 
-        // the light doesn't have a unique ID yet, jsut its hardware name, so look for hardawre name
+        // the light doesn't have a unique ID yet, jsut its hardware name, so look for hardware name
         for (const auto& foundController : mFoundLights.items()) {
             if (foundController.hardwareName() == light.hardwareName()) {
                 isFound = true;
             }
         }
 
-        if (!isFound && (light.IP() != "http://")) { // second check is there for an edge case where
-                                                     // the nanoleaf did not properly configure
+        if (!isFound && (light.IP() != "http://")) {
+            // second check is there for an edge case where
+            // the nanoleaf did not properly configure
             mUnknownLights.push_back(light);
         }
     }
@@ -215,6 +217,17 @@ void LeafDiscovery::startupTimerTimeout() {
     mStartupTimerFinished = true;
     // this automatically stops. the discovery page will immediately turn it back on, if its open.
     stopDiscovery();
+}
+
+void LeafDiscovery::verifyIP(const QString& IP) {
+    // first get IP
+    QStringList pieces = IP.split(":");
+    auto splitIP = pieces[1];
+    for (auto&& unknownLight : mUnknownLights) {
+        if (unknownLight.IP().contains(splitIP)) {
+            unknownLight.IPVerified(true);
+        }
+    }
 }
 
 void LeafDiscovery::discoveryRoutine() {
@@ -320,26 +333,38 @@ std::pair<nano::LeafMetadata, bool> LeafDiscovery::handleUndiscoveredLight(
 }
 
 void LeafDiscovery::addIP(const QString& ip) {
-    QString ipAddr = ip;
-    if (!ip.contains("http:")) {
-        ipAddr = "http://" + ip;
+    // verify that the IP address doesn't already exist in any lists
+    if (!doesIPExist(ip)) {
+        QString ipAddr = ip;
+        if (!ip.contains("http:")) {
+            ipAddr = "http://" + ip;
+        }
+        // get device count + 1 for unique naming
+        auto deviceCount = int(mFoundLights.size() + mNotFoundLights.size() + 1);
+        nano::LeafMetadata controller(QString("Unknown--" + ipAddr),
+                                      "Nanoleaf" + QString::number(deviceCount));
+        controller.addConnectionInfo(ipAddr, 16201);
+        controller.IPVerified(false);
+        controller.name("Nanoleaf" + QString::number(deviceCount));
+        mUnknownLights.push_back(controller);
     }
-    // get device count + 1 for unique naming
-    auto deviceCount = int(mFoundLights.size() + mNotFoundLights.size() + 1);
-    nano::LeafMetadata controller("", "Nanoleaf" + QString::number(deviceCount));
-    controller.addConnectionInfo(ipAddr, 16201);
-    controller.name("Nanoleaf" + QString::number(deviceCount));
-    mUnknownLights.push_back(controller);
 }
 
 bool LeafDiscovery::doesIPExist(const QString& IP) {
+    QStringList pieces = IP.split(":");
+    auto splitIP = pieces[1];
     for (const auto& notFoundLight : mNotFoundLights) {
-        if (notFoundLight.IP() == IP) {
+        if (notFoundLight.IP().contains(IP)) {
             return true;
         }
     }
     for (const auto& foundLight : mFoundLights.items()) {
-        if (foundLight.IP() == IP) {
+        if (foundLight.IP().contains(IP)) {
+            return true;
+        }
+    }
+    for (const auto& unknownLights : mUnknownLights) {
+        if (unknownLights.IP().contains(IP)) {
             return true;
         }
     }

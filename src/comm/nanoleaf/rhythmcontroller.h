@@ -19,20 +19,19 @@ class RhythmController {
 public:
     RhythmController() : mIsConnected{false} {}
 
-    /// constructor
     RhythmController(const QJsonObject& object) {
         mIsConnected = object["rhythmConnected"].toBool();
         if (mIsConnected) {
-            if (object["rhythmActive"].isBool() && object["rhythmId"].isString()
+            if (object["rhythmActive"].isBool() && object["rhythmId"].isDouble()
                 && object["hardwareVersion"].isString() && object["firmwareVersion"].isString()
-                && object["auxAvailable"].isBool() && object["rhythmMode"].isString()
-                && object["rhythmPos"].isString()) {
+                && object["auxAvailable"].isBool() && object["rhythmMode"].isDouble()
+                && object["rhythmPos"].isObject()) {
                 mIsActive = object["rhythmActive"].toBool();
-                mID = object["rhythmId"].toString();
+                mID = int(object["rhythmId"].toDouble());
                 mHardwareVersion = object["hardwareVersion"].toString();
                 mFirmwareVersion = object["firmwareVersion"].toString();
                 mAuxAvailable = object["auxAvailable"].toBool();
-                mMode = object["rhythmMode"].toString();
+                mMode = int(object["rhythmMode"].toDouble());
                 mPosition = object["rhythmPos"].toString();
             }
         }
@@ -45,7 +44,7 @@ public:
     bool isActive() const noexcept { return mIsActive; }
 
     /// ID for the Rhythm Controller
-    const QString& ID() const noexcept { return mID; }
+    const int& ID() const noexcept { return mID; }
 
     /// hardware version
     const QString& hardwareVersion() const noexcept { return mHardwareVersion; }
@@ -57,7 +56,7 @@ public:
     bool auxAvailable() const noexcept { return mAuxAvailable; }
 
     /// current mode of Rhythm controller
-    const QString& mode() const noexcept { return mMode; }
+    int mode() const noexcept { return mMode; }
 
     /// current position of the Rhythm controller
     const QString& position() const noexcept { return mPosition; }
@@ -70,7 +69,7 @@ private:
     bool mIsActive;
 
     /// ID for the Rhythm Controller
-    QString mID;
+    int mID;
 
     /// hardware version
     QString mHardwareVersion;
@@ -82,7 +81,7 @@ private:
     bool mAuxAvailable;
 
     /// current mode of Rhythm controller
-    QString mMode;
+    int mMode;
 
     /// current position of the Rhythm controller
     QString mPosition;

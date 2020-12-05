@@ -379,6 +379,13 @@ std::pair<nano::LeafMetadata, bool> CommNanoleaf::findNanoLeafLight(const QStrin
     return mDiscovery->findLightBySerial(serialNumber);
 }
 
+std::pair<nano::LeafLight, bool> CommNanoleaf::lightFromMetadata(
+    const nano::LeafMetadata& metadata) {
+    auto light = nano::LeafLight(metadata);
+    auto result = fillLight(light);
+    return std::make_pair(light, result);
+}
+
 void CommNanoleaf::handleInitialDiscovery(const nano::LeafMetadata& light, const QString& payload) {
     // adds light if it can be fully discovered
     auto result = mDiscovery->handleUndiscoveredLight(light, payload);
@@ -429,9 +436,12 @@ void CommNanoleaf::replyFinished(QNetworkReply* reply) {
             handleNetworkPacket(light, payload);
         }
     } else if (reply->error() == QNetworkReply::ConnectionRefusedError) {
-        QString payload = reply->readAll().trimmed();
-
         qDebug() << "Nanoleaf connection refused from " << reply->url().toString();
+        // TODO: is there a more elegant way to check if the IP address contains a nanoleaf without
+        // NUPnP or an auth token?
+        mDiscovery->verifyIP(reply->url().toString());
+    } else if (reply->errorString() == "Forbidden") {
+        qDebug() << "Nanoleaf connection forbidden from " << reply->url().toString();
     } else {
         qDebug() << " unknown error from " << reply->url().toString() << reply->errorString();
     }
@@ -1090,7 +1100,7 @@ void CommNanoleaf::deleteLight(const cor::Light& leafLight) {
     auto light = result.first;
     if (result.second) {
         // remove from comm data
-        removeLight(light.hardwareName());
+        removeLight(light.serialNumber());
 
         // remove from saved data
         mDiscovery->removeNanoleaf(light);

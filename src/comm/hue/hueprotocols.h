@@ -3,10 +3,10 @@
 
 #include <list>
 
+#include <unordered_map>
 #include "cor/dictionary.h"
 #include "cor/objects/light.h"
 #include "cor/protocols.h"
-
 /*!
  * \copyright
  * Copyright (C) 2015 - 2020.
@@ -110,7 +110,7 @@ inline QString hueTypeToString(EHueType type) {
 
 namespace hue {
 
-static std::vector<std::pair<std::string, ELightHardwareType>> vect = {
+static std::unordered_map<std::string, ELightHardwareType> modelIDToLightTypeMap = {
     {"LCT001", ELightHardwareType::hueBulb},       {"LCT007", ELightHardwareType::hueBulb},
     {"LCT010", ELightHardwareType::hueBulb},       {"LCT014", ELightHardwareType::hueBulb},
     {"LCT015", ELightHardwareType::hueBulb},       {"LTW010", ELightHardwareType::hueBulb},
@@ -144,15 +144,13 @@ static std::vector<std::pair<std::string, ELightHardwareType>> vect = {
     {"LTT001", ELightHardwareType::hueLamp},       {"LDT001", ELightHardwareType::hueLamp},
     {"MWM001", ELightHardwareType::hueLamp},       {"LST002", ELightHardwareType::lightStrip},
     {"LST001", ELightHardwareType::lightStrip},    {"LLC020", ELightHardwareType::hueGo},
-    {"LCT024", ELightHardwareType::huePlay}};
-
-static cor::Dictionary<ELightHardwareType> modelDict = cor::Dictionary<ELightHardwareType>(vect);
+    {"LCT024", ELightHardwareType::huePlay},       {"440400982841", ELightHardwareType::huePlay}};
 
 /// converts model from phillips bridge to corluma hardware type
 inline ELightHardwareType modelToHardwareType(const QString& modelID) {
-    auto itemResult = modelDict.item(modelID.toStdString());
-    if (itemResult.second) {
-        return itemResult.first;
+    auto result = modelIDToLightTypeMap.find(modelID.toStdString());
+    if (result != modelIDToLightTypeMap.end()) {
+        return result->second;
     } else {
         return ELightHardwareType::hueBulb;
     }

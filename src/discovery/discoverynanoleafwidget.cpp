@@ -14,8 +14,10 @@
 
 DiscoveryNanoLeafWidget::DiscoveryNanoLeafWidget(QWidget* parent,
                                                  CommLayer* comm,
+                                                 cor::LightList* selectedLights,
                                                  ControllerPage* controllerPage)
-    : DiscoveryWidget(parent, comm, controllerPage) {
+    : DiscoveryWidget(parent, comm, controllerPage),
+      mSelectedLights{selectedLights} {
     mLabel = new QLabel(this);
     mLabel->setWordWrap(true);
     mLabel->setText("Looking for NanoLeaf...");
@@ -33,36 +35,33 @@ void DiscoveryNanoLeafWidget::handleDiscovery(bool) {
 
     const auto& foundNanoleafs = mComm->nanoleaf()->discovery()->foundLights().items();
     const auto& notFoundNanoleafs = mComm->nanoleaf()->discovery()->notFoundLights();
-    auto nanoleafList = foundNanoleafs;
-    // get all not found bridges
-    for (const auto& controller : notFoundNanoleafs) {
-        nanoleafList.push_back(controller);
+    const auto& unknownLights = mComm->nanoleaf()->discovery()->unknownLights();
+
+    // loop through all found nanoleafs
+    for (const auto& nanoleaf : foundNanoleafs) {
+        handleNanoleaf(nanoleaf, nano::ELeafDiscoveryState::connected);
     }
 
-    // loop through all nanoleafs
-    for (const auto& nanoleaf : nanoleafList) {
-        // check if light already exists in list
-        int widgetIndex = -1;
-        int i = 0;
-        for (const auto& widget : mListWidget->widgets()) {
-            auto nanoleafWidget = dynamic_cast<DisplayPreviewNanoleafWidget*>(widget);
-            if (widget->key() == nanoleaf.serialNumber()) {
-                // standard case, theres a unique ID for this bridge
-                widgetIndex = i;
-                nanoleafWidget->updateNanoleaf(nanoleaf);
-            }
-            ++i;
-        }
-
-        // if it doesnt exist, add it
-        if (widgetIndex == -1) {
-            auto widget = new DisplayPreviewNanoleafWidget(nanoleaf, mListWidget->mainWidget());
-            widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-            connect(widget, SIGNAL(clicked(QString)), this, SLOT(nanoleafClicked(QString)));
-            mListWidget->insertWidget(widget);
-            resize();
-        }
+    // loop through all not found nanoleafs
+    for (const auto& nanoleaf : notFoundNanoleafs) {
+        handleNanoleaf(nanoleaf, nano::ELeafDiscoveryState::reverifying);
     }
+
+    // loop through all partially discovered nanoleafs
+    for (const auto& nanoleaf : unknownLights) {
+        // figure out the discovery state of each unknown light
+        nano::ELeafDiscoveryState status;
+        if (!nanoleaf.IPVerified()) {
+            status = nano::ELeafDiscoveryState::searchingIP;
+        } else if (nanoleaf.authToken().isEmpty()) {
+            status = nano::ELeafDiscoveryState::searchingAuth;
+        } else {
+            status = nano::ELeafDiscoveryState::reverifying;
+        }
+        handleNanoleaf(nanoleaf, status);
+    }
+
+    removeDuplicatedNanoleafs();
 
     ENanoleafDiscoveryState discoveryState = mComm->nanoleaf()->discovery()->state();
     switch (discoveryState) {
@@ -77,15 +76,13 @@ void DiscoveryNanoLeafWidget::handleDiscovery(bool) {
             mLabel->setText("Looking for a NanoLeaf Aurora. This may take up to a minute...");
             break;
         case ENanoleafDiscoveryState::unknownNanoleafsFound:
-            mLabel->setText("Aurora found! Hold the power button for around 5 "
-                            "seconds, until the LED to the left of it starts blinking. ");
+            mLabel->setText("Nanoleaf found!");
             break;
         case ENanoleafDiscoveryState::someNanoleafsConnected:
-            mLabel->setText("Additional Aurora found! Please hold the power button for around 5 "
-                            "seconds, until the LED to the left of it starts blinking. ");
+            mLabel->setText("Additional Nanoleaf found!");
             break;
         case ENanoleafDiscoveryState::allNanoleafsConnected:
-            mLabel->setText("All NanoLeaf discovered and fully connected!");
+            mLabel->setText("");
             break;
     }
 
@@ -99,6 +96,61 @@ void DiscoveryNanoLeafWidget::handleDiscovery(bool) {
     }
 }
 
+void DiscoveryNanoLeafWidget::handleNanoleaf(const nano::LeafMetadata& nanoleaf,
+                                             nano::ELeafDiscoveryState status) {
+    // check if light already exists in list
+    int widgetIndex = -1;
+    int i = 0;
+    for (const auto& widget : mListWidget->widgets()) {
+        auto nanoleafWidget = dynamic_cast<DisplayPreviewNanoleafWidget*>(widget);
+        if (widget->key() == nanoleaf.serialNumber()) {
+            // standard case, theres a unique ID for this bridge
+            widgetIndex = i;
+            nanoleafWidget->updateNanoleaf(nanoleaf, status);
+            nanoleafWidget->setShouldHighlight(
+                mSelectedLights->doesLightExist(nanoleaf.serialNumber()));
+        }
+        ++i;
+    }
+
+    // if it doesnt exist, add it
+    if (widgetIndex == -1) {
+        auto widget = new DisplayPreviewNanoleafWidget(nanoleaf, status, mListWidget->mainWidget());
+        widget->setShouldHighlight(mSelectedLights->doesLightExist(nanoleaf.serialNumber()));
+        connect(widget, SIGNAL(clicked(QString)), this, SLOT(nanoleafClicked(QString)));
+        mListWidget->insertWidget(widget);
+        resize();
+    }
+}
+
+void DiscoveryNanoLeafWidget::removeDuplicatedNanoleafs() {
+    std::vector<QString> widgetsToRemove;
+    for (const auto& widget : mListWidget->widgets()) {
+        auto nanoleafWidget = dynamic_cast<DisplayPreviewNanoleafWidget*>(widget);
+        if (nanoleafWidget->nanoleaf().serialNumber().contains("Unknown--")) {
+            // check if this unknown has been discovered
+            // get its IP address
+            QStringList splitIP = nanoleafWidget->nanoleaf().serialNumber().split("//");
+            auto IP = splitIP[1];
+            for (const auto& innerWidget : mListWidget->widgets()) {
+                auto innerNanoleafWidget = dynamic_cast<DisplayPreviewNanoleafWidget*>(innerWidget);
+                if (innerNanoleafWidget->status() == nano::ELeafDiscoveryState::connected
+                    && innerNanoleafWidget->nanoleaf().IP().contains(IP)) {
+                    widgetsToRemove.push_back(nanoleafWidget->nanoleaf().serialNumber());
+                }
+            }
+        }
+    }
+
+    bool shouldResize = !widgetsToRemove.empty();
+    for (auto widgetToRemove : widgetsToRemove) {
+        mListWidget->removeWidget(widgetToRemove);
+    }
+    if (shouldResize) {
+        resize();
+    }
+}
+
 void DiscoveryNanoLeafWidget::checkIfIPExists(const QString& IP) {
     if (!mComm->nanoleaf()->discovery()->doesIPExist(IP)) {
         mComm->nanoleaf()->discovery()->addIP(IP);
@@ -107,6 +159,23 @@ void DiscoveryNanoLeafWidget::checkIfIPExists(const QString& IP) {
         QMessageBox reply;
         reply.setText("IP Address already exists.");
         reply.exec();
+    }
+}
+
+void DiscoveryNanoLeafWidget::deleteLight(const QString& light) {
+    std::vector<QString> widgetsToRemove;
+    for (const auto& widget : mListWidget->widgets()) {
+        auto nanoleafWidget = dynamic_cast<DisplayPreviewNanoleafWidget*>(widget);
+        if (nanoleafWidget->nanoleaf().serialNumber() == light) {
+            widgetsToRemove.emplace_back(nanoleafWidget->nanoleaf().serialNumber());
+        }
+    }
+    bool shouldResize = !widgetsToRemove.empty();
+    for (auto widgetToRemove : widgetsToRemove) {
+        mListWidget->removeWidget(widgetToRemove);
+    }
+    if (shouldResize) {
+        resize();
     }
 }
 
@@ -151,5 +220,13 @@ void DiscoveryNanoLeafWidget::greyOutClicked() {
     mGreyout->greyOut(false);
     if (mIPWidget->isOpen()) {
         closeIPWidget();
+    }
+}
+
+void DiscoveryNanoLeafWidget::highlightLights() {
+    for (auto widget : mListWidget->widgets()) {
+        auto nanoleafWidget = dynamic_cast<DisplayPreviewNanoleafWidget*>(widget);
+        nanoleafWidget->setShouldHighlight(
+            mSelectedLights->doesLightExist(nanoleafWidget->nanoleaf().serialNumber()));
     }
 }

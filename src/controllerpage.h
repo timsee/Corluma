@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "comm/commlayer.h"
+#include "cor/lightlist.h"
 #include "cor/objects/page.h"
 #include "cor/widgets/topwidget.h"
 #include "display/displayarducorcontrollerwidget.h"
@@ -24,7 +25,7 @@
 class ControllerPage : public QWidget, public cor::Page {
     Q_OBJECT
 public:
-    explicit ControllerPage(QWidget* parent, CommLayer* comm);
+    explicit ControllerPage(QWidget* parent, CommLayer* comm, cor::LightList* selectedLights);
 
     /// show page
     void showPage(QPoint);
@@ -44,10 +45,19 @@ public:
     /// change row height
     void changeRowHeight(int height);
 
+    /// highlight lights on the controller page.
+    void highlightLights();
+
 signals:
 
     /// back button pressed
     void backButtonPressed();
+
+    /// delete clicked from a controller page
+    void deleteLight(QString);
+
+    /// a light is slected from the controller page, true if seleceted, false if deselected.
+    void lightSelected(QString, bool);
 
 protected:
     /*!
@@ -65,9 +75,30 @@ private slots:
     /// handles when back button is pressed
     void backButtonPressed(bool);
 
+    /// handle when a light is deleted.
+    void handleDeleteLight(QString);
+
+    /// handle when a full controller is deleted. this deletes all of its lights.
+    void handleDeleteController(QString, EProtocolType);
+
+    /// handle when a light is clicked.
+    void lightClicked(QString, bool);
+
+    /// handle when a controller is clicked.
+    void controllerClicked(QString, EProtocolType, bool);
+
+    /// renders and UI that needs explicit updates.
+    void renderUI();
+
 private:
     /// pointer to commlayer
     CommLayer* mComm;
+
+    /// list of selected lights
+    cor::LightList* mSelectedLights;
+
+    /// timer for rendering.
+    QTimer* mRenderTimer;
 
     /// top widget with settings title and close button
     cor::TopWidget* mTopWidget;

@@ -6,11 +6,16 @@
 #include <QStyleOption>
 #include <QWidget>
 #include "comm/arducor/controller.h"
+#include "cor/lightlist.h"
 #include "cor/widgets/lightvectorwidget.h"
 #include "cor/widgets/listitemwidget.h"
 #include "syncwidget.h"
 #include "utils/qt.h"
 
+namespace {
+const QString kTransparentStyleSheet = "background-color: rgba(0,0,0,0);";
+
+}
 
 /*!
  * \copyright
@@ -27,13 +32,17 @@ public:
     /// constructor
     explicit DisplayPreviewArduCorWidget(const cor::Controller& controller,
                                          cor::EArduCorStatus status,
+                                         cor::LightList* selectedLights,
                                          QWidget* parent)
         : cor::ListItemWidget(controller.name(), parent),
           mName{new QLabel(cor::controllerToGenericName(controller, status), this)},
+          mSelectedLights{selectedLights},
           mSyncWidget{new SyncWidget(this)},
           mLightVector{nullptr},
           mController{controller},
           mStatusType{status} {
+        mName->setStyleSheet(kTransparentStyleSheet);
+        mSyncWidget->setStyleSheet(kTransparentStyleSheet);
         createIcons(controller, status);
     }
 
@@ -47,11 +56,29 @@ public:
     void updateController(const cor::Controller& controller,
                           const std::vector<cor::Light>& lights,
                           cor::EArduCorStatus status) {
+        mLights = lights;
         mController = controller;
         mStatusType = status;
         mName->setText(cor::controllerToGenericName(controller, status));
         createIcons(controller, status);
         updateLights(lights);
+
+        highlightLights();
+    }
+
+    /// highlight lights
+    void highlightLights() {
+        mReachableCount = 0u;
+        mSelectedCount = 0u;
+        for (auto light : mLights) {
+            if (light.isReachable()) {
+                mReachableCount++;
+            }
+            if (mSelectedLights->doesLightExist(light.uniqueID())) {
+                mSelectedCount++;
+            }
+        }
+        update();
     }
 
     /// programmatically resize.
@@ -63,29 +90,16 @@ public:
             auto iconHeight = this->height() / 2;
             mSyncWidget->setGeometry(0, yPos, iconHeight, iconHeight);
             yPos += mSyncWidget->height();
+            if (mLightVector != nullptr) {
+                mLightVector->setVisible(false);
+            }
         } else {
-            if (!mIcons.empty()) {
-                if (mIcons.size() == 1) {
-                    auto iconHeight = this->height() / 2;
-                    auto i = 0;
-                    if (mIconPixmaps[i].size() != QSize(iconHeight, iconHeight)) {
-                        mIcons[i]->setGeometry(i * (1.1 * iconHeight),
-                                               yPos,
-                                               iconHeight,
-                                               iconHeight);
-                        mIconPixmaps[i] = lightHardwareTypeToPixmap(mController.hardwareTypes()[i]);
-                        mIconPixmaps[i] = mIconPixmaps[i].scaled(iconHeight,
-                                                                 iconHeight,
-                                                                 Qt::IgnoreAspectRatio,
-                                                                 Qt::SmoothTransformation);
-                        mIcons[i]->setPixmap(mIconPixmaps[i]);
-                        mIcons[i]->setVisible(true);
-                    }
-                    mLightVector->setGeometry(iconHeight * 1.1, yPos, iconHeight, iconHeight);
-                    mLightVector->setVisible(true);
-                } else {
-                    auto iconHeight = this->height() / 3;
-                    for (auto i = 0u; i < mIcons.size(); ++i) {
+            if (mLightVector != nullptr) {
+                mLightVector->setVisible(true);
+                if (!mIcons.empty()) {
+                    if (mIcons.size() == 1) {
+                        auto iconHeight = this->height() / 2;
+                        auto i = 0;
                         if (mIconPixmaps[i].size() != QSize(iconHeight, iconHeight)) {
                             mIcons[i]->setGeometry(i * (1.1 * iconHeight),
                                                    yPos,
@@ -100,13 +114,33 @@ public:
                             mIcons[i]->setPixmap(mIconPixmaps[i]);
                             mIcons[i]->setVisible(true);
                         }
+                        mLightVector->setGeometry(iconHeight * 1.1, yPos, iconHeight, iconHeight);
+                        mLightVector->setVisible(true);
+                    } else {
+                        auto iconHeight = this->height() / 3;
+                        for (auto i = 0u; i < mIcons.size(); ++i) {
+                            if (mIconPixmaps[i].size() != QSize(iconHeight, iconHeight)) {
+                                mIcons[i]->setGeometry(i * (1.1 * iconHeight),
+                                                       yPos,
+                                                       iconHeight,
+                                                       iconHeight);
+                                mIconPixmaps[i] =
+                                    lightHardwareTypeToPixmap(mController.hardwareTypes()[i]);
+                                mIconPixmaps[i] = mIconPixmaps[i].scaled(iconHeight,
+                                                                         iconHeight,
+                                                                         Qt::IgnoreAspectRatio,
+                                                                         Qt::SmoothTransformation);
+                                mIcons[i]->setPixmap(mIconPixmaps[i]);
+                                mIcons[i]->setVisible(true);
+                            }
+                        }
+                        mLightVector->setGeometry(0u,
+                                                  yPos + iconHeight,
+                                                  (iconHeight * 1.1) * mIcons.size(),
+                                                  iconHeight);
+                        mLightVector->setVisible(true);
+                        yPos += mLightVector->height();
                     }
-                    mLightVector->setGeometry(0u,
-                                              yPos + iconHeight,
-                                              (iconHeight * 1.1) * mIcons.size(),
-                                              iconHeight);
-                    mLightVector->setVisible(true);
-                    yPos += mLightVector->height();
                 }
                 yPos += mIcons[0]->height();
             }
@@ -135,7 +169,7 @@ protected:
         QPainter painter(this);
 
         painter.setRenderHint(QPainter::Antialiasing);
-        painter.fillRect(rect(), QBrush(QColor(32, 31, 31, 255)));
+        painter.fillRect(rect(), cor::computeHighlightColor(mSelectedCount, mReachableCount));
 
         // draw line at bottom of widget
         QRect area(x(), y(), width(), height());
@@ -161,7 +195,7 @@ private:
             mSyncWidget->changeState(ESyncState::syncing);
         } else {
             mSyncWidget->setVisible(false);
-            auto numOfLights = std::min(controller.names().size(), 6ul);
+            auto numOfLights = std::min(std::uint32_t(controller.names().size()), 6u);
             if (mIcons.size() != numOfLights || mIconPixmaps.size() != numOfLights) {
                 clearIconMemory();
                 mIconPixmaps = std::vector<QPixmap>(numOfLights);
@@ -181,6 +215,7 @@ private:
         if (mLightVector == nullptr) {
             mLightVector = new cor::LightVectorWidget(lights.size(), 1, true, this);
             mLightVector->enableButtonInteraction(false);
+            mLightVector->setStyleSheet(kTransparentStyleSheet);
             if (lights.size() == 1) {
                 mLightVector->setButtonIconPercent(0.8f);
             } else {
@@ -202,6 +237,9 @@ private:
     /// label to display name
     QLabel* mName;
 
+    /// list of selected lights
+    cor::LightList* mSelectedLights;
+
     /// sync widget to display when searching for the light
     SyncWidget* mSyncWidget;
 
@@ -211,8 +249,17 @@ private:
     /// vector of pixmaps for mIcons
     std::vector<QPixmap> mIconPixmaps;
 
+    /// vector of lights for the preview
+    std::vector<cor::Light> mLights;
+
     /// light vector for displaying the state of the lights.
     cor::LightVectorWidget* mLightVector;
+
+    /// count of reachable lights
+    std::uint32_t mReachableCount;
+
+    /// count of selected lights.
+    std::uint32_t mSelectedCount;
 
     /// controller being displayed
     cor::Controller mController;

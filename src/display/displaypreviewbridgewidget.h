@@ -7,8 +7,10 @@
 #include <QPushButton>
 #include <QWidget>
 
+#include "comm/commlayer.h"
 #include "comm/hue/bridge.h"
 #include "comm/hue/huemetadata.h"
+#include "cor/lightlist.h"
 #include "cor/widgets/listitemwidget.h"
 #include "editablefieldwidget.h"
 
@@ -28,6 +30,8 @@ public:
     /// constructor
     explicit DisplayPreviewBridgeWidget(const hue::Bridge& bridge,
                                         const QString& key,
+                                        CommLayer* comm,
+                                        cor::LightList* selectedLights,
                                         QWidget* parent);
 
     /// update the bridge being shown
@@ -49,6 +53,9 @@ public:
 
     /// getter for bridge that is being displayed
     const hue::Bridge& bridge() { return mBridge; }
+
+    /// highlight bridge based on the number of lights.
+    void highlightLights();
 
 signals:
 
@@ -118,6 +125,12 @@ private:
     /// bridge used to display info
     hue::Bridge mBridge;
 
+    /// pointer to comm data
+    CommLayer* mComm;
+
+    /// pointer to selected lights
+    cor::LightList* mSelectedLights;
+
     /// label for the name widget
     QLabel* mNameLabel;
 
@@ -168,6 +181,12 @@ private:
 
     /// button used for viewing the groups of a bridge.
     QPushButton* mGroupsButton;
+
+    /// reachable count
+    std::uint32_t mReachableCount;
+
+    /// selected count
+    std::uint32_t mSelectedCount;
 
     /// true if checked, false otherwise
     bool mIsChecked;

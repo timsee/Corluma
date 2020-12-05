@@ -382,28 +382,6 @@ cor::Light CommLayer::lightByID(const QString& ID) const {
     return {};
 }
 
-void CommLayer::deleteLight(const QString& uniqueID) {
-    qDebug() << " delete light with this key " << uniqueID;
-    auto light = lightByID(uniqueID);
-    if (light.isValid()) {
-        switch (light.protocol()) {
-            case EProtocolType::arduCor:
-                mArduCor->deleteLight(light);
-                break;
-            case EProtocolType::hue:
-                mHue->deleteLight(light);
-                break;
-            case EProtocolType::nanoleaf:
-                mNanoleaf->deleteLight(light);
-                break;
-            case EProtocolType::MAX:
-                break;
-        }
-    } else {
-        qDebug() << "light not found";
-    }
-}
-
 void CommLayer::lightNameChange(const QString& key, const QString& name) {
     auto light = lightByID(key);
     if (light.protocol() == EProtocolType::hue) {

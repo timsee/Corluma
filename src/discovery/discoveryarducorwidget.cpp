@@ -14,8 +14,10 @@
 
 DiscoveryArduCorWidget::DiscoveryArduCorWidget(QWidget* parent,
                                                CommLayer* comm,
+                                               cor::LightList* selectedLights,
                                                ControllerPage* controllerPage)
-    : DiscoveryWidget(parent, comm, controllerPage) {
+    : DiscoveryWidget(parent, comm, controllerPage),
+      mSelectedLights{selectedLights} {
     mListWidget = new cor::ListWidget(this, cor::EListType::linear);
     mListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mListWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -80,8 +82,10 @@ void DiscoveryArduCorWidget::handleController(const cor::Controller& controller,
 
     // if it doesnt exist, add it
     if (!foundWidget) {
-        auto widget =
-            new DisplayPreviewArduCorWidget(controller, status, mListWidget->mainWidget());
+        auto widget = new DisplayPreviewArduCorWidget(controller,
+                                                      status,
+                                                      mSelectedLights,
+                                                      mListWidget->mainWidget());
         widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         connect(widget, SIGNAL(clicked(QString)), this, SLOT(controllerClicked(QString)));
         mListWidget->insertWidget(widget);
@@ -152,9 +156,25 @@ void DiscoveryArduCorWidget::controllerClicked(QString controller) {
     }
 }
 
+void DiscoveryArduCorWidget::deleteLight(const QString& light) {
+    for (auto widget : mListWidget->widgets()) {
+        auto arduCorWidget = dynamic_cast<DisplayPreviewArduCorWidget*>(widget);
+        if (arduCorWidget->controller().name() == light) {
+            // TODO
+        }
+    }
+}
+
 void DiscoveryArduCorWidget::greyOutClicked() {
     mGreyout->greyOut(false);
     if (mIPWidget->isOpen()) {
         closeIPWidget();
+    }
+}
+
+void DiscoveryArduCorWidget::highlightLights() {
+    for (auto widget : mListWidget->widgets()) {
+        auto arduCorWidget = dynamic_cast<DisplayPreviewArduCorWidget*>(widget);
+        arduCorWidget->highlightLights();
     }
 }

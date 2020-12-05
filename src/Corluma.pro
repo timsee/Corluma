@@ -264,6 +264,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     comm/hue/schedule.h \
     comm/nanoleaf/leaflightinfowidget.h \
     comm/nanoleaf/leafmetadata.h \
+    comm/nanoleaf/leafschedulewidget.h \
     comm/upnpdiscovery.h \
     colorpicker/colorpicker.h \
     colorpicker/rgbsliders.h \
@@ -297,6 +298,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     display/displayarducorcontrollerwidget.h \
     display/displayhuebridgewidget.h \
     display/displaynanoleafcontrollerwidget.h \
+    display/displaynanoleafscheduleswidget.h \
     display/displaypreviewarducorwidget.h \
     display/displaypreviewnanoleafwidget.h \
     display/displaypreviewbridgewidget.h \

@@ -20,6 +20,8 @@ LeafMetadata jsonToLeafController(const QJsonObject& object) {
     controller.addConnectionInfo(IP, port);
     controller.name(name);
     controller.authToken(auth);
+    // since we have an auth, the IP was verified.
+    controller.IPVerified(true);
     return controller;
 }
 

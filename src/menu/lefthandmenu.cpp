@@ -64,6 +64,11 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     // Setup Buttons
     //---------------
 
+    mLightsButton =
+        new LeftHandButton("Lights", EPage::discoveryPage, ":/images/connectionIcon.png", this);
+    mLightsButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    connect(mLightsButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
+
     mSingleColorButton = new LeftHandButton("Single Color",
                                             EPage::colorPage,
                                             ":/images/wheels/color_wheel_hsv.png",
@@ -129,10 +134,13 @@ void LeftHandMenu::resize() {
         setGeometry(-width, pos().y(), width, parentSize.height());
     }
 
-    auto buttonHeight = mMoodButton->height();
+    auto buttonHeight = mRowHeight;
     auto yPos = int(height() * 0.02);
 
     mSpacer->setGeometry(0, 0, this->width(), height());
+
+    mLightsButton->setGeometry(0, yPos, this->width(), buttonHeight);
+    yPos += mLightsButton->height();
 
     mSingleColorButton->setGeometry(0, yPos, this->width(), buttonHeight);
     yPos += mSingleColorButton->height();
@@ -214,12 +222,15 @@ void LeftHandMenu::updateLights() {
 
 void LeftHandMenu::buttonPressed(EPage page) {
     if (alwaysOpen()) {
+        mLightsButton->shouldHightlght(false);
         mSingleColorButton->shouldHightlght(false);
         mMultiColorButton->shouldHightlght(false);
         mMoodButton->shouldHightlght(false);
         mSettingsButton->shouldHightlght(false);
         mTimeoutButton->shouldHightlght(false);
-        if (page == EPage::colorPage) {
+        if (page == EPage::discoveryPage) {
+            mLightsButton->shouldHightlght(true);
+        } else if (page == EPage::colorPage) {
             mSingleColorButton->shouldHightlght(true);
         } else if (page == EPage::palettePage) {
             mMultiColorButton->shouldHightlght(true);
@@ -234,11 +245,14 @@ void LeftHandMenu::buttonPressed(EPage page) {
         }
     } else {
         if (page != EPage::settingsPage) {
+            mLightsButton->shouldHightlght(false);
             mSingleColorButton->shouldHightlght(false);
             mMultiColorButton->shouldHightlght(false);
             mMoodButton->shouldHightlght(false);
             mTimeoutButton->shouldHightlght(false);
-            if (page == EPage::colorPage) {
+            if (page == EPage::discoveryPage) {
+                mLightsButton->shouldHightlght(true);
+            } else if (page == EPage::colorPage) {
                 mSingleColorButton->shouldHightlght(true);
             } else if (page == EPage::palettePage) {
                 mMultiColorButton->shouldHightlght(true);
@@ -343,6 +357,9 @@ void LeftHandMenu::clearWidgets() {
 }
 
 QWidget* LeftHandMenu::selectedButton() {
+    if (mLightsButton->highlighted()) {
+        return mLightsButton;
+    }
     if (mSingleColorButton->highlighted()) {
         return mSingleColorButton;
     }

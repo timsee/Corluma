@@ -119,6 +119,16 @@ public:
     /// dictionary of light metadata
     const cor::Dictionary<HueMetadata>& lights() const noexcept { return mLights; }
 
+    /// returns a vector of all the uniqueIDs of each light associated with the bridge.
+    std::vector<QString> lightIDs() const noexcept {
+        std::vector<QString> retVector;
+        retVector.reserve(mLights.size());
+        for (const auto& light : mLights.items()) {
+            retVector.emplace_back(light.uniqueID());
+        }
+        return retVector;
+    }
+
     /// setter for the schedules
     void schedules(cor::Dictionary<hue::Schedule> scheduleDict) {
         mSchedules = std::move(scheduleDict);
@@ -156,6 +166,7 @@ public:
     /// getter for the state
     EBridgeDiscoveryState state() const noexcept { return mState; }
 
+    /// getter for both the groups with their associated IDs
     BridgeGroupVector groupsWithIDs() const {
         BridgeGroupVector retVector;
         std::vector<std::pair<std::string, cor::Group>> entrySet = mGroups.keysAndItems();

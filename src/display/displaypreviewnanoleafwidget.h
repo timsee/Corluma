@@ -7,6 +7,7 @@
 #include <QWidget>
 #include "comm/nanoleaf/leafmetadata.h"
 #include "cor/widgets/listitemwidget.h"
+#include "syncwidget.h"
 #include "utils/qt.h"
 
 /*!
@@ -20,33 +21,78 @@
 class DisplayPreviewNanoleafWidget : public cor::ListItemWidget {
     Q_OBJECT
 public:
-    explicit DisplayPreviewNanoleafWidget(const nano::LeafMetadata& leafMetadata, QWidget* parent)
+    explicit DisplayPreviewNanoleafWidget(const nano::LeafMetadata& leafMetadata,
+                                          nano::ELeafDiscoveryState status,
+                                          QWidget* parent)
         : cor::ListItemWidget(leafMetadata.serialNumber(), parent),
+          mIsHighlighted{false},
           mName{new QLabel(leafMetadata.name(), this)},
-          mLeafMetadata{leafMetadata} {
-        updateNanoleaf(leafMetadata);
+          mSyncWidget{new SyncWidget(this)},
+          mStatusPrompt{new QLabel(this)},
+          mLeafMetadata{leafMetadata},
+          mStatus{status} {
+        updateNanoleaf(leafMetadata, status);
     }
 
     /// getter for the nanoleaf
     const nano::LeafMetadata& nanoleaf() { return mLeafMetadata; }
 
+    /// getter for the status
+    nano::ELeafDiscoveryState status() { return mStatus; }
+
+    /// set whether the light is highlighted or not.
+    void setShouldHighlight(bool shouldHighlight) {
+        mIsHighlighted = shouldHighlight;
+        update();
+    }
+
     /// update the nanoleaf
-    void updateNanoleaf(const nano::LeafMetadata& metadata) {
+    void updateNanoleaf(const nano::LeafMetadata& metadata, nano::ELeafDiscoveryState status) {
         mLeafMetadata = metadata;
-        if (!mLeafMetadata.name().isEmpty()) {
-            mName->setText(mLeafMetadata.name());
+        mStatus = status;
+        handleStatusPrompt();
+        if (mStatus == nano::ELeafDiscoveryState::searchingIP
+            || mStatus == nano::ELeafDiscoveryState::searchingAuth
+            || mStatus == nano::ELeafDiscoveryState::reverifying) {
+            // show a syncing widget, we haven't found it yet
+            mSyncWidget->setVisible(true);
+            mStatusPrompt->setVisible(true);
+            mSyncWidget->changeState(ESyncState::syncing);
         } else {
-            // handle edge case where name is not filled.
-            if (!mLeafMetadata.hardwareName().isEmpty()) {
-                mName->setText(mLeafMetadata.hardwareName());
+            mSyncWidget->setVisible(false);
+            mStatusPrompt->setVisible(true);
+
+            mStatus = status;
+            mLeafMetadata = metadata;
+            if (!mLeafMetadata.name().isEmpty()) {
+                mName->setText(mLeafMetadata.name());
             } else {
-                mName->setText(mLeafMetadata.IP());
+                // handle edge case where name is not filled.
+                if (!mLeafMetadata.hardwareName().isEmpty()) {
+                    mName->setText(mLeafMetadata.hardwareName());
+                } else {
+                    mName->setText(mLeafMetadata.IP());
+                }
             }
         }
     }
 
     /// resize the widget programmatically.
-    void resize() { mName->setGeometry(0, 0, this->width(), this->height()); }
+    void resize() {
+        auto yPos = 0u;
+        if (mStatus == nano::ELeafDiscoveryState::searchingIP
+            || mStatus == nano::ELeafDiscoveryState::searchingAuth
+            || mStatus == nano::ELeafDiscoveryState::reverifying) {
+            auto iconHeight = this->height() / 2;
+            mSyncWidget->setGeometry(0, yPos, iconHeight, iconHeight);
+            yPos += mSyncWidget->height();
+        }
+        mName->setGeometry(0, yPos, this->width(), this->height() / 4);
+        yPos += mName->height();
+        mStatusPrompt->setGeometry(0, yPos, this->width(), this->height() / 4);
+        yPos += mStatusPrompt->height();
+    }
+
 signals:
 
     /// emits when a nanoleaf is clicked
@@ -67,7 +113,11 @@ protected:
         QPainter painter(this);
 
         painter.setRenderHint(QPainter::Antialiasing);
-        painter.fillRect(rect(), QBrush(QColor(32, 31, 31, 255)));
+        if (mIsHighlighted) {
+            painter.fillRect(rect(), QBrush(QColor(61, 142, 201)));
+        } else {
+            painter.fillRect(rect(), QBrush(QColor(32, 31, 31, 255)));
+        }
 
         // draw line at bottom of widget
         QRect area(x(), y(), width(), height());
@@ -85,11 +135,45 @@ protected:
     virtual void mouseReleaseEvent(QMouseEvent*) { emit clicked(mLeafMetadata.name()); }
 
 private:
+    /// handle the status prompt.
+    void handleStatusPrompt() {
+        QString text;
+        switch (mStatus) {
+            case nano::ELeafDiscoveryState::searchingAuth:
+                text = "Light found! Hold the power button for around 5 seconds.";
+                break;
+            case nano::ELeafDiscoveryState::reverifying:
+                text = "Testing connection with IP " + nanoleaf().IP() + "...";
+                break;
+
+            case nano::ELeafDiscoveryState::searchingIP:
+                text = "Searching for new light at " + nanoleaf().IP() + "...";
+                break;
+
+            case nano::ELeafDiscoveryState::connected:
+            default:
+                break;
+        }
+        mStatusPrompt->setText(text);
+    }
+
+    /// true if highlighted, false if not.
+    bool mIsHighlighted;
+
     /// name of the nanoleaf.
     QLabel* mName;
 
+    /// sync widget to display when searching for the light
+    SyncWidget* mSyncWidget;
+
+    /// status prompt for when searching but need user to hold down button.
+    QLabel* mStatusPrompt;
+
     /// metadata widget for the nanoleaf
     nano::LeafMetadata mLeafMetadata;
+
+    /// status for the discovery state.
+    nano::ELeafDiscoveryState mStatus;
 };
 
 #endif // DISPLAYPREVIEWNANOLEAFWIDGET_H

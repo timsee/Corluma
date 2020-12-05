@@ -190,9 +190,6 @@ public:
      */
     void lightNameChange(const QString& key, const QString& name);
 
-    /// delete a light by unique ID. This deletes the light from memory.
-    void deleteLight(const QString& uniqueID);
-
     /// gives the last time any specific CommType last received an update
     QTime lastUpdateTime();
 

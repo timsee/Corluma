@@ -202,17 +202,19 @@ std::vector<cor::Light> CommArduCor::lights() {
     return lights;
 }
 
-void CommArduCor::deleteLight(const cor::Light& light) {
-    auto result = mArduCorLights.item(light.uniqueID().toStdString());
+void CommArduCor::deleteController(const QString& controller) {
+    auto result = mDiscovery->findControllerByControllerName(controller);
     if (result.second) {
-        auto arduCorLight = result.first;
-        // remove from comm data
-        commByType(arduCorLight.commType())->removeLight(arduCorLight.controller());
-
+        auto controller = result.first;
+        for (auto light : controller.names()) {
+            // remove from comm data
+            commByType(controller.type())->removeLight(light);
+        }
         // remove from JSON data
-        mDiscovery->removeController(arduCorLight.controller());
+        mDiscovery->removeController(controller);
     }
 }
+
 
 ArduCorMetadata CommArduCor::metadataFromLight(const cor::Light& light) {
     auto result = mArduCorLights.item(light.uniqueID().toStdString());

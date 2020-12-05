@@ -107,7 +107,7 @@ public:
     const nano::LeafDate& startDate() const noexcept { return mStartDate; }
 
     /// returns the number of seconds until a schedule executes.
-    double secondsUntilExecution() {
+    double secondsUntilExecution() const {
         auto curTime = LeafDate::currentTime().date();
         auto executionTime = mStartDate.date();
         return std::difftime(std::mktime(&executionTime), std::mktime(&curTime));

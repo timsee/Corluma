@@ -70,6 +70,9 @@ public:
     /// hides the discovery page
     void pushOut(const QPoint& startPoint, const QPoint& endPoint);
 
+    /// highlight the lights on the discovery page.
+    void highlightLights();
+
 signals:
     /*!
      * \brief startButtonClicked sent whenver the start button is clicked so that the discovery
@@ -86,6 +89,10 @@ signals:
      * \brief closeWithoutTransition emits to a parent to close this page without transition.
      */
     void closeWithoutTransition();
+
+public slots:
+    /// handle when a light is deleted.
+    void deleteLight(QString);
 
 private slots:
     /*!

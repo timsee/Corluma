@@ -156,9 +156,10 @@ private:
 class HueLight : public cor::Light {
 public:
     HueLight(const HueMetadata& metadata) : cor::Light(metadata.uniqueID(), ECommType::hue) {
-        mHardwareType = metadata.hardwareType();
         mName = metadata.name();
     }
+
+    void hardwareType(ELightHardwareType type) { mHardwareType = type; }
 };
 
 

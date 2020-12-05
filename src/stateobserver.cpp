@@ -15,6 +15,8 @@ StateObserver::StateObserver(cor::LightList* data,
                              GroupData* groups,
                              AppSettings* appSettings,
                              MainWindow* mainWindow,
+                             ControllerPage* controllerPage,
+                             DiscoveryPage* discoveryPage,
                              TopMenu* topMenu,
                              QObject* parent)
     : QObject(parent),
@@ -23,6 +25,8 @@ StateObserver::StateObserver(cor::LightList* data,
       mGroups{groups},
       mAppSettings{appSettings},
       mMainWindow{mainWindow},
+      mControllerPage{controllerPage},
+      mDiscoveryPage{discoveryPage},
       mTopMenu{topMenu},
       mMainViewport{mMainWindow->viewport()},
       mColorPage{mMainViewport->colorPage()},
@@ -184,6 +188,8 @@ void StateObserver::moodChanged(std::uint64_t moodID) {
 void StateObserver::lightCountChanged() {
     mTopMenu->lightCountChanged();
     mMainViewport->timeoutPage()->updateLights();
+    mControllerPage->highlightLights();
+    mDiscoveryPage->highlightLights();
 }
 
 void StateObserver::dataInSync(bool inSync) {
@@ -272,8 +278,10 @@ void StateObserver::lightNameChange(const QString& key, const QString& name) {
     mComm->lightNameChange(key, name);
 }
 
-void StateObserver::deleteLight(const QString& uniqueID) {
-    mComm->deleteLight(uniqueID);
+void StateObserver::lightCountChangedFromControllerPage(QString, bool) {
+    mMainWindow->leftHandMenu()->lightCountChanged();
+    mMainWindow->leftHandMenu()->updateLights();
+    lightCountChanged();
 }
 
 } // namespace cor

@@ -972,3 +972,12 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Added full page widgets for displaying each type of controller.
 - Added widgets for previewing a controller in a list.
 - Fixed miscellaneous bugs.
+
+### **v0.21.0**
+### The ControllerPage Selection Update
+- Added the ability to select and deselect lights from the `ControllerPage`.
+- Added support for more recent Nanoleaf models.
+- Added widgets to display Nanoleaf schedules.
+- Cleaned up Nanoleaf discovery code.
+- Fixed a bug with displaying icons for many hue models.
+- Fixed miscellaneous bugs.

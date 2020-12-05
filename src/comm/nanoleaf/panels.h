@@ -1,6 +1,7 @@
 #ifndef PANELS_H
 #define PANELS_H
 
+#include <QDebug>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <vector>
@@ -15,6 +16,18 @@ namespace nano {
  * Released under the GNU General Public License.
  */
 
+enum class EShapeType {
+    triangle = 0,
+    rhythm = 1,
+    square = 2,
+    controlSquareMaster = 3,
+    controlSquarePassive = 4,
+    heaxagonShapes = 7,
+    triangleShapes = 8,
+    miniTriangleShapes = 9,
+    controllerShapes = 12
+};
+
 /*!
  * \brief The Panel class is a simple class storing data about a panel
  */
@@ -27,6 +40,7 @@ public:
             mX = int(object["x"].toDouble());
             mY = int(object["y"].toDouble());
             mO = int(object["o"].toDouble());
+            mShape = EShapeType(object["shapeType"].toDouble());
         } else {
             THROW_EXCEPTION("Invalid Panels JSON");
         }
@@ -44,6 +58,30 @@ public:
     /// orientation of the panel
     int o() const noexcept { return mO; }
 
+    /// shape for the panel
+    EShapeType shape() const noexcept { return mShape; }
+
+    /// getter for side length, inferred by shapeType.
+    int sideLength() {
+        switch (mShape) {
+            case EShapeType::triangle:
+                return 150;
+            case EShapeType::square:
+            case EShapeType::controlSquareMaster:
+            case EShapeType::controlSquarePassive:
+                return 100;
+            case EShapeType::heaxagonShapes:
+            case EShapeType::miniTriangleShapes:
+                return 67;
+            case EShapeType::triangleShapes:
+                return 134;
+            case EShapeType::controllerShapes:
+            case EShapeType::rhythm:
+            default:
+                return 0u;
+        }
+    }
+
 private:
     /// number given to the panel
     int mID;
@@ -53,6 +91,8 @@ private:
     int mY;
     /// orientation of the panel
     int mO;
+    /// type of shape
+    EShapeType mShape;
 };
 
 /*!
@@ -68,7 +108,6 @@ public:
             if (layoutObject["numPanels"].isDouble() && layoutObject["sideLength"].isDouble()
                 && layoutObject["positionData"].isArray()) {
                 mCount = int(layoutObject["numPanels"].toDouble());
-                mSideLength = int(layoutObject["sideLength"].toDouble());
                 QJsonArray array = layoutObject["positionData"].toArray();
                 std::vector<nano::Panel> panelInfoVector;
                 for (auto value : array) {
@@ -77,7 +116,7 @@ public:
                         panelInfoVector.emplace_back(value.toObject());
                     }
                 }
-                mPositionData = panelInfoVector;
+                mPositionLayout = panelInfoVector;
             }
         } else {
             THROW_EXCEPTION("Invalid JSON for Panels");
@@ -85,20 +124,16 @@ public:
     }
 
     /// constructor
-    Panels() : mCount{1}, mSideLength{3}, mOrientationValue{0}, mOrientationRange{0, 0} {}
+    Panels() : mCount{1}, mOrientationValue{0}, mOrientationRange{0, 0} {}
 
     /// number of panels connected to the controller.
     int count() const noexcept { return mCount; }
-
-    /// the length of a triangle side, in pixels, that is used in calculation of the centroid
-    /// location
-    int sideLength() const noexcept { return mSideLength; }
 
     /// current value for the orientation of the panels
     int orientationValue() const noexcept { return mOrientationValue; }
 
     /// a vector of data about each of the individual panels
-    const std::vector<Panel>& positionData() const noexcept { return mPositionData; }
+    const std::vector<Panel>& positionLayout() const noexcept { return mPositionLayout; }
 
     /// potential range for the orientation value
     const cor::Range<int>& orientationRange() const noexcept { return mOrientationRange; }
@@ -107,12 +142,8 @@ private:
     /// number of panels connected to the controller.
     int mCount;
 
-    /// the length of a triangle side, in pixels, that is used in calculation of the centroid
-    /// location
-    int mSideLength;
-
     /// a vector of data about each of the individual panels
-    std::vector<Panel> mPositionData;
+    std::vector<Panel> mPositionLayout;
 
     /// current value for the orientation of the panels
     int mOrientationValue;

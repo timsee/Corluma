@@ -14,6 +14,8 @@
 
 namespace nano {
 
+enum class ELeafDiscoveryState { searchingIP, searchingAuth, reverifying, connected };
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2020.
@@ -24,7 +26,7 @@ namespace nano {
  */
 class LeafMetadata {
 public:
-    LeafMetadata() {}
+    LeafMetadata() : mIPVerified{false} {}
 
     /// constructor
     LeafMetadata(const QString& serial, const QString& hardware)
@@ -33,7 +35,8 @@ public:
           mPort{-1},
           mHardwareName{hardware},
           mSerialNumber{serial},
-          mName{hardware} {}
+          mName{hardware},
+          mIPVerified{false} {}
 
     /// getter for serial number, unique for each light
     const QString& serialNumber() const noexcept { return mSerialNumber; }
@@ -45,10 +48,14 @@ public:
     // Metadata
     //-----------
 
+    /// getter for manufacturer
     const QString& manufacturer() const noexcept { return mManufacturer; }
 
     /// getter for firmware version of light
     const QString& firmware() const noexcept { return mFirmware; }
+
+    /// getter for hardware version
+    const QString& hardwareVersion() const noexcept { return mHardwareVersion; }
 
     /// getter for model number of light
     const QString& model() const noexcept { return mModel; }
@@ -80,6 +87,12 @@ public:
 
     /// getter for port
     int port() const noexcept { return mPort; }
+
+    /// true if IP address was ever verified, false if a packet was never received.
+    bool IPVerified() const noexcept { return mIPVerified; }
+
+    /// setter for if IP address is verified
+    void IPVerified(bool verified) { mIPVerified = verified; }
 
     /// getter for current effect
     const QString& effect() const noexcept { return mEffect; }
@@ -121,9 +134,9 @@ public:
     static bool isValidJson(const QJsonObject& object) {
         return object["name"].isString() && object["serialNo"].isString()
                && object["manufacturer"].isString() && object["firmwareVersion"].isString()
-               && object["model"].isString() && object["state"].isObject()
-               && object["effects"].isObject() && object["panelLayout"].isObject()
-               && object["rhythm"].isObject();
+               && object["hardwareVersion"].isString() && object["model"].isString()
+               && object["state"].isObject() && object["effects"].isObject()
+               && object["panelLayout"].isObject();
     }
 
     /// updates the meatadata based off of JSON
@@ -133,6 +146,7 @@ public:
         mModel = object["model"].toString();
         mHardwareName = object["name"].toString();
         mSerialNumber = object["serialNo"].toString();
+        mHardwareVersion = object["hardwareVersion"].toString();
 
         const auto& effectsObject = object["effects"].toObject();
         if (effectsObject["select"].isString()) {
@@ -154,7 +168,9 @@ public:
         }
 
         mPanelLayout = Panels(object["panelLayout"].toObject());
-        mRhythm = RhythmController(object["rhythm"].toObject());
+        if (object["rhythm"].isObject()) {
+            mRhythm = RhythmController(object["rhythm"].toObject());
+        }
     }
 
     operator QString() const {
@@ -183,6 +199,9 @@ private:
 
     /// current firmware
     QString mFirmware;
+
+    /// hardware version
+    QString mHardwareVersion;
 
     /// hardware model
     QString mModel;
@@ -226,6 +245,9 @@ private:
 
     /// name of light
     QString mName;
+
+    /// true if IP address is verified, false otherwise.
+    bool mIPVerified;
 
     //-----------
     // Other Hardware

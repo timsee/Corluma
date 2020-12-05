@@ -529,6 +529,7 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge,
 
             HueLight hue(metadata);
             fillLight(hue);
+            hue.hardwareType(metadata.hardwareType());
 
             auto state = hue.state();
             hue.isReachable(stateObject["reachable"].toBool());
@@ -717,6 +718,7 @@ cor::Light CommHue::lightFromMetadata(const HueMetadata& metadata) {
     if (result.second) {
         return result.first;
     }
+    THROW_EXCEPTION("No hue found for unique ID" + metadata.uniqueID().toStdString());
 }
 
 std::vector<cor::Light> CommHue::lightsFromMetadata(

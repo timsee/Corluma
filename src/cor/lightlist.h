@@ -102,6 +102,13 @@ public:
      */
     bool doesLightExist(const cor::Light& light);
 
+    /*!
+     * \brief doesLightExist checks if device exist in connected device list
+     * \param light device to search for
+     * \return true if the device exists, false otherwise.
+     */
+    bool doesLightExist(const QString& uniqueID);
+
     /// returns a count of how many lights from the input vector are contained in the light list.
     std::uint32_t countNumberOfLights(const std::vector<QString>& lightIDs);
 

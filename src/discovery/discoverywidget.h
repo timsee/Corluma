@@ -53,6 +53,12 @@ public:
     /// default value for the IP widget
     virtual QString IPWidgetDefaultValue() = 0;
 
+    /// delete a light from the discovery page.
+    virtual void deleteLight(const QString& light) = 0;
+
+    /// handles how to higlight lights.
+    virtual void highlightLights() = 0;
+
     /// opens the IP widget
     void openIPWidget();
 

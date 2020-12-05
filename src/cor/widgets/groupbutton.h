@@ -5,9 +5,7 @@
 #include <QLayout>
 #include <QPushButton>
 #include <QWidget>
-
-/// group button state
-enum class EGroupButtonState { selectAll, clearAll, disabled };
+#include "cor/widgets/checkbox.h"
 
 namespace cor {
 /*!
@@ -92,32 +90,11 @@ private slots:
     void buttonPressed(bool);
 
 private:
-    /*!
-     * \brief computeHighlightColor compute the color of the highlight of the widget. The highlight
-     * is based on the number of devices and the number that are currently selected. If all
-     * devices are currently selected, it highlights completely.
-     *
-     * \param checkedDeviceCount the number of devices that are checked
-     * \param reachableDeviceCount the total number of reachable devices
-     * \return the color to use for the highlight.
-     */
-    QColor computeHighlightColor(std::uint32_t checkedDeviceCount, uint32_t reachableDeviceCount);
-
-    /*!
-     * \brief resizeRightHandIcon resize the right hand icon to match the widgets size
-     * \param pixmap the pixmap to resize
-     * \param button the button to apply the resized pixmap to
-     */
-    void resizeRightHandIcon(QPixmap pixmap, QPushButton* button);
-
     /// preferred size of icon
     QSize iconSize();
 
     /// getter for current pixmap
     const QPixmap& currentPixmap();
-
-    /// state of the button
-    EGroupButtonState mButtonState;
 
     /// true if widget is selected, false otherwise
     bool mIsSelected;
@@ -141,19 +118,7 @@ private:
     /// label for checkbox
     QLabel* mTitle;
 
-    /*!
-     * \brief mButton button that selects all devices when pushed and adds them to the data layer.
-     */
-    QLabel* mButton;
-
-    /// pixmap for the select all button
-    QPixmap mSelectAllPixmap;
-
-    /// pixmap for the clear all button
-    QPixmap mClearAllPixmap;
-
-    /// pixmap for disabled button
-    QPixmap mDisabledPixmap;
+    cor::CheckBox* mCheckBox;
 };
 
 } // namespace cor

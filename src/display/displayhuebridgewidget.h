@@ -18,10 +18,13 @@
 #include "comm/arducor/controller.h"
 #include "comm/commhue.h"
 #include "comm/commlayer.h"
+#include "cor/lightlist.h"
+#include "cor/widgets/checkbox.h"
 #include "cor/widgets/expandingtextscrollarea.h"
 #include "menu/displaymoodmetadata.h"
 #include "menu/groupstatelistmenu.h"
 #include "menu/lightslistmenu.h"
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2020.
@@ -34,17 +37,22 @@
 class DisplayHueBridgeWidget : public QWidget {
     Q_OBJECT
 public:
-    explicit DisplayHueBridgeWidget(QWidget* parent, CommLayer* comm)
+    explicit DisplayHueBridgeWidget(QWidget* parent,
+                                    CommLayer* comm,
+                                    cor::LightList* selectedLights)
         : QWidget(parent),
           mComm{comm},
+          mSelectedLights{selectedLights},
           mName{new QLabel(this)},
           mLightsLabel{new QLabel("<b>Lights:</b>", this)},
-          mLights{new LightsListMenu(this, false)},
-          mMetadata{new cor::ExpandingTextScrollArea(this)} {
+          mLights{new LightsListMenu(this, true)},
+          mMetadata{new cor::ExpandingTextScrollArea(this)},
+          mCheckBox{new cor::CheckBox(this)} {
         auto font = mName->font();
         font.setPointSize(20);
         mName->setFont(font);
 
+        connect(mLights, SIGNAL(clickedLight(cor::Light)), this, SLOT(lightClicked(cor::Light)));
         this->setStyleSheet("background-color:rgb(33,32,32);");
     }
 
@@ -60,6 +68,8 @@ public:
         mBridge.lights();
         auto lights = mComm->hue()->lightsFromMetadata(bridge.lights().items());
         mLights->showLights(lights);
+        highlightLights();
+        handleCheckboxState();
         updateMetadata(mBridge);
         resize();
     }
@@ -79,13 +89,20 @@ public:
     void resize() {
         int yPosColumn1 = 0;
         int yPosColumn2 = 0;
+        int headerX = 0;
         int buttonHeight = this->height() / 10;
         int xSecondColumnStart = int(this->width() / 2 * 1.05);
         int columnWidth = int((this->width() / 2) * 0.95);
         int xSpacer = this->width() / 20;
 
         // top of both
-        mName->setGeometry(xSpacer / 2, yPosColumn1, this->width() - xSpacer / 2, buttonHeight);
+        mName->setGeometry(xSpacer / 2,
+                           yPosColumn1,
+                           this->width() - xSpacer / 2 - buttonHeight,
+                           buttonHeight);
+        headerX += mName->width() + mName->geometry().x();
+        mCheckBox->setGeometry(headerX, yPosColumn1, buttonHeight, buttonHeight);
+        mCheckBox->resize();
         yPosColumn1 += mName->height();
         yPosColumn2 += mName->height();
 
@@ -103,6 +120,19 @@ public:
         yPosColumn2 += mMetadata->height();
     }
 
+    ///  highlight lights in the widget
+    void highlightLights() { qDebug() << "TODO: highlight hue bridge widget"; }
+
+signals:
+    /// handle when a light is clicked
+    void lightClicked(QString, bool);
+
+    /// handle when a full controller is clicked
+    void controllerClicked(QString, EProtocolType, bool);
+
+    /// handle when deleting a full controller.
+    void deleteController(QString, EProtocolType);
+
 protected:
     /*!
      * \brief resizeEvent called whenever the widget resizes so that assets can be updated.
@@ -117,6 +147,28 @@ protected:
         painter.fillRect(rect(), QBrush(QColor(32, 31, 31, 255)));
     }
 
+    /// handles when the mouse is released
+    void mouseReleaseEvent(QMouseEvent* event) {
+        if (cor::isMouseEventTouchUpInside(event, mCheckBox, false)) {
+            if (mCheckBox->checkboxState() == cor::ECheckboxState::clearAll) {
+                mCheckBox->checkboxState(cor::ECheckboxState::selectAll);
+                emit controllerClicked(mBridge.id(), EProtocolType::hue, false);
+                mLights->highlightLights({});
+            } else {
+                mCheckBox->checkboxState(cor::ECheckboxState::clearAll);
+                emit controllerClicked(mBridge.id(), EProtocolType::hue, true);
+                mLights->highlightLights(mBridge.lightIDs());
+            }
+        }
+        event->ignore();
+    }
+private slots:
+
+    /// handle when a light is clicked
+    void lightClicked(cor::Light light) { emit lightClicked(light.uniqueID(), true); }
+
+    /// handle when the delete button is pressed for a hue.
+    void deleteButtonPressed(bool) { emit deleteController(mBridge.id(), EProtocolType::arduCor); }
 
 private:
     /// update the metadata for the hue::Bridge
@@ -132,8 +184,28 @@ private:
         mMetadata->updateText(QString(result.c_str()));
     }
 
+    /// handle the state of the checkbox.
+    void handleCheckboxState() {
+        bool anyLightSelected = false;
+        for (auto light : mBridge.lightIDs()) {
+            if (mSelectedLights->doesLightExist(light)) {
+                anyLightSelected = true;
+                break;
+            }
+        }
+        if (anyLightSelected) {
+            mCheckBox->checkboxState(cor::ECheckboxState::clearAll);
+        } else {
+            mCheckBox->checkboxState(cor::ECheckboxState::selectAll);
+        }
+    }
+
+
     /// pointer to comm data
     CommLayer* mComm;
+
+    /// list of selected lights
+    cor::LightList* mSelectedLights;
 
     /// The controller being displayed.
     hue::Bridge mBridge;
@@ -149,6 +221,9 @@ private:
 
     /// widget for metadata
     cor::ExpandingTextScrollArea* mMetadata;
+
+    /// checkbox to select/deselect the bridge.
+    cor::CheckBox* mCheckBox;
 
     /// the height of a row in a scroll area
     int mRowHeight;

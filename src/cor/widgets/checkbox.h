@@ -5,8 +5,11 @@
 #include <QLayout>
 #include <QPushButton>
 #include <QWidget>
-
+#include "utils/exception.h"
 namespace cor {
+
+/// checkbox state
+enum class ECheckboxState { selectAll, clearAll, disabled };
 
 /*!
  * \copyright
@@ -21,132 +24,91 @@ class CheckBox : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit CheckBox(QWidget* parent, const QString& title) : QWidget(parent) {
-        mIsChecked = false;
+    explicit CheckBox(QWidget* parent)
+        : QWidget(parent),
+          mButton{new QLabel(this)},
+          mState{ECheckboxState::disabled} {
         const QString transparentStyleSheet = "background-color: rgba(0,0,0,0);";
-
-        mTitle = new QLabel(title, this);
-        mTitle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        mTitle->setStyleSheet(transparentStyleSheet);
-        mTitle->setAlignment(Qt::AlignBottom);
-        QRect r = mTitle->fontMetrics().boundingRect(mTitle->text());
-        mTitle->setFixedWidth(r.width());
-        mTitle->setFixedHeight(r.height() * 1.5);
-
-        mSpacer = int(mTitle->width() * 0.03f);
-        mCheckBox = new QPushButton(this);
-        mCheckBox->setCheckable(true);
-        connect(mCheckBox, SIGNAL(clicked(bool)), this, SLOT(buttonPressed(bool)));
-        mCheckBox->setStyleSheet(
-            QString("QPushButton:checked{ background-color:rgb(61, 142, 201); } "
-                    "QPushButton{ border:%1px solid #AAAAAA; }")
-                .arg(mSpacer));
-        mCheckBox->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-        setMinimumHeight(mTitle->height());
-        mCheckBox->setMinimumHeight(mTitle->height());
-        mCheckBox->setMinimumWidth(mTitle->height());
+        mButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        mButton->setStyleSheet(transparentStyleSheet);
+        mButton->setAttribute(Qt::WA_TransparentForMouseEvents);
     }
 
+    /// getter for checkbox state
+    ECheckboxState checkboxState() { return mState; }
 
-    /// checks and unchecks the checkbox
-    void setChecked(bool shouldCheck) {
-        mCheckBox->setChecked(shouldCheck);
-        mIsChecked = shouldCheck;
+    /// setter for checkbox state
+    void checkboxState(ECheckboxState state) {
+        mState = state;
+        mButton->setPixmap(currentPixmap());
     }
 
-    /// set the title for the corluma checkbox
-    void setTitle(const QString& title) {
-        mTitle->setText(title);
-        QRect r = mTitle->fontMetrics().boundingRect(mTitle->text());
-        mTitle->setFixedWidth(r.width());
-        mTitle->setMinimumHeight(int(r.height() * 1.75f));
+    /// programmatically resize
+    void resize() {
+        mButton->setGeometry(0, 0, this->width(), this->height());
+        const auto& size = iconSize();
+        mClearAllPixmap = QPixmap(":/images/selectAllIcon.png");
+        mClearAllPixmap = mClearAllPixmap.scaled(size.width(),
+                                                 size.height(),
+                                                 Qt::IgnoreAspectRatio,
+                                                 Qt::SmoothTransformation);
 
-        setMinimumHeight(mTitle->height());
-        mCheckBox->setMinimumHeight(mTitle->height());
-        mCheckBox->setMinimumWidth(mTitle->height());
+        mSelectAllPixmap = QPixmap(":/images/uncheckedBox.png");
+        mSelectAllPixmap = mSelectAllPixmap.scaled(size.width(),
+                                                   size.height(),
+                                                   Qt::IgnoreAspectRatio,
+                                                   Qt::SmoothTransformation);
+
+        mDisabledPixmap = QPixmap(":/images/disabledX.png");
+        mDisabledPixmap = mDisabledPixmap.scaled(size.width(),
+                                                 size.height(),
+                                                 Qt::IgnoreAspectRatio,
+                                                 Qt::SmoothTransformation);
+
+        mButton->setPixmap(currentPixmap());
     }
-
-    /*!
-     * \brief downsizeTextWidthToFit downsize the font's point size until this entire widget
-     *        fits into the width provided. If downsizing is not needed, the system's font
-     *        size is used instead.
-     *
-     * NOTE: this is hacky and inefficient!
-     * \param maxWidth max width for the entire widget.
-     */
-    void downsizeTextWidthToFit(int maxWidth) {
-        QLabel label(mTitle->text());
-        int systemFontWidth = label.fontMetrics().boundingRect(label.text()).width();
-        int fontPtSize = label.font().pointSize();
-        int nonTitleSize = mCheckBox->width() + mSpacer * 3;
-        int computedSize = systemFontWidth;
-        maxWidth = maxWidth - nonTitleSize;
-        if (maxWidth > computedSize) {
-            // just use the systems font instead of scaling up
-            QFont font = mTitle->font();
-            font.setPointSize(fontPtSize);
-            mTitle->setFont(font);
-            QRect r = mTitle->fontMetrics().boundingRect(mTitle->text());
-            mTitle->setFixedWidth(r.width());
-        } else {
-            while ((maxWidth < computedSize) && (fontPtSize > 2)) {
-                fontPtSize--;
-                QFont font = mTitle->font();
-                font.setPointSize(fontPtSize);
-                mTitle->setFont(font);
-                QRect r = mTitle->fontMetrics().boundingRect(mTitle->text());
-                mTitle->setFixedWidth(r.width());
-                computedSize = mTitle->width();
-            }
-        }
-        adjustSize();
-    }
-
-    /// getter for whether a box is checked or not.
-    bool checked() { return mIsChecked; }
 
 signals:
 
-    /// sent out whenever the checkbox is checked or unchecked
-    void boxChecked(bool);
+    /// emit when the checkbox is clicked.
+    void checkBoxClicked(bool);
 
 private slots:
 
-    /// handles when the checkbox button is clicked
-    void buttonPressed(bool) {
-        mIsChecked = !mIsChecked;
-        emit boxChecked(mIsChecked);
-    }
-
-protected:
-    /// resize the widget
-    virtual void resizeEvent(QResizeEvent*) {
-        mTitle->setGeometry(mSpacer, mSpacer, mTitle->width(), mTitle->height());
-
-        auto height = int(mTitle->height() * 0.8);
-        mCheckBox->setGeometry(mSpacer, mSpacer, height + mSpacer, height + mSpacer);
-
-        mTitle->setGeometry(mCheckBox->width() + 2 * mSpacer,
-                            mCheckBox->geometry().y(),
-                            width() - mCheckBox->width() - 2 * mSpacer,
-                            mTitle->height());
-
-        adjustSize();
-    }
+    /// picks up when the select all button is pressed
+    void buttonPressed(bool clicked) { emit checkBoxClicked(clicked); }
 
 private:
-    /// true if checked, false if not checked
-    bool mIsChecked;
+    /// getter for current pixmap
+    const QPixmap& currentPixmap() {
+        switch (mState) {
+            case ECheckboxState::disabled:
+                return mDisabledPixmap;
+            case ECheckboxState::clearAll:
+                return mClearAllPixmap;
+            case ECheckboxState::selectAll:
+                return mSelectAllPixmap;
+        }
+        THROW_EXCEPTION("Do not recognize pixmap");
+    }
 
-    /// spacer between checkbox and title
-    int mSpacer;
+    /// getter for icon size
+    QSize iconSize() { return {int(height() * 0.75), int(height() * 0.75)}; }
 
-    /// label for checkbox
-    QLabel* mTitle;
+    /// button used for checkbox
+    QLabel* mButton;
 
-    /// button that displays checked and unchecked states
-    QPushButton* mCheckBox;
+    /// state of the button
+    ECheckboxState mState;
+
+    /// pixmap for the select all button
+    QPixmap mSelectAllPixmap;
+
+    /// pixmap for the clear all button
+    QPixmap mClearAllPixmap;
+
+    /// pixmap for disabled button
+    QPixmap mDisabledPixmap;
 };
 
 } // namespace cor

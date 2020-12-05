@@ -46,7 +46,7 @@ protected:
 private:
     /// programmatically resizes the widget
     void resize() {
-        auto textWidth = int(this->width() * 0.9);
+        auto textWidth = int(this->width());
         // set width in case it adjusts height
         mText->setFixedWidth(textWidth);
         // set height

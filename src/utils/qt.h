@@ -115,6 +115,33 @@ inline void resizeIcon(QPushButton* button, QString iconPath, float sizeRatio = 
 }
 
 /*!
+ * \brief computeHighlightColor compute the color of the highlight of the widget. The highlight
+ * is based on the number of devices and the number that are currently selected. If all
+ * devices are currently selected, it highlights completely.
+ *
+ * \param checkedDeviceCount the number of devices that are checked
+ * \param reachableDeviceCount the total number of reachable devices
+ * \return the color to use for the highlight.
+ */
+inline QColor computeHighlightColor(std::uint32_t checkedDeviceCount,
+                                    uint32_t reachableDeviceCount) {
+    QColor pureBlue(61, 142, 201);
+    QColor pureBlack(32, 31, 31);
+    QColor difference(pureBlue.red() - pureBlack.red(),
+                      pureBlue.green() - pureBlack.green(),
+                      pureBlue.blue() - pureBlack.blue());
+
+
+    if (checkedDeviceCount == 0 || reachableDeviceCount == 0) {
+        return {32, 31, 31, 255};
+    }
+    auto amountOfBlue = checkedDeviceCount / float(reachableDeviceCount);
+    return {int(amountOfBlue * difference.red() + pureBlack.red()),
+            int(amountOfBlue * difference.green() + pureBlack.green()),
+            int(amountOfBlue * difference.blue() + pureBlack.blue())};
+}
+
+/*!
  * \brief applicationSize this returns the size of the MainWindow, in a pretty ugly but effective
  *        way.
  *

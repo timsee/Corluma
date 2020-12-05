@@ -35,6 +35,9 @@ public:
                  GroupData* groups,
                  QWidget* parent);
 
+    /// change the height of each row
+    void changeRowHeight(int height) { mRowHeight = height; }
+
     /// resize programmatically
     void resize();
 
@@ -141,6 +144,9 @@ private:
     /// pointer to group data
     GroupData* mGroups;
 
+    /// lights button
+    LeftHandButton* mLightsButton;
+
     /// single color button
     LeftHandButton* mSingleColorButton;
 
@@ -164,6 +170,9 @@ private:
 
     /// last time lights were rendered.
     QTime mLastRenderTime;
+
+    /// height of each row, used for buttons.
+    int mRowHeight;
 
     /// true if moving, false otherwise
     bool mIsMoving;

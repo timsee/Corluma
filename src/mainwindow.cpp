@@ -98,7 +98,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     // --------------
     // Setup Controller Page
     // --------------
-    mControllerPage = new ControllerPage(this, mComm);
+    mControllerPage = new ControllerPage(this, mComm, mData);
     mControllerPage->hide();
     mControllerPage->isOpen(false);
     connect(mControllerPage, SIGNAL(backButtonPressed()), this, SLOT(hideControllerPage()));
@@ -163,6 +163,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     connect(mGreyOut, SIGNAL(clicked()), this, SLOT(greyoutClicked()));
 
     mControllerPage->changeRowHeight(mLeftHandMenu->height() / 18);
+    mLeftHandMenu->changeRowHeight(mLeftHandMenu->height() / 18);
 
     // --------------
     // Finish up wifi check
@@ -746,17 +747,7 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
         pushOutChooseMoodPage();
     }
 
-    if (mDiscoveryPage->isOpen() && page == EPage::discoveryPage) {
-        // special case, page is already settings, just return
-        return;
-    } else if (!mDiscoveryPage->isOpen() && page == EPage::discoveryPage) {
-        pushInDiscovery();
-        return;
-    } else if (mDiscoveryPage->isOpen()) {
-        pushOutDiscovery();
-    }
-
-    if (page == EPage::settingsPage || page == EPage::discoveryPage) {
+    if (page == EPage::settingsPage) {
         ignorePushOut = true;
     }
 
@@ -766,7 +757,15 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
         }
     }
 
-    mMainViewport->pageChanged(page);
+    if (page == EPage::discoveryPage && !mDiscoveryPage->isOpen()) {
+        pushInDiscovery();
+    } else if (page != EPage::discoveryPage && mDiscoveryPage->isOpen()) {
+        pushOutDiscovery();
+    }
+
+    if (page != EPage::discoveryPage) {
+        mMainViewport->pageChanged(page);
+    }
     mTopMenu->showFloatingLayout(page);
     if (!ignorePushOut) {
         pushOutLeftHandMenu();
@@ -981,8 +980,15 @@ void MainWindow::reorderWidgets() {
 }
 
 void MainWindow::setupStateObserver() {
-    mStateObserver =
-        new cor::StateObserver(mData, mComm, mGroups, mAppSettings, this, mTopMenu, this);
+    mStateObserver = new cor::StateObserver(mData,
+                                            mComm,
+                                            mGroups,
+                                            mAppSettings,
+                                            this,
+                                            mControllerPage,
+                                            mDiscoveryPage,
+                                            mTopMenu,
+                                            this);
     // color page setup
     connect(mMainViewport->colorPage(),
             SIGNAL(colorUpdate(QColor)),
@@ -1062,15 +1068,22 @@ void MainWindow::setupStateObserver() {
     // sync status
     connect(mSyncStatus, SIGNAL(statusChanged(bool)), mStateObserver, SLOT(dataInSync(bool)));
 
+    // setup deleting lights
+    connect(mControllerPage,
+            SIGNAL(lightSelected(QString, bool)),
+            mStateObserver,
+            SLOT(lightCountChangedFromControllerPage(QString, bool)));
+
+    connect(mControllerPage,
+            SIGNAL(deleteLight(QString)),
+            mDiscoveryPage,
+            SLOT(deleteLight(QString)));
+
     // light info widget
     connect(mSettingsPage->lightInfoWidget(),
             SIGNAL(lightNameChanged(QString, QString)),
             mStateObserver,
             SLOT(lightNameChange(QString, QString)));
-    connect(mSettingsPage->lightInfoWidget(),
-            SIGNAL(deleteLight(QString)),
-            mStateObserver,
-            SLOT(deleteLight(QString)));
 }
 
 void MainWindow::debugModeClicked() {

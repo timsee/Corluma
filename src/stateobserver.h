@@ -42,6 +42,8 @@ public:
                            GroupData* groups,
                            AppSettings* appSettings,
                            MainWindow* mainWindow,
+                           ControllerPage* controllerPage,
+                           DiscoveryPage* discoveryPage,
                            TopMenu* topMenu,
                            QObject* parent);
 
@@ -71,6 +73,7 @@ public slots:
     /// speed changed from a speed widget
     void speedChanged(std::uint32_t);
 
+    /// timeout changed.
     void timeoutChanged(bool, std::uint32_t);
 
     /// getter for the time observer
@@ -108,8 +111,8 @@ public slots:
      */
     void lightNameChange(const QString& key, const QString& name);
 
-    /// delete a light by unique ID. This deletes the light from memory.
-    void deleteLight(const QString& uniqueID);
+    /// light count changed from controller page.
+    void lightCountChangedFromControllerPage(QString, bool);
 
 private:
     /// computes the state based off of the various states of the widget
@@ -133,6 +136,12 @@ private:
 
     /// main window of the app
     MainWindow* mMainWindow;
+
+    /// controller page
+    ControllerPage* mControllerPage;
+
+    /// discovery page
+    DiscoveryPage* mDiscoveryPage;
 
     /// top menu of the app
     TopMenu* mTopMenu;

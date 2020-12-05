@@ -97,6 +97,10 @@ public:
      */
     void foundNewAuthToken(const nano::LeafMetadata& newLight, const QString& authToken);
 
+    /// checks for IPs in the unknown list and sets its verifiedIP flag to true if it exists in the
+    /// list.
+    void verifyIP(const QString& IP);
+
     /// update stored data about a found device
     void updateFoundLight(const nano::LeafMetadata& light);
 
@@ -108,6 +112,9 @@ public:
 
     /// getter for list of not found lights
     const std::vector<nano::LeafMetadata>& notFoundLights() { return mNotFoundLights; }
+
+    /// getter for list of unknown lights
+    const std::vector<nano::LeafMetadata>& unknownLights() { return mUnknownLights; }
 
     /// connects the UPnP object to the nanoleaf object.
     void connectUPnP(UPnPDiscovery* upnp);

@@ -305,6 +305,16 @@ int LightList::removeLightOfType(EProtocolType type) {
     return int(mLights.size());
 }
 
+bool LightList::doesLightExist(const QString& uniqueID) {
+    for (const auto& storedLight : mLights) {
+        if (uniqueID == storedLight.uniqueID()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
 bool LightList::doesLightExist(const cor::Light& device) {
     for (const auto& storedDevice : mLights) {
         if (device.uniqueID() == storedDevice.uniqueID()) {

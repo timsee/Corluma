@@ -17,9 +17,11 @@
 
 DiscoveryHueWidget::DiscoveryHueWidget(QWidget* parent,
                                        CommLayer* comm,
+                                       cor::LightList* selectedLights,
                                        ControllerPage* controllerPage)
     : DiscoveryWidget(parent, comm, controllerPage),
       mBridgeDiscovered{false},
+      mSelectedLights{selectedLights},
       mHueDiscoveryState{EHueDiscoveryState::findingIpAddress} {
     mScale = 0.4f;
 
@@ -120,6 +122,8 @@ void DiscoveryHueWidget::checkIfIPExists(const QString& IP) {
     }
 }
 
+void DiscoveryHueWidget::deleteLight(const QString& light) {}
+
 void DiscoveryHueWidget::updateBridgeGUI() {
     auto bridgeList = mComm->hue()->bridges().items();
     // get all not found bridges
@@ -163,8 +167,11 @@ void DiscoveryHueWidget::updateBridgeGUI() {
             if (key.isEmpty()) {
                 key = bridge.IP();
             }
-            auto widget =
-                new hue::DisplayPreviewBridgeWidget(bridge, key, mListWidget->mainWidget());
+            auto widget = new hue::DisplayPreviewBridgeWidget(bridge,
+                                                              key,
+                                                              mComm,
+                                                              mSelectedLights,
+                                                              mListWidget->mainWidget());
             widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
             connect(widget,
                     SIGNAL(nameChanged(QString, QString)),
@@ -282,6 +289,13 @@ void DiscoveryHueWidget::greyOutClicked() {
     }
     if (mIPWidget->isOpen()) {
         closeIPWidget();
+    }
+}
+
+void DiscoveryHueWidget::highlightLights() {
+    for (auto widget : mListWidget->widgets()) {
+        auto bridgeInfoWidget = dynamic_cast<hue::DisplayPreviewBridgeWidget*>(widget);
+        bridgeInfoWidget->highlightLights();
     }
 }
 

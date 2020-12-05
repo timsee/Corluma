@@ -432,17 +432,17 @@ void TopMenu::moveFloatingLayout() {
         // special case where the current floating layout is shown regardless of if the data is
         // empty
         currentFloatingLayout()->move(topRight);
-    } else if (mData->empty()) {
+    } else if (mData->empty() && mCurrentPage != EPage::discoveryPage) {
         // floating layout is not shown
         currentFloatingLayout()->move(
             QPoint(parentWidget()->size().width() + currentFloatingLayout()->width(),
                    mFloatingMenuStart));
-    } else {
+        moveHiddenLayouts();
+    } else if (mCurrentPage != EPage::discoveryPage) {
         // floating layout should be shown, since data is showing.
         currentFloatingLayout()->move(topRight);
+        moveHiddenLayouts();
     }
-
-    moveHiddenLayouts();
 }
 
 

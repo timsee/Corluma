@@ -33,7 +33,10 @@ public:
      *
      * \param parent
      */
-    explicit DiscoveryHueWidget(QWidget* parent, CommLayer* comm, ControllerPage* controllerPage);
+    explicit DiscoveryHueWidget(QWidget* parent,
+                                CommLayer* comm,
+                                cor::LightList* selectedLights,
+                                ControllerPage* controllerPage);
 
     /// See DiscoveryWidget.h
     void handleDiscovery(bool isActive) override;
@@ -54,6 +57,12 @@ public:
 
     /// default value for the IP widget
     QString IPWidgetDefaultValue() override { return "192.168.0.100"; }
+
+    /// delete a light from the discovery page.
+    void deleteLight(const QString&) override;
+
+    /// handles how to higlight lights.
+    void highlightLights() override;
 
 private slots:
     /// handles when the greyout is clicked
@@ -106,6 +115,9 @@ private:
 
     /// true if bridge is discovered, false if not.
     bool mBridgeDiscovered;
+
+    /// list of selected lights.
+    cor::LightList* mSelectedLights;
 
     /// widget for discovering hue lights
     hue::LightDiscovery* mHueLightDiscovery;

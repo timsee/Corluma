@@ -11,14 +11,19 @@
 #include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
+#include "utils/qt.h"
 
 namespace hue {
 
 DisplayPreviewBridgeWidget::DisplayPreviewBridgeWidget(const hue::Bridge& bridge,
                                                        const QString& key,
+                                                       CommLayer* comm,
+                                                       cor::LightList* selectedLights,
                                                        QWidget* parent)
     : cor::ListItemWidget(key, parent),
-      mState{EBridgeDiscoveryState::unknown} {
+      mState{EBridgeDiscoveryState::unknown},
+      mComm{comm},
+      mSelectedLights{selectedLights} {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     setStyleSheet(styleSheet);
 
@@ -131,6 +136,7 @@ void DisplayPreviewBridgeWidget::updateBridge(const hue::Bridge& bridge) {
     mAPI->setText("<b>API:</b>  " + bridge.API());
     mID->setText("<b>ID:</b>  " + bridge.id());
     handleBridgeState(bridge.state());
+    highlightLights();
     mBridge = bridge;
 }
 
@@ -169,12 +175,7 @@ void DisplayPreviewBridgeWidget::paintEvent(QPaintEvent*) {
     QPainter painter(this);
 
     painter.setRenderHint(QPainter::Antialiasing);
-    if (mIsChecked) {
-        painter.fillRect(rect(), QBrush(QColor(61, 142, 201, 255)));
-    } else {
-        // TODO: could I make this transparent in all cases?
-        painter.fillRect(rect(), QBrush(QColor(32, 31, 31, 255)));
-    }
+    painter.fillRect(rect(), cor::computeHighlightColor(mSelectedCount, mReachableCount));
 
     // draw line at bottom of widget
     QRect area(x(), y(), width(), height());
@@ -272,6 +273,20 @@ void DisplayPreviewBridgeWidget::calculateButtonFontSize() {
     mSchedulesButton->setFont(font);
     mDiscoverHueButton->setFont(font);
     mGroupsButton->setFont(font);
+}
+
+void DisplayPreviewBridgeWidget::highlightLights() {
+    mReachableCount = 0u;
+    mSelectedCount = 0u;
+    for (auto light : mComm->hue()->lightsFromMetadata(mBridge.lights().items())) {
+        if (light.isReachable()) {
+            mReachableCount++;
+        }
+        if (mSelectedLights->doesLightExist(light.uniqueID())) {
+            mSelectedCount++;
+        }
+    }
+    update();
 }
 
 } // namespace hue
