@@ -436,14 +436,22 @@ void CommNanoleaf::replyFinished(QNetworkReply* reply) {
             handleNetworkPacket(light, payload);
         }
     } else if (reply->error() == QNetworkReply::ConnectionRefusedError) {
-        qDebug() << "Nanoleaf connection refused from " << reply->url().toString();
-        // TODO: is there a more elegant way to check if the IP address contains a nanoleaf without
-        // NUPnP or an auth token?
-        mDiscovery->verifyIP(reply->url().toString());
+#ifdef DEBUG_LEAF_TOUCHY
+        qDebug() << "Nanoleaf connection refused from "
+                 << reply->url()
+                        .toString()
+#endif
+                    // TODO: is there a more elegant way to check if the IP address contains a
+                    // nanoleaf without NUPnP or an auth token?
+                    mDiscovery->verifyIP(reply->url().toString());
     } else if (reply->errorString() == "Forbidden") {
+#ifdef DEBUG_LEAF_TOUCHY
         qDebug() << "Nanoleaf connection forbidden from " << reply->url().toString();
+#endif
     } else {
+#ifdef DEBUG_LEAF_TOUCHY
         qDebug() << " unknown error from " << reply->url().toString() << reply->errorString();
+#endif
     }
 }
 

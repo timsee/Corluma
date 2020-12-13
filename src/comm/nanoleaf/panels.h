@@ -4,8 +4,9 @@
 #include <QDebug>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QRect>
+#include <cmath>
 #include <vector>
-
 #include "cor/range.h"
 #include "utils/exception.h"
 
@@ -61,8 +62,19 @@ public:
     /// shape for the panel
     EShapeType shape() const noexcept { return mShape; }
 
+    /// true if its a triangle and the triangle is flipped upside down, false if its not a triangle
+    /// or if the triangle is right side up.
+    bool isAFlippedTriangle() const noexcept {
+        if (mShape == EShapeType::triangle || mShape == EShapeType::triangleShapes
+            || mShape == EShapeType::miniTriangleShapes) {
+            return (o() % 120) == 0;
+        } else {
+            return false;
+        }
+    }
+
     /// getter for side length, inferred by shapeType.
-    int sideLength() {
+    int sideLength() const {
         switch (mShape) {
             case EShapeType::triangle:
                 return 150;
@@ -79,6 +91,45 @@ public:
             case EShapeType::rhythm:
             default:
                 return 0u;
+        }
+    }
+
+    /// bounding rect for the shape. Shape fits exactly within the bounding box, with no extra
+    /// padding.
+    QRect boundingRect() const {
+        switch (mShape) {
+            case EShapeType::triangle:
+            case EShapeType::triangleShapes:
+            case EShapeType::miniTriangleShapes: {
+                auto height = sideLength() * std::sqrt(3) / 2;
+                auto width = sideLength();
+
+                auto distToVertexFromCentroid = sideLength() / std::sqrt(3);
+                if (isAFlippedTriangle()) {
+                    distToVertexFromCentroid = height - distToVertexFromCentroid;
+                }
+                auto leftX = x() - sideLength() / 2;
+                auto topY = y() - distToVertexFromCentroid;
+
+                return QRect(leftX, topY, width, height);
+            }
+            case EShapeType::controlSquarePassive:
+            case EShapeType::controlSquareMaster:
+            case EShapeType::square:
+                return QRect(x() - sideLength() / 2,
+                             y() - sideLength() / 2,
+                             sideLength(),
+                             sideLength());
+            case EShapeType::heaxagonShapes: {
+                auto width = sideLength() * 2;
+                // I have to remember high school geometry to use this API...
+                auto inradius = std::sqrt(3) / 2 * sideLength();
+                // rounding up since its likely not a whole number
+                auto height = std::ceil(inradius * 2);
+                return QRect(x() - width / 2, y() - height / 2, width, height);
+            }
+            default:
+                return {};
         }
     }
 

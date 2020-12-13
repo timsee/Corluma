@@ -981,3 +981,12 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Cleaned up Nanoleaf discovery code.
 - Fixed a bug with displaying icons for many hue models.
 - Fixed miscellaneous bugs.
+
+### **v0.21.1**
+### The Nanoleaf Layout Update
+- Added `LeafPanelImage` which uses the Nanoleaf's layout data to draw what the Nanoleaf looks like.
+- Added a `rotation` value to Nanoleaf metadata, to track how the lights are rotated.
+- Fixed bugs with resizing the `LeftHandMenu`.
+- Fixed a bug where the `ExpandingTextScrollArea` always showed its scrollbar, even when it was not needed.
+- Fixed bugs where negative sizes were used.
+- Fixed miscellaneous bugs.

@@ -13,6 +13,7 @@
 #include <QPainter>
 #include <QPropertyAnimation>
 
+#include <algorithm>
 #include "comm/commhue.h"
 #include "comm/commnanoleaf.h"
 #include "cor/presetpalettes.h"
@@ -24,7 +25,8 @@
 
 namespace {
 bool mDebugMode = false;
-}
+
+} // namespace
 
 MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& minimumSize)
     : QMainWindow(parent),
@@ -163,7 +165,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     connect(mGreyOut, SIGNAL(clicked()), this, SLOT(greyoutClicked()));
 
     mControllerPage->changeRowHeight(mLeftHandMenu->height() / 18);
-    mLeftHandMenu->changeRowHeight(mLeftHandMenu->height() / 18);
+    mLeftHandMenu->changeRowHeight(mLeftHandMenu->height() / 20);
 
     // --------------
     // Finish up wifi check
@@ -411,7 +413,7 @@ void MainWindow::pushOutDiscovery() {
         }
         mTopMenu->showFloatingLayout(EPage::colorPage);
     }
-
+    hideControllerPage();
     if (mLeftHandMenu->alwaysOpen()) {
         mDiscoveryPage->pushOut(QPoint(mLeftHandMenu->width(), 0),
                                 QPoint(width() + mDiscoveryPage->width(), 0));
@@ -420,16 +422,9 @@ void MainWindow::pushOutDiscovery() {
     }
 }
 
+
 void MainWindow::pushInDiscovery() {
-    const auto& fullScreenSize = size();
-    if (mFirstLoad) {
-        mDiscoveryPage->setFixedSize(fullScreenSize.width(), fullScreenSize.height());
-    } else if (mLeftHandMenu->alwaysOpen()) {
-        mDiscoveryPage->setFixedSize(fullScreenSize.width() - mLeftHandMenu->width(),
-                                     fullScreenSize.height());
-    } else {
-        mDiscoveryPage->setFixedSize(fullScreenSize.width(), fullScreenSize.height());
-    }
+    pushInFullPageWidget(mDiscoveryPage);
 
     if (mLeftHandMenu->alwaysOpen() && !mFirstLoad) {
         mDiscoveryPage->pushIn(QPoint(width() + mDiscoveryPage->width(), 0),
@@ -518,14 +513,7 @@ void MainWindow::editButtonClicked(bool isMood) {
 void MainWindow::resizeFullPageWidget(QWidget* widget) {
     QSize fullScreenSize = size();
     if (widget->isVisible()) {
-        if (mFirstLoad) {
-            widget->setFixedSize(fullScreenSize.width(), fullScreenSize.height());
-        } else if (mLeftHandMenu->alwaysOpen()) {
-            widget->setFixedSize(fullScreenSize.width() - mLeftHandMenu->width(),
-                                 fullScreenSize.height());
-        } else {
-            widget->setFixedSize(fullScreenSize.width(), fullScreenSize.height());
-        }
+        pushInFullPageWidget(widget);
 
         if (mFirstLoad) {
             widget->move(QPoint(0, widget->geometry().y()));
@@ -569,14 +557,7 @@ void MainWindow::resize() {
 
     QSize fullScreenSize = size();
     if (mDiscoveryPage->isOpen()) {
-        if (mFirstLoad) {
-            mDiscoveryPage->setFixedSize(fullScreenSize.width(), fullScreenSize.height());
-        } else if (mLeftHandMenu->isIn()) {
-            mDiscoveryPage->setFixedSize(fullScreenSize.width() - mLeftHandMenu->width(),
-                                         fullScreenSize.height());
-        } else {
-            mDiscoveryPage->setFixedSize(fullScreenSize.width(), fullScreenSize.height());
-        }
+        pushInFullPageWidget(mDiscoveryPage);
 
         if (mFirstLoad) {
             mDiscoveryPage->move(QPoint(0, mDiscoveryPage->geometry().y()));
@@ -757,6 +738,7 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
         }
     }
 
+
     if (page == EPage::discoveryPage && !mDiscoveryPage->isOpen()) {
         pushInDiscovery();
     } else if (page != EPage::discoveryPage && mDiscoveryPage->isOpen()) {
@@ -777,8 +759,9 @@ void MainWindow::pushInFullPageWidget(QWidget* widget) {
     if (mFirstLoad) {
         widget->setFixedSize(fullScreenSize.width(), fullScreenSize.height());
     } else if (mLeftHandMenu->alwaysOpen()) {
-        widget->setFixedSize(fullScreenSize.width() - mLeftHandMenu->width(),
-                             fullScreenSize.height());
+        widget->setFixedSize(
+            cor::guardAgainstNegativeSize(fullScreenSize.width() - mLeftHandMenu->width()),
+            fullScreenSize.height());
     } else {
         widget->setFixedSize(fullScreenSize.width(), fullScreenSize.height());
     }

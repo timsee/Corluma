@@ -104,8 +104,10 @@ void ListWidget::clearAll() {
 }
 
 void ListWidget::resize() {
-    mWidget->setFixedWidth(geometry().width() - verticalScrollBar()->width()
-                           - contentsMargins().left() - contentsMargins().right());
+    auto width = std::max(geometry().width() - verticalScrollBar()->width()
+                              - contentsMargins().left() - contentsMargins().right(),
+                          10);
+    mWidget->setFixedWidth(width);
     setMinimumWidth(mWidget->minimumSizeHint().width() + verticalScrollBar()->width());
     for (auto widget : mListLayout.widgets()) {
         if (mListLayout.type() == cor::EListType::linear) {

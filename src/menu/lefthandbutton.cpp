@@ -24,18 +24,18 @@ LeftHandButton::LeftHandButton(const QString& text,
     : QWidget(menu) {
     mPage = page;
     mMenu = menu;
+    mIsState = false;
+    setFixedWidth(parentWidget()->width());
     mIsHighlighted = false;
     mResourcePath = iconResource;
 
-    setFixedSize(parentWidget()->width(), parentWidget()->height() / 15);
     mTitle = new QLabel(text, this);
     mTitle->setStyleSheet("background-color:rgba(0,0,0,0);");
-    mTitle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mTitle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     mIcon = new QLabel(text, this);
     mIcon->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     mIcon->setStyleSheet("background-color:rgba(0,0,0,0);");
-    mIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     updateIcon(iconResource);
     renderButton();
 }
@@ -49,9 +49,10 @@ LeftHandButton::LeftHandButton(const QString& text,
     mPage = page;
     mMenu = menu;
     mIsHighlighted = false;
+    mIsState = true;
     mState = state;
+    setFixedWidth(parentWidget()->width());
 
-    setFixedSize(parentWidget()->width(), parentWidget()->height() / 15);
     mTitle = new QLabel(text, this);
     mTitle->setStyleSheet("background-color:rgba(0,0,0,0);");
     mTitle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -59,12 +60,12 @@ LeftHandButton::LeftHandButton(const QString& text,
     mIcon = new QLabel(text, this);
     mIcon->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     mIcon->setStyleSheet("background-color:rgba(0,0,0,0);");
-    mIcon->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     updateState(state);
     renderButton();
 }
 
 void LeftHandButton::updateIcon(const QString& iconResource) {
+    mResourcePath = iconResource;
     QPixmap pixmap(iconResource);
     const auto& size = QSize(int(this->size().height() * 0.8), int(this->size().height() * 0.8));
     mIcon->setPixmap(
@@ -74,8 +75,9 @@ void LeftHandButton::updateIcon(const QString& iconResource) {
 
 void LeftHandButton::updateState(const cor::LightState& state) {
     IconData icon;
+    mState = state;
     icon.setRoutine(state);
-    const auto& size = QSize(int(this->size().width() * 0.8), int(this->size().height() * 0.8));
+    const auto& size = QSize(int(this->size().height() * 0.8), int(this->size().height() * 0.8));
     mIcon->setPixmap(icon.renderAsQPixmap().scaled(size.width(),
                                                    size.height(),
                                                    Qt::KeepAspectRatio,
@@ -93,8 +95,13 @@ void LeftHandButton::renderButton() {
 }
 
 void LeftHandButton::resize() {
-    mIcon->setGeometry(0, 0, mIcon->width(), height());
+    mIcon->setGeometry(0, 0, height(), height());
     mTitle->setGeometry(mIcon->width(), 0, width() - mIcon->width(), height());
+    if (mIsState) {
+        updateState(mState);
+    } else {
+        updateIcon(mResourcePath);
+    }
 }
 
 void LeftHandButton::mousePressEvent(QMouseEvent* event) {

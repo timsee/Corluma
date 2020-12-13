@@ -27,6 +27,7 @@ LightVectorWidget::LightVectorWidget(std::uint32_t width,
     mLayout = new QGridLayout;
     mLayout->setContentsMargins(0, 0, 0, 0);
     mLayout->setHorizontalSpacing(0);
+    setLayout(mLayout);
 
     // --------------
     // Setup Array Color Buttons
@@ -57,7 +58,6 @@ LightVectorWidget::LightVectorWidget(std::uint32_t width,
             ++i;
         }
     }
-    setLayout(mLayout);
 }
 
 void LightVectorWidget::updateLights(const std::vector<cor::Light>& lights) {

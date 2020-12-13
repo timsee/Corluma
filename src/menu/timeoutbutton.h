@@ -44,11 +44,11 @@ private slots:
         if (mTimeoutEnabled) {
             auto lights = mData->lights();
             if (!isAnyLightOn(lights)) {
-                mTitle->setText("Timeout Default: " + QString::number(mTimeoutValue));
+                mTitle->setText("Timeout: " + QString::number(mTimeoutValue));
             } else {
                 auto timeouts = mComm->secondsUntilTimeout(cor::lightVectorToIDs(lights));
                 auto modeTimeout = std::round(cor::mode(timeouts) / 60.0);
-                mTitle->setText("Timeout in: " + QString::number(modeTimeout));
+                mTitle->setText("Timeout: " + QString::number(modeTimeout));
             }
         } else {
             mTitle->setText("Timeout Disabled");

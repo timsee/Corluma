@@ -6,6 +6,7 @@
 #include <QStyleOption>
 #include <QWidget>
 #include "comm/nanoleaf/leafmetadata.h"
+#include "comm/nanoleaf/leafpanelimage.h"
 #include "cor/widgets/listitemwidget.h"
 #include "syncwidget.h"
 #include "utils/qt.h"
@@ -29,6 +30,9 @@ public:
           mName{new QLabel(leafMetadata.name(), this)},
           mSyncWidget{new SyncWidget(this)},
           mStatusPrompt{new QLabel(this)},
+          mPanelImage{new nano::LeafPanelImage(this)},
+          mPanelLabel{new QLabel(this)},
+          mRotation{420},
           mLeafMetadata{leafMetadata},
           mStatus{status} {
         updateNanoleaf(leafMetadata, status);
@@ -74,6 +78,9 @@ public:
                     mName->setText(mLeafMetadata.IP());
                 }
             }
+            if (mLeafMetadata.rotation() != mRotation) {
+                drawPanels();
+            }
         }
     }
 
@@ -86,11 +93,20 @@ public:
             auto iconHeight = this->height() / 2;
             mSyncWidget->setGeometry(0, yPos, iconHeight, iconHeight);
             yPos += mSyncWidget->height();
+            mName->setGeometry(0, yPos, this->width(), this->height() / 4);
+            yPos += mName->height();
+            mStatusPrompt->setGeometry(0, yPos, this->width(), this->height() / 4);
+            yPos += mStatusPrompt->height();
+        } else if (mStatus == nano::ELeafDiscoveryState::connected) {
+            auto iconHeight = this->height() * 3 / 4;
+            mPanelLabel->setGeometry(0, yPos, this->width() / 2, iconHeight);
+
+            drawPanels();
+            yPos += mPanelLabel->height();
+
+            mName->setGeometry(0, yPos, this->width(), this->height() / 4);
+            yPos += mName->height();
         }
-        mName->setGeometry(0, yPos, this->width(), this->height() / 4);
-        yPos += mName->height();
-        mStatusPrompt->setGeometry(0, yPos, this->width(), this->height() / 4);
-        yPos += mStatusPrompt->height();
     }
 
 signals:
@@ -157,6 +173,21 @@ private:
         mStatusPrompt->setText(text);
     }
 
+    void drawPanels() {
+        mRotation = mLeafMetadata.rotation();
+        // render the image for the panel
+        mPanelImage->drawPanels(mLeafMetadata.panels(), mLeafMetadata.rotation());
+        // draw the image to the panel label
+        mPanelPixmap.convertFromImage(mPanelImage->image());
+        if (!mPanelPixmap.isNull()) {
+            mPanelPixmap = mPanelPixmap.scaled(mPanelLabel->width(),
+                                               mPanelLabel->height(),
+                                               Qt::KeepAspectRatio,
+                                               Qt::SmoothTransformation);
+            mPanelLabel->setPixmap(mPanelPixmap);
+        }
+    }
+
     /// true if highlighted, false if not.
     bool mIsHighlighted;
 
@@ -168,6 +199,18 @@ private:
 
     /// status prompt for when searching but need user to hold down button.
     QLabel* mStatusPrompt;
+
+    /// generates the panel image
+    nano::LeafPanelImage* mPanelImage;
+
+    /// label that shows the panel image
+    QLabel* mPanelLabel;
+
+    /// pixmap that stores the panel image.
+    QPixmap mPanelPixmap;
+
+    /// stored rotation of the lights
+    int mRotation;
 
     /// metadata widget for the nanoleaf
     nano::LeafMetadata mLeafMetadata;

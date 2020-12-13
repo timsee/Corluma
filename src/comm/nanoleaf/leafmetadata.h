@@ -33,6 +33,7 @@ public:
         : mIP{},
           mAuthToken{},
           mPort{-1},
+          mRotation{-1},
           mHardwareName{hardware},
           mSerialNumber{serial},
           mName{hardware},
@@ -65,6 +66,12 @@ public:
 
     /// setter for name
     void name(const QString& name) { mName = name; }
+
+    /// getter for rotation
+    int rotation() const noexcept { return mRotation; }
+
+    /// setter for rotation
+    void rotation(int rotation) { mRotation = rotation; }
 
     //-----------
     // Connection
@@ -214,6 +221,10 @@ private:
 
     /// port of nanoleaf, -1 if no nanoleaf found
     int mPort;
+
+    /// between 0 and 360, this is the rotation of the lights when mounted on a wall. This is used
+    /// to properly display the lights in the app. -1 means the rotation is undefined.
+    int mRotation;
 
     /// possible range for brightness values
     cor::Range<std::uint32_t> mBrightRange = cor::Range<std::uint32_t>(0, 100);

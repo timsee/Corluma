@@ -25,6 +25,9 @@ DropdownTopWidget::DropdownTopWidget(const QString& key,
     mType = type;
     mShowButtons = false;
     mHideEdit = hideEdit;
+    mLayout = new QHBoxLayout;
+    setLayout(mLayout);
+
     connect(this, SIGNAL(pressed()), this, SLOT(widgetPressed()));
 
     mName = new QLabel(this);
@@ -73,11 +76,9 @@ DropdownTopWidget::DropdownTopWidget(const QString& key,
     mHiddenStateIcon->setFixedHeight(mMinimumHeight);
     mHiddenStateIcon->setStyleSheet("background-color: rgba(0,0,0,0);");
 
-    mLayout = new QHBoxLayout;
     mLayout->addWidget(mName);
     mLayout->addWidget(mEditButton);
     mLayout->addWidget(mHiddenStateIcon);
-    setLayout(mLayout);
 
     mLayout->setContentsMargins(10, 0, 0, 0);
     mLayout->setSpacing(0);

@@ -23,14 +23,16 @@ public:
     explicit ExpandingTextScrollArea(QWidget* parent)
         : QScrollArea(parent),
           mText{new QTextEdit(this)} {
+        setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         setWidget(mText);
-        horizontalScrollBar()->setVisible(false);
         QScroller::grabGesture(viewport(), QScroller::LeftMouseButtonGesture);
+        setStyleSheet("background-color:rgb(33,32,32);");
+
+        horizontalScrollBar()->setVisible(false);
 
         mText->setReadOnly(true);
         mText->setWordWrapMode(QTextOption::WordWrap);
         mText->setAlignment(Qt::AlignTop | Qt::AlignLeft);
-        this->setStyleSheet("background-color:rgb(33,32,32);");
     }
 
     /// update the text in the widget

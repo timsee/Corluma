@@ -99,6 +99,9 @@ private:
     /// true if highlight, false if not
     bool mIsHighlighted;
 
+    /// true if state, false if icon
+    bool mIsState;
+
     /// resize programmatically
     void resize();
 };

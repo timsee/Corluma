@@ -67,8 +67,9 @@ void ControllerPage::renderUI() {
     if (mNanoleafWidget->isVisible()) {
         auto lightResult = mComm->nanoleaf()->lightFromMetadata(mNanoleafWidget->metadata());
         if (lightResult.second) {
-            mNanoleafWidget->updateLeafMetadata(mNanoleafWidget->metadata(),
-                                                lightResult.first.state().isOn());
+            mNanoleafWidget->updateLeafMetadata(
+                mNanoleafWidget->metadata(),
+                mSelectedLights->doesLightExist(mNanoleafWidget->metadata().serialNumber()));
         }
     }
 

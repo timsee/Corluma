@@ -15,11 +15,13 @@ LeafMetadata jsonToLeafController(const QJsonObject& object) {
     QString auth = object["auth"].toString();
     QString hardwareName = object["hardwareName"].toString();
     int port = int(object["port"].toDouble());
+    int rotation = int(object["rotation"].toDouble());
 
     nano::LeafMetadata controller(serial, hardwareName);
     controller.addConnectionInfo(IP, port);
     controller.name(name);
     controller.authToken(auth);
+    controller.rotation(rotation);
     // since we have an auth, the IP was verified.
     controller.IPVerified(true);
     return controller;
@@ -33,6 +35,7 @@ QJsonObject leafControllerToJson(const LeafMetadata& controller) {
     object["hardwareName"] = controller.hardwareName();
     object["auth"] = controller.authToken();
     object["port"] = controller.port();
+    object["rotation"] = controller.rotation();
     return object;
 }
 

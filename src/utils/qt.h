@@ -141,6 +141,14 @@ inline QColor computeHighlightColor(std::uint32_t checkedDeviceCount,
             int(amountOfBlue * difference.blue() + pureBlack.blue())};
 }
 
+/// if a negative size is going to be used, a size of 50 is chosen instead.
+inline int guardAgainstNegativeSize(int size) {
+    if (size < 1) {
+        return 50;
+    }
+    return size;
+}
+
 /*!
  * \brief applicationSize this returns the size of the MainWindow, in a pretty ugly but effective
  *        way.

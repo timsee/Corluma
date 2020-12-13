@@ -66,6 +66,8 @@ public:
             }
         }
         mLights->highlightLights(lightsToHighlight);
+
+        handleCheckboxState();
     }
 
     /// updates the controller's UI elements.
@@ -121,9 +123,6 @@ public:
         yPosColumn1 += mLightsLabel->height();
         mMetadata->setGeometry(xSpacer, yPosColumn1, columnWidth, buttonHeight * 4);
         yPosColumn1 += mMetadata->height();
-        mDeleteButton->setGeometry(xSpacer, yPosColumn1, columnWidth, buttonHeight);
-        yPosColumn1 += mDeleteButton->height();
-
 
         // column 2
         mLightsLabel->setGeometry(xSecondColumnStart,
@@ -135,9 +134,15 @@ public:
         QRect selectedLightsRect(xSecondColumnStart,
                                  yPosColumn2,
                                  columnWidth - xSpacer,
-                                 buttonHeight * 8);
+                                 buttonHeight * 7);
         mLights->resize(selectedLightsRect, mRowHeight);
         yPosColumn2 += mLights->height();
+
+        // put delete button on bottom of column
+        mDeleteButton->setGeometry(xSecondColumnStart,
+                                   height() - buttonHeight,
+                                   columnWidth,
+                                   buttonHeight);
     }
 
 signals:

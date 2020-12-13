@@ -68,6 +68,10 @@ public:
     /// removes the nanoleaf from the save data and discovered data
     void removeNanoleaf(const nano::LeafMetadata& light);
 
+    /// change the rotation of a nanoleaf light, which reflects how it is mounted in physical
+    /// reality. This is not a value stored in a nanoleaf, but is useful when rendering the light.
+    void changeRotation(const nano::LeafMetadata& light, int rotation);
+
     /*!
      * \brief findLightBySerial looks for the LeafMetadata of a light based off of its serial
      * number.

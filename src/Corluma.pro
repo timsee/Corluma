@@ -134,6 +134,7 @@ SOURCES += main.cpp \
     comm/datasynctimeout.cpp \
     comm/nanoleaf/leaflightinfowidget.cpp \
     comm/nanoleaf/leafmetadata.cpp \
+    comm/nanoleaf/leafpanelimage.cpp \
     comm/upnpdiscovery.cpp \
     colorpicker/colorpicker.cpp \
     colorpicker/rgbsliders.cpp \
@@ -163,6 +164,7 @@ SOURCES += main.cpp \
     cor/widgets/lightvectorwidget.cpp \
     cor/listlayout.cpp \
     cor/widgets/groupbutton.cpp \
+    display/rotatelightwidget.cpp \
     edit/chooseeditpage.cpp \
     edit/choosegroupwidget.cpp \
     edit/choosemoodwidget.cpp \
@@ -264,6 +266,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     comm/hue/schedule.h \
     comm/nanoleaf/leaflightinfowidget.h \
     comm/nanoleaf/leafmetadata.h \
+    comm/nanoleaf/leafpanelimage.h \
     comm/nanoleaf/leafschedulewidget.h \
     comm/upnpdiscovery.h \
     colorpicker/colorpicker.h \
@@ -302,6 +305,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     display/displaypreviewarducorwidget.h \
     display/displaypreviewnanoleafwidget.h \
     display/displaypreviewbridgewidget.h \
+    display/rotatelightwidget.h \
     edit/chooseeditpage.h \
     edit/choosegroupwidget.h \
     edit/chooselightsgroupwidget.h \

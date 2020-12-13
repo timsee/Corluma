@@ -42,6 +42,7 @@ void LeafDiscovery::foundNewAuthToken(const nano::LeafMetadata& newController,
         if (unknownController.IP() == newController.IP()) {
             unknownController.authToken(authToken);
             unknownController.name(newController.hardwareName());
+            unknownController.rotation(newController.rotation());
             break;
         }
     }
@@ -51,7 +52,8 @@ void LeafDiscovery::foundNewLight(nano::LeafMetadata newLight) {
 #ifdef DEBUG_LEAF_DISCOVERY
     qDebug() << __func__ << " Controller " << newLight.hardwareName()
              << " name: " << newLight.name() << " auth: " << newLight.authToken()
-             << " IP: " << newLight.IP() << " serial number " << newLight.serialNumber();
+             << " IP: " << newLight.IP() << " serial number " << newLight.serialNumber()
+             << " rotation " << newLight.rotation();
 #endif
     // check if the controller exists in the unknown group, delete if found
     for (auto unknownLight : mUnknownLights) {
@@ -70,12 +72,18 @@ void LeafDiscovery::foundNewLight(nano::LeafMetadata newLight) {
     for (auto notFoundController : mNotFoundLights) {
         if (notFoundController.authToken() == newLight.authToken()) {
             newLight.name(notFoundController.name());
+            newLight.rotation(notFoundController.rotation());
             auto it = std::find(mNotFoundLights.begin(), mNotFoundLights.end(), notFoundController);
             mNotFoundLights.erase(it);
             break;
         }
     }
-
+#ifdef DEBUG_LEAF_DISCOVERY
+    qDebug() << __func__ << " Inserting New Light of " << newLight.hardwareName()
+             << " name: " << newLight.name() << " auth: " << newLight.authToken()
+             << " IP: " << newLight.IP() << " serial number " << newLight.serialNumber()
+             << " rotation " << newLight.rotation();
+#endif
     mFoundLights.insert(newLight.serialNumber().toStdString(), newLight);
     updateJSON(newLight);
 }
@@ -305,6 +313,7 @@ std::pair<nano::LeafMetadata, bool> LeafDiscovery::handleUndiscoveredLight(
         // get connection unique keys used as connection info for the light
         QString serialNumber;
         QString name;
+        int rotation = -1;
         if (object["serialNo"].isString() && object["name"].isString()) {
             serialNumber = object["serialNo"].toString();
             name = object["name"].toString();
@@ -323,9 +332,12 @@ std::pair<nano::LeafMetadata, bool> LeafDiscovery::handleUndiscoveredLight(
         for (const auto& notFoundLight : mNotFoundLights) {
             if (notFoundLight.hardwareName() == completeLight.hardwareName()) {
                 name = notFoundLight.hardwareName();
+                rotation = notFoundLight.rotation();
             }
         }
         completeLight.name(name);
+        completeLight.rotation(rotation);
+
         // add complete light to discovery buffers
         foundNewLight(completeLight);
         return std::make_pair(completeLight, true);
@@ -427,6 +439,13 @@ void LeafDiscovery::updateFoundLight(const nano::LeafMetadata& controller) {
         mFoundLights.update(controller.serialNumber().toStdString(), controller);
         updateJSON(controller);
     }
+}
+
+void LeafDiscovery::changeRotation(const nano::LeafMetadata& light, int rotation) {
+    qDebug() << " light " << light << " rotation" << rotation;
+    auto lightCopy = light;
+    lightCopy.rotation(rotation);
+    updateFoundLight(lightCopy);
 }
 
 std::pair<QString, bool> LeafDiscovery::nameFromSerial(const QString& serialNumber) {

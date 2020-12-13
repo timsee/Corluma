@@ -74,7 +74,6 @@ protected:
     /// handles sizing the widgets.
     void resizeEvent(QResizeEvent*) {
         auto yPos = 0u;
-
         mNameLabel->setGeometry(0, yPos, this->width(), this->height() / 2);
         yPos += mNameLabel->height();
         mExecutionTime->setGeometry(0, yPos, this->width(), this->height() / 2);

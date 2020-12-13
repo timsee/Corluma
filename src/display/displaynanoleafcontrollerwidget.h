@@ -10,6 +10,7 @@
 #include "comm/commlayer.h"
 #include "comm/commnanoleaf.h"
 #include "comm/nanoleaf/leafmetadata.h"
+#include "comm/nanoleaf/leafpanelimage.h"
 #include "cor/widgets/button.h"
 #include "cor/widgets/checkbox.h"
 #include "cor/widgets/expandingtextscrollarea.h"
@@ -19,6 +20,7 @@
 #include "menu/displaymoodmetadata.h"
 #include "menu/groupstatelistmenu.h"
 #include "menu/lightslistmenu.h"
+#include "rotatelightwidget.h"
 
 /*!
  * \copyright
@@ -35,17 +37,20 @@ public:
     explicit DisplayNanoleafControllerWidget(QWidget* parent, CommLayer* comm)
         : QWidget(parent),
           mComm{comm},
+          mPanelImage{new nano::LeafPanelImage(this)},
           mDisplayLights{new QLabel(this)},
           mName{new QLabel(this)},
           mStateButton{new cor::Button(this, {})},
           mCheckBox{new cor::CheckBox(this)},
           mChangeName{new QPushButton("Change Name", this)},
+          mChangeRotation{new QPushButton("Rotate", this)},
           mDeleteButton{new QPushButton("Delete", this)},
           mMetadata{new cor::ExpandingTextScrollArea(this)},
           mSchedulesLabel{new QLabel("<b>Schedules:</b>", this)},
           mSchedulesWidget{new DisplayNanoleafSchedulesWidget(this)},
           mGreyout{new GreyOutOverlay(true, parentWidget()->parentWidget())},
-          mChangeNameInput{new cor::TextInputWidget(parentWidget()->parentWidget())} {
+          mChangeNameInput{new cor::TextInputWidget(parentWidget()->parentWidget())},
+          mRotateLightWidget{new RotateLightWidget(parentWidget()->parentWidget())} {
         auto font = mName->font();
         font.setPointSize(20);
         mName->setFont(font);
@@ -54,13 +59,23 @@ public:
         mChangeNameInput->setVisible(false);
 
         connect(mDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteButtonPressed(bool)));
+        connect(mChangeRotation, SIGNAL(clicked(bool)), this, SLOT(rotateButtonPressed(bool)));
         mDeleteButton->setStyleSheet("background-color:rgb(110,30,30);");
 
         connect(mGreyout, SIGNAL(clicked()), this, SLOT(greyOutClicked()));
         mGreyout->greyOut(false);
 
+        mSchedulesLabel->setVisible(false);
+        mSchedulesWidget->setVisible(false);
+
         connect(mChangeName, SIGNAL(clicked(bool)), this, SLOT(handleChangeNamePressed()));
         this->setStyleSheet("background-color:rgb(33,32,32);");
+
+        connect(mRotateLightWidget, SIGNAL(cancelClicked()), this, SLOT(rotateWidgetClosed()));
+        connect(mRotateLightWidget,
+                SIGNAL(valueChanged(int)),
+                this,
+                SLOT(rotateWidgetChangedAngle(int)));
     }
 
     /// getter for controller represented by the widget
@@ -136,29 +151,43 @@ public:
                                     yPosColumn1,
                                     this->width() - xSpacer / 2,
                                     buttonHeight * 4);
+
+        drawPanels();
         yPosColumn1 += mDisplayLights->height();
         yPosColumn2 += mDisplayLights->height();
 
 
         // column 1
-        mMetadata->setGeometry(xSpacer, yPosColumn1, columnWidth, buttonHeight * 4);
+        mMetadata->setGeometry(xSpacer, yPosColumn1, columnWidth, buttonHeight * 5);
         yPosColumn1 += mMetadata->height();
-        mChangeName->setGeometry(xSpacer, yPosColumn1, columnWidth, buttonHeight);
+        // mChangeName->setGeometry(xSpacer, yPosColumn1, columnWidth, buttonHeight);
 
         // column 2
-        mSchedulesLabel->setGeometry(xSecondColumnStart,
-                                     yPosColumn2,
-                                     columnWidth,
-                                     buttonHeight * 0.5);
-        yPosColumn2 += mSchedulesLabel->height();
-        mSchedulesWidget->setGeometry(xSecondColumnStart,
-                                      yPosColumn2,
-                                      columnWidth,
-                                      buttonHeight * 3.5);
-        yPosColumn2 += mSchedulesWidget->height();
+        yPosColumn2 += buttonHeight * 2;
+        mChangeName->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, buttonHeight);
+        yPosColumn2 += mChangeName->height();
+        mChangeRotation->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, buttonHeight);
+        yPosColumn2 += mChangeRotation->height();
+
+        //        mSchedulesLabel->setGeometry(xSecondColumnStart,
+        //                                     yPosColumn2,
+        //                                     columnWidth,
+        //                                     buttonHeight * 0.5);
+        //        yPosColumn2 += mSchedulesLabel->height();
+        //        mSchedulesWidget->setGeometry(xSecondColumnStart,
+        //                                      yPosColumn2,
+        //                                      columnWidth,
+        //                                      buttonHeight * 3.5);
+        //        yPosColumn2 += mSchedulesWidget->height();
 
         mDeleteButton->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, buttonHeight);
         yPosColumn2 += mDeleteButton->height();
+
+        if (mRotateLightWidget->isOpen()) {
+            mGreyout->raise();
+            mRotateLightWidget->resize();
+            mRotateLightWidget->raise();
+        }
     }
 signals:
 
@@ -226,6 +255,10 @@ private slots:
     void greyOutClicked() {
         mChangeNameInput->pushOut();
         mGreyout->greyOut(false);
+
+        if (mRotateLightWidget->isOpen()) {
+            mRotateLightWidget->pushOut();
+        }
     }
 
     /*!
@@ -240,6 +273,30 @@ private slots:
             // signal to remove from app
             emit deleteLight(mLeaf.serialNumber());
         }
+    }
+
+    /// rotate button pressed
+    void rotateButtonPressed(bool) {
+        mGreyout->greyOut(true);
+        setVisible(true);
+        mRotateLightWidget->setNanoleaf(mLeaf, mLeaf.rotation());
+        mRotateLightWidget->raise();
+        mRotateLightWidget->pushIn();
+    }
+
+    /// rotate widget closed
+    void rotateWidgetClosed() {
+        mGreyout->greyOut(false);
+        mRotateLightWidget->pushOut();
+    }
+
+    /// rotation changed angle
+    void rotateWidgetChangedAngle(int angle) {
+        mLeaf.rotation(angle);
+        mComm->nanoleaf()->discovery()->changeRotation(mLeaf, angle);
+        drawPanels();
+        mGreyout->greyOut(false);
+        mRotateLightWidget->pushOut();
     }
 
 private:
@@ -282,11 +339,32 @@ private:
         mMetadata->updateText(QString(returnString.str().c_str()));
     }
 
+    /// draws the nanoleafs actual layout and rotation.
+    void drawPanels() {
+        // render the image for the panel
+        mPanelImage->drawPanels(mLeaf.panels(), mLeaf.rotation());
+        // draw the image to the panel label
+        mPanelPixmap.convertFromImage(mPanelImage->image());
+        if (!mPanelPixmap.isNull()) {
+            mPanelPixmap = mPanelPixmap.scaled(mDisplayLights->width(),
+                                               mDisplayLights->height(),
+                                               Qt::KeepAspectRatio,
+                                               Qt::SmoothTransformation);
+            mDisplayLights->setPixmap(mPanelPixmap);
+        }
+    }
+
     /// pointer to comm data
     CommLayer* mComm;
 
     /// nanoleaf being displayed
     nano::LeafMetadata mLeaf;
+
+    /// generates the panel image
+    nano::LeafPanelImage* mPanelImage;
+
+    /// pixmap that stores the panel image.
+    QPixmap mPanelPixmap;
 
     /// lights to display
     QLabel* mDisplayLights;
@@ -302,6 +380,9 @@ private:
 
     /// button to change name.
     QPushButton* mChangeName;
+
+    /// button to change rotation of lights.
+    QPushButton* mChangeRotation;
 
     /// button for deleting the currently selected nanoleaf
     QPushButton* mDeleteButton;
@@ -320,6 +401,9 @@ private:
 
     /// input to change the name of a light
     cor::TextInputWidget* mChangeNameInput;
+
+    /// widget to handle rotating a light.
+    RotateLightWidget* mRotateLightWidget;
 
     /// the height of a row in a scroll area
     int mRowHeight;
