@@ -33,19 +33,8 @@ SettingsPage::SettingsPage(QWidget* parent,
       mGroups(parser),
       mShareUtils(shareUtils),
       mComm{comm},
-      mGreyOut{new GreyOutOverlay(false, parentWidget())},
-      mLightInfoWidget{new LightInfoListWidget(parentWidget(), appSettings)} {
+      mGreyOut{new GreyOutOverlay(false, parentWidget())} {
     mShowingDebug = true;
-
-    // --------------
-    // Setup Light Info Widget
-    // --------------
-
-    mLightInfoWidget->isOpen(false);
-
-    connect(mLightInfoWidget, SIGNAL(pressedClose()), this, SLOT(lightInfoClosePressed()));
-    mLightInfoWidget->setGeometry(0, -1 * height(), width(), height());
-
     mCurrentWebView = ECorlumaWebView::none;
 
     //------------
@@ -92,8 +81,7 @@ SettingsPage::SettingsPage(QWidget* parent,
 
     mSectionTitles = {"Data", "About"};
 
-    mTitles = {"View/Edit Lights",
-               "Add or Edit Group",
+    mTitles = {"Add or Edit Group",
                "Backup Save Data",
 #ifndef MOBILE_BUILD
                "Load Backup",
@@ -160,15 +148,13 @@ void SettingsPage::show() {
     auto mainWindow = qobject_cast<MainWindow*>(parentWidget());
     Q_ASSERT(mainWindow);
     bool anyDiscovered = mainWindow->anyDiscovered();
-    // view/edit lights
-    mButtons[1]->shouldEnable(anyDiscovered);
     // add new group
-    mButtons[2]->shouldEnable(anyDiscovered);
+    mButtons[0]->shouldEnable(anyDiscovered);
     // backup save data
-    mButtons[3]->shouldEnable(mGroups->saveExists());
+    mButtons[1]->shouldEnable(mGroups->saveExists());
 #ifndef MOBILE_BUILD
     // load backup
-    mButtons[4]->shouldEnable(anyDiscovered);
+    mButtons[2]->shouldEnable(anyDiscovered);
 #endif
     mGlobalWidget->resize();
     mCopyrightWidget->setGeometry(geometry());
@@ -196,7 +182,6 @@ void SettingsPage::resizeEvent(QResizeEvent*) {
     }
 
 
-    mLightInfoWidget->resize();
     mGreyOut->resize();
 }
 
@@ -277,8 +262,6 @@ void SettingsPage::settingsButtonPressed(const QString& title) {
         loadButtonClicked();
     } else if (title == "Backup Save Data") {
         saveButtonClicked();
-    } else if (title == "View/Edit Lights") {
-        lightInfoWidgetClicked();
     } else if (title == "Add or Edit Group") {
         addOrEditGroupPressed();
     }
@@ -333,28 +316,11 @@ void SettingsPage::hideCurrentWebView() {
 }
 
 
-void SettingsPage::lightInfoWidgetClicked() {
-    mGreyOut->resize();
-    mGreyOut->greyOut(true);
-
-    mLightInfoWidget->isOpen();
-    mLightInfoWidget->scrollArea()->updateHues(mComm->hue()->discovery()->lights());
-    mLightInfoWidget->scrollArea()->updateNanoLeafs(mComm->nanoleaf()->lights().items());
-    mLightInfoWidget->scrollArea()->updateAruCorLights(mComm->arducor()->arduCorLights());
-    mLightInfoWidget->resize();
-    mLightInfoWidget->pushIn();
-}
-
-
-void SettingsPage::lightInfoClosePressed() {
-    mGreyOut->greyOut(false);
-    mLightInfoWidget->pushOut();
-}
 
 void SettingsPage::greyOutClicked() {
-    if (mLightInfoWidget->isOpen()) {
-        lightInfoClosePressed();
-    }
+    //    if (mLightInfoWidget->isOpen()) {
+    //        lightInfoClosePressed();
+    //    }
 }
 
 void SettingsPage::pushIn(const QPoint& startPoint, const QPoint& endPoint) {

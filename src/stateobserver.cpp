@@ -56,8 +56,7 @@ void StateObserver::globalBrightnessChanged(std::uint32_t brightness) {
             mTopMenu->singleColorStateWidget()->updateState(mData->mainColor(),
                                                             ERoutine::singleSolid);
         }
-    }
-    if (mMainViewport->currentPage() == EPage::palettePage) {
+    } else if (mMainViewport->currentPage() == EPage::palettePage) {
         mPalettePage->updateBrightness(brightness);
         mTopMenu->multiColorStateWidget()->updateState(mData->colorScheme());
     }

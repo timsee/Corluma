@@ -990,3 +990,10 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed a bug where the `ExpandingTextScrollArea` always showed its scrollbar, even when it was not needed.
 - Fixed bugs where negative sizes were used.
 - Fixed miscellaneous bugs.
+
+### **v0.21.2**
+### The Minor Hue Fixes Update
+- Made a more consistent experience when using palettes across multiple hues.
+- Removed the `ArduCorInfoWIdget` and `LeafLightInfoWidget`.
+- Moved the `LightInfoScrollArea` to the `DisplayHueBridgeWidget`.
+- Fixed miscellaneous bugs.

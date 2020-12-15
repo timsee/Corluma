@@ -611,7 +611,12 @@ void TopMenu::updateState(const cor::LightState& state) {
         // set slider color
         mGlobalBrightness->updateColor(mData->mainColor());
         // set slider position
-        mGlobalBrightness->updateBrightness(mData->mainColor().valueF() * 100.0);
+        // catch edge case where its only hues and we're updating to a palette, in this case, don't
+        // adjust the global brightness
+        if (!(mData->onlyLightsWithProtocol(EProtocolType::hue)
+              && state.routine() > cor::ERoutineSingleColorEnd)) {
+            mGlobalBrightness->updateBrightness(mData->mainColor().valueF() * 100.0);
+        }
     }
 }
 

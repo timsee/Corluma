@@ -118,7 +118,6 @@ SOURCES += main.cpp \
     comm/arducor/arducordiscovery.cpp \
     comm/arducor/arducorpacketparser.cpp \
     comm/arducor/controller.cpp \
-    comm/arducor/arducorinfowidget.cpp \
     comm/arducor/crccalculator.cpp \
     comm/commarducor.cpp \
     comm/commhttp.cpp \
@@ -132,7 +131,6 @@ SOURCES += main.cpp \
     comm/datasyncarduino.cpp \
     comm/datasyncnanoleaf.cpp \
     comm/datasynctimeout.cpp \
-    comm/nanoleaf/leaflightinfowidget.cpp \
     comm/nanoleaf/leafmetadata.cpp \
     comm/nanoleaf/leafpanelimage.cpp \
     comm/upnpdiscovery.cpp \
@@ -247,7 +245,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     comm/arducor/arducormetadata.h \
     comm/arducor/arducorpacketparser.h \
     comm/arducor/controller.h \
-    comm/arducor/arducorinfowidget.h \
     comm/arducor/crccalculator.h \
     comm/commtype.h \
     comm/commarducor.h \
@@ -264,7 +261,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     comm/hue/command.h \
     comm/hue/huemetadata.h \
     comm/hue/schedule.h \
-    comm/nanoleaf/leaflightinfowidget.h \
     comm/nanoleaf/leafmetadata.h \
     comm/nanoleaf/leafpanelimage.h \
     comm/nanoleaf/leafschedulewidget.h \

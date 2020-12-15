@@ -300,13 +300,14 @@ void DiscoveryPage::paintEvent(QPaintEvent*) {
 
 void DiscoveryPage::resize() {
     int yPos = 0;
-    mSpacer->setGeometry(0, yPos, width(), height() / 9);
+    auto rowHeight = height() / 12;
+    mSpacer->setGeometry(0, yPos, width(), rowHeight * 2);
     yPos += mSpacer->height();
 
-    mPlaceholder->setGeometry(0, yPos, width(), height() * 2 / 3);
+    mPlaceholder->setGeometry(0, yPos, width(), rowHeight * 10);
     yPos += mPlaceholder->height();
 
-    mStartButton->setGeometry(0, yPos, width(), height() * 2 / 9);
+    mStartButton->setGeometry(0, yPos, width(), rowHeight);
     yPos += mStartButton->height();
 
     if (mType == EProtocolType::arduCor) {

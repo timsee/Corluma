@@ -8,10 +8,8 @@
 #include <QWidget>
 
 #include "appsettings.h"
-#include "comm/arducor/arducorinfowidget.h"
 #include "comm/commhue.h"
 #include "comm/hue/hueinfowidget.h"
-#include "comm/nanoleaf/leaflightinfowidget.h"
 #include "cor/objects/page.h"
 #include "cor/widgets/topwidget.h"
 #include "lightinfoscrollarea.h"
@@ -23,7 +21,7 @@
  */
 
 /*!
- * \brief The HueLightInfoListWidget class contains a list of Philips Hue lights. Clicking on
+ * \brief The LightInfoListWidget class contains a list of Philips Hue lights. Clicking on
  * an entry of the list shows more information about the light, such as its software version
  * and model number. This widget also allows the user to rename individual lights or delete
  * the light from the Bridge. If the light is deleted from the Bridge, then it cannot be controlled
@@ -33,8 +31,9 @@ class LightInfoListWidget : public QWidget, public cor::Page {
     Q_OBJECT
 public:
     /// constructor
-    explicit LightInfoListWidget(QWidget* parent, AppSettings* appSettings);
+    explicit LightInfoListWidget(QWidget* parent);
 
+    /// getter for scroll area
     LightInfoScrollArea* scrollArea() { return mLightInfoScrollArea; }
 
     /*!
@@ -42,18 +41,7 @@ public:
      */
     void resize();
 
-    /// pushes in the widget
-    void pushIn();
-
-    /// pushes out the widget
-    void pushOut();
-
 signals:
-    /*!
-     * \brief pressedClose emited when the close button is pressed.
-     */
-    void pressedClose();
-
     /// emits when a light name should change
     void lightNameChanged(const QString&, const QString&);
 
@@ -69,11 +57,6 @@ private slots:
      * \param name new name of the light
      */
     void nameChanged(QString key, QString name) { emit lightNameChanged(key, name); }
-
-    /*!
-     * \brief closePressed close button pressed from top widget.
-     */
-    void closePressed(bool);
 
     /*!
      * \brief paintEvent used to draw the background of the widget.
@@ -92,39 +75,12 @@ private slots:
      */
     void deleteButtonPressed(bool);
 
-    /// hue button clicked
-    void hueClicked();
-
-    /// nanoleaf button clicked
-    void nanoleafClicked();
-
-    /// arducor button clicked
-    void arducorClicked();
-
 private:
-    /// highlights the protocol type
-    void highlightProtocolType();
-
-    /// handle the protocol type thats selected
-    bool handleProtocolType();
-
     /// scroll area that contains the information about the lights
     LightInfoScrollArea* mLightInfoScrollArea;
 
-    /// pointer to app settings
-    AppSettings* mAppSettings;
-
-    /// title and close button at top of widget.
-    cor::TopWidget* mTopWidget;
-
     /// button for deleting the currently selected widget
     QPushButton* mDeleteButton;
-
-    /// buttons for changing the protocols
-    std::vector<QPushButton*> mProtocolButtons;
-
-    /// current protocol
-    EProtocolType mCurrentProtocol;
 };
 
 

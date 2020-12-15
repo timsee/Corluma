@@ -161,6 +161,9 @@ public:
     /// true if any of the lights have the given protocol type.
     bool hasLightWithProtocol(EProtocolType) const noexcept;
 
+    /// true if all lights match a given protocol type.
+    bool onlyLightsWithProtocol(EProtocolType) const noexcept;
+
     /// true if the lights could support routines, false if they cannot.
     bool supportsRoutines();
 

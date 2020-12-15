@@ -39,7 +39,12 @@ void LightList::updateState(const cor::LightState& newState) {
             std::vector<QColor> colors = newState.palette().colors();
             if (light.protocol() == EProtocolType::hue) {
                 auto colorIndex = std::uint32_t(hueCount) % colors.size();
-                stateCopy.color(colors[colorIndex]);
+                auto color = colors[colorIndex];
+                // apply brightness
+                color.setHsvF(color.hueF(),
+                              color.saturationF(),
+                              newState.palette().brightness() / 100.0);
+                stateCopy.color(color);
                 ++hueCount;
             }
         }
@@ -57,7 +62,8 @@ QColor LightList::mainColor() {
     for (const auto& light : mLights) {
         const auto& state = light.state();
         if (light.isReachable()) {
-            if (int(state.routine()) <= int(cor::ERoutineSingleColorEnd)) {
+            if (int(state.routine()) <= int(cor::ERoutineSingleColorEnd)
+                || light.protocol() == EProtocolType::hue) {
                 r = r + state.color().red();
                 g = g + state.color().green();
                 b = b + state.color().blue();
@@ -82,6 +88,7 @@ QColor LightList::mainColor() {
 
 
 void LightList::updateBrightness(std::uint32_t brightness) {
+    std::uint32_t huePaletteCount = 0u;
     for (auto&& light : mLights) {
         auto state = light.state();
         if (state.routine() <= cor::ERoutineSingleColorEnd) {
@@ -90,6 +97,17 @@ void LightList::updateBrightness(std::uint32_t brightness) {
             state.color(color);
         } else {
             state.paletteBrightness(brightness);
+            if (light.protocol() == EProtocolType::hue) {
+                auto colors = state.palette().colors();
+                auto colorIndex = std::uint32_t(huePaletteCount) % colors.size();
+                auto color = colors[colorIndex];
+                // apply brightness
+                color.setHsvF(color.hueF(),
+                              color.saturationF(),
+                              state.palette().brightness() / 100.0);
+                state.color(color);
+                ++huePaletteCount;
+            }
         }
         state.isOn(bool(brightness));
         light.state(state);
@@ -332,6 +350,15 @@ bool LightList::hasLightWithProtocol(EProtocolType protocol) const noexcept {
         }
     }
     return false;
+}
+
+bool LightList::onlyLightsWithProtocol(EProtocolType protocol) const noexcept {
+    for (const auto& light : mLights) {
+        if (light.protocol() != protocol) {
+            return false;
+        }
+    }
+    return true;
 }
 
 bool LightList::supportsRoutines() {

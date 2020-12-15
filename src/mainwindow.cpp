@@ -1063,7 +1063,7 @@ void MainWindow::setupStateObserver() {
             SLOT(deleteLight(QString)));
 
     // light info widget
-    connect(mSettingsPage->lightInfoWidget(),
+    connect(mControllerPage->lightInfoWidget(),
             SIGNAL(lightNameChanged(QString, QString)),
             mStateObserver,
             SLOT(lightNameChange(QString, QString)));

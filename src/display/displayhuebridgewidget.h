@@ -21,9 +21,13 @@
 #include "cor/lightlist.h"
 #include "cor/widgets/checkbox.h"
 #include "cor/widgets/expandingtextscrollarea.h"
+#include "lightinfolistwidget.h"
 #include "menu/displaymoodmetadata.h"
 #include "menu/groupstatelistmenu.h"
 #include "menu/lightslistmenu.h"
+
+
+enum class EDisplayHueBridgeState { info, lights, groups, schedule };
 
 /*!
  * \copyright
@@ -42,15 +46,32 @@ public:
                                     cor::LightList* selectedLights)
         : QWidget(parent),
           mComm{comm},
+          mInfoButton{new QPushButton("Info", this)},
+          mLightsButton{new QPushButton("Lights", this)},
+          mGroupsButton{new QPushButton("Groups", this)},
+          mScheduleButton{new QPushButton("Schedules", this)},
+          mLightInfoWidget{new LightInfoListWidget(this)},
           mSelectedLights{selectedLights},
           mName{new QLabel(this)},
           mLightsLabel{new QLabel("<b>Lights:</b>", this)},
           mLights{new LightsListMenu(this, true)},
           mMetadata{new cor::ExpandingTextScrollArea(this)},
-          mCheckBox{new cor::CheckBox(this)} {
+          mCheckBox{new cor::CheckBox(this)},
+          mState{EDisplayHueBridgeState::info} {
         auto font = mName->font();
         font.setPointSize(20);
         mName->setFont(font);
+
+        connect(mInfoButton, SIGNAL(clicked(bool)), this, SLOT(infoButtonPressed(bool)));
+        connect(mLightsButton, SIGNAL(clicked(bool)), this, SLOT(lightsButtonPressed(bool)));
+        connect(mGroupsButton, SIGNAL(clicked(bool)), this, SLOT(groupsButtonPressed(bool)));
+        connect(mScheduleButton, SIGNAL(clicked(bool)), this, SLOT(scheduleButtonPressed(bool)));
+
+        mGroupsButton->setEnabled(false);
+        mScheduleButton->setEnabled(false);
+
+        mLightInfoWidget->isOpen(false);
+        mLightInfoWidget->setVisible(false);
 
         connect(mLights, SIGNAL(clickedLight(cor::Light)), this, SLOT(lightClicked(cor::Light)));
         this->setStyleSheet("background-color:rgb(33,32,32);");
@@ -58,6 +79,9 @@ public:
 
     /// getter for hue::Bridge represented by the widget
     const hue::Bridge& bridge() const noexcept { return mBridge; }
+
+    /// getter for lightinfowidget
+    LightInfoListWidget* lightInfoWidget() { return mLightInfoWidget; }
 
     /// updates the controller's UI elements.
     void updateBridge(const hue::Bridge& bridge) {
@@ -103,14 +127,39 @@ public:
         headerX += mName->width() + mName->geometry().x();
         mCheckBox->setGeometry(headerX, yPosColumn1, buttonHeight, buttonHeight);
         mCheckBox->resize();
+
         yPosColumn1 += mName->height();
         yPosColumn2 += mName->height();
+
+        auto buttonPos = 0u;
+        auto buttonWidth = width() / 4;
+        mInfoButton->setGeometry(buttonPos, yPosColumn1, buttonWidth, buttonHeight);
+        buttonPos += mInfoButton->width();
+        mLightsButton->setGeometry(buttonPos, yPosColumn1, buttonWidth, buttonHeight);
+        buttonPos += mLightsButton->width();
+        mGroupsButton->setGeometry(buttonPos, yPosColumn1, buttonWidth, buttonHeight);
+        buttonPos += mGroupsButton->width();
+        mScheduleButton->setGeometry(buttonPos, yPosColumn1, buttonWidth, buttonHeight);
+        buttonPos += mScheduleButton->width();
+
+        yPosColumn1 += mInfoButton->height();
+        yPosColumn2 += mInfoButton->height();
+
+        if (mState == EDisplayHueBridgeState::lights) {
+            mLightInfoWidget->isOpen(true);
+            mLightInfoWidget->raise();
+            mLightInfoWidget->setVisible(true);
+            mLightInfoWidget->setGeometry(0, yPosColumn1, width(), height() - yPosColumn1);
+            mLightInfoWidget->resize();
+        } else {
+            mLightInfoWidget->setVisible(false);
+        }
 
         // column 1
         mLightsLabel->setGeometry(xSpacer, yPosColumn1, columnWidth - xSpacer, buttonHeight);
         yPosColumn1 += mLightsLabel->height();
 
-        QRect selectedLightsRect(xSpacer, yPosColumn1, columnWidth - xSpacer, buttonHeight * 8);
+        QRect selectedLightsRect(xSpacer, yPosColumn1, columnWidth - xSpacer, buttonHeight * 7);
         mLights->resize(selectedLightsRect, mRowHeight);
         yPosColumn1 += mLights->height();
 
@@ -170,7 +219,29 @@ private slots:
     /// handle when the delete button is pressed for a hue.
     void deleteButtonPressed(bool) { emit deleteController(mBridge.id(), EProtocolType::arduCor); }
 
+    /// info button pressed
+    void infoButtonPressed(bool) {
+        mState = EDisplayHueBridgeState::info;
+        handleState();
+    }
+
+    /// lights button pressed
+    void lightsButtonPressed(bool) {
+        mState = EDisplayHueBridgeState::lights;
+        mLightInfoWidget->scrollArea()->updateHues(mComm->hue()->discovery()->lights());
+        handleState();
+    }
+
+    /// groups button pressed
+    void groupsButtonPressed(bool) { mState = EDisplayHueBridgeState::groups; }
+
+    /// schedule buttons pressed
+    void scheduleButtonPressed(bool) { mState = EDisplayHueBridgeState::schedule; }
+
 private:
+    /// handle states
+    void handleState() { resize(); }
+
     /// update the metadata for the hue::Bridge
     void updateMetadata(const hue::Bridge& bridge) {
         std::stringstream returnString;
@@ -204,6 +275,21 @@ private:
     /// pointer to comm data
     CommLayer* mComm;
 
+    /// button for showing light info
+    QPushButton* mInfoButton;
+
+    /// button for showing info on specific lights
+    QPushButton* mLightsButton;
+
+    /// button for showing groups
+    QPushButton* mGroupsButton;
+
+    /// button showing schedules
+    QPushButton* mScheduleButton;
+
+    /// shows the info for each light
+    LightInfoListWidget* mLightInfoWidget;
+
     /// list of selected lights
     cor::LightList* mSelectedLights;
 
@@ -227,6 +313,9 @@ private:
 
     /// the height of a row in a scroll area
     int mRowHeight;
+
+    /// state of the widget
+    EDisplayHueBridgeState mState;
 };
 
 

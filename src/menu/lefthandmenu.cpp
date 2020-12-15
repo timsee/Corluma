@@ -139,6 +139,9 @@ void LeftHandMenu::resize() {
 
     mSpacer->setGeometry(0, 0, this->width(), height());
 
+    mLightsButton->setGeometry(0, yPos, this->width(), buttonHeight);
+    yPos += mLightsButton->height();
+
     mSingleColorButton->setGeometry(0, yPos, this->width(), buttonHeight);
     yPos += mSingleColorButton->height();
 
@@ -147,9 +150,6 @@ void LeftHandMenu::resize() {
 
     mMoodButton->setGeometry(0, yPos, this->width(), buttonHeight);
     yPos += mMoodButton->height();
-
-    mLightsButton->setGeometry(0, yPos, this->width(), buttonHeight);
-    yPos += mLightsButton->height();
 
     mTimeoutButton->setGeometry(0, yPos, this->width(), buttonHeight);
     yPos += mTimeoutButton->height();

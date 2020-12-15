@@ -6,8 +6,7 @@
 LightInfoScrollArea::LightInfoScrollArea(QWidget* parent)
     : QScrollArea(parent),
       mScrollAreaWidget(new QWidget(this)),
-      mScrollLayout(new QVBoxLayout(mScrollAreaWidget)),
-      mCurrentProtocol{EProtocolType::hue} {
+      mScrollLayout(new QVBoxLayout(mScrollAreaWidget)) {
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     QScroller::grabGesture(viewport(), QScroller::LeftMouseButtonGesture);
 
@@ -56,144 +55,27 @@ void LightInfoScrollArea::updateHues(std::vector<HueMetadata> lights) {
     }
 }
 
-void LightInfoScrollArea::updateNanoLeafs(const std::vector<nano::LeafMetadata>& lights) {
-    auto sortedLights = lights;
-    auto lambda = [](const nano::LeafMetadata& a, const nano::LeafMetadata& b) -> bool {
-        return a.name() < b.name();
-    };
-    std::sort(sortedLights.begin(), sortedLights.end(), lambda);
-    for (auto light : sortedLights) {
-        // check if light already exists in list
-        int widgetIndex = -1;
-        int i = 0;
-        for (auto widget : mNanoleafWidgets) {
-            if (widget->light().serialNumber() == light.serialNumber()) {
-                widgetIndex = i;
-                widget->updateLight(light);
-            }
-            ++i;
-        }
-        // if it doesnt exist, add it
-        if (widgetIndex == -1) {
-            nano::LeafLightInfoWidget* widget =
-                new nano::LeafLightInfoWidget(light, mScrollAreaWidget);
-            widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-            connect(widget, SIGNAL(clicked(QString)), this, SLOT(clickedLight(QString)));
-            connect(widget,
-                    SIGNAL(changedName(QString, QString)),
-                    parentWidget(),
-                    SLOT(nameChanged(QString, QString)));
-            mNanoleafWidgets.push_back(widget);
-            mScrollLayout->addWidget(widget);
-        }
-    }
-}
-
-
-void LightInfoScrollArea::updateAruCorLights(const std::vector<ArduCorMetadata>& lights) {
-    auto sortedLights = lights;
-    auto lambda = [](const ArduCorMetadata& a, const ArduCorMetadata& b) -> bool {
-        return a.uniqueID() < b.uniqueID();
-    };
-    std::sort(sortedLights.begin(), sortedLights.end(), lambda);
-    for (auto light : sortedLights) {
-        // check if light already exists in list
-        int widgetIndex = -1;
-        int i = 0;
-        for (auto widget : mArduCorWidgets) {
-            if (widget->metadata().uniqueID() == light.uniqueID()) {
-                widgetIndex = i;
-                widget->updateLight(light);
-            }
-            ++i;
-        }
-        // if it doesnt exist, add it
-        if (widgetIndex == -1) {
-            ArduCorInfoWidget* widget = new ArduCorInfoWidget(light, mScrollAreaWidget);
-            widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-            connect(widget, SIGNAL(clicked(QString)), this, SLOT(clickedLight(QString)));
-            mArduCorWidgets.push_back(widget);
-            mScrollLayout->addWidget(widget);
-        }
-    }
-}
-
-
 void LightInfoScrollArea::clickedLight(const QString& key) {
     bool shouldEnableDelete = true;
-
-    switch (mCurrentProtocol) {
-        case EProtocolType::hue:
-            for (auto widget : mHueWidgets) {
-                if (widget->checked()) {
-                    widget->setChecked(false);
-                    widget->hideDetails(true);
-                }
+    for (auto widget : mHueWidgets) {
+        if (widget->checked()) {
+            widget->setChecked(false);
+            widget->hideDetails(true);
+        }
+    }
+    for (auto widget : mHueWidgets) {
+        if (widget->key() == key) {
+            if (mLastHueKey == key) {
+                shouldEnableDelete = false;
+                widget->hideDetails(true);
+                widget->setChecked(false);
+                mLastHueKey = "";
+            } else {
+                widget->hideDetails(false);
+                widget->setChecked(true);
+                mLastHueKey = key;
             }
-            for (auto widget : mHueWidgets) {
-                if (widget->key() == key) {
-                    if (mLastHueKey == key) {
-                        shouldEnableDelete = false;
-                        widget->hideDetails(true);
-                        widget->setChecked(false);
-                        mLastHueKey = "";
-                    } else {
-                        widget->hideDetails(false);
-                        widget->setChecked(true);
-                        mLastHueKey = key;
-                    }
-                }
-            }
-            break;
-        case EProtocolType::nanoleaf:
-            for (auto widget : mNanoleafWidgets) {
-                if (widget->checked()) {
-                    widget->setChecked(false);
-                    widget->hideDetails(true);
-                }
-            }
-
-            for (auto widget : mNanoleafWidgets) {
-                if (widget->key() == key) {
-                    if (mLastNanoleafKey == key) {
-                        shouldEnableDelete = false;
-                        widget->hideDetails(true);
-                        widget->setChecked(false);
-                        mLastNanoleafKey = "";
-                    } else {
-                        widget->hideDetails(false);
-                        widget->setChecked(true);
-                        mLastNanoleafKey = key;
-                    }
-                }
-            }
-
-            break;
-        case EProtocolType::arduCor:
-            for (auto widget : mArduCorWidgets) {
-                if (widget->checked()) {
-                    widget->setChecked(false);
-                    widget->hideDetails(true);
-                }
-            }
-
-            for (auto widget : mArduCorWidgets) {
-                if (widget->key() == key) {
-                    shouldEnableDelete = false;
-                    if (mLastArduCorKey == key) {
-                        widget->hideDetails(true);
-                        widget->setChecked(false);
-                        mLastArduCorKey = "";
-                    } else {
-                        widget->hideDetails(false);
-                        widget->setChecked(true);
-                        mLastArduCorKey = key;
-                    }
-                }
-            }
-            break;
-        default:
-            break;
+        }
     }
     emit lightClicked(key, shouldEnableDelete);
 }
@@ -202,55 +84,15 @@ void LightInfoScrollArea::clickedLight(const QString& key) {
 void LightInfoScrollArea::resize() {
     QSize widgetSize(width(), int(height() / 2));
     int widgetHeightY = 0;
-    // TODO: make a better system for resizing
-    // draw widgets in content region
-    if (mCurrentProtocol == EProtocolType::hue) {
-        for (auto widget : mHueWidgets) {
-            widget->setVisible(true);
-            if (widget->detailsHidden()) {
-                widget->setFixedHeight(widgetSize.height() / 2);
-            } else {
-                widget->setFixedHeight(widgetSize.height());
-            }
-            widget->setGeometry(0, widgetHeightY, widgetSize.width(), widget->height());
-            widgetHeightY += widget->height();
+    for (auto widget : mHueWidgets) {
+        widget->setVisible(true);
+        if (widget->detailsHidden()) {
+            widget->setFixedHeight(widgetSize.height() / 2);
+        } else {
+            widget->setFixedHeight(widgetSize.height());
         }
-    } else {
-        for (auto widget : mHueWidgets) {
-            widget->setVisible(false);
-        }
-    }
-    if (mCurrentProtocol == EProtocolType::nanoleaf) {
-        for (auto widget : mNanoleafWidgets) {
-            widget->setVisible(true);
-            if (widget->detailsHidden()) {
-                widget->setFixedHeight(widgetSize.height() / 2);
-            } else {
-                widget->setFixedHeight(widgetSize.height());
-            }
-            widget->setGeometry(0, widgetHeightY, widgetSize.width(), widget->height());
-            widgetHeightY += widget->height();
-        }
-    } else {
-        for (auto widget : mNanoleafWidgets) {
-            widget->setVisible(false);
-        }
-    }
-    if (mCurrentProtocol == EProtocolType::arduCor) {
-        for (auto widget : mArduCorWidgets) {
-            widget->setVisible(true);
-            if (widget->detailsHidden()) {
-                widget->setFixedHeight(widgetSize.height() / 2);
-            } else {
-                widget->setFixedHeight(widgetSize.height());
-            }
-            widget->setGeometry(0, widgetHeightY, widgetSize.width(), widget->height());
-            widgetHeightY += widget->height();
-        }
-    } else {
-        for (auto widget : mArduCorWidgets) {
-            widget->setVisible(false);
-        }
+        widget->setGeometry(0, widgetHeightY, widgetSize.width(), widget->height());
+        widgetHeightY += widget->height();
     }
 
     setMinimumWidth(parentWidget()->minimumSizeHint().width() + verticalScrollBar()->width());
@@ -259,48 +101,13 @@ void LightInfoScrollArea::resize() {
                                     widgetHeightY);
 }
 
-void LightInfoScrollArea::changeProtocol(EProtocolType protocol) {
-    mCurrentProtocol = protocol;
-    if (key() == "") {
-        emit lightClicked(key(), false);
-    } else {
-        emit lightClicked(key(), true);
-    }
-}
 
-std::pair<EProtocolType, QString> LightInfoScrollArea::lookupCurrentLight() {
+QString LightInfoScrollArea::lookupCurrentLight() {
     QString lightName;
-    EProtocolType type = EProtocolType::MAX;
-
-    switch (mCurrentProtocol) {
-        case EProtocolType::hue:
-            for (auto widget : mHueWidgets) {
-                if (widget->key() == mLastHueKey) {
-                    lightName = widget->light().name();
-                    type = EProtocolType::hue;
-                }
-            }
-            break;
-        case EProtocolType::nanoleaf:
-            for (auto widget : mNanoleafWidgets) {
-                if (widget->key() == mLastNanoleafKey) {
-                    lightName = widget->key();
-                    type = EProtocolType::nanoleaf;
-                }
-            }
-            break;
-        case EProtocolType::arduCor:
-
-            for (auto widget : mArduCorWidgets) {
-                if (widget->key() == mLastNanoleafKey) {
-                    lightName = widget->metadata().uniqueID();
-                    type = EProtocolType::arduCor;
-                }
-            }
-            break;
-        default:
-            break;
+    for (auto widget : mHueWidgets) {
+        if (widget->key() == mLastHueKey) {
+            return widget->light().name();
+        }
     }
-
-    return std::make_pair(type, lightName);
+    return {};
 }

@@ -13,7 +13,6 @@
 #include "cor/widgets/webview.h"
 #include "globalsettingswidget.h"
 #include "greyoutoverlay.h"
-#include "lightinfolistwidget.h"
 #include "settingsbutton.h"
 #include "shareutils/shareutils.hpp"
 
@@ -72,9 +71,6 @@ public:
      */
     void enableButtons(bool enable);
 
-    /// pointer to light info widget
-    LightInfoListWidget* lightInfoWidget() { return mLightInfoWidget; }
-
 signals:
 
     /*!
@@ -124,12 +120,6 @@ private slots:
 
     /// hides whatever webview is showing. If none is showing, this does nothing.
     void hideCurrentWebView();
-
-    /// light info widgedt clicked
-    void lightInfoWidgetClicked();
-
-    /// light info widget close button pressed.
-    void lightInfoClosePressed();
 
 protected:
     /*!
@@ -218,9 +208,6 @@ private:
 
     /// widget for greying out the page when other widgets are overlaid
     GreyOutOverlay* mGreyOut;
-
-    /// widget for displaying information about lights
-    LightInfoListWidget* mLightInfoWidget;
 
     /// true if showing debug options, false otherwise.
     bool mShowingDebug;

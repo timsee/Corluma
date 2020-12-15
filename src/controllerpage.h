@@ -48,6 +48,8 @@ public:
     /// highlight lights on the controller page.
     void highlightLights();
 
+    /// returns the lightInfoWidget
+    LightInfoListWidget* lightInfoWidget() { return mHueBridgeWidget->lightInfoWidget(); }
 signals:
 
     /// back button pressed
