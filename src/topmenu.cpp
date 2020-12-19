@@ -8,16 +8,19 @@
 
 #include <QGraphicsEffect>
 
+#include "lightspage.h"
 #include "mainwindow.h"
+#include "topmenu.h"
 #include "utils/exception.h"
 #include "utils/qt.h"
-
 
 TopMenu::TopMenu(QWidget* parent,
                  cor::LightList* data,
                  CommLayer* comm,
                  GroupData* groups,
+                 AppSettings* appSettings,
                  MainWindow* mainWindow,
+                 LightsPage* lightsPage,
                  PalettePage* palettePage,
                  ColorPage* colorPage)
     : QWidget(parent),
@@ -28,9 +31,11 @@ TopMenu::TopMenu(QWidget* parent,
       mData(data),
       mComm(comm),
       mGroups(groups),
+      mAppSettings{appSettings},
       mMainWindow(mainWindow),
       mPalettePage(palettePage),
       mColorPage(colorPage),
+      mLightsPage{lightsPage},
       mCurrentPage{EPage::colorPage},
       mSize{QSize(int(cor::applicationSize().height() * 0.1f),
                   int(cor::applicationSize().height() * 0.1f))},
@@ -51,6 +56,8 @@ TopMenu::TopMenu(QWidget* parent,
       mColorFloatingLayout{new FloatingLayout(mMainWindow)},
       mTimeoutFloatingLayout{new FloatingLayout(mMainWindow)},
       mRoutineFloatingLayout{new FloatingLayout(mMainWindow)},
+      mLightsFloatingLayout{new FloatingLayout(mMainWindow)},
+      mAddLightsFloatingLayout{new FloatingLayout(mMainWindow)},
       mSingleColorStateWidget{new SingleColorStateWidget(mMainWindow)},
       mMultiColorStateWidget{new MultiColorStateWidget(mMainWindow)},
       mSelectLightsButton{new SelectLightsButton(this)} {
@@ -136,6 +143,23 @@ TopMenu::TopMenu(QWidget* parent,
 
 
     // --------------
+    // Lights Menus
+    // --------------
+
+    connect(mAddLightsFloatingLayout,
+            SIGNAL(buttonPressed(QString)),
+            this,
+            SLOT(floatingLayoutButtonPressed(QString)));
+    std::vector<QString> verticalButtons = {QString("Plus")};
+    mAddLightsFloatingLayout->setupButtons(verticalButtons, EButtonSize::small);
+
+    connect(mLightsFloatingLayout,
+            SIGNAL(buttonPressed(QString)),
+            this,
+            SLOT(floatingLayoutButtonPressed(QString)));
+
+
+    // --------------
     // Select Lights Button
     // --------------
     mSelectLightsButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -160,6 +184,9 @@ TopMenu::TopMenu(QWidget* parent,
     }
     mMainPalette->setFixedHeight(int(mSize.height() * 0.8));
     mMainPalette->setFixedWidth(mPaletteWidth);
+
+    // update the lights menu to reflect the proper state
+    updateLightsMenu();
 
     hideMenuButton(mMainWindow->leftHandMenu()->alwaysOpen());
     resize(0);
@@ -227,6 +254,8 @@ void TopMenu::showMenu() {
     mRoutineFloatingLayout->raise();
     mSingleColorStateWidget->raise();
     mMultiColorStateWidget->raise();
+    mLightsFloatingLayout->raise();
+    mAddLightsFloatingLayout->raise();
 }
 
 void TopMenu::resize(int xOffset) {
@@ -312,6 +341,11 @@ void TopMenu::floatingLayoutButtonPressed(const QString& button) {
         }
     } else if (button == "Settings") {
         emit buttonPressed("Settings");
+    } else if (button.contains("Discovery_")) {
+        emit buttonPressed(button);
+    } else if (button.contains("Plus")) {
+        emit buttonPressed(button);
+        mAddLightsFloatingLayout->highlightButton("");
     } else {
         qDebug() << "I don't recognize that button type..." << button;
     }
@@ -412,6 +446,9 @@ FloatingLayout* TopMenu::currentFloatingLayout() {
         case EPage::timeoutPage:
             layout = mTimeoutFloatingLayout;
             break;
+        case EPage::lightsPage:
+            layout = mLightsFloatingLayout;
+            break;
         default:
             break;
     }
@@ -432,13 +469,15 @@ void TopMenu::moveFloatingLayout() {
         // special case where the current floating layout is shown regardless of if the data is
         // empty
         currentFloatingLayout()->move(topRight);
-    } else if (mData->empty() && mCurrentPage != EPage::discoveryPage) {
+    } else if (mCurrentPage == EPage::lightsPage) {
+        moveLightsMenu();
+    } else if (mData->empty() && mCurrentPage != EPage::lightsPage) {
         // floating layout is not shown
         currentFloatingLayout()->move(
             QPoint(parentWidget()->size().width() + currentFloatingLayout()->width(),
                    mFloatingMenuStart));
         moveHiddenLayouts();
-    } else if (mCurrentPage != EPage::discoveryPage) {
+    } else if (mCurrentPage != EPage::lightsPage) {
         // floating layout should be shown, since data is showing.
         currentFloatingLayout()->move(topRight);
         moveHiddenLayouts();
@@ -505,13 +544,50 @@ void TopMenu::pushRightFloatingLayout(FloatingLayout* layout) {
     }
 }
 
-
 void TopMenu::pullLeftFloatingLayout(FloatingLayout* layout) {
     auto parentSize = parentWidget()->size();
     if (layout->geometry().x() != (parentSize.width() - layout->width())) {
         cor::moveWidget(layout,
                         QPoint(parentSize.width() + layout->width(), mFloatingMenuStart),
                         QPoint(parentSize.width() - layout->width(), mFloatingMenuStart));
+    }
+}
+
+void TopMenu::pullLeftLightsMenu() {
+    auto parentSize = parentWidget()->size();
+    if (mLightsFloatingLayout->geometry().x()
+        != (parentSize.width() - mLightsFloatingLayout->width())) {
+        cor::moveWidget(mLightsFloatingLayout,
+                        QPoint(parentSize.width() + mLightsFloatingLayout->width(), 0u),
+                        QPoint(parentSize.width() - mLightsFloatingLayout->width(), 0u));
+    }
+
+    auto addLightsStartPoint = mLightsFloatingLayout->height();
+    if (mAddLightsFloatingLayout->geometry().x()
+        != (parentSize.width() - mAddLightsFloatingLayout->width())) {
+        cor::moveWidget(
+            mAddLightsFloatingLayout,
+            QPoint(parentSize.width() + mAddLightsFloatingLayout->width(), addLightsStartPoint),
+            QPoint(parentSize.width() - mAddLightsFloatingLayout->width(), addLightsStartPoint));
+    }
+}
+
+void TopMenu::pushRightLightsMenus() {
+    auto parentSize = parentWidget()->size();
+    if (mLightsFloatingLayout->geometry().x()
+        != (parentSize.width() + mLightsFloatingLayout->width())) {
+        cor::moveWidget(mLightsFloatingLayout,
+                        QPoint(parentSize.width() - mLightsFloatingLayout->width(), 0u),
+                        QPoint(parentSize.width() + mLightsFloatingLayout->width(), 0u));
+    }
+
+    auto addLightsStartPoint = mLightsFloatingLayout->height();
+    if (mAddLightsFloatingLayout->geometry().x()
+        != (parentSize.width() + mAddLightsFloatingLayout->width())) {
+        cor::moveWidget(
+            mAddLightsFloatingLayout,
+            QPoint(parentSize.width() - mAddLightsFloatingLayout->width(), addLightsStartPoint),
+            QPoint(parentSize.width() + mAddLightsFloatingLayout->width(), addLightsStartPoint));
     }
 }
 
@@ -528,6 +604,17 @@ void TopMenu::moveHiddenLayouts() {
                                             topRight.y(),
                                             mRoutineFloatingLayout->width(),
                                             mRoutineFloatingLayout->height());
+    }
+
+    if (layout != mLightsFloatingLayout) {
+        mLightsFloatingLayout->setGeometry(topRight.x(),
+                                           topRight.y() + mColorFloatingLayout->height(),
+                                           mLightsFloatingLayout->width(),
+                                           mLightsFloatingLayout->height());
+        mAddLightsFloatingLayout->setGeometry(topRight.x(),
+                                              topRight.y(),
+                                              mAddLightsFloatingLayout->width(),
+                                              mAddLightsFloatingLayout->height());
     }
     if (layout != mMoodsFloatingLayout) {
         mMoodsFloatingLayout->setGeometry(topRight.x(),
@@ -575,8 +662,8 @@ void TopMenu::menuButtonPressed() {
 }
 
 void TopMenu::pushInTapToSelectButton() {
-    if (!mSelectLightsButton->isIn() && !mMainWindow->leftHandMenu()->alwaysOpen()
-        && mData->empty()) {
+    if (!mSelectLightsButton->isIn() && !mMainWindow->leftHandMenu()->alwaysOpen() && mData->empty()
+        && mCurrentPage != EPage::lightsPage) {
         mSelectLightsButton->pushIn(mStartSelectLightsButton);
     }
 }
@@ -638,7 +725,7 @@ void TopMenu::updateScheme(const std::vector<QColor>& colors, std::uint32_t inde
 }
 
 void TopMenu::handleBrightnessSliders() {
-    if (mData->empty()) {
+    if (mData->empty() || mCurrentPage == EPage::lightsPage) {
         // hide both, its empty
         mSingleLightBrightness->pushOut();
         mGlobalBrightness->pushOut();
@@ -687,6 +774,9 @@ void TopMenu::handleButtonLayouts() {
             mMoodsFloatingLayout->setVisible(false);
             mPaletteFloatingLayout->setVisible(false);
             mTimeoutFloatingLayout->setVisible(false);
+            mLightsFloatingLayout->setVisible(false);
+            mAddLightsFloatingLayout->setVisible(false);
+            pushRightLightsMenus();
             pushRightFloatingLayout(mMoodsFloatingLayout);
             pushRightFloatingLayout(mPaletteFloatingLayout);
             break;
@@ -695,6 +785,9 @@ void TopMenu::handleButtonLayouts() {
             mMoodsFloatingLayout->setVisible(true);
             mPaletteFloatingLayout->setVisible(false);
             mTimeoutFloatingLayout->setVisible(false);
+            mLightsFloatingLayout->setVisible(false);
+            mAddLightsFloatingLayout->setVisible(false);
+            pushRightLightsMenus();
             pushRightFloatingLayout(mColorFloatingLayout);
             pullLeftFloatingLayout(mMoodsFloatingLayout);
             pushRightFloatingLayout(mPaletteFloatingLayout);
@@ -709,6 +802,9 @@ void TopMenu::handleButtonLayouts() {
             mMoodsFloatingLayout->setVisible(false);
             mPaletteFloatingLayout->setVisible(true);
             mTimeoutFloatingLayout->setVisible(false);
+            mLightsFloatingLayout->setVisible(false);
+            mAddLightsFloatingLayout->setVisible(false);
+            pushRightLightsMenus();
             pushRightFloatingLayout(mColorFloatingLayout);
             pushRightFloatingLayout(mMoodsFloatingLayout);
             break;
@@ -722,14 +818,20 @@ void TopMenu::handleButtonLayouts() {
             mMoodsFloatingLayout->setVisible(false);
             mPaletteFloatingLayout->setVisible(false);
             mTimeoutFloatingLayout->setVisible(true);
+            mLightsFloatingLayout->setVisible(false);
+            mAddLightsFloatingLayout->setVisible(false);
+            pushRightLightsMenus();
             pushRightFloatingLayout(mMoodsFloatingLayout);
             pushRightFloatingLayout(mPaletteFloatingLayout);
             break;
         case EPage::settingsPage:
-        case EPage::discoveryPage:
+        case EPage::lightsPage:
             mColorFloatingLayout->setVisible(false);
             mMoodsFloatingLayout->setVisible(false);
             mPaletteFloatingLayout->setVisible(false);
+            mLightsFloatingLayout->setVisible(true);
+            mAddLightsFloatingLayout->setVisible(true);
+            pullLeftLightsMenu();
             pushRightFloatingLayout(mColorFloatingLayout);
             pushRightFloatingLayout(mMoodsFloatingLayout);
             pushRightFloatingLayout(mPaletteFloatingLayout);
@@ -737,4 +839,76 @@ void TopMenu::handleButtonLayouts() {
         case EPage::MAX:
             break;
     }
+}
+
+
+void TopMenu::updateLightsMenu() {
+    std::vector<QString> buttons;
+
+    // hide and show buttons based on their usage
+    if (mAppSettings->enabled(EProtocolType::hue)) {
+        buttons.emplace_back("Discovery_Hue");
+    }
+
+    if (mAppSettings->enabled(EProtocolType::nanoleaf)) {
+        buttons.emplace_back("Discovery_NanoLeaf");
+    }
+
+    if (mAppSettings->enabled(EProtocolType::arduCor)) {
+        buttons.emplace_back("Discovery_ArduCor");
+    }
+
+    // check that commtype being shown is available, if not, adjust
+    if (!mAppSettings->enabled(mLightsPage->discoveryWidget()->currentProtocol())) {
+        if (mAppSettings->enabled(EProtocolType::hue)) {
+            mLightsPage->discoveryWidget()->switchProtocol(EProtocolType::hue);
+        } else if (mAppSettings->enabled(EProtocolType::nanoleaf)) {
+            mLightsPage->discoveryWidget()->switchProtocol(EProtocolType::nanoleaf);
+        } else if (mAppSettings->enabled(EProtocolType::arduCor)) {
+            mLightsPage->discoveryWidget()->switchProtocol(EProtocolType::arduCor);
+        }
+    }
+
+    auto currentProtocol = mLightsPage->discoveryWidget()->currentProtocol();
+    // check that if only one is available that the top menu doesn't show.
+    if (buttons.size() == 1) {
+        std::vector<QString> emptyVector;
+        mLightsFloatingLayout->setupButtons(emptyVector, EButtonSize::small);
+        mAddLightsFloatingLayout->highlightButton("");
+    } else {
+        mLightsFloatingLayout->setupButtons(buttons, EButtonSize::rectangle);
+        mAddLightsFloatingLayout->highlightButton("");
+        if (currentProtocol == EProtocolType::nanoleaf) {
+            mLightsFloatingLayout->highlightButton("Discovery_NanoLeaf");
+        } else if (currentProtocol == EProtocolType::arduCor) {
+            mLightsFloatingLayout->highlightButton("Discovery_ArduCor");
+        } else if (currentProtocol == EProtocolType::hue) {
+            mLightsFloatingLayout->highlightButton("Discovery_Hue");
+        }
+    }
+    mLightsPage->discoveryWidget()->switchProtocol(currentProtocol);
+
+    pullLeftLightsMenu();
+}
+
+void TopMenu::moveLightsMenu() {
+    auto parentSize = parentWidget()->size();
+    FloatingLayout* layout = currentFloatingLayout();
+    QPoint verticalStart(parentSize.width() + layout->width(), mFloatingMenuStart);
+    if (mLightsFloatingLayout->buttonCount() == 0) {
+        // theres no horizontal floating layout, so move vertical to top right
+        verticalStart = QPoint(parentSize.width(), 0u);
+    } else {
+        // theres a horizontal and vertical menu, horizontal is in top right
+        QPoint topRight(parentSize.width(), 0u);
+        mLightsFloatingLayout->move(topRight);
+        // vertical is directly under it.
+        verticalStart = QPoint(parentSize.width(), mLightsFloatingLayout->size().height());
+    }
+
+    mAddLightsFloatingLayout->move(verticalStart);
+}
+
+void TopMenu::updateLightsButton(EProtocolType type, EConnectionState state) {
+    mLightsFloatingLayout->updateDiscoveryButton(type, state);
 }

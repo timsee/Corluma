@@ -18,8 +18,8 @@
 DiscoveryHueWidget::DiscoveryHueWidget(QWidget* parent,
                                        CommLayer* comm,
                                        cor::LightList* selectedLights,
-                                       ControllerPage* controllerPage)
-    : DiscoveryWidget(parent, comm, controllerPage),
+                                       ControllerWidget* controllerPage)
+    : DiscoveryTypeWidget(parent, comm, controllerPage),
       mBridgeDiscovered{false},
       mSelectedLights{selectedLights},
       mHueDiscoveryState{EHueDiscoveryState::findingIpAddress} {
@@ -284,9 +284,11 @@ void DiscoveryHueWidget::greyOutClicked() {
     if (mBridgeSchedulesWidget->isOpen()) {
         schedulesClosePressed();
     }
+
     if (mBridgeGroupsWidget->isOpen()) {
         groupsClosePressed();
     }
+
     if (mIPWidget->isOpen()) {
         closeIPWidget();
     }
@@ -303,7 +305,7 @@ void DiscoveryHueWidget::bridgePressed(const QString& key) {
     const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
     if (bridgeResult.second) {
         mControllerPage->showHueBridge(bridgeResult.first);
-        cor::mainWindow()->showControllerPage();
+        emit showControllerWidget();
     }
 }
 
@@ -328,29 +330,23 @@ void DiscoveryHueWidget::textInputAddedIP(const QString& IP) {
 
 void DiscoveryHueWidget::resize() {
     int yPos = 0;
-    mLabel->setGeometry(0, 0, int(width() * 0.7), int(height() * 0.25));
+    mLabel->setGeometry(0, 0, int(width() * 0.7), int(height() * 0.1));
     yPos += mLabel->height();
-    mListWidget->setGeometry(int(width() * 0.025),
-                             yPos,
-                             int(width() * 0.95),
-                             int(height() * 0.735));
+    mListWidget->setGeometry(int(width() * 0.025), yPos, int(width() * 0.95), int(height() * 0.9));
 
-    QSize widgetSize(mListWidget->width(), int(mListWidget->height() * 0.9));
+    QSize widgetSize(width(), int(mListWidget->height() * 0.9));
     int yHeight = 0;
     for (auto widget : mListWidget->widgets()) {
+        auto bridgeInfoWidget = dynamic_cast<hue::DisplayPreviewBridgeWidget*>(widget);
         widget->setFixedHeight(widgetSize.height());
         widget->setGeometry(0, yHeight, widgetSize.width(), widgetSize.height());
         widget->setVisible(true);
+        bridgeInfoWidget->resize();
         yHeight += widgetSize.height();
     }
     mListWidget->mainWidget()->setFixedHeight(yHeight);
     mListWidget->mainWidget()->setFixedWidth(width());
     mHueLightDiscovery->resize();
-    // call resize function of each widget
-    for (auto widget : mListWidget->widgets()) {
-        auto bridgeInfoWidget = dynamic_cast<hue::DisplayPreviewBridgeWidget*>(widget);
-        bridgeInfoWidget->resize();
-    }
 }
 
 void DiscoveryHueWidget::resizeEvent(QResizeEvent*) {

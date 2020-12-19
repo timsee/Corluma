@@ -8,7 +8,7 @@
 #include "comm/hue/lightdiscovery.h"
 #include "cor/widgets/listwidget.h"
 #include "cor/widgets/textinputwidget.h"
-#include "discovery/discoverywidget.h"
+#include "discovery/discoverytypewidget.h"
 #include "display/displaypreviewbridgewidget.h"
 #include "editablefieldwidget.h"
 #include "greyoutoverlay.h"
@@ -24,7 +24,7 @@
  *        it prompts the user to enter the IP address. It also prompts the user
  *        through setup steps such as pressing button on the bridge.
  */
-class DiscoveryHueWidget : public DiscoveryWidget {
+class DiscoveryHueWidget : public DiscoveryTypeWidget {
     Q_OBJECT
 
 public:
@@ -36,7 +36,7 @@ public:
     explicit DiscoveryHueWidget(QWidget* parent,
                                 CommLayer* comm,
                                 cor::LightList* selectedLights,
-                                ControllerPage* controllerPage);
+                                ControllerWidget* controllerPage);
 
     /// See DiscoveryWidget.h
     void handleDiscovery(bool isActive) override;
@@ -127,9 +127,6 @@ private:
 
     /// widget for displaying the schedules of a widget
     hue::BridgeSchedulesWidget* mBridgeSchedulesWidget;
-
-    /// widget for entering an IP manually
-    cor::TextInputWidget* mIPWidget;
 
     /// label to prompt the user through the application.
     QLabel* mLabel;

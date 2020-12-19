@@ -4,16 +4,18 @@
  * Released under the GNU General Public License.
  */
 
-#include "discoverywidget.h"
+#include "discoverytypewidget.h"
 #include <QMessageBox>
 
 
-DiscoveryWidget::DiscoveryWidget(QWidget* parent, CommLayer* comm, ControllerPage* controllerPage)
+DiscoveryTypeWidget::DiscoveryTypeWidget(QWidget* parent,
+                                         CommLayer* comm,
+                                         ControllerWidget* controllerPage)
     : QWidget(parent),
       mComm{comm},
       mControllerPage{controllerPage},
-      mIPWidget{new cor::TextInputWidget(parentWidget()->parentWidget())},
-      mGreyout{new GreyOutOverlay(true, parentWidget()->parentWidget())} {
+      mIPWidget{new cor::TextInputWidget(parentWidget()->parentWidget()->parentWidget())},
+      mGreyout{new GreyOutOverlay(true, parentWidget()->parentWidget()->parentWidget())} {
     connect(mIPWidget, SIGNAL(textAdded(QString)), this, SLOT(textInputAddedIP(QString)));
     connect(mIPWidget, SIGNAL(cancelClicked()), this, SLOT(closeIPWidget()));
     mIPWidget->setVisible(false);
@@ -22,7 +24,7 @@ DiscoveryWidget::DiscoveryWidget(QWidget* parent, CommLayer* comm, ControllerPag
     mGreyout->greyOut(false);
 }
 
-void DiscoveryWidget::fillList(QListWidget* list, std::vector<cor::Controller>& connections) {
+void DiscoveryTypeWidget::fillList(QListWidget* list, std::vector<cor::Controller>& connections) {
     std::vector<QString> strings;
     for (const auto& connection : connections) {
         strings.push_back(connection.name());
@@ -30,7 +32,7 @@ void DiscoveryWidget::fillList(QListWidget* list, std::vector<cor::Controller>& 
     fillList(list, strings);
 }
 
-void DiscoveryWidget::fillList(QListWidget* list, std::vector<QString>& connections) {
+void DiscoveryTypeWidget::fillList(QListWidget* list, std::vector<QString>& connections) {
     for (const auto& connection : connections) {
         // check if item is already in the table, if not, add it
         bool connectionFound = false;
@@ -46,14 +48,14 @@ void DiscoveryWidget::fillList(QListWidget* list, std::vector<QString>& connecti
     }
 }
 
-void DiscoveryWidget::openIPWidget() {
+void DiscoveryTypeWidget::openIPWidget() {
     mGreyout->greyOut(true);
     mIPWidget->pushIn(IPWidgetPrompt(), IPWidgetDefaultValue());
-    mIPWidget->raise();
     mIPWidget->setVisible(true);
+    mIPWidget->raise();
 }
 
-void DiscoveryWidget::textInputAddedIP(const QString& IP) {
+void DiscoveryTypeWidget::textInputAddedIP(const QString& IP) {
     QHostAddress address(IP);
     if (address.protocol() == QAbstractSocket::IPv4Protocol
         || address.protocol() == QAbstractSocket::IPv6Protocol) {
@@ -65,13 +67,13 @@ void DiscoveryWidget::textInputAddedIP(const QString& IP) {
     }
 }
 
-void DiscoveryWidget::closeIPWidget() {
+void DiscoveryTypeWidget::closeIPWidget() {
     mGreyout->greyOut(false);
     mIPWidget->pushOut();
     mIPWidget->setVisible(false);
 }
 
-void DiscoveryWidget::greyOutClicked() {
+void DiscoveryTypeWidget::greyOutClicked() {
     mGreyout->greyOut(false);
     if (mIPWidget->isOpen()) {
         closeIPWidget();

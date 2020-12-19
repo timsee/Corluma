@@ -94,11 +94,8 @@ CommArduCor::CommArduCor(QObject* parent) : QObject(parent) {
 
 
 bool CommArduCor::isActive() {
-    return mUDP->isActive()
-#ifndef MOBILE_BUILD
-           && mSerial->isActive()
-#endif
-           && mHTTP->isActive();
+    // ignore serial in this case, it is always active if its available.
+    return mUDP->isActive() && mHTTP->isActive();
 }
 
 QTime CommArduCor::lastUpdateTime() {

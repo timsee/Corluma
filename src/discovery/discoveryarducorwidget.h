@@ -5,7 +5,7 @@
 
 #include "comm/commarducor.h"
 #include "cor/widgets/listwidget.h"
-#include "discovery/discoverywidget.h"
+#include "discovery/discoverytypewidget.h"
 #include "display/displaypreviewarducorwidget.h"
 
 /*!
@@ -19,7 +19,7 @@
  *        IP addresses manually, and then shows which IP addresses are currently running
  *        discovery and which have passed a discovery check.
  */
-class DiscoveryArduCorWidget : public DiscoveryWidget {
+class DiscoveryArduCorWidget : public DiscoveryTypeWidget {
     Q_OBJECT
 
 public:
@@ -31,7 +31,7 @@ public:
     explicit DiscoveryArduCorWidget(QWidget* parent,
                                     CommLayer* comm,
                                     cor::LightList* selectedLights,
-                                    ControllerPage* controllerPage);
+                                    ControllerWidget* controllerPage);
 
     /// See DiscoveryWidget.h
     void handleDiscovery(bool isActive) override;

@@ -1,8 +1,8 @@
-#include "controllerpage.h"
+#include "controllerwidget.h"
 #include <QPainter>
 #include <QStyleOption>
 
-ControllerPage::ControllerPage(QWidget* parent, CommLayer* comm, cor::LightList* selectedLights)
+ControllerWidget::ControllerWidget(QWidget* parent, CommLayer* comm, cor::LightList* selectedLights)
     : QWidget(parent),
       mComm{comm},
       mSelectedLights{selectedLights},
@@ -49,7 +49,7 @@ ControllerPage::ControllerPage(QWidget* parent, CommLayer* comm, cor::LightList*
     mRenderTimer->start(333);
 }
 
-void ControllerPage::showPage(QPoint topLeft) {
+void ControllerWidget::showPage(QPoint topLeft) {
     setVisible(true);
     setGeometry(topLeft.x(), topLeft.y(), width(), height());
     raise();
@@ -57,13 +57,13 @@ void ControllerPage::showPage(QPoint topLeft) {
     isOpen(true);
 }
 
-void ControllerPage::hidePage() {
+void ControllerWidget::hidePage() {
     setVisible(false);
     isOpen(false);
 }
 
 
-void ControllerPage::renderUI() {
+void ControllerWidget::renderUI() {
     if (mNanoleafWidget->isVisible()) {
         auto lightResult = mComm->nanoleaf()->lightFromMetadata(mNanoleafWidget->metadata());
         if (lightResult.second) {
@@ -77,18 +77,18 @@ void ControllerPage::renderUI() {
 }
 
 
-void ControllerPage::backButtonPressed(bool) {
+void ControllerWidget::backButtonPressed(bool) {
     emit backButtonPressed();
 }
 
-void ControllerPage::showArduCor(const cor::Controller& controller) {
+void ControllerWidget::showArduCor(const cor::Controller& controller) {
     mArduCorWidget->updateController(controller);
     mArduCorWidget->setVisible(true);
     mNanoleafWidget->setVisible(false);
     mHueBridgeWidget->setVisible(false);
 }
 
-void ControllerPage::showNanoleaf(const nano::LeafMetadata& metadata) {
+void ControllerWidget::showNanoleaf(const nano::LeafMetadata& metadata) {
     mNanoleafWidget->updateLeafMetadata(metadata,
                                         mSelectedLights->doesLightExist(metadata.serialNumber()));
     mArduCorWidget->setVisible(false);
@@ -96,27 +96,27 @@ void ControllerPage::showNanoleaf(const nano::LeafMetadata& metadata) {
     mHueBridgeWidget->setVisible(false);
 }
 
-void ControllerPage::showHueBridge(const hue::Bridge& bridge) {
+void ControllerWidget::showHueBridge(const hue::Bridge& bridge) {
     mHueBridgeWidget->updateBridge(bridge);
     mArduCorWidget->setVisible(false);
     mNanoleafWidget->setVisible(false);
     mHueBridgeWidget->setVisible(true);
 }
 
-void ControllerPage::changeRowHeight(int height) {
+void ControllerWidget::changeRowHeight(int height) {
     mArduCorWidget->changeRowHeight(height);
     mNanoleafWidget->changeRowHeight(height);
     mHueBridgeWidget->changeRowHeight(height);
 }
 
-void ControllerPage::handleDeleteLight(QString uniqueID) {
+void ControllerWidget::handleDeleteLight(QString uniqueID) {
     // delete the light
     emit deleteLight(uniqueID);
     // close the page, it will no longer exist
     emit backButtonPressed();
 }
 
-void ControllerPage::handleDeleteController(QString uniqueID, EProtocolType protocol) {
+void ControllerWidget::handleDeleteController(QString uniqueID, EProtocolType protocol) {
     qDebug() << " delete controller " << uniqueID;
     if (protocol == EProtocolType::arduCor) {
         // mComm->arducor()->deleteController(uniqueID);
@@ -125,7 +125,7 @@ void ControllerPage::handleDeleteController(QString uniqueID, EProtocolType prot
     }
 }
 
-void ControllerPage::highlightLights() {
+void ControllerWidget::highlightLights() {
     if (mArduCorWidget->isVisible()) {
         mArduCorWidget->highlightLights();
     }
@@ -135,7 +135,7 @@ void ControllerPage::highlightLights() {
     }
 }
 
-void ControllerPage::lightClicked(QString lightKey, bool) {
+void ControllerWidget::lightClicked(QString lightKey, bool) {
     auto light = mComm->lightByID(lightKey);
     auto state = light.state();
     if (light.isReachable()) {
@@ -149,7 +149,7 @@ void ControllerPage::lightClicked(QString lightKey, bool) {
     }
 }
 
-void ControllerPage::controllerClicked(QString controller, EProtocolType protocol, bool selectAll) {
+void ControllerWidget::controllerClicked(QString controller, EProtocolType protocol, bool selectAll) {
     if (protocol == EProtocolType::arduCor) {
         auto controllerResult =
             mComm->arducor()->discovery()->findControllerByControllerName(controller);
@@ -180,7 +180,7 @@ void ControllerPage::controllerClicked(QString controller, EProtocolType protoco
     }
 }
 
-void ControllerPage::resizeEvent(QResizeEvent*) {
+void ControllerWidget::resizeEvent(QResizeEvent*) {
     auto yPos = 0u;
     mTopWidget->setGeometry(0, 0, this->width(), this->height() / 12);
     yPos += mTopWidget->height();
@@ -190,7 +190,7 @@ void ControllerPage::resizeEvent(QResizeEvent*) {
     mHueBridgeWidget->setGeometry(0, yPos, this->width(), this->height() * 11 / 12);
 }
 
-void ControllerPage::paintEvent(QPaintEvent*) {
+void ControllerWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.init(this);
     QPainter painter(this);

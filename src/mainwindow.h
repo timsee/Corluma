@@ -13,11 +13,11 @@
 #include "comm/datasynctimeout.h"
 #include "comm/hue/lightdiscovery.h"
 #include "comm/syncstatus.h"
-#include "controllerpage.h"
+#include "controllerwidget.h"
 #include "cor/objects/page.h"
 #include "cor/widgets/button.h"
 #include "debugconnectionspoofer.h"
-#include "discoverypage.h"
+#include "discoverywidget.h"
 #include "edit/chooseeditpage.h"
 #include "edit/choosegroupwidget.h"
 #include "edit/choosemoodwidget.h"
@@ -62,7 +62,7 @@ public:
     explicit MainWindow(QWidget* parent, const QSize& startingSize, const QSize& minimumSize);
 
     /// true if any discovered, false if nothing discoverd.
-    void anyDiscovered(bool discovered) { mAnyDiscovered = discovered; }
+    void anyDiscovered(bool discovered);
 
     /// true if any discovered, false if nothing discoverd.
     bool anyDiscovered() const noexcept { return mAnyDiscovered; }
@@ -88,21 +88,7 @@ public:
     /// pushes the LeftHandMenu out
     void pushOutLeftHandMenu();
 
-
 public slots:
-
-    /// displays the discovery page
-    void pushInDiscovery();
-
-    /// hides the discovery page
-    void pushOutDiscovery();
-
-    /// show the controller page
-    void showControllerPage();
-
-    /// hide the controller page
-    void hideControllerPage();
-
     /// displays the color page
     void switchToColorPage();
 
@@ -165,21 +151,9 @@ public slots:
     void editPageClosePressed();
 
     /*!
-     * \brief settingsButtonFromDiscoveryPressed settings button pressed on discovery page. Handled
-     *        as a bit of a special case.
-     */
-    void settingsButtonFromDiscoveryPressed();
-
-    /*!
      * \brief settingsClosePressed slot that handles when the settings page is closed.
      */
     void settingsClosePressed();
-
-    /*!
-     * \brief closeDiscoveryWithoutTransition force close discovery page as quickly as possible.
-     * SKips the standard transition.
-     */
-    void closeDiscoveryWithoutTransition();
 
     /*!
      * \brief topMenuButtonPressed button is pressed from top menu. Gives back the key of the
@@ -238,25 +212,13 @@ protected:
     void keyPressEvent(QKeyEvent* event) override;
 
     /// picks up mouse presses and sends them to TouchListener
-    void mousePressEvent(QMouseEvent* event) override {
-        if (mPagesLoaded) {
-            mTouchListener->pressEvent(event);
-        }
-    }
+    void mousePressEvent(QMouseEvent* event) override { mTouchListener->pressEvent(event); }
 
     /// picks up mouse moves and sends them to TouchListener
-    void mouseMoveEvent(QMouseEvent* event) override {
-        if (mPagesLoaded) {
-            mTouchListener->moveEvent(event);
-        }
-    }
+    void mouseMoveEvent(QMouseEvent* event) override { mTouchListener->moveEvent(event); }
 
     /// picks up mouse releases and sends them to TouchListener
-    void mouseReleaseEvent(QMouseEvent* event) override {
-        if (mPagesLoaded) {
-            mTouchListener->releaseEvent(event);
-        }
-    }
+    void mouseReleaseEvent(QMouseEvent* event) override { mTouchListener->releaseEvent(event); }
 
 private:
     /// resets the state update flags for every communication time
@@ -275,14 +237,8 @@ private:
     /// resize
     void resize();
 
-    /// true if pages are loaded, false if they haven't been loaded yet
-    bool mPagesLoaded;
-
     /// true if any discovered, false if none discovered
     bool mAnyDiscovered;
-
-    /// handles an edge case when the app is loading the first time.
-    bool mFirstLoad;
 
     /// true if editing a mood, false if editing a group or room.
     bool mIsMoodEdit;
@@ -405,15 +361,6 @@ private:
 
     /// push out a widget that takes up the full page
     void pushOutFullPageWidget(QWidget* widget);
-
-    /*!
-     * \brief mDiscoveryPage page devoted to discovering new connections. Previous connections
-     * are saved so this page should only be used for configuring.
-     */
-    DiscoveryPage* mDiscoveryPage;
-
-    /// page that displays a light controller.
-    ControllerPage* mControllerPage;
 
     /*!
      * \brief mGreyOut overlay that greys out the entire main window. Used in conjunction with the

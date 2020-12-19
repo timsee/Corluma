@@ -146,14 +146,15 @@ SOURCES += main.cpp \
     colorpicker/singlecolorpicker.cpp \
     colorpicker/multicolorpicker.cpp \
     colorpicker/schemegenerator.cpp \
-    controllerpage.cpp \
+    controllerwidget.cpp \
     cor/lightlist.cpp \
     debugconnectionspoofer.cpp \
-    discovery/discoverywidget.cpp \
     discovery/discoveryhuewidget.cpp \
     discovery/discoverynanoleafwidget.cpp \
+    discovery/discoverytypewidget.cpp \
     discovery/hardwareconnectionwidget.cpp \
     discovery/discoveryarducorwidget.cpp \
+    discoverywidget.cpp \
     display/displaypreviewbridgewidget.cpp \
     cor/widgets/slider.cpp \
     cor/widgets/listwidget.cpp \
@@ -169,6 +170,7 @@ SOURCES += main.cpp \
     edit/editpage.cpp \
     edit/editprogresswidget.cpp \
     groupstatewidget.cpp \
+    lightspage.cpp \
     listmoodwidget.cpp \
     menu/choosestatewidget.cpp \
     menu/displaygroupmetadata.cpp \
@@ -208,7 +210,6 @@ SOURCES += main.cpp \
     settingspage.cpp \
     icondata.cpp \
     floatinglayout.cpp \
-    discoverypage.cpp \
     presetgroupwidget.cpp \
     greyoutoverlay.cpp \
     routinebuttonswidget.cpp \
@@ -277,15 +278,16 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     colorpicker/singlecolorpicker.h \
     colorpicker/multicolorpicker.h \
     colorpicker/schemegenerator.h \
-    controllerpage.h \
+    connectionbutton.h \
+    controllerwidget.h \
     cor/lightlist.h \
     cor/objects/groupstate.h \
     cor/widgets/expandingtextscrollarea.h \
     data/moodparentdata.h \
     debugconnectionspoofer.h \
-    discovery/discoverywidget.h \
     discovery/discoveryhuewidget.h \
     discovery/discoverynanoleafwidget.h \
+    discovery/discoverytypewidget.h \
     discovery/hardwareconnectionwidget.h \
     discovery/discoveryarducorwidget.h \
     cor/protocols.h \
@@ -294,6 +296,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     cor/jsonsavedata.h \
     cor/listlayout.h \
     cor/dictionary.h \
+    discoverywidget.h \
     display/displayarducorcontrollerwidget.h \
     display/displayhuebridgewidget.h \
     display/displaynanoleafcontrollerwidget.h \
@@ -323,6 +326,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     data/orphandata.h \
     data/parentdata.h \
     groupstatewidget.h \
+    lightspage.h \
     listmoodwidget.h \
     menu/choosestatewidget.h \
     menu/displaygroupmetadata.h \
@@ -373,7 +377,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     settingspage.h \
     icondata.h \
     floatinglayout.h \
-    discoverypage.h \
     presetgroupwidget.h \
     greyoutoverlay.h \
     routinebuttonswidget.h \

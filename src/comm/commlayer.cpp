@@ -463,6 +463,18 @@ void CommLayer::resetStateUpdates(EProtocolType type) {
 }
 
 
+bool CommLayer::isActive(EProtocolType type) {
+    if (type == EProtocolType::arduCor) {
+        return mArduCor->isActive();
+    } else if (type == EProtocolType::hue) {
+        return commByType(ECommType::hue)->isActive();
+    } else if (type == EProtocolType::nanoleaf) {
+        return commByType(ECommType::nanoleaf)->isActive();
+    }
+    return false;
+}
+
+
 void CommLayer::stopStateUpdates(EProtocolType type) {
     if (type == EProtocolType::arduCor) {
         mArduCor->stopStateUpdates();
@@ -483,6 +495,7 @@ void CommLayer::startup(EProtocolType type) {
     } else if (type == EProtocolType::nanoleaf) {
         commByType(ECommType::nanoleaf)->startup();
     }
+    qDebug() << "INFO: start state updates" << protocolToString(type);
 }
 
 void CommLayer::shutdown(EProtocolType type) {

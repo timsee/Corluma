@@ -15,8 +15,8 @@
 DiscoveryNanoLeafWidget::DiscoveryNanoLeafWidget(QWidget* parent,
                                                  CommLayer* comm,
                                                  cor::LightList* selectedLights,
-                                                 ControllerPage* controllerPage)
-    : DiscoveryWidget(parent, comm, controllerPage),
+                                                 ControllerWidget* controllerPage)
+    : DiscoveryTypeWidget(parent, comm, controllerPage),
       mSelectedLights{selectedLights} {
     mLabel = new QLabel(this);
     mLabel->setWordWrap(true);
@@ -185,12 +185,9 @@ void DiscoveryNanoLeafWidget::resizeEvent(QResizeEvent*) {
 
 void DiscoveryNanoLeafWidget::resize() {
     auto yPos = 0u;
-    mLabel->setGeometry(0, 0, int(width() * 0.7), int(height() * 0.25));
+    mLabel->setGeometry(0, 0, int(width() * 0.7), int(height() * 0.1));
     yPos += mLabel->height();
-    mListWidget->setGeometry(int(width() * 0.025),
-                             yPos,
-                             int(width() * 0.95),
-                             int(height() * 0.735));
+    mListWidget->setGeometry(int(width() * 0.025), yPos, int(width() * 0.95), int(height() * 0.9));
     mGreyout->resize();
 
     // call resize function of each widget
@@ -211,7 +208,7 @@ void DiscoveryNanoLeafWidget::nanoleafClicked(QString nanoleaf) {
         auto nanoleafWidget = dynamic_cast<DisplayPreviewNanoleafWidget*>(widget);
         if (nanoleafWidget->nanoleaf().name() == nanoleaf) {
             mControllerPage->showNanoleaf(nanoleafWidget->nanoleaf());
-            cor::mainWindow()->showControllerPage();
+            emit showControllerWidget();
         }
     }
 }

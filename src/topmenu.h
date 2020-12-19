@@ -5,12 +5,14 @@
 
 #include "colorpage.h"
 #include "comm/commlayer.h"
+#include "connectionbutton.h"
 #include "cor/lightlist.h"
 #include "cor/objects/page.h"
 #include "cor/widgets/button.h"
 #include "data/groupdata.h"
 #include "floatinglayout.h"
 #include "globalbrightnesswidget.h"
+#include "lightspage.h"
 #include "moodpage.h"
 #include "multicolorstatewidget.h"
 #include "palettepage.h"
@@ -24,6 +26,7 @@
  * Released under the GNU General Public License.
  */
 class MainWindow;
+class LightsPage;
 
 /// type of color menu
 enum class EColorMenuType {
@@ -45,7 +48,9 @@ public:
                      cor::LightList* data,
                      CommLayer* comm,
                      GroupData* groups,
+                     AppSettings* appSettings,
                      MainWindow* mainWindow,
+                     LightsPage* lightsPage,
                      PalettePage* palettePage,
                      ColorPage* colorPage);
 
@@ -106,6 +111,15 @@ public:
 
     /// getter for single light brightness
     SingleLightBrightnessWidget* singleLightBrightness() { return mSingleLightBrightness; }
+
+    /// getter for the lights floating layout
+    FloatingLayout* lightsFloatingLayout() { return mLightsFloatingLayout; }
+
+    /// update the lights menus
+    void updateLightsMenu();
+
+    /// update a lights button to a new connection state.
+    void updateLightsButton(EProtocolType type, EConnectionState connectionState);
 
 signals:
 
@@ -168,6 +182,9 @@ private:
     /// pointer to group data
     GroupData* mGroups;
 
+    /// pointer to app settings.
+    AppSettings* mAppSettings;
+
     /// returns a pointer to the current floating layout.
     FloatingLayout* currentFloatingLayout();
 
@@ -177,9 +194,15 @@ private:
     /// pushes the floating layout specified out to the right and off screen.
     void pushRightFloatingLayout(FloatingLayout* layout);
 
+    /// push right the lights menus.
+    void pushRightLightsMenus();
+
     /// pulls the floating layout specified in from the right to the left and places it in the top
     /// right.
     void pullLeftFloatingLayout(FloatingLayout* layout);
+
+    /// pull left the lights menu.
+    void pullLeftLightsMenu();
 
     /// pointer to main window, used for public function calls.
     MainWindow* mMainWindow;
@@ -189,6 +212,9 @@ private:
 
     /// pointer to color page, used during floating layouts clicks
     ColorPage* mColorPage;
+
+    /// poitner to lights page, using during flaoting layout clicks
+    LightsPage* mLightsPage;
 
     /// current page being displayed
     EPage mCurrentPage;
@@ -207,6 +233,9 @@ private:
 
     /// update the button for the color page based off the group of devices selected.
     void updatePaletteButton();
+
+    /// move lights menus to their proper location during resizes.
+    void moveLightsMenu();
 
     /// can run into issues on certain screen ratios, so to be safe, compute once and store
     int mPaletteWidth;
@@ -243,6 +272,12 @@ private:
 
     /// routine widget for ColorPage and PalettePage
     FloatingLayout* mRoutineFloatingLayout;
+
+    /// floating layout for lights menu
+    FloatingLayout* mLightsFloatingLayout;
+
+    /// floating layout to add new lights
+    FloatingLayout* mAddLightsFloatingLayout;
 
     /// widget for showing the state of the single color page
     SingleColorStateWidget* mSingleColorStateWidget;

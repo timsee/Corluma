@@ -74,6 +74,10 @@ public:
     /// update the state of the timeout button
     void updateTimeoutButton(bool timeoutEnabled, std::uint32_t timeoutValue);
 
+    /// certain buttons are only enabled if a light is connected. this enables and disables those
+    /// buttons.
+    void enableButtons(bool enable);
+
 signals:
     /// signals when a page button is pressed
     void pressedButton(EPage);
@@ -110,6 +114,10 @@ protected:
 private:
     /// true if menu should be always open for landscape orientation, false otherwise
     bool mAlwaysOpen;
+
+    /// certain buttons that require any lights to be connected are disabled by default. This is set
+    /// to false if they are disabled, and true if they are enabled.
+    bool mButtonsEnabled;
 
     /// returns a pointer to the currently selected button
     QWidget* selectedButton();

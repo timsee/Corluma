@@ -8,6 +8,7 @@
 #include "comm/commlayer.h"
 #include "cor/lightlist.h"
 #include "data/groupdata.h"
+#include "lightspage.h"
 #include "moodpage.h"
 #include "palettepage.h"
 #include "timeoutpage.h"
@@ -43,6 +44,9 @@ public:
 
     /// getter for page
     EPage currentPage() { return mPageIndex; }
+
+    /// getter for light page
+    LightsPage* lightsPage() { return mLightsPage; }
 
     /// getter for the color page
     ColorPage* colorPage() { return mColorPage; }
@@ -82,6 +86,9 @@ private:
 
     /// getter for the QWidget given the enum
     QWidget* mainWidget(EPage page);
+
+    /// page for discovering, modifying, and viewing lights
+    LightsPage* mLightsPage;
 
     /// page for choosing colors of the LEDs
     ColorPage* mColorPage;

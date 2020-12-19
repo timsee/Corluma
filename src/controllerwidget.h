@@ -22,10 +22,10 @@
  * Or, an arduino is a controller.
  *
  */
-class ControllerPage : public QWidget, public cor::Page {
+class ControllerWidget : public QWidget, public cor::Page {
     Q_OBJECT
 public:
-    explicit ControllerPage(QWidget* parent, CommLayer* comm, cor::LightList* selectedLights);
+    explicit ControllerWidget(QWidget* parent, CommLayer* comm, cor::LightList* selectedLights);
 
     /// show page
     void showPage(QPoint);

@@ -29,6 +29,10 @@ MainViewport::MainViewport(MainWindow* parent,
     // Setup Pages
     // --------------
 
+    mLightsPage = new LightsPage(parent, comm, data, settings);
+    mLightsPage->isOpen(true);
+    mLightsPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
     mColorPage = new ColorPage(parent);
     mColorPage->isOpen(false);
     mColorPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -60,6 +64,10 @@ void MainViewport::resize(const QRect& geometry) {
 
     if (mPageIndex != EPage::colorPage) {
         mColorPage->setGeometry(offsetGeometry);
+    }
+
+    if (mPageIndex != EPage::lightsPage) {
+        mLightsPage->setGeometry(offsetGeometry);
     }
 
     if (mPageIndex != EPage::palettePage) {
@@ -98,6 +106,9 @@ QWidget* MainViewport::mainWidget(EPage page) {
         case EPage::timeoutPage:
             widget = qobject_cast<QWidget*>(mTimeoutPage);
             break;
+        case EPage::lightsPage:
+            widget = qobject_cast<QWidget*>(mLightsPage);
+            break;
         default:
             THROW_EXCEPTION("Widget not supported by main widget");
     }
@@ -120,6 +131,9 @@ cor::Page* MainViewport::mainPage(EPage page) {
         case EPage::timeoutPage:
             widget = mTimeoutPage;
             break;
+        case EPage::lightsPage:
+            widget = mLightsPage;
+            break;
         default:
             THROW_EXCEPTION("Widget not recognized by mainviewport");
     }
@@ -139,6 +153,10 @@ void MainViewport::showMainPage(EPage page, bool skipTransition) {
         cor::moveWidget(widget, QPoint(x, pos().y()), pos());
     }
 
+    if (page != EPage::lightsPage) {
+        mLightsPage->hideWidgets();
+    }
+
     if (page == EPage::colorPage) {
         mColorPage->update(mData->mainColor(),
                            mData->brightness(),
@@ -155,6 +173,8 @@ void MainViewport::showMainPage(EPage page, bool skipTransition) {
     } else if (page == EPage::timeoutPage) {
         mTimeoutPage->update(mAppSettings->timeoutEnabled(), mAppSettings->timeout());
         mTimeoutPage->setVisible(true);
+    } else if (page == EPage::lightsPage) {
+        mLightsPage->showWidgets();
     }
 }
 

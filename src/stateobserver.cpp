@@ -15,8 +15,8 @@ StateObserver::StateObserver(cor::LightList* data,
                              GroupData* groups,
                              AppSettings* appSettings,
                              MainWindow* mainWindow,
-                             ControllerPage* controllerPage,
-                             DiscoveryPage* discoveryPage,
+                             ControllerWidget* controllerPage,
+                             DiscoveryWidget* discoveryPage,
                              TopMenu* topMenu,
                              QObject* parent)
     : QObject(parent),
@@ -261,7 +261,7 @@ void StateObserver::computeState() {
         }
         case EPage::moodPage:
         case EPage::settingsPage:
-        case EPage::discoveryPage:
+        case EPage::lightsPage:
         case EPage::timeoutPage:
         case EPage::MAX:
             // for all of these cases, theres no universal state for the page.
@@ -283,4 +283,10 @@ void StateObserver::lightCountChangedFromControllerPage(QString, bool) {
     lightCountChanged();
 }
 
+void StateObserver::connectionStateChanged(EProtocolType type, EConnectionState newState) {
+    mTopMenu->updateLightsButton(type, newState);
+    if (newState == EConnectionState::discovered && !mMainWindow->anyDiscovered()) {
+        mMainWindow->anyDiscovered(true);
+    }
+}
 } // namespace cor

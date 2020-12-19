@@ -11,7 +11,7 @@
 #include "greyoutoverlay.h"
 
 
-class ControllerPage;
+class ControllerWidget;
 
 /*!
  * \copyright
@@ -23,17 +23,19 @@ class ControllerPage;
  *        subclass of this widget maps to a different communication stream. So theres a widget for
  *        Serial arduinos, a widget for Yun arduinos, and a widget for Hues.
  */
-class DiscoveryWidget : public QWidget {
+class DiscoveryTypeWidget : public QWidget {
     Q_OBJECT
 
 public:
     /// constructor
-    explicit DiscoveryWidget(QWidget* parent, CommLayer* comm, ControllerPage* controllerPage);
+    explicit DiscoveryTypeWidget(QWidget* parent,
+                                 CommLayer* comm,
+                                 ControllerWidget* controllerPage);
 
     /*!
      * \brief ~DiscoveryWidget Deconstructor
      */
-    virtual ~DiscoveryWidget() {}
+    virtual ~DiscoveryTypeWidget() {}
 
     /*!
      * \brief handleDiscovery run the discovery roiutines and associated GUI updates
@@ -63,6 +65,10 @@ public:
     void openIPWidget();
 
 signals:
+
+    /// show the controller widget of a specific controller.
+    void showControllerWidget();
+
     /*!
      * \brief connectionStatusChanged emitted whenever the connection status changes
      *        for a communication type
@@ -87,7 +93,7 @@ protected:
     CommLayer* mComm;
 
     /// pointer to controller page.
-    ControllerPage* mControllerPage;
+    ControllerWidget* mControllerPage;
 
     /// widget for entering an IP manually
     cor::TextInputWidget* mIPWidget;

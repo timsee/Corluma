@@ -30,9 +30,7 @@ bool mDebugMode = false;
 
 MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& minimumSize)
     : QMainWindow(parent),
-      mPagesLoaded{false},
       mAnyDiscovered{false},
-      mFirstLoad{true},
       mWifiFound{cor::wifiEnabled()},
       mWifiChecker{new QTimer(this)},
       mShareChecker{new QTimer(this)},
@@ -92,34 +90,11 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     mSettingsPage->setVisible(false);
     mSettingsPage->isOpen(false);
     connect(mSettingsPage, SIGNAL(closePressed()), this, SLOT(settingsClosePressed()));
-    connect(mSettingsPage, SIGNAL(clickedDiscovery()), this, SLOT(pushInDiscovery()));
+    // connect(mSettingsPage, SIGNAL(clickedDiscovery()), this, SLOT(pushInDiscovery()));
     connect(mSettingsPage, SIGNAL(clickedLoadJSON(QString)), this, SLOT(loadJSON(QString)));
     connect(mSettingsPage, SIGNAL(addOrEditGroupPressed()), this, SLOT(openEditGroupMenu()));
     connect(mSettingsPage, SIGNAL(enableDebugMode()), this, SLOT(debugModeClicked()));
 
-    // --------------
-    // Setup Controller Page
-    // --------------
-    mControllerPage = new ControllerPage(this, mComm, mData);
-    mControllerPage->hide();
-    mControllerPage->isOpen(false);
-    connect(mControllerPage, SIGNAL(backButtonPressed()), this, SLOT(hideControllerPage()));
-
-    // --------------
-    // Setup Discovery Page
-    // --------------
-    mDiscoveryPage = new DiscoveryPage(this, mData, mComm, mAppSettings, mControllerPage);
-    mDiscoveryPage->show();
-    mDiscoveryPage->isOpen(true);
-    connect(mDiscoveryPage, SIGNAL(startButtonClicked()), this, SLOT(pushOutDiscovery()));
-    connect(mDiscoveryPage,
-            SIGNAL(settingsButtonClicked()),
-            this,
-            SLOT(settingsButtonFromDiscoveryPressed()));
-    connect(mDiscoveryPage,
-            SIGNAL(closeWithoutTransition()),
-            this,
-            SLOT(closeDiscoveryWithoutTransition()));
 
     // --------------
     // Start Discovery
@@ -158,14 +133,32 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
             SLOT(leftHandMenuButtonPressed(EPage)));
     connect(mLeftHandMenu, SIGNAL(createNewGroup()), this, SLOT(openEditGroupMenu()));
 
+    loadPages();
+
     // --------------
     // Setup GreyOut View
     // --------------
     mGreyOut = new GreyOutOverlay(!mLeftHandMenu->alwaysOpen(), this);
+    mGreyOut->resize();
     connect(mGreyOut, SIGNAL(clicked()), this, SLOT(greyoutClicked()));
 
-    mControllerPage->changeRowHeight(mLeftHandMenu->height() / 18);
+
+    reorderWidgets();
+    resize();
+    mMainViewport->pageChanged(EPage::lightsPage, true);
+    if (!mLeftHandMenu->alwaysOpen()) {
+        pushInLeftHandMenu();
+    }
+    mTopMenu->showFloatingLayout(EPage::lightsPage);
+    mGreyOut->raise();
+    mLeftHandMenu->raise();
+
+    mEditMoodPage->changeRowHeight(mLeftHandMenu->height() / 18);
+    mEditGroupPage->changeRowHeight(mLeftHandMenu->height() / 18);
+    mMainViewport->timeoutPage()->changeRowHeight(mLeftHandMenu->height() / 18);
+    mMainViewport->lightsPage()->controllerWidget()->changeRowHeight(mLeftHandMenu->height() / 18);
     mLeftHandMenu->changeRowHeight(mLeftHandMenu->height() / 20);
+    mTouchListener = new TouchListener(this, mLeftHandMenu, mTopMenu, mData);
 
     // --------------
     // Finish up wifi check
@@ -233,114 +226,104 @@ void MainWindow::receivedURL(QString url) {
 }
 
 void MainWindow::loadPages() {
-    if (!mPagesLoaded) {
-        // --------------
-        // Setup main widget space
-        // --------------
+    // --------------
+    // Setup main widget space
+    // --------------
 
-        mMainViewport =
-            new MainViewport(this, mComm, mData, mGroups, mAppSettings, mDataSyncTimeout);
-        mMainViewport->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        mMainViewport->timeoutPage()->changeRowHeight(mLeftHandMenu->height() / 18);
+    mMainViewport = new MainViewport(this, mComm, mData, mGroups, mAppSettings, mDataSyncTimeout);
+    mMainViewport->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-        mRoutineWidget = new RoutineButtonsWidget(this);
-        auto x = 0;
-        if (mLeftHandMenu->alwaysOpen()) {
-            x = mLeftHandMenu->width();
-        }
-        mRoutineWidget->setMaximumWidth(mMainViewport->width());
-        mRoutineWidget->setMaximumHeight(mMainViewport->height() / 3);
-        mRoutineWidget->setGeometry(x, height(), mRoutineWidget->width(), mRoutineWidget->height());
-        mRoutineWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-
-        mEditGroupPage = new cor::EditGroupPage(this, mComm, mGroups);
-        mEditGroupPage->setVisible(false);
-        mEditGroupPage->isOpen(false);
-        connect(mEditGroupPage, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
-        connect(mEditGroupPage, SIGNAL(updateGroups()), this, SLOT(editPageUpdateGroups()));
-        mEditGroupPage->changeRowHeight(mLeftHandMenu->height() / 18);
-
-        mEditMoodPage = new cor::EditMoodPage(this, mComm, mGroups, mData);
-        mEditMoodPage->setVisible(false);
-        mEditMoodPage->isOpen(false);
-        connect(mEditMoodPage, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
-        connect(mEditMoodPage, SIGNAL(updateGroups()), this, SLOT(editPageUpdateGroups()));
-        mEditMoodPage->changeRowHeight(mLeftHandMenu->height() / 18);
-
-        connect(mMainViewport->moodPage()->moodDetailedWidget(),
-                SIGNAL(editMood(std::uint64_t)),
-                this,
-                SLOT(editMoodSelected(std::uint64_t)));
-
-        mChooseEditPage = new ChooseEditPage(this);
-        mChooseEditPage->setVisible(false);
-        mChooseEditPage->isOpen(false);
-        connect(mChooseEditPage, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
-        connect(mChooseEditPage,
-                SIGNAL(modeSelected(EChosenEditMode)),
-                this,
-                SLOT(selectedEditMode(EChosenEditMode)));
-
-        mChooseGroupWidget = new ChooseGroupWidget(this, mComm, mGroups);
-        mChooseGroupWidget->setVisible(false);
-        mChooseGroupWidget->isOpen(false);
-        connect(mChooseGroupWidget, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
-        connect(mChooseGroupWidget, SIGNAL(updateGroups()), this, SLOT(editPageUpdateGroups()));
-        connect(mChooseGroupWidget,
-                SIGNAL(editGroup(std::uint64_t)),
-                this,
-                SLOT(editGroupSelected(std::uint64_t)));
-
-
-        mChooseMoodWidget = new ChooseMoodWidget(this, mComm, mGroups);
-        mChooseMoodWidget->setVisible(false);
-        mChooseMoodWidget->isOpen(false);
-        connect(mChooseMoodWidget, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
-        connect(mChooseMoodWidget, SIGNAL(updateMoods()), this, SLOT(editPageUpdateMoods()));
-        connect(mChooseMoodWidget,
-                SIGNAL(editMood(std::uint64_t)),
-                this,
-                SLOT(editMoodSelected(std::uint64_t)));
-
-        // --------------
-        // Top Menu
-        // --------------
-
-        mTopMenu = new TopMenu(this,
-                               mData,
-                               mComm,
-                               mGroups,
-                               this,
-                               mMainViewport->palettePage(),
-                               mMainViewport->colorPage());
-
-        mTouchListener = new TouchListener(this, mLeftHandMenu, mTopMenu, mData);
-
-        connect(mTopMenu,
-                SIGNAL(buttonPressed(QString)),
-                this,
-                SLOT(topMenuButtonPressed(QString)));
-
-        mGreyOut->resize();
-
-        // --------------
-        // Setup Layout
-        // --------------
-
-        mSpacer = new QWidget(this);
-        mSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-        mSpacer->setFixedHeight(int(height() * 0.22f));
-
-        mSettingsPage->enableButtons(true);
-
-        // mark pages as loaded
-        mPagesLoaded = true;
-        reorderWidgets();
-        resize();
-
-        setupStateObserver();
+    mRoutineWidget = new RoutineButtonsWidget(this);
+    auto x = 0;
+    if (mLeftHandMenu->alwaysOpen()) {
+        x = mLeftHandMenu->width();
     }
+    mRoutineWidget->setMaximumWidth(mMainViewport->width());
+    mRoutineWidget->setMaximumHeight(mMainViewport->height() / 3);
+    mRoutineWidget->setGeometry(x, height(), mRoutineWidget->width(), mRoutineWidget->height());
+    mRoutineWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+
+    mEditGroupPage = new cor::EditGroupPage(this, mComm, mGroups);
+    mEditGroupPage->setVisible(false);
+    mEditGroupPage->isOpen(false);
+    connect(mEditGroupPage, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
+    connect(mEditGroupPage, SIGNAL(updateGroups()), this, SLOT(editPageUpdateGroups()));
+
+    mEditMoodPage = new cor::EditMoodPage(this, mComm, mGroups, mData);
+    mEditMoodPage->setVisible(false);
+    mEditMoodPage->isOpen(false);
+    connect(mEditMoodPage, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
+    connect(mEditMoodPage, SIGNAL(updateGroups()), this, SLOT(editPageUpdateGroups()));
+
+    connect(mMainViewport->moodPage()->moodDetailedWidget(),
+            SIGNAL(editMood(std::uint64_t)),
+            this,
+            SLOT(editMoodSelected(std::uint64_t)));
+
+    mChooseEditPage = new ChooseEditPage(this);
+    mChooseEditPage->setVisible(false);
+    mChooseEditPage->isOpen(false);
+    connect(mChooseEditPage, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
+    connect(mChooseEditPage,
+            SIGNAL(modeSelected(EChosenEditMode)),
+            this,
+            SLOT(selectedEditMode(EChosenEditMode)));
+
+    mChooseGroupWidget = new ChooseGroupWidget(this, mComm, mGroups);
+    mChooseGroupWidget->setVisible(false);
+    mChooseGroupWidget->isOpen(false);
+    connect(mChooseGroupWidget, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
+    connect(mChooseGroupWidget, SIGNAL(updateGroups()), this, SLOT(editPageUpdateGroups()));
+    connect(mChooseGroupWidget,
+            SIGNAL(editGroup(std::uint64_t)),
+            this,
+            SLOT(editGroupSelected(std::uint64_t)));
+
+
+    mChooseMoodWidget = new ChooseMoodWidget(this, mComm, mGroups);
+    mChooseMoodWidget->setVisible(false);
+    mChooseMoodWidget->isOpen(false);
+    connect(mChooseMoodWidget, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
+    connect(mChooseMoodWidget, SIGNAL(updateMoods()), this, SLOT(editPageUpdateMoods()));
+    connect(mChooseMoodWidget,
+            SIGNAL(editMood(std::uint64_t)),
+            this,
+            SLOT(editMoodSelected(std::uint64_t)));
+
+    // --------------
+    // Top Menu
+    // --------------
+
+    mTopMenu = new TopMenu(this,
+                           mData,
+                           mComm,
+                           mGroups,
+                           mAppSettings,
+                           this,
+                           mMainViewport->lightsPage(),
+                           mMainViewport->palettePage(),
+                           mMainViewport->colorPage());
+
+
+    connect(mTopMenu, SIGNAL(buttonPressed(QString)), this, SLOT(topMenuButtonPressed(QString)));
+
+    connect(mTopMenu,
+            SIGNAL(buttonPressed(QString)),
+            mMainViewport->lightsPage()->discoveryWidget(),
+            SLOT(floatingLayoutButtonPressed(QString)));
+
+    // --------------
+    // Setup Layout
+    // --------------
+
+    mSpacer = new QWidget(this);
+    mSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    mSpacer->setFixedHeight(int(height() * 0.22f));
+
+    mSettingsPage->enableButtons(true);
+
+    setupStateObserver();
 }
 
 
@@ -354,14 +337,10 @@ void MainWindow::topMenuButtonPressed(const QString& key) {
     } else if (key == "Menu") {
         pushInLeftHandMenu();
     } else {
-        qDebug() << "Do not recognize key" << key;
+        //  qDebug() << "Do not recognize key" << key;
     }
 }
 
-void MainWindow::settingsButtonFromDiscoveryPressed() {
-    // open settings if needed
-    pushInSettingsPage();
-}
 
 // ----------------------------
 // Protected
@@ -403,59 +382,12 @@ void MainWindow::resetStateUpdates() {
     }
 }
 
-void MainWindow::pushOutDiscovery() {
-    if (mFirstLoad) {
-        reorderWidgets();
-        mFirstLoad = false;
-        mMainViewport->pageChanged(EPage::colorPage, true);
-        if (!mLeftHandMenu->alwaysOpen()) {
-            pushInLeftHandMenu();
-        }
-        mTopMenu->showFloatingLayout(EPage::colorPage);
-    }
-    hideControllerPage();
-    if (mLeftHandMenu->alwaysOpen()) {
-        mDiscoveryPage->pushOut(QPoint(mLeftHandMenu->width(), 0),
-                                QPoint(width() + mDiscoveryPage->width(), 0));
-    } else {
-        mDiscoveryPage->pushOut(QPoint(0, 0), QPoint(width() + mDiscoveryPage->width(), 0));
-    }
-}
-
-
-void MainWindow::pushInDiscovery() {
-    pushInFullPageWidget(mDiscoveryPage);
-
-    if (mLeftHandMenu->alwaysOpen() && !mFirstLoad) {
-        mDiscoveryPage->pushIn(QPoint(width() + mDiscoveryPage->width(), 0),
-                               QPoint(mLeftHandMenu->width(), 0));
-    } else {
-        mDiscoveryPage->pushIn(QPoint(width() + mDiscoveryPage->width(), 0), QPoint(0, 0));
-    }
-}
-
-void MainWindow::showControllerPage() {
-    mControllerPage->setFixedSize(mDiscoveryPage->size());
-
-    if (mLeftHandMenu->alwaysOpen() && !mFirstLoad) {
-        mControllerPage->showPage(QPoint(mLeftHandMenu->width(), 0));
-    } else {
-        mControllerPage->showPage(QPoint(0u, 0));
-    }
-    mControllerPage->isOpen(true);
-}
-
-void MainWindow::hideControllerPage() {
-    mControllerPage->hidePage();
-}
-
 void MainWindow::switchToColorPage() {
     if (mLeftHandMenu->isIn()) {
         pushOutLeftHandMenu();
     }
 
     mLeftHandMenu->buttonPressed(EPage::colorPage);
-    pushOutDiscovery();
     if (!mSettingsPage->isOpen()) {
         reorderWidgets();
         mMainViewport->pageChanged(EPage::colorPage);
@@ -468,7 +400,7 @@ void MainWindow::settingsClosePressed() {
     // highlighted if its always open. Checking if discovery page is open fixes an edge case where
     // settings is called from discovery. this makes settings overlay over discovery, so correcting
     // the left hand menu isnt necessary.
-    if (mLeftHandMenu->alwaysOpen() && !mDiscoveryPage->isOpen()) {
+    if (mLeftHandMenu->alwaysOpen()) {
         mLeftHandMenu->buttonPressed(mMainViewport->currentPage());
     }
 }
@@ -482,27 +414,11 @@ void MainWindow::editPageClosePressed() {
     // highlighted if its always open. Checking if discovery page is open fixes an edge case where
     // settings is called from discovery. this makes settings overlay over discovery, so correcting
     // the left hand menu isnt necessary.
-    if (mLeftHandMenu->alwaysOpen() && !mDiscoveryPage->isOpen()) {
+    if (mLeftHandMenu->alwaysOpen() && !mMainViewport->lightsPage()->isOpen()) {
         mLeftHandMenu->buttonPressed(mMainViewport->currentPage());
     }
 }
 
-void MainWindow::closeDiscoveryWithoutTransition() {
-    loadPages();
-    mFirstLoad = false;
-
-    reorderWidgets();
-    mDiscoveryPage->setGeometry(QRect(-mDiscoveryPage->width(),
-                                      0,
-                                      mDiscoveryPage->geometry().width(),
-                                      mDiscoveryPage->geometry().height()));
-    mDiscoveryPage->hide();
-    mDiscoveryPage->isOpen(false);
-    mMainViewport->pageChanged(EPage::colorPage);
-    if (!mLeftHandMenu->alwaysOpen()) {
-        pushInLeftHandMenu();
-    }
-}
 
 void MainWindow::editButtonClicked(bool isMood) {
     mIsMoodEdit = isMood;
@@ -515,9 +431,7 @@ void MainWindow::resizeFullPageWidget(QWidget* widget) {
     if (widget->isVisible()) {
         pushInFullPageWidget(widget);
 
-        if (mFirstLoad) {
-            widget->move(QPoint(0, widget->geometry().y()));
-        } else if (mLeftHandMenu->isIn()) {
+        if (mLeftHandMenu->isIn()) {
             widget->move(QPoint(mLeftHandMenu->width(), widget->geometry().y()));
         } else {
             widget->move(QPoint(0, widget->geometry().y()));
@@ -537,59 +451,21 @@ void MainWindow::resizeFullPageWidget(QWidget* widget) {
 void MainWindow::resize() {
     mLeftHandMenu->resize();
 
-    if (mPagesLoaded) {
-        if (mLeftHandMenu->alwaysOpen()) {
-            mTopMenu->resize(mLeftHandMenu->width());
-        } else {
-            mTopMenu->resize(0);
-        }
-
-        mSpacer->setGeometry(mTopMenu->geometry());
-        int xPos = 5u;
-        int width = this->width() - 10;
-        if (mLeftHandMenu->alwaysOpen()) {
-            xPos += mLeftHandMenu->width();
-            width -= mLeftHandMenu->width();
-        }
-        QRect rect(xPos, mTopMenu->height(), width, (height() - mTopMenu->height()));
-        mMainViewport->resize(rect);
-    }
-
-    QSize fullScreenSize = size();
-    if (mDiscoveryPage->isOpen()) {
-        pushInFullPageWidget(mDiscoveryPage);
-
-        if (mFirstLoad) {
-            mDiscoveryPage->move(QPoint(0, mDiscoveryPage->geometry().y()));
-        } else if (mLeftHandMenu->isIn()) {
-            mDiscoveryPage->move(QPoint(mLeftHandMenu->width(), mDiscoveryPage->geometry().y()));
-        } else {
-            mDiscoveryPage->move(QPoint(0, mDiscoveryPage->geometry().y()));
-        }
-
-        if (mWifiFound) {
-            mDiscoveryPage->raise();
-        }
+    if (mLeftHandMenu->alwaysOpen()) {
+        mTopMenu->resize(mLeftHandMenu->width());
     } else {
-        mDiscoveryPage->setGeometry(geometry().width() * -1,
-                                    mDiscoveryPage->geometry().y(),
-                                    fullScreenSize.width(),
-                                    fullScreenSize.height());
+        mTopMenu->resize(0);
     }
 
-    if (mControllerPage->isOpen()) {
-        mControllerPage->setFixedSize(mDiscoveryPage->size());
-        mControllerPage->setGeometry(mDiscoveryPage->geometry());
-
-        if (mWifiFound) {
-            mControllerPage->raise();
-        }
-    } else {
-        mControllerPage->setGeometry(geometry().width() * -1,
-                                     mDiscoveryPage->geometry().y(),
-                                     mDiscoveryPage->width(),
-                                     mDiscoveryPage->height());
+    mSpacer->setGeometry(mTopMenu->geometry());
+    int xPos = 5u;
+    int width = this->width() - 10;
+    if (mLeftHandMenu->alwaysOpen()) {
+        xPos += mLeftHandMenu->width();
+        width -= mLeftHandMenu->width();
     }
+    QRect rect(xPos, mTopMenu->height(), width, (height() - mTopMenu->height()));
+    mMainViewport->resize(rect);
 
     if (mSettingsPage->isOpen()) {
         resizeFullPageWidget(mSettingsPage);
@@ -601,40 +477,38 @@ void MainWindow::resize() {
     }
     mGreyOut->resize();
 
-    if (mPagesLoaded) {
-        if (mEditGroupPage->isOpen()) {
-            resizeFullPageWidget(mEditGroupPage);
-        } else {
-            mEditGroupPage->setGeometry(geometry().width(),
-                                        0,
-                                        mEditGroupPage->width(),
-                                        mEditGroupPage->height());
-        }
-
-        if (mEditMoodPage->isOpen()) {
-            resizeFullPageWidget(mEditMoodPage);
-        } else {
-            mEditMoodPage->setGeometry(geometry().width(),
-                                       0,
-                                       mEditMoodPage->width(),
-                                       mEditMoodPage->height());
-        }
-
-        if (mChooseEditPage->isOpen()) {
-            resizeFullPageWidget(mChooseEditPage);
-        } else {
-            mChooseEditPage->setGeometry(geometry().width(),
-                                         0,
-                                         mChooseEditPage->width(),
-                                         mChooseEditPage->height());
-        }
-
-        resizeFullPageWidget(mChooseGroupWidget);
-        resizeFullPageWidget(mChooseMoodWidget);
-
-        mRoutineWidget->resize(mMainViewport->x(),
-                               QSize(mMainViewport->width(), mMainViewport->height()));
+    if (mEditGroupPage->isOpen()) {
+        resizeFullPageWidget(mEditGroupPage);
+    } else {
+        mEditGroupPage->setGeometry(geometry().width(),
+                                    0,
+                                    mEditGroupPage->width(),
+                                    mEditGroupPage->height());
     }
+
+    if (mEditMoodPage->isOpen()) {
+        resizeFullPageWidget(mEditMoodPage);
+    } else {
+        mEditMoodPage->setGeometry(geometry().width(),
+                                   0,
+                                   mEditMoodPage->width(),
+                                   mEditMoodPage->height());
+    }
+
+    if (mChooseEditPage->isOpen()) {
+        resizeFullPageWidget(mChooseEditPage);
+    } else {
+        mChooseEditPage->setGeometry(geometry().width(),
+                                     0,
+                                     mChooseEditPage->width(),
+                                     mChooseEditPage->height());
+    }
+
+    resizeFullPageWidget(mChooseGroupWidget);
+    resizeFullPageWidget(mChooseMoodWidget);
+
+    mRoutineWidget->resize(mMainViewport->x(),
+                           QSize(mMainViewport->width(), mMainViewport->height()));
 
     mNoWifiWidget->setGeometry(QRect(0, 0, geometry().width(), geometry().height()));
 }
@@ -666,7 +540,6 @@ void MainWindow::wifiChecker() {
     mNoWifiWidget->setVisible(!mWifiFound);
     if (mWifiFound) {
         mNoWifiWidget->setVisible(false);
-        loadPages();
     } else {
         mNoWifiWidget->setVisible(true);
         mNoWifiWidget->raise();
@@ -739,14 +612,9 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
     }
 
 
-    if (page == EPage::discoveryPage && !mDiscoveryPage->isOpen()) {
-        pushInDiscovery();
-    } else if (page != EPage::discoveryPage && mDiscoveryPage->isOpen()) {
-        pushOutDiscovery();
-    }
-
-    if (page != EPage::discoveryPage) {
-        mMainViewport->pageChanged(page);
+    mMainViewport->pageChanged(page);
+    if (page == EPage::lightsPage) {
+        mTopMenu->updateLightsMenu();
     }
     mTopMenu->showFloatingLayout(page);
     if (!ignorePushOut) {
@@ -756,9 +624,7 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
 
 void MainWindow::pushInFullPageWidget(QWidget* widget) {
     const auto& fullScreenSize = size();
-    if (mFirstLoad) {
-        widget->setFixedSize(fullScreenSize.width(), fullScreenSize.height());
-    } else if (mLeftHandMenu->alwaysOpen()) {
+    if (mLeftHandMenu->alwaysOpen()) {
         widget->setFixedSize(
             cor::guardAgainstNegativeSize(fullScreenSize.width() - mLeftHandMenu->width()),
             fullScreenSize.height());
@@ -778,7 +644,7 @@ void MainWindow::pushOutFullPageWidget(QWidget*) {
 
 void MainWindow::pushInSettingsPage() {
     pushInFullPageWidget(mSettingsPage);
-    if (mLeftHandMenu->alwaysOpen() && !mFirstLoad) {
+    if (mLeftHandMenu->alwaysOpen()) {
         mSettingsPage->pushIn(QPoint(width(), 0), QPoint(mLeftHandMenu->width(), 0));
     } else {
         mSettingsPage->pushIn(QPoint(width(), 0), QPoint(0u, 0u));
@@ -789,9 +655,6 @@ void MainWindow::pushOutSettingsPage() {
     pushOutFullPageWidget(mSettingsPage);
 
     mSettingsPage->pushOut(QPoint(width(), 0u));
-    if (mDiscoveryPage->isOpen()) {
-        mDiscoveryPage->updateTopMenu();
-    }
 }
 
 void MainWindow::pushInEditGroupPage(std::uint64_t key) {
@@ -803,7 +666,7 @@ void MainWindow::pushInEditGroupPage(std::uint64_t key) {
     }
 
     pushInFullPageWidget(mEditGroupPage);
-    if (mLeftHandMenu->alwaysOpen() && !mFirstLoad) {
+    if (mLeftHandMenu->alwaysOpen()) {
         mEditGroupPage->pushIn(QPoint(width(), 0), QPoint(mLeftHandMenu->width(), 0));
     } else {
         mEditGroupPage->pushIn(QPoint(width(), 0), QPoint(0u, 0u));
@@ -819,7 +682,7 @@ void MainWindow::pushInEditMoodPage(std::uint64_t key) {
     }
 
     pushInFullPageWidget(mEditMoodPage);
-    if (mLeftHandMenu->alwaysOpen() && !mFirstLoad) {
+    if (mLeftHandMenu->alwaysOpen()) {
         mEditMoodPage->pushIn(QPoint(width(), 0), QPoint(mLeftHandMenu->width(), 0));
     } else {
         mEditMoodPage->pushIn(QPoint(width(), 0), QPoint(0u, 0u));
@@ -835,14 +698,11 @@ void MainWindow::pushOutEditPage() {
 
     mEditMoodPage->pushOut(QPoint(width(), 0u));
     mEditMoodPage->reset();
-    if (mDiscoveryPage->isOpen()) {
-        mDiscoveryPage->updateTopMenu();
-    }
 }
 
 void MainWindow::pushInChooseEditPage() {
     pushInFullPageWidget(mChooseEditPage);
-    if (mLeftHandMenu->alwaysOpen() && !mFirstLoad) {
+    if (mLeftHandMenu->alwaysOpen()) {
         mChooseEditPage->pushIn(QPoint(width(), 0), QPoint(mLeftHandMenu->width(), 0));
     } else {
         mChooseEditPage->pushIn(QPoint(width(), 0), QPoint(0u, 0u));
@@ -853,16 +713,13 @@ void MainWindow::pushOutChooseEditPage() {
     pushOutFullPageWidget(mChooseEditPage);
 
     mChooseEditPage->pushOut(QPoint(width(), 0u));
-    if (mDiscoveryPage->isOpen()) {
-        mDiscoveryPage->updateTopMenu();
-    }
 }
 
 
 void MainWindow::pushInChooseGroupPage(cor::EGroupAction action) {
     mChooseGroupWidget->showGroups(cor::groupVectorToIDs(mGroups->groupDict().items()), action);
     pushInFullPageWidget(mChooseGroupWidget);
-    if (mLeftHandMenu->alwaysOpen() && !mFirstLoad) {
+    if (mLeftHandMenu->alwaysOpen()) {
         mChooseGroupWidget->pushIn(QPoint(width(), 0), QPoint(mLeftHandMenu->width(), 0));
     } else {
         mChooseGroupWidget->pushIn(QPoint(width(), 0), QPoint(0u, 0u));
@@ -873,15 +730,12 @@ void MainWindow::pushOutChooseGroupPage() {
     pushOutFullPageWidget(mChooseGroupWidget);
 
     mChooseGroupWidget->pushOut(QPoint(width(), 0u));
-    if (mDiscoveryPage->isOpen()) {
-        mDiscoveryPage->updateTopMenu();
-    }
 }
 
 void MainWindow::pushInChooseMoodPage(cor::EGroupAction action) {
     mChooseMoodWidget->showMoods(action);
     pushInFullPageWidget(mChooseMoodWidget);
-    if (mLeftHandMenu->alwaysOpen() && !mFirstLoad) {
+    if (mLeftHandMenu->alwaysOpen()) {
         mChooseMoodWidget->pushIn(QPoint(width(), 0), QPoint(mLeftHandMenu->width(), 0));
     } else {
         mChooseMoodWidget->pushIn(QPoint(width(), 0), QPoint(0u, 0u));
@@ -892,9 +746,6 @@ void MainWindow::pushOutChooseMoodPage() {
     pushOutFullPageWidget(mChooseMoodWidget);
 
     mChooseMoodWidget->pushOut(QPoint(width(), 0u));
-    if (mDiscoveryPage->isOpen()) {
-        mDiscoveryPage->updateTopMenu();
-    }
 }
 
 void MainWindow::selectedEditMode(EChosenEditMode mode) {
@@ -944,7 +795,7 @@ void MainWindow::editPageUpdateMoods() {
 
 bool MainWindow::isAnyWidgetAbove() {
     if (mSettingsPage->isOpen() || mEditGroupPage->isOpen() || mEditMoodPage->isOpen()
-        || mDiscoveryPage->isOpen() || mNoWifiWidget->isVisible()) {
+        || mMainViewport->lightsPage()->discoveryWidget() || mNoWifiWidget->isVisible()) {
         return true;
     }
     return false;
@@ -955,10 +806,9 @@ void MainWindow::openEditGroupMenu() {
 }
 
 void MainWindow::reorderWidgets() {
-    if (mPagesLoaded) {
-        mTopMenu->showMenu();
-        mLeftHandMenu->raise();
-    }
+    mTopMenu->showMenu();
+    mLeftHandMenu->raise();
+
     mGreyOut->raise();
 }
 
@@ -968,8 +818,8 @@ void MainWindow::setupStateObserver() {
                                             mGroups,
                                             mAppSettings,
                                             this,
-                                            mControllerPage,
-                                            mDiscoveryPage,
+                                            mMainViewport->lightsPage()->controllerWidget(),
+                                            mMainViewport->lightsPage()->discoveryWidget(),
                                             mTopMenu,
                                             this);
     // color page setup
@@ -1052,18 +902,19 @@ void MainWindow::setupStateObserver() {
     connect(mSyncStatus, SIGNAL(statusChanged(bool)), mStateObserver, SLOT(dataInSync(bool)));
 
     // setup deleting lights
-    connect(mControllerPage,
+    connect(mMainViewport->lightsPage()->controllerWidget(),
             SIGNAL(lightSelected(QString, bool)),
             mStateObserver,
             SLOT(lightCountChangedFromControllerPage(QString, bool)));
 
-    connect(mControllerPage,
-            SIGNAL(deleteLight(QString)),
-            mDiscoveryPage,
-            SLOT(deleteLight(QString)));
+    // set up changes to connection state
+    connect(mMainViewport->lightsPage()->discoveryWidget(),
+            SIGNAL(connectionStateChanged(EProtocolType, EConnectionState)),
+            mStateObserver,
+            SLOT(connectionStateChanged(EProtocolType, EConnectionState)));
 
     // light info widget
-    connect(mControllerPage->lightInfoWidget(),
+    connect(mMainViewport->lightsPage()->controllerWidget()->lightInfoWidget(),
             SIGNAL(lightNameChanged(QString, QString)),
             mStateObserver,
             SLOT(lightNameChange(QString, QString)));
@@ -1073,4 +924,12 @@ void MainWindow::debugModeClicked() {
     qDebug() << "INFO: enabling debug mode!";
     mDebugMode = true;
     mDebugConnections->initiateSpoofedConnections();
+}
+
+void MainWindow::anyDiscovered(bool discovered) {
+    if (!mAnyDiscovered && discovered) {
+        mAnyDiscovered = discovered;
+        mSettingsPage->enableButtons(true);
+        mLeftHandMenu->enableButtons(true);
+    }
 }

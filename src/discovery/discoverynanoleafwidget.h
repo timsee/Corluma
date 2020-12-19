@@ -6,7 +6,7 @@
 #include "comm/commnanoleaf.h"
 #include "cor/lightlist.h"
 #include "cor/widgets/listwidget.h"
-#include "discoverywidget.h"
+#include "discoverytypewidget.h"
 #include "editablefieldwidget.h"
 #include "searchwidget.h"
 
@@ -20,7 +20,7 @@
  *        instructions to connect to the NanoLeaf and also provides the ability to manually
  *        enter an IP address, if discovery is failing.
  */
-class DiscoveryNanoLeafWidget : public DiscoveryWidget {
+class DiscoveryNanoLeafWidget : public DiscoveryTypeWidget {
     Q_OBJECT
 
 public:
@@ -32,7 +32,7 @@ public:
     explicit DiscoveryNanoLeafWidget(QWidget* parent,
                                      CommLayer* comm,
                                      cor::LightList* selectedLights,
-                                     ControllerPage* controllerPage);
+                                     ControllerWidget* controllerPage);
 
     /// See DiscoveryWidget.h
     void handleDiscovery(bool isActive) override;

@@ -14,7 +14,7 @@
 class DiscoveryArduCorWidget;
 class DiscoveryHueWidget;
 class DiscoveryNanoLeafWidget;
-class ControllerPage;
+class ControllerWidget;
 
 /*!
  * \copyright
@@ -32,28 +32,28 @@ class ControllerPage;
  * Bridges you can view the schedules in the bridge, and some metadata such as the API version.
  *
  */
-class DiscoveryPage : public QWidget, public cor::Page {
+class DiscoveryWidget : public QWidget, public cor::Page {
     Q_OBJECT
 
 public:
     /*!
      * Constructor
      */
-    explicit DiscoveryPage(QWidget* parent,
-                           cor::LightList* data,
-                           CommLayer* layer,
-                           AppSettings* appSettings,
-                           ControllerPage* controllerPage);
+    explicit DiscoveryWidget(QWidget* parent,
+                             cor::LightList* data,
+                             CommLayer* layer,
+                             AppSettings* appSettings,
+                             ControllerWidget* controllerPage);
 
     /// debug function
     void openStartForDebug() { mForceStartOpen = true; }
 
-    /*!
-     * \brief updateTopMenu helper for adjusting the top menu to show
-     *        only available CommTypes. If only one commtype is available, don't show
-     *        any of the buttons.
-     */
-    void updateTopMenu();
+    EProtocolType currentProtocol() { return mType; }
+
+    void switchProtocol(EProtocolType type) {
+        mType = type;
+        protocolTypeSelected(mType);
+    }
 
     /// called when the widget is shown
     void show();
@@ -61,44 +61,29 @@ public:
     /// called when the widget is hidden
     void hide();
 
-    /// true if any lights have been discovered, false otherwise
-    bool isAnyDiscovered();
-
-    /// displays the discovery page
-    void pushIn(const QPoint& startPoint, const QPoint& endPoint);
-
-    /// hides the discovery page
-    void pushOut(const QPoint& startPoint, const QPoint& endPoint);
-
     /// highlight the lights on the discovery page.
     void highlightLights();
 
+public slots:
+    /*!
+     * \brief floatingLayoutButtonPressed handles whenever a floating layout button is presed
+     * \param button key for floating layout button
+     */
+    void floatingLayoutButtonPressed(const QString& button);
+
 signals:
-    /*!
-     * \brief startButtonClicked sent whenver the start button is clicked so that the discovery
-     *        page can be hidden.
-     */
-    void startButtonClicked();
 
-    /*!
-     * \brief settingsButtonClicked sent whenever the settings button is clicked.
-     */
-    void settingsButtonClicked();
+    /// show the controller widget.
+    void showControllerWidget();
 
-    /*!
-     * \brief closeWithoutTransition emits to a parent to close this page without transition.
-     */
-    void closeWithoutTransition();
+    /// a connection state has changed for a widget.
+    void connectionStateChanged(EProtocolType type, EConnectionState newState);
 
 public slots:
     /// handle when a light is deleted.
     void deleteLight(QString);
 
 private slots:
-    /*!
-     * \brief startClicked handle when the start button is clicked.
-     */
-    void startClicked();
 
     /*!
      * \brief protocolTypeSelected called when the comm type updates and changes
@@ -121,11 +106,8 @@ private slots:
      */
     void widgetConnectionStateChanged(EProtocolType type, EConnectionState connectionState);
 
-    /*!
-     * \brief floatingLayoutButtonPressed handles whenever a floating layout button is presed
-     * \param button key for floating layout button
-     */
-    void floatingLayoutButtonPressed(const QString& button);
+    /// should show a controller widget.
+    void shouldShowControllerWidget();
 
 protected:
     /*!
@@ -146,20 +128,14 @@ private:
      */
     cor::LightList* mData;
 
-    /// moves floating layouts to top right position of screen.
-    void moveFloatingLayouts();
-
     /// true if protocol has been discovered, false if its still waiting on its first device.
     bool checkIfDiscovered(EProtocolType type);
 
-    /// floating layout for commtype button
-    FloatingLayout* mHorizontalFloatingLayout;
+    /// spacer for floating layouts
+    QWidget* mSpacer;
 
-    /// floating layout for settings button
-    FloatingLayout* mVerticalFloatingLayout;
-
-    /// used for certain discovery pages as an additional button
-    FloatingLayout* mOptionalFloatingLayout;
+    /// placeholder for main widget
+    QWidget* mPlaceholder;
 
     /// discovery widget for ArduCor
     DiscoveryArduCorWidget* mArduCorWidget;
@@ -169,15 +145,6 @@ private:
 
     /// discovery widget for nanoleaf products
     DiscoveryNanoLeafWidget* mNanoLeafWidget;
-
-    /// spacer for floating layouts
-    QWidget* mSpacer;
-
-    /// placeholder for main widget
-    QWidget* mPlaceholder;
-
-    /// start button of widget
-    QPushButton* mStartButton;
 
     /*!
      * \brief resize resize buttons at top that switch between Hue, Serial, etc.
@@ -204,11 +171,6 @@ private:
     EProtocolType mType;
 
     /*!
-     * \brief mButtonIcons reference to a QPixmap for each of the comm buttons.
-     */
-    std::vector<QPixmap> mButtonIcons;
-
-    /*!
      * \brief mConnectionStates The connection state of any
      *        specific commtype
      */
@@ -219,19 +181,6 @@ private:
      *        to stay active.
      */
     bool mForceStartOpen;
-
-    /*!
-     * \brief mStartTime start time for the application. If discovery happens quickly,
-     *        the app automatically hides this page. This timer tracks that.
-     */
-    QTime mStartTime;
-
-    /// resizes the icons on the discovery page if the floating layout size changes (this typically
-    /// happens only once)
-    void resizeButtonIcons();
-
-    /// the last floating layout height, used to test if resize is needed.
-    int mLastFloatingHeight;
 
     /// pointer to the app states that determine if a protocol (such as arducor or nanoleaf) is
     /// currently enabled

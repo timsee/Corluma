@@ -60,9 +60,9 @@ public:
      * of the connection.
      *
      * \param type comm type of discovery button
-     * \param pixmap new pixmap for discovery button
+     * \param connectionState state of connection
      */
-    void updateDiscoveryButton(EProtocolType type, const QPixmap& pixmap);
+    void updateDiscoveryButton(EProtocolType type, EConnectionState connectionState);
 
     /*!
      * \brief addMultiRoutineIcon add a multi routine icon

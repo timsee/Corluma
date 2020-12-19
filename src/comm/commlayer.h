@@ -61,6 +61,9 @@ public:
      */
     void resetStateUpdates(EProtocolType type);
 
+    /// true if the protocol is receiving state updates, false otherwise.
+    bool isActive(EProtocolType type);
+
     /*!
      * \brief stopStateUpdates turn off the state update threads for specified commtypes.
      */

@@ -5,6 +5,7 @@
  */
 
 #include "floatinglayout.h"
+#include "connectionbutton.h"
 
 #include <QDebug>
 #include <QGraphicsOpacityEffect>
@@ -54,10 +55,10 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
         // extremely thin aspect ratios will likely make the rectangle still pretty thin, so account
         // for that
         auto ratio = float(size.height()) / size.width();
-        auto width = size.width() * 0.22f;
+        auto width = size.width() * 0.2f;
         auto height = size.height() * 0.08f;
         if (ratio > 1.3f) {
-            width = size.width() * 0.33f;
+            width = size.width() * 0.25f;
             height = size.height() * 0.1f;
         }
         size = QSize(int(width), int(height));
@@ -127,27 +128,15 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             Q_ASSERT(mButtons[i]);
         } else if (mNames[i] == "Discovery_ArduCor") {
             foundMatch = true;
-            mButtons[i] = new QPushButton(this);
-            mButtons[i]->setCheckable(true);
-            mButtons[i]->setStyleSheet("text-align:left");
-            mButtons[i]->setIconSize(QSize(int(mButtons[i]->size().height() * 0.9f),
-                                           int(mButtons[i]->size().height() * 0.9f)));
+            mButtons[i] = new ConnectionButton(this);
             mButtons[i]->setText("ArduCor");
         } else if (mNames[i] == "Discovery_Hue") {
             foundMatch = true;
-            mButtons[i] = new QPushButton(this);
-            mButtons[i]->setCheckable(true);
-            mButtons[i]->setStyleSheet("text-align:left");
-            mButtons[i]->setIconSize(QSize(int(mButtons[i]->size().height() * 0.9f),
-                                           int(mButtons[i]->size().height() * 0.9f)));
+            mButtons[i] = new ConnectionButton(this);
             mButtons[i]->setText("Hue");
         } else if (mNames[i] == "Discovery_NanoLeaf") {
             foundMatch = true;
-            mButtons[i] = new QPushButton(this);
-            mButtons[i]->setCheckable(true);
-            mButtons[i]->setStyleSheet("text-align:left");
-            mButtons[i]->setIconSize(QSize(int(mButtons[i]->size().height() * 0.9f),
-                                           int(mButtons[i]->size().height() * 0.9f)));
+            mButtons[i] = new ConnectionButton(this);
             mButtons[i]->setText("NanoLeaf");
         }
 
@@ -230,7 +219,7 @@ void FloatingLayout::updateCollectionButton(const QString& resource) {
     }
 }
 
-void FloatingLayout::updateDiscoveryButton(EProtocolType type, const QPixmap& pixmap) {
+void FloatingLayout::updateDiscoveryButton(EProtocolType type, EConnectionState connectionState) {
     QString label;
     switch (type) {
         case EProtocolType::hue:
@@ -246,11 +235,10 @@ void FloatingLayout::updateDiscoveryButton(EProtocolType type, const QPixmap& pi
             break;
     }
     for (std::size_t i = 0u; i < mButtons.size(); ++i) {
-        if (mNames[i] == label && !pixmap.isNull()) {
-            int size = int(mButtons[i]->size().height() * 0.5f);
-            mButtons[i]->setIcon(
-                QIcon(pixmap.scaled(size, size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation)));
-            mButtons[i]->setIconSize(QSize(size, size));
+        if (mNames[i] == label) {
+            auto connectionButton = dynamic_cast<ConnectionButton*>(mButtons[i]);
+            Q_ASSERT(connectionButton);
+            connectionButton->changeState(connectionState);
         }
     }
 }

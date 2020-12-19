@@ -27,6 +27,7 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
                            QWidget* parent)
     : QWidget(parent),
       mAlwaysOpen{alwaysOpen},
+      mButtonsEnabled{false},
       mSpacer{new QWidget(this)},
       mSelectedLights{devices},
       mMainPalette{new cor::LightVectorWidget(6, 2, true, this)},
@@ -65,9 +66,10 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     //---------------
 
     mLightsButton =
-        new LeftHandButton("Lights", EPage::discoveryPage, ":/images/connectionIcon.png", this);
+        new LeftHandButton("Lights", EPage::lightsPage, ":/images/connectionIcon.png", this);
     mLightsButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mLightsButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
+    mLightsButton->shouldHightlght(true);
 
     mSingleColorButton = new LeftHandButton("Single Color",
                                             EPage::colorPage,
@@ -75,7 +77,6 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
                                             this);
     mSingleColorButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mSingleColorButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
-    mSingleColorButton->shouldHightlght(true);
 
     mSettingsButton =
         new LeftHandButton("Settings", EPage::settingsPage, ":/images/settingsgear.png", this);
@@ -87,7 +88,6 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
         new TimeoutButton("Timeouts", EPage::timeoutPage, ":/images/timer.png", mComm, mData, this);
     mTimeoutButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mTimeoutButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
-
 
     PresetPalettes palettes;
     cor::LightState state;
@@ -105,6 +105,9 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     mMoodButton = new LeftHandButton("Moods", EPage::moodPage, moodState, this);
     mMoodButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     connect(mMoodButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
+
+    // by default, initialize with certain buttons disabled until a connection to any light is made
+    enableButtons(false);
 
     mRenderThread = new QTimer(this);
     connect(mRenderThread, SIGNAL(timeout()), this, SLOT(renderUI()));
@@ -228,7 +231,7 @@ void LeftHandMenu::buttonPressed(EPage page) {
         mMoodButton->shouldHightlght(false);
         mSettingsButton->shouldHightlght(false);
         mTimeoutButton->shouldHightlght(false);
-        if (page == EPage::discoveryPage) {
+        if (page == EPage::lightsPage) {
             mLightsButton->shouldHightlght(true);
         } else if (page == EPage::colorPage) {
             mSingleColorButton->shouldHightlght(true);
@@ -250,7 +253,7 @@ void LeftHandMenu::buttonPressed(EPage page) {
             mMultiColorButton->shouldHightlght(false);
             mMoodButton->shouldHightlght(false);
             mTimeoutButton->shouldHightlght(false);
-            if (page == EPage::discoveryPage) {
+            if (page == EPage::lightsPage) {
                 mLightsButton->shouldHightlght(true);
             } else if (page == EPage::colorPage) {
                 mSingleColorButton->shouldHightlght(true);
@@ -400,4 +403,13 @@ int LeftHandMenu::showingWidth() {
 
 void LeftHandMenu::updateTimeoutButton(bool enabled, std::uint32_t value) {
     mTimeoutButton->update(enabled, value);
+}
+
+void LeftHandMenu::enableButtons(bool enable) {
+    mButtonsEnabled = enable;
+
+    mSingleColorButton->setEnabled(enable);
+    mMultiColorButton->setEnabled(enable);
+    mMoodButton->setEnabled(enable);
+    mTimeoutButton->setEnabled(enable);
 }

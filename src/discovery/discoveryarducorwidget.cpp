@@ -7,7 +7,7 @@
 #include "discoveryarducorwidget.h"
 #include <QMessageBox>
 #include <QScroller>
-#include "controllerpage.h"
+#include "controllerwidget.h"
 #include "display/displaypreviewarducorwidget.h"
 #include "mainwindow.h"
 #include "utils/qt.h"
@@ -15,8 +15,8 @@
 DiscoveryArduCorWidget::DiscoveryArduCorWidget(QWidget* parent,
                                                CommLayer* comm,
                                                cor::LightList* selectedLights,
-                                               ControllerPage* controllerPage)
-    : DiscoveryWidget(parent, comm, controllerPage),
+                                               ControllerWidget* controllerPage)
+    : DiscoveryTypeWidget(parent, comm, controllerPage),
       mSelectedLights{selectedLights} {
     mListWidget = new cor::ListWidget(this, cor::EListType::linear);
     mListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -119,12 +119,9 @@ void DiscoveryArduCorWidget::resizeEvent(QResizeEvent*) {
 
 void DiscoveryArduCorWidget::resize() {
     auto yPos = 0u;
-    mTopLabel->setGeometry(0, 0, int(width() * 0.7), int(height() * 0.25));
+    mTopLabel->setGeometry(0, 0, int(width() * 0.7), int(height() * 0.1));
     yPos += mTopLabel->height();
-    mListWidget->setGeometry(int(width() * 0.025),
-                             yPos,
-                             int(width() * 0.95),
-                             int(height() * 0.735));
+    mListWidget->setGeometry(int(width() * 0.025), yPos, int(width() * 0.95), int(height() * 0.9));
     mGreyout->resize();
 
     // call resize function of each widget
@@ -145,7 +142,7 @@ void DiscoveryArduCorWidget::controllerClicked(QString controller) {
         auto arduCorWidget = dynamic_cast<DisplayPreviewArduCorWidget*>(widget);
         if (arduCorWidget->controller().name() == controller) {
             if (arduCorWidget->status() == cor::EArduCorStatus::connected) {
-                cor::mainWindow()->showControllerPage();
+                emit showControllerWidget();
                 mControllerPage->showArduCor(arduCorWidget->controller());
             } else {
                 QMessageBox::StandardButton warning;

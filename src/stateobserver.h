@@ -42,8 +42,8 @@ public:
                            GroupData* groups,
                            AppSettings* appSettings,
                            MainWindow* mainWindow,
-                           ControllerPage* controllerPage,
-                           DiscoveryPage* discoveryPage,
+                           ControllerWidget* controllerPage,
+                           DiscoveryWidget* discoveryPage,
                            TopMenu* topMenu,
                            QObject* parent);
 
@@ -75,6 +75,9 @@ public slots:
 
     /// timeout changed.
     void timeoutChanged(bool, std::uint32_t);
+
+    /// connection state has changed for a specific protocol.
+    void connectionStateChanged(EProtocolType type, EConnectionState newState);
 
     /// getter for the time observer
     TimeObserver* timeObserver() { return mTimeObserver; }
@@ -138,10 +141,10 @@ private:
     MainWindow* mMainWindow;
 
     /// controller page
-    ControllerPage* mControllerPage;
+    ControllerWidget* mControllerPage;
 
     /// discovery page
-    DiscoveryPage* mDiscoveryPage;
+    DiscoveryWidget* mDiscoveryPage;
 
     /// top menu of the app
     TopMenu* mTopMenu;

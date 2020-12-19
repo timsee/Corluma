@@ -997,3 +997,12 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Removed the `ArduCorInfoWIdget` and `LeafLightInfoWidget`.
 - Moved the `LightInfoScrollArea` to the `DisplayHueBridgeWidget`.
 - Fixed miscellaneous bugs.
+
+
+### **v0.21.3**
+### The Revised LightsPage Update
+- Renamed `DiscoveryPage` and `ControllerPage` to `DiscoveryWidget` and `ControllerWidget`.
+- Added back `LightsPage`, which now contains `DiscoveryWidget` and `ControllerWidget`.
+- Refactored the menu at the top of the `DiscoveryPage` to be part of `TopMenu`.
+- Simplified `DiscoveryWidget` and `MainWindow`.
+- Fixed miscellaneous bugs.

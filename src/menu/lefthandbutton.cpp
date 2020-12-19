@@ -128,16 +128,20 @@ void LeftHandButton::shouldHightlght(bool shouldHighlight) {
 void LeftHandButton::paintEvent(QPaintEvent*) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
+    auto transparency = 255;
+    if (!isEnabled()) {
+        transparency = 127;
+    }
     // paint background
     if (mIsHighlighted) {
-        painter.fillRect(rect(), QBrush(QColor(61, 142, 201)));
+        painter.fillRect(rect(), QBrush(QColor(61, 142, 201, transparency)));
     } else {
-        painter.fillRect(rect(), QBrush(QColor(35, 34, 34)));
+        painter.fillRect(rect(), QBrush(QColor(35, 34, 34, transparency)));
     }
 
     // paint top line
     int greyValue = 185;
-    QBrush brush(QColor(greyValue, greyValue, greyValue));
+    QBrush brush(QColor(greyValue, greyValue, greyValue, transparency));
     QPen pen(brush, 1);
     painter.setPen(pen);
     painter.drawLine(0, 0, width(), 0);
