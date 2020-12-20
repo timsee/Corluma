@@ -1006,3 +1006,10 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Refactored the menu at the top of the `DiscoveryPage` to be part of `TopMenu`.
 - Simplified `DiscoveryWidget` and `MainWindow`.
 - Fixed miscellaneous bugs.
+
+
+### **v0.21.35**
+### Yet Another Minor Bug Fixes Update
+- Fixed a bug (?) with displaying panel layouts for Nanoleaf Shapes.
+- Started to move all important widgets to initializer lists.
+- Moved the `SettingsPage` to the `MainViewport`.

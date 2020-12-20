@@ -37,11 +37,6 @@ ChooseGroupWidget::ChooseGroupWidget(QWidget* parent, CommLayer* comm, GroupData
     mGroupScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     mGroupScrollArea->horizontalScrollBar()->setEnabled(false);
     mGroupScrollArea->horizontalScrollBar()->setVisible(false);
-#ifdef MOBILE_BUILD
-    mTopHeight = cor::applicationSize().height() * 0.075;
-#else
-    mTopHeight = int(cor::applicationSize().height() * 0.1);
-#endif
 }
 
 void ChooseGroupWidget::showGroups(const std::vector<std::uint64_t>& groups,
@@ -102,6 +97,11 @@ void ChooseGroupWidget::pushOut(const QPoint& endPoint) {
 
 
 void ChooseGroupWidget::resizeEvent(QResizeEvent*) {
+#ifdef MOBILE_BUILD
+    mTopHeight = cor::applicationSize().height() * 0.075;
+#else
+    mTopHeight = int(cor::applicationSize().height() * 0.1);
+#endif
     int yPos = mTopHeight;
     int xSpacer = this->width() / 20;
 

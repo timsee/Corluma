@@ -72,6 +72,9 @@ private slots:
     void widgetPressed() { emit dropdownPressed(mName->text()); }
 
 protected:
+    /// handles when widget resizes
+    void resizeEvent(QResizeEvent*);
+
     /*!
      * \brief mouseReleaseEvent picks up when a click (or a tap on mobile) is released.
      */
@@ -87,21 +90,16 @@ private:
     cor::EWidgetType mType;
 
     /*!
-     * \brief mLayout layout for the widget
-     */
-    QHBoxLayout* mLayout;
-
-    /*!
      * \brief mEditButton button used to edit the collection. Editing can change
      *        the name or the lights contained in the collection.
      */
     QPushButton* mEditButton;
 
     /*!
-     * \brief mHiddenStateIcon an arrow in the top right of the widget. If its pointing right, no
+     * \brief mArrowIcon an arrow in the top right of the widget. If its pointing right, no
      *        buttons are shown. If its pointing down, all buttons are shown.
      */
-    QLabel* mHiddenStateIcon;
+    QLabel* mArrowIcon;
 
     /// pixmap for icon that conveys no buttons being shown
     QPixmap mClosedPixmap;
@@ -125,20 +123,13 @@ private:
      */
     bool mHideEdit;
 
-    /// helper for computing icon size
-    QSize iconSize() {
-        return QSize(int(mMinimumHeight * mIconRatio), int(mMinimumHeight * mIconRatio));
-    }
+    /// programmatically resize
+    void resize();
 
     /*!
-     * \brief mMinimumHeight minimum size allowed for collection.
+     * \brief mButtonHeight height of a button
      */
-    int mMinimumHeight;
-
-    /*!
-     * \brief mIconRatio
-     */
-    float mIconRatio;
+    int mButtonHeight;
 };
 
 #endif // DROPDOWNTOPWIDGET_H

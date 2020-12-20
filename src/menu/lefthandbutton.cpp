@@ -25,7 +25,6 @@ LeftHandButton::LeftHandButton(const QString& text,
     mPage = page;
     mMenu = menu;
     mIsState = false;
-    setFixedWidth(parentWidget()->width());
     mIsHighlighted = false;
     mResourcePath = iconResource;
 
@@ -51,7 +50,6 @@ LeftHandButton::LeftHandButton(const QString& text,
     mIsHighlighted = false;
     mIsState = true;
     mState = state;
-    setFixedWidth(parentWidget()->width());
 
     mTitle = new QLabel(text, this);
     mTitle->setStyleSheet("background-color:rgba(0,0,0,0);");

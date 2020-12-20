@@ -96,17 +96,7 @@ protected:
     /*!
      * \brief resizeEvent called whenever the widget resizes so that assets can be updated.
      */
-    void resizeEvent(QResizeEvent*) {
-        auto yPos = 0;
-        if (mParentWidget->isVisible() && mSubgroupButton->isVisible()) {
-            mParentWidget->setGeometry(0, 0, width(), height() / 2);
-            yPos += mParentWidget->height();
-            mSubgroupButton->setGeometry(0, yPos, width(), height() / 2);
-        } else if (mParentWidget->isVisible()) {
-            mParentWidget->setFixedHeight(height());
-            mParentWidget->setGeometry(0, 0, width(), height());
-        }
-    }
+    void resizeEvent(QResizeEvent*) { resize(); }
 
 private slots:
 
@@ -125,6 +115,19 @@ private slots:
     }
 
 private:
+    /// resize programmatically
+    void resize() {
+        auto yPos = 0;
+        if (mParentWidget->isVisible() && mSubgroupButton->isVisible()) {
+            mParentWidget->setGeometry(0, 0, width(), height() / 2);
+            yPos += mParentWidget->height();
+            mSubgroupButton->setGeometry(0, yPos, width(), height() / 2);
+        } else if (mParentWidget->isVisible()) {
+            mParentWidget->setFixedHeight(height());
+            mParentWidget->setGeometry(0, 0, width(), height());
+        }
+    }
+
     /// dropdown top widget used to display the parent group widget
     ParentGroupWidget* mParentWidget;
 

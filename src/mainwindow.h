@@ -92,12 +92,6 @@ public slots:
     /// displays the color page
     void switchToColorPage();
 
-    /// displays the settings page
-    void pushInSettingsPage();
-
-    /// hides the settings page
-    void pushOutSettingsPage();
-
     /// displays the edit group page
     void pushInEditGroupPage(std::uint64_t key);
 
@@ -149,11 +143,6 @@ public slots:
 
     /// close the edit page
     void editPageClosePressed();
-
-    /*!
-     * \brief settingsClosePressed slot that handles when the settings page is closed.
-     */
-    void settingsClosePressed();
 
     /*!
      * \brief topMenuButtonPressed button is pressed from top menu. Gives back the key of the
@@ -266,17 +255,8 @@ private:
     // Helper Widgets
     //------------------
 
-    /*!
-     * \brief mMainViewport widget that fills the main view port of the application.
-     *        This is used for animations.
-     */
-    MainViewport* mMainViewport;
-
     /// adds space to top of window
     QWidget* mSpacer;
-
-    /// top menu, contains buttons to different widget pages and global controls.
-    TopMenu* mTopMenu;
 
     //------------------
     // Backend Data
@@ -332,27 +312,6 @@ private:
     /// pointer to object that handles sharing on mobile devices.
     ShareUtils* mShareUtils;
 
-    /*!
-     * \brief mSettingsPage overlay widget that allows access to various app settings such as
-     * loading from JSON or reseting things to defaults.
-     */
-    SettingsPage* mSettingsPage;
-
-    /// chooses how to edit data (either add new data, remove existing data, or edit existing data)
-    ChooseEditPage* mChooseEditPage;
-
-    /// widget for choosing a group to either delete or edit
-    ChooseGroupWidget* mChooseGroupWidget;
-
-    /// widget for choosing a mood to either delete or edit
-    ChooseMoodWidget* mChooseMoodWidget;
-
-    /// edit page for editing groups and rooms
-    cor::EditGroupPage* mEditGroupPage;
-
-    /// edit page for editing moods
-    cor::EditMoodPage* mEditMoodPage;
-
     /// resize a widget that takes up the full page
     void resizeFullPageWidget(QWidget* widget);
 
@@ -367,12 +326,6 @@ private:
      * mEditPage
      */
     GreyOutOverlay* mGreyOut;
-
-    /// left hand menu.
-    LeftHandMenu* mLeftHandMenu;
-
-    /// routine widget, for choosing the routine of lights with multiple addressable LEDs.
-    RoutineButtonsWidget* mRoutineWidget;
 
     /// listens to mouse and touch events on the MainWindow and handles moving widgets around and
     /// spawning events.
@@ -390,6 +343,36 @@ private:
     /// class that spoofs connections for working on the application in situations where lights
     /// can't be reached.
     DebugConnectionSpoofer* mDebugConnections;
+
+    /*!
+     * \brief mMainViewport widget that fills the main view port of the application.
+     *        This is used for animations.
+     */
+    MainViewport* mMainViewport;
+
+    /// top menu, contains buttons to different widget pages and global controls.
+    TopMenu* mTopMenu;
+
+    /// left hand menu.
+    LeftHandMenu* mLeftHandMenu;
+
+    /// routine widget, for choosing the routine of lights with multiple addressable LEDs.
+    RoutineButtonsWidget* mRoutineWidget;
+
+    /// edit page for editing groups and rooms
+    cor::EditGroupPage* mEditGroupPage;
+
+    /// edit page for editing moods
+    cor::EditMoodPage* mEditMoodPage;
+
+    /// chooses how to edit data (either add new data, remove existing data, or edit existing data)
+    ChooseEditPage* mChooseEditPage;
+
+    /// widget for choosing a group to either delete or edit
+    ChooseGroupWidget* mChooseGroupWidget;
+
+    /// widget for choosing a mood to either delete or edit
+    ChooseMoodWidget* mChooseMoodWidget;
 
     /// sets up the object that listens to the states of various apps
     void setupStateObserver();

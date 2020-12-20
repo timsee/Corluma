@@ -54,7 +54,10 @@ public:
                           ShareUtils* shareUtils);
 
     /// called when the widget is shown
-    void show();
+    void showWidget();
+
+    /// called when the widget is hidden
+    void hideWidget();
 
     /// returns pointer to global widget
     GlobalSettingsWidget* globalWidget() { return mGlobalWidget; }
@@ -80,11 +83,6 @@ signals:
     void settingsPageIsStandard(bool);
 
     /*!
-     * \brief closePressed emitted when close button in top left is pressed.
-     */
-    void closePressed();
-
-    /*!
      * \brief clickedDiscovery emits when discovery button is clicked
      */
     void clickedDiscovery();
@@ -103,10 +101,6 @@ signals:
 
 private slots:
 
-    /*!
-     * \brief closeButtonPressed signaled from close button, emits a close signal.
-     */
-    void closeButtonPressed(bool) { emit closePressed(); }
 
     /*!
      * \brief settingsButtonPressed a settings button has been pressed
@@ -136,9 +130,6 @@ protected:
 private:
     /// groups parser
     GroupData* mGroups;
-
-    /// top widget with settings title and close button
-    cor::TopWidget* mTopWidget;
 
     /// scroll area that contains all the information in the widget
     QScrollArea* mScrollArea;
@@ -188,11 +179,11 @@ private:
     /// titles of the sections, such as About, Debug, Data
     std::vector<std::string> mSectionTitles;
 
-    /// titles of specific buttons, such as Load, Copyright, or Reset.
-    std::vector<std::string> mTitles;
-
     /// labels for sections.
     std::vector<QLabel*> mSectionLabels;
+
+    /// titles of specific buttons, such as Load, Copyright, or Reset.
+    std::vector<std::string> mTitles;
 
     /// vector of buttons. contains all buttons on the settings page
     std::vector<SettingsButton*> mButtons;
@@ -208,9 +199,6 @@ private:
 
     /// widget for greying out the page when other widgets are overlaid
     GreyOutOverlay* mGreyOut;
-
-    /// true if showing debug options, false otherwise.
-    bool mShowingDebug;
 };
 
 #endif // SETTINGSPAGE_H

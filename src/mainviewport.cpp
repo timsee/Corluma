@@ -14,13 +14,20 @@ MainViewport::MainViewport(MainWindow* parent,
                            cor::LightList* data,
                            GroupData* groups,
                            AppSettings* settings,
-                           DataSyncTimeout* dataSyncTimeout)
+                           DataSyncTimeout* dataSyncTimeout,
+                           ShareUtils* shareUtils)
     : QWidget(parent),
-      mGroups{groups},
       mComm{comm},
       mData{data},
+      mGroups{groups},
+      mAppSettings{settings},
       mMainWindow{parent},
-      mAppSettings{settings} {
+      mLightsPage{new LightsPage(parent, comm, data, settings)},
+      mColorPage{new ColorPage(parent)},
+      mPalettePage{new PalettePage(parent)},
+      mMoodPage{new MoodPage(parent, groups, comm)},
+      mTimeoutPage{new TimeoutPage(parent, comm, data, dataSyncTimeout)},
+      mSettingsPage{new SettingsPage(parent, mGroups, mComm, mAppSettings, shareUtils)} {
     // NOTE: this is mood page so that it doesn't default to light page on so when light page
     //      is turned on, we can use standard functions
     mPageIndex = EPage::moodPage;
@@ -29,26 +36,24 @@ MainViewport::MainViewport(MainWindow* parent,
     // Setup Pages
     // --------------
 
-    mLightsPage = new LightsPage(parent, comm, data, settings);
     mLightsPage->isOpen(true);
     mLightsPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    mColorPage = new ColorPage(parent);
     mColorPage->isOpen(false);
     mColorPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    mPalettePage = new PalettePage(parent);
     mPalettePage->isOpen(false);
     mPalettePage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    mMoodPage = new MoodPage(parent, groups, comm);
     mMoodPage->isOpen(false);
     mMoodPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mMoodPage, SIGNAL(clickedEditButton(bool)), parent, SLOT(editButtonClicked(bool)));
 
-    mTimeoutPage = new TimeoutPage(parent, comm, data, dataSyncTimeout);
     mTimeoutPage->isOpen(false);
     mTimeoutPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+    mSettingsPage->isOpen(false);
+    mSettingsPage->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
 
@@ -81,6 +86,10 @@ void MainViewport::resize(const QRect& geometry) {
     if (mPageIndex != EPage::timeoutPage) {
         mTimeoutPage->setGeometry(offsetGeometry);
     }
+
+    if (mPageIndex != EPage::settingsPage) {
+        mSettingsPage->setGeometry(offsetGeometry);
+    }
 }
 
 void MainViewport::pageChanged(EPage pageIndex, bool skipTransition) {
@@ -109,6 +118,9 @@ QWidget* MainViewport::mainWidget(EPage page) {
         case EPage::lightsPage:
             widget = qobject_cast<QWidget*>(mLightsPage);
             break;
+        case EPage::settingsPage:
+            widget = qobject_cast<QWidget*>(mSettingsPage);
+            break;
         default:
             THROW_EXCEPTION("Widget not supported by main widget");
     }
@@ -134,6 +146,9 @@ cor::Page* MainViewport::mainPage(EPage page) {
         case EPage::lightsPage:
             widget = mLightsPage;
             break;
+        case EPage::settingsPage:
+            widget = mLightsPage;
+            break;
         default:
             THROW_EXCEPTION("Widget not recognized by mainviewport");
     }
@@ -157,6 +172,10 @@ void MainViewport::showMainPage(EPage page, bool skipTransition) {
         mLightsPage->hideWidgets();
     }
 
+    if (page != EPage::settingsPage) {
+        mSettingsPage->hideWidget();
+    }
+
     if (page == EPage::colorPage) {
         mColorPage->update(mData->mainColor(),
                            mData->brightness(),
@@ -175,6 +194,8 @@ void MainViewport::showMainPage(EPage page, bool skipTransition) {
         mTimeoutPage->setVisible(true);
     } else if (page == EPage::lightsPage) {
         mLightsPage->showWidgets();
+    } else if (page == EPage::settingsPage) {
+        mSettingsPage->showWidget();
     }
 }
 

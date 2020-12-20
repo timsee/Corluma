@@ -25,8 +25,6 @@ DropdownTopWidget::DropdownTopWidget(const QString& key,
     mType = type;
     mShowButtons = false;
     mHideEdit = hideEdit;
-    mLayout = new QHBoxLayout;
-    setLayout(mLayout);
 
     connect(this, SIGNAL(pressed()), this, SLOT(widgetPressed()));
 
@@ -37,14 +35,6 @@ DropdownTopWidget::DropdownTopWidget(const QString& key,
     mName->setStyleSheet("font: bold; background-color: rgba(0,0,0,0);");
     mName->setAlignment(Qt::AlignVCenter);
 
-    if (mType == cor::EWidgetType::condensed) {
-        mMinimumHeight = cor::applicationSize().height() / 15;
-        mIconRatio = 0.25f;
-    } else {
-        mMinimumHeight = cor::applicationSize().height() / 10;
-        mIconRatio = 0.5f;
-    }
-    mName->setFixedHeight(mMinimumHeight);
 
     mEditButton = new QPushButton(this);
     mEditButton->setStyleSheet("border: none; background-color: rgba(0,0,0,0);");
@@ -52,42 +42,17 @@ DropdownTopWidget::DropdownTopWidget(const QString& key,
     connect(mEditButton, SIGNAL(clicked(bool)), this, SLOT(editButtonClicked(bool)));
     mEditIcon = QPixmap(":/images/editIcon.png");
     mEditButton->setIcon(QIcon(mEditIcon));
-    mEditButton->setFixedSize(int(mMinimumHeight * mIconRatio), int(mMinimumHeight * mIconRatio));
     mEditButton->setHidden(true);
-    mEditButton->setFixedHeight(mMinimumHeight);
-
-    mClosedPixmap = QPixmap(":/images/closedArrow.png");
-    mClosedPixmap = mClosedPixmap.scaled(mMinimumHeight,
-                                         mMinimumHeight,
-                                         Qt::KeepAspectRatio,
-                                         Qt::SmoothTransformation);
 
 
-    mOpenedPixmap = QPixmap(":/images/openedArrow.png");
-    mOpenedPixmap = mOpenedPixmap.scaled(mMinimumHeight,
-                                         mMinimumHeight,
-                                         Qt::KeepAspectRatio,
-                                         Qt::SmoothTransformation);
+    mArrowIcon = new QLabel(this);
+    mArrowIcon->setPixmap(mClosedPixmap);
+    mArrowIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mArrowIcon->setAlignment(Qt::AlignCenter);
+    mArrowIcon->setStyleSheet("background-color: rgba(0,0,0,0);");
 
-    mHiddenStateIcon = new QLabel(this);
-    mHiddenStateIcon->setPixmap(mClosedPixmap);
-    mHiddenStateIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mHiddenStateIcon->setAlignment(Qt::AlignCenter);
-    mHiddenStateIcon->setFixedHeight(mMinimumHeight);
-    mHiddenStateIcon->setStyleSheet("background-color: rgba(0,0,0,0);");
-
-    mLayout->addWidget(mName);
-    mLayout->addWidget(mEditButton);
-    mLayout->addWidget(mHiddenStateIcon);
-
-    mLayout->setContentsMargins(10, 0, 0, 0);
-    mLayout->setSpacing(0);
-    mLayout->setStretch(0, 12);
-    mLayout->setStretch(2, 2);
-    mLayout->setStretch(3, 2);
-
-    // TODO: figure out a more elegant solution for this, too much relies on fixed height
-    setFixedHeight(mMinimumHeight);
+    resize();
+    showButtons(false);
 }
 
 void DropdownTopWidget::mouseReleaseEvent(QMouseEvent* event) {
@@ -97,12 +62,47 @@ void DropdownTopWidget::mouseReleaseEvent(QMouseEvent* event) {
     event->ignore();
 }
 
+void DropdownTopWidget::resizeEvent(QResizeEvent*) {
+    resize();
+}
+
+void DropdownTopWidget::resize() {
+    auto originalIconSide = mButtonHeight;
+    mButtonHeight = height();
+
+    if (mButtonHeight != originalIconSide) {
+        mClosedPixmap = QPixmap(":/images/closedArrow.png");
+        mClosedPixmap = mClosedPixmap.scaled(mButtonHeight,
+                                             mButtonHeight,
+                                             Qt::KeepAspectRatio,
+                                             Qt::SmoothTransformation);
+
+
+        mOpenedPixmap = QPixmap(":/images/openedArrow.png");
+        mOpenedPixmap = mOpenedPixmap.scaled(mButtonHeight,
+                                             mButtonHeight,
+                                             Qt::KeepAspectRatio,
+                                             Qt::SmoothTransformation);
+        showButtons(mShowButtons);
+    }
+
+    auto xPos = width() - mButtonHeight;
+    mArrowIcon->setGeometry(xPos, 0u, mButtonHeight, mButtonHeight);
+
+    if (!mHideEdit) {
+        mEditButton->setGeometry(xPos, 0u, mButtonHeight, mButtonHeight);
+        xPos -= mEditButton->width();
+    }
+
+    auto rightSpacer = width() * 0.03;
+    mName->setGeometry(rightSpacer, 0, xPos - rightSpacer, mButtonHeight);
+}
 
 void DropdownTopWidget::showButtons(bool showButtons) {
     mShowButtons = showButtons;
     if (mShowButtons) {
-        mHiddenStateIcon->setPixmap(mOpenedPixmap);
+        mArrowIcon->setPixmap(mOpenedPixmap);
     } else {
-        mHiddenStateIcon->setPixmap(mClosedPixmap);
+        mArrowIcon->setPixmap(mClosedPixmap);
     }
 }

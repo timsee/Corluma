@@ -11,6 +11,7 @@
 #include "lightspage.h"
 #include "moodpage.h"
 #include "palettepage.h"
+#include "settingspage.h"
 #include "timeoutpage.h"
 
 class MainWindow;
@@ -32,7 +33,8 @@ public:
                           cor::LightList* data,
                           GroupData* groups,
                           AppSettings* settings,
-                          DataSyncTimeout* dataSyncTimeout);
+                          DataSyncTimeout* dataSyncTimeout,
+                          ShareUtils* shareUtils);
 
     /*!
      * \brief pageChanged change the QStackedWidget to the page specified
@@ -59,6 +61,9 @@ public:
 
     /// getter for timeout page
     TimeoutPage* timeoutPage() { return mTimeoutPage; }
+
+    /// getter for settings page
+    SettingsPage* settingsPage() { return mSettingsPage; }
 
     /// loads the mood page programmatically
     void loadMoodPage();
@@ -87,6 +92,29 @@ private:
     /// getter for the QWidget given the enum
     QWidget* mainWidget(EPage page);
 
+    /*!
+     * \brief communication pointer to communication object
+     * for sending comannds to the lights
+     */
+    CommLayer* mComm;
+
+    /*!
+     * \brief data layer that maintains and tracks the states of the lights
+     * and the saved data of the GUI
+     */
+    cor::LightList* mData;
+
+    /// groups parser
+    GroupData* mGroups;
+
+    /*!
+     * \brief mAppSettings maintains which comnmtypes are currently enabled.
+     */
+    AppSettings* mAppSettings;
+
+    /// pointer to main window
+    MainWindow* mMainWindow;
+
     /// page for discovering, modifying, and viewing lights
     LightsPage* mLightsPage;
 
@@ -102,28 +130,8 @@ private:
     /// page for managing timeouts
     TimeoutPage* mTimeoutPage;
 
-    /// groups parser
-    GroupData* mGroups;
-
-    /*!
-     * \brief communication pointer to communication object
-     * for sending comannds to the lights
-     */
-    CommLayer* mComm;
-
-    /*!
-     * \brief data layer that maintains and tracks the states of the lights
-     * and the saved data of the GUI
-     */
-    cor::LightList* mData;
-
-    /// pointer to main window
-    MainWindow* mMainWindow;
-
-    /*!
-     * \brief mAppSettings maintains which comnmtypes are currently enabled.
-     */
-    AppSettings* mAppSettings;
+    /// page for changing settings.
+    SettingsPage* mSettingsPage;
 
     /*!
      * \brief mPageIndex index of current page.

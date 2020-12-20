@@ -31,28 +31,37 @@ SettingsPage::SettingsPage(QWidget* parent,
                            ShareUtils* shareUtils)
     : QWidget(parent),
       mGroups(parser),
+      mScrollArea{new QScrollArea(this)},
+      mScrollAreaWidget{new QWidget(this)},
+      mScrollLayout{new QVBoxLayout(mScrollAreaWidget)},
+      mMainLayout{new QVBoxLayout(this)},
+      mGlobalWidget{new GlobalSettingsWidget(mScrollAreaWidget, appSettings)},
+      mCurrentWebView{ECorlumaWebView::none},
+      mSectionTitles{"Data", "About"},
+      mSectionLabels{mSectionTitles.size()},
+      mTitles{"Add or Edit Group",
+              "Backup Save Data",
+#ifndef MOBILE_BUILD
+              "Load Backup",
+#endif
+#ifdef USE_DEBUG_OPTIONS
+              kDebugSpoof,
+#endif
+              "Reset",
+              "Copyright"},
+      mButtons{mTitles.size()},
+      mCopyrightWidget{new cor::WebView("Copyright", ":/resources/Copyright.html", this)},
       mShareUtils(shareUtils),
       mComm{comm},
       mGreyOut{new GreyOutOverlay(false, parentWidget())} {
-    mShowingDebug = true;
-    mCurrentWebView = ECorlumaWebView::none;
-
-    //------------
-    // Top Layout
-    //------------
-
-    mTopWidget = new cor::TopWidget("", ":images/closeX.png", this);
-    connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(closeButtonPressed(bool)));
 
     //------------
     // ScrollArea Widget
     //------------
 
-    mScrollArea = new QScrollArea(this);
     mScrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    mScrollAreaWidget = new QWidget(this);
     mScrollAreaWidget->setObjectName("contentWidget");
     QScroller::grabGesture(mScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
     mScrollAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -60,7 +69,6 @@ SettingsPage::SettingsPage(QWidget* parent,
     mScrollAreaWidget->setStyleSheet("QWidget#contentWidget{ background-color: #201F1F; } QLabel { "
                                      "background-color: #201F1F; } ");
 
-    mScrollLayout = new QVBoxLayout(mScrollAreaWidget);
     mScrollLayout->setSpacing(7);
     mScrollLayout->setContentsMargins(9, 9, 9, 9);
     mScrollAreaWidget->setLayout(mScrollLayout);
@@ -69,8 +77,6 @@ SettingsPage::SettingsPage(QWidget* parent,
     // Main Layout
     //------------
 
-    mMainLayout = new QVBoxLayout(this);
-    mMainLayout->addWidget(mTopWidget, 1);
     mMainLayout->addWidget(mScrollArea, 12);
     mMainLayout->setContentsMargins(9, 9, 9, 9);
     mMainLayout->setSpacing(6);
@@ -78,22 +84,6 @@ SettingsPage::SettingsPage(QWidget* parent,
     //------------
     // Scroll Area Contents
     //------------
-
-    mSectionTitles = {"Data", "About"};
-
-    mTitles = {"Add or Edit Group",
-               "Backup Save Data",
-#ifndef MOBILE_BUILD
-               "Load Backup",
-#endif
-#ifdef USE_DEBUG_OPTIONS
-               kDebugSpoof,
-#endif
-               "Reset",
-               "Copyright"};
-
-    mButtons = std::vector<SettingsButton*>(mTitles.size());
-    mSectionLabels = std::vector<QLabel*>(mSectionTitles.size());
 
     std::uint32_t sectionIndex = 0;
     for (std::size_t x = 0u; x < mTitles.size(); ++x) {
@@ -115,7 +105,6 @@ SettingsPage::SettingsPage(QWidget* parent,
         mScrollLayout->addWidget(mButtons[x]);
     }
 
-    mCopyrightWidget = new cor::WebView("Copyright", ":/resources/Copyright.html", this);
     mCopyrightWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mCopyrightWidget->setGeometry(geometry());
     connect(mCopyrightWidget, SIGNAL(closePressed()), this, SLOT(hideCurrentWebView()));
@@ -123,7 +112,6 @@ SettingsPage::SettingsPage(QWidget* parent,
     //------------
     // Global Widget
     //------------
-    mGlobalWidget = new GlobalSettingsWidget(mScrollAreaWidget, appSettings);
     mGlobalWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mScrollLayout->addWidget(mGlobalWidget);
 
@@ -142,7 +130,10 @@ SettingsPage::SettingsPage(QWidget* parent,
 // Protected
 // ----------------------------
 
-void SettingsPage::show() {
+void SettingsPage::showWidget() {
+    raise();
+    isOpen(true);
+
     mGlobalWidget->updateUI();
     mGlobalWidget->show();
     auto mainWindow = qobject_cast<MainWindow*>(parentWidget());
@@ -160,11 +151,16 @@ void SettingsPage::show() {
     mCopyrightWidget->setGeometry(geometry());
 }
 
+void SettingsPage::hideWidget() {
+    isOpen(false);
+}
+
 void SettingsPage::resizeEvent(QResizeEvent*) {
     for (auto button : mButtons) {
         button->setMinimumHeight(height() / 10);
     }
-    mScrollAreaWidget->setFixedWidth(int(width() * 0.85f));
+    mScrollAreaWidget->setFixedWidth(int(width() * 0.9f));
+    // mScrollAreaWidget->setFixedHeight(1.1 * (mGlobalWidget->y() + mGlobalWidget->height()));
 
     QRect shownWidget = geometry();
     QRect hiddenWidget = QRect(0, geometry().height(), width(), height());
@@ -315,26 +311,7 @@ void SettingsPage::hideCurrentWebView() {
     mCurrentWebView = ECorlumaWebView::none;
 }
 
-
-
-void SettingsPage::greyOutClicked() {
-    //    if (mLightInfoWidget->isOpen()) {
-    //        lightInfoClosePressed();
-    //    }
-}
-
-void SettingsPage::pushIn(const QPoint& startPoint, const QPoint& endPoint) {
-    setVisible(true);
-    moveWidget(this, startPoint, endPoint);
-    raise();
-    show();
-    isOpen(true);
-}
-
-void SettingsPage::pushOut(const QPoint& endPoint) {
-    moveWidget(this, pos(), endPoint);
-    isOpen(false);
-}
+void SettingsPage::greyOutClicked() {}
 
 void SettingsPage::enableButtons(bool enable) {
     if (enable) {
