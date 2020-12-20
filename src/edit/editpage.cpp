@@ -23,12 +23,6 @@ EditPage::EditPage(QWidget* parent, CommLayer* comm, GroupData* groups, bool sho
       mUsePreviewButton{showPreviewButton} {
     connect(mCloseButton, SIGNAL(clicked(bool)), this, SLOT(closePressed(bool)));
     mPreviewButton->setVisible(mUsePreviewButton);
-
-#ifdef MOBILE_BUILD
-    mTopHeight = cor::applicationSize().height() * 0.075;
-#else
-    mTopHeight = int(cor::applicationSize().height() * 0.1);
-#endif
 }
 
 void EditPage::setupWidgets(std::vector<EditPageChildWidget*> widgets) {
@@ -147,6 +141,11 @@ void EditPage::computeStateOfReviewPage() {
 
 
 void EditPage::showAndResizePage(std::uint32_t i) {
+#ifdef MOBILE_BUILD
+    mTopHeight = cor::applicationSize().height() * 0.075;
+#else
+    mTopHeight = int(cor::applicationSize().height() * 0.1);
+#endif
     for (auto widget : widgets()) {
         widget->setVisible(false);
     }

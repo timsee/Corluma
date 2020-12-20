@@ -37,11 +37,6 @@ ChooseMoodWidget::ChooseMoodWidget(QWidget* parent, CommLayer* comm, GroupData* 
     mMoodScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     mMoodScrollArea->horizontalScrollBar()->setEnabled(false);
     mMoodScrollArea->horizontalScrollBar()->setVisible(false);
-#ifdef MOBILE_BUILD
-    mTopHeight = cor::applicationSize().height() * 0.075;
-#else
-    mTopHeight = int(cor::applicationSize().height() * 0.1);
-#endif
 }
 
 void ChooseMoodWidget::showMoods(cor::EGroupAction action) {
@@ -101,6 +96,11 @@ void ChooseMoodWidget::pushOut(const QPoint& endPoint) {
 
 
 void ChooseMoodWidget::resizeEvent(QResizeEvent*) {
+#ifdef MOBILE_BUILD
+    mTopHeight = cor::applicationSize().height() * 0.075;
+#else
+    mTopHeight = int(cor::applicationSize().height() * 0.1);
+#endif
     int yPos = mTopHeight;
     int xSpacer = this->width() / 20;
 

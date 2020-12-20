@@ -45,12 +45,53 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
       mDataSyncTimeout{new DataSyncTimeout(mData, mComm, mAppSettings, this)},
       mSyncStatus{new SyncStatus(this)},
       mShareUtils{new ShareUtils(this)},
-      mSettingsPage{new SettingsPage(this, mGroups, mComm, mAppSettings, mShareUtils)},
-      mDebugConnections{new DebugConnectionSpoofer(mComm)} {
+      mDebugConnections{new DebugConnectionSpoofer(mComm)},
+      mMainViewport{new MainViewport(this,
+                                     mComm,
+                                     mData,
+                                     mGroups,
+                                     mAppSettings,
+                                     mDataSyncTimeout,
+                                     mShareUtils)},
+      mLeftHandMenu{new LeftHandMenu(startingSize.width() / float(startingSize.height()) > 1.0f ? true : false,
+                                     mData,
+                                     mComm,
+                                     mData,
+                                     mGroups,
+                                     this)},
+      mRoutineWidget{new RoutineButtonsWidget(this)},
+      mEditGroupPage{new cor::EditGroupPage(this, mComm, mGroups)},
+      mEditMoodPage{new cor::EditMoodPage(this, mComm, mGroups, mData)},
+      mChooseEditPage{new ChooseEditPage(this)},
+      mChooseGroupWidget{new ChooseGroupWidget(this, mComm, mGroups)},
+      mChooseMoodWidget{new ChooseMoodWidget(this, mComm, mGroups)} {
     // initialize geometry
     setGeometry(0, 0, startingSize.width(), startingSize.height());
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     setMinimumSize(minimumSize);
+
+    // TODO: must be init'd after mainwindow... bad code smell.
+    mTopMenu = new TopMenu(this,
+                           mData,
+                           mComm,
+                           mGroups,
+                           mAppSettings,
+                           this,
+                           mMainViewport->lightsPage(),
+                           mMainViewport->palettePage(),
+                           mMainViewport->colorPage());
+    mSpacer = new QWidget(this);
+    mStateObserver = new cor::StateObserver(mData,
+                                            mComm,
+                                            mGroups,
+                                            mAppSettings,
+                                            this,
+                                            mMainViewport->lightsPage()->controllerWidget(),
+                                            mMainViewport->lightsPage()->discoveryWidget(),
+                                            mTopMenu,
+                                            this);
+    mGreyOut = new GreyOutOverlay(!mLeftHandMenu->alwaysOpen(), this);
+
 
     // set title
     setWindowTitle("Corluma");
@@ -81,20 +122,23 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
             SIGNAL(statusChanged(EDataSyncType, bool)),
             mSyncStatus,
             SLOT(syncStatusChanged(EDataSyncType, bool)));
-    // timeout does not announce its sync status since its background.
+    // timeout does not announce its sync status since its run in the background.
 
     // --------------
     // Settings Page
     // --------------
-
-    mSettingsPage->setVisible(false);
-    mSettingsPage->isOpen(false);
-    connect(mSettingsPage, SIGNAL(closePressed()), this, SLOT(settingsClosePressed()));
-    // connect(mSettingsPage, SIGNAL(clickedDiscovery()), this, SLOT(pushInDiscovery()));
-    connect(mSettingsPage, SIGNAL(clickedLoadJSON(QString)), this, SLOT(loadJSON(QString)));
-    connect(mSettingsPage, SIGNAL(addOrEditGroupPressed()), this, SLOT(openEditGroupMenu()));
-    connect(mSettingsPage, SIGNAL(enableDebugMode()), this, SLOT(debugModeClicked()));
-
+    connect(mMainViewport->settingsPage(),
+            SIGNAL(clickedLoadJSON(QString)),
+            this,
+            SLOT(loadJSON(QString)));
+    connect(mMainViewport->settingsPage(),
+            SIGNAL(addOrEditGroupPressed()),
+            this,
+            SLOT(openEditGroupMenu()));
+    connect(mMainViewport->settingsPage(),
+            SIGNAL(enableDebugMode()),
+            this,
+            SLOT(debugModeClicked()));
 
     // --------------
     // Start Discovery
@@ -119,12 +163,6 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     // --------------
     // Setup Left Hand Menu
     // --------------
-    float sizeRatio = size().width() / float(size().height());
-    bool alwaysOpen = false;
-    if (sizeRatio > 1.0f) {
-        alwaysOpen = true;
-    }
-    mLeftHandMenu = new LeftHandMenu(alwaysOpen, mData, mComm, mData, mGroups, this);
     mLeftHandMenu->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mLeftHandMenu->updateTimeoutButton(mAppSettings->timeoutEnabled(), mAppSettings->timeout());
     connect(mLeftHandMenu,
@@ -134,14 +172,13 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     connect(mLeftHandMenu, SIGNAL(createNewGroup()), this, SLOT(openEditGroupMenu()));
 
     loadPages();
+    setupStateObserver();
 
     // --------------
     // Setup GreyOut View
     // --------------
-    mGreyOut = new GreyOutOverlay(!mLeftHandMenu->alwaysOpen(), this);
     mGreyOut->resize();
     connect(mGreyOut, SIGNAL(clicked()), this, SLOT(greyoutClicked()));
-
 
     reorderWidgets();
     resize();
@@ -230,10 +267,8 @@ void MainWindow::loadPages() {
     // Setup main widget space
     // --------------
 
-    mMainViewport = new MainViewport(this, mComm, mData, mGroups, mAppSettings, mDataSyncTimeout);
     mMainViewport->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    mRoutineWidget = new RoutineButtonsWidget(this);
     auto x = 0;
     if (mLeftHandMenu->alwaysOpen()) {
         x = mLeftHandMenu->width();
@@ -244,13 +279,11 @@ void MainWindow::loadPages() {
     mRoutineWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
 
-    mEditGroupPage = new cor::EditGroupPage(this, mComm, mGroups);
     mEditGroupPage->setVisible(false);
     mEditGroupPage->isOpen(false);
     connect(mEditGroupPage, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
     connect(mEditGroupPage, SIGNAL(updateGroups()), this, SLOT(editPageUpdateGroups()));
 
-    mEditMoodPage = new cor::EditMoodPage(this, mComm, mGroups, mData);
     mEditMoodPage->setVisible(false);
     mEditMoodPage->isOpen(false);
     connect(mEditMoodPage, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
@@ -261,7 +294,6 @@ void MainWindow::loadPages() {
             this,
             SLOT(editMoodSelected(std::uint64_t)));
 
-    mChooseEditPage = new ChooseEditPage(this);
     mChooseEditPage->setVisible(false);
     mChooseEditPage->isOpen(false);
     connect(mChooseEditPage, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
@@ -270,7 +302,6 @@ void MainWindow::loadPages() {
             this,
             SLOT(selectedEditMode(EChosenEditMode)));
 
-    mChooseGroupWidget = new ChooseGroupWidget(this, mComm, mGroups);
     mChooseGroupWidget->setVisible(false);
     mChooseGroupWidget->isOpen(false);
     connect(mChooseGroupWidget, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
@@ -281,7 +312,6 @@ void MainWindow::loadPages() {
             SLOT(editGroupSelected(std::uint64_t)));
 
 
-    mChooseMoodWidget = new ChooseMoodWidget(this, mComm, mGroups);
     mChooseMoodWidget->setVisible(false);
     mChooseMoodWidget->isOpen(false);
     connect(mChooseMoodWidget, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
@@ -295,35 +325,12 @@ void MainWindow::loadPages() {
     // Top Menu
     // --------------
 
-    mTopMenu = new TopMenu(this,
-                           mData,
-                           mComm,
-                           mGroups,
-                           mAppSettings,
-                           this,
-                           mMainViewport->lightsPage(),
-                           mMainViewport->palettePage(),
-                           mMainViewport->colorPage());
-
-
     connect(mTopMenu, SIGNAL(buttonPressed(QString)), this, SLOT(topMenuButtonPressed(QString)));
 
     connect(mTopMenu,
             SIGNAL(buttonPressed(QString)),
             mMainViewport->lightsPage()->discoveryWidget(),
             SLOT(floatingLayoutButtonPressed(QString)));
-
-    // --------------
-    // Setup Layout
-    // --------------
-
-    mSpacer = new QWidget(this);
-    mSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    mSpacer->setFixedHeight(int(height() * 0.22f));
-
-    mSettingsPage->enableButtons(true);
-
-    setupStateObserver();
 }
 
 
@@ -333,7 +340,7 @@ void MainWindow::loadPages() {
 
 void MainWindow::topMenuButtonPressed(const QString& key) {
     if (key == "Settings") {
-        pushInSettingsPage();
+        mMainViewport->pageChanged(EPage::settingsPage);
     } else if (key == "Menu") {
         pushInLeftHandMenu();
     } else {
@@ -388,21 +395,6 @@ void MainWindow::switchToColorPage() {
     }
 
     mLeftHandMenu->buttonPressed(EPage::colorPage);
-    if (!mSettingsPage->isOpen()) {
-        reorderWidgets();
-        mMainViewport->pageChanged(EPage::colorPage);
-    }
-}
-
-void MainWindow::settingsClosePressed() {
-    pushOutSettingsPage();
-    // this fixes the higlight of the left hand menu when its always open. "Settings" only gets
-    // highlighted if its always open. Checking if discovery page is open fixes an edge case where
-    // settings is called from discovery. this makes settings overlay over discovery, so correcting
-    // the left hand menu isnt necessary.
-    if (mLeftHandMenu->alwaysOpen()) {
-        mLeftHandMenu->buttonPressed(mMainViewport->currentPage());
-    }
 }
 
 void MainWindow::editPageClosePressed() {
@@ -467,14 +459,6 @@ void MainWindow::resize() {
     QRect rect(xPos, mTopMenu->height(), width, (height() - mTopMenu->height()));
     mMainViewport->resize(rect);
 
-    if (mSettingsPage->isOpen()) {
-        resizeFullPageWidget(mSettingsPage);
-    } else {
-        mSettingsPage->setGeometry(geometry().width(),
-                                   0,
-                                   mSettingsPage->width(),
-                                   mSettingsPage->height());
-    }
     mGreyOut->resize();
 
     if (mEditGroupPage->isOpen()) {
@@ -547,9 +531,9 @@ void MainWindow::wifiChecker() {
 }
 
 void MainWindow::backButtonPressed() {
-    if (mSettingsPage->isOpen()) {
-        settingsClosePressed();
-    }
+    //    if (mSettingsPage->isOpen()) {
+    //        settingsClosePressed();
+    //    }
 }
 
 void MainWindow::pushInLeftHandMenu() {
@@ -575,15 +559,7 @@ void MainWindow::keyPressEvent(QKeyEvent* event) {
 
 void MainWindow::leftHandMenuButtonPressed(EPage page) {
     bool ignorePushOut = false;
-    if (mSettingsPage->isOpen() && page == EPage::settingsPage) {
-        // special case, page is already settings, just return
-        return;
-    } else if (!mSettingsPage->isOpen() && page == EPage::settingsPage) {
-        pushInSettingsPage();
-        return;
-    } else if (mSettingsPage->isOpen()) {
-        pushOutSettingsPage();
-    }
+    reorderWidgets();
 
     if (mEditGroupPage->isOpen() || mEditMoodPage->isOpen()) {
         pushOutEditPage();
@@ -599,10 +575,6 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
 
     if (mChooseMoodWidget->isOpen()) {
         pushOutChooseMoodPage();
-    }
-
-    if (page == EPage::settingsPage) {
-        ignorePushOut = true;
     }
 
     if (!ignorePushOut) {
@@ -640,21 +612,6 @@ void MainWindow::pushOutFullPageWidget(QWidget*) {
         mTopMenu->pushInTapToSelectButton();
     }
     mTopMenu->showFloatingLayout(mMainViewport->currentPage());
-}
-
-void MainWindow::pushInSettingsPage() {
-    pushInFullPageWidget(mSettingsPage);
-    if (mLeftHandMenu->alwaysOpen()) {
-        mSettingsPage->pushIn(QPoint(width(), 0), QPoint(mLeftHandMenu->width(), 0));
-    } else {
-        mSettingsPage->pushIn(QPoint(width(), 0), QPoint(0u, 0u));
-    }
-}
-
-void MainWindow::pushOutSettingsPage() {
-    pushOutFullPageWidget(mSettingsPage);
-
-    mSettingsPage->pushOut(QPoint(width(), 0u));
 }
 
 void MainWindow::pushInEditGroupPage(std::uint64_t key) {
@@ -794,8 +751,9 @@ void MainWindow::editPageUpdateMoods() {
 }
 
 bool MainWindow::isAnyWidgetAbove() {
-    if (mSettingsPage->isOpen() || mEditGroupPage->isOpen() || mEditMoodPage->isOpen()
-        || mMainViewport->lightsPage()->discoveryWidget() || mNoWifiWidget->isVisible()) {
+    if (mMainViewport->settingsPage()->isOpen() || mEditGroupPage->isOpen()
+        || mEditMoodPage->isOpen() || mMainViewport->lightsPage()->discoveryWidget()
+        || mNoWifiWidget->isVisible()) {
         return true;
     }
     return false;
@@ -813,15 +771,6 @@ void MainWindow::reorderWidgets() {
 }
 
 void MainWindow::setupStateObserver() {
-    mStateObserver = new cor::StateObserver(mData,
-                                            mComm,
-                                            mGroups,
-                                            mAppSettings,
-                                            this,
-                                            mMainViewport->lightsPage()->controllerWidget(),
-                                            mMainViewport->lightsPage()->discoveryWidget(),
-                                            mTopMenu,
-                                            this);
     // color page setup
     connect(mMainViewport->colorPage(),
             SIGNAL(colorUpdate(QColor)),
@@ -884,7 +833,7 @@ void MainWindow::setupStateObserver() {
             SLOT(moodChanged(std::uint64_t)));
 
     // settings page
-    connect(mSettingsPage->globalWidget(),
+    connect(mMainViewport->settingsPage()->globalWidget(),
             SIGNAL(protocolSettingsUpdate(EProtocolType, bool)),
             mStateObserver,
             SLOT(protocolSettingsChanged(EProtocolType, bool)));
@@ -929,7 +878,7 @@ void MainWindow::debugModeClicked() {
 void MainWindow::anyDiscovered(bool discovered) {
     if (!mAnyDiscovered && discovered) {
         mAnyDiscovered = discovered;
-        mSettingsPage->enableButtons(true);
+        mMainViewport->settingsPage()->enableButtons(true);
         mLeftHandMenu->enableButtons(true);
     }
 }

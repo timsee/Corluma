@@ -196,7 +196,8 @@ TopMenu::TopMenu(QWidget* parent,
 void TopMenu::lightCountChanged() {
     // handle select lights button
     if (mData->empty() && !mMainWindow->leftHandMenu()->isIn()
-        && !mMainWindow->leftHandMenu()->alwaysOpen()) {
+        && !mMainWindow->leftHandMenu()->alwaysOpen()
+        && (mCurrentPage != EPage::settingsPage && mCurrentPage != EPage::lightsPage)) {
         mSelectLightsButton->pushIn(mStartSelectLightsButton);
     } else if (!mMainWindow->leftHandMenu()->alwaysOpen()) {
         mSelectLightsButton->pushOut(mStartSelectLightsButton);
@@ -465,7 +466,10 @@ void TopMenu::moveFloatingLayout() {
     }
 
 
-    if (mData->empty() && mCurrentPage == EPage::moodPage) {
+    if (mCurrentPage == EPage::settingsPage) {
+        // exit early, settings page has no floating layouts
+        return;
+    } else if (mData->empty() && mCurrentPage == EPage::moodPage) {
         // special case where the current floating layout is shown regardless of if the data is
         // empty
         currentFloatingLayout()->move(topRight);
@@ -663,7 +667,7 @@ void TopMenu::menuButtonPressed() {
 
 void TopMenu::pushInTapToSelectButton() {
     if (!mSelectLightsButton->isIn() && !mMainWindow->leftHandMenu()->alwaysOpen() && mData->empty()
-        && mCurrentPage != EPage::lightsPage) {
+        && mCurrentPage != EPage::lightsPage && mCurrentPage != EPage::settingsPage) {
         mSelectLightsButton->pushIn(mStartSelectLightsButton);
     }
 }
@@ -725,7 +729,7 @@ void TopMenu::updateScheme(const std::vector<QColor>& colors, std::uint32_t inde
 }
 
 void TopMenu::handleBrightnessSliders() {
-    if (mData->empty() || mCurrentPage == EPage::lightsPage) {
+    if (mData->empty() || (mCurrentPage == EPage::lightsPage || mCurrentPage == EPage::settingsPage)) {
         // hide both, its empty
         mSingleLightBrightness->pushOut();
         mGlobalBrightness->pushOut();
@@ -824,7 +828,6 @@ void TopMenu::handleButtonLayouts() {
             pushRightFloatingLayout(mMoodsFloatingLayout);
             pushRightFloatingLayout(mPaletteFloatingLayout);
             break;
-        case EPage::settingsPage:
         case EPage::lightsPage:
             mColorFloatingLayout->setVisible(false);
             mMoodsFloatingLayout->setVisible(false);
@@ -832,6 +835,18 @@ void TopMenu::handleButtonLayouts() {
             mLightsFloatingLayout->setVisible(true);
             mAddLightsFloatingLayout->setVisible(true);
             pullLeftLightsMenu();
+            pushRightFloatingLayout(mColorFloatingLayout);
+            pushRightFloatingLayout(mMoodsFloatingLayout);
+            pushRightFloatingLayout(mPaletteFloatingLayout);
+            break;
+        case EPage::settingsPage:
+            mColorFloatingLayout->setVisible(false);
+            mMoodsFloatingLayout->setVisible(true);
+            mPaletteFloatingLayout->setVisible(false);
+            mTimeoutFloatingLayout->setVisible(false);
+            mLightsFloatingLayout->setVisible(false);
+            mAddLightsFloatingLayout->setVisible(false);
+            pushRightLightsMenus();
             pushRightFloatingLayout(mColorFloatingLayout);
             pushRightFloatingLayout(mMoodsFloatingLayout);
             pushRightFloatingLayout(mPaletteFloatingLayout);

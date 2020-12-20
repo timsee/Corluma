@@ -58,7 +58,6 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     // Setup Main Palette
     // -------------
     mMainPalette->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mMainPalette->setFixedHeight(int(height() * 0.1));
     mMainPalette->setStyleSheet("background-color:rgb(33,32,32);");
 
     //---------------
@@ -67,7 +66,7 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
 
     mLightsButton =
         new LeftHandButton("Lights", EPage::lightsPage, ":/images/connectionIcon.png", this);
-    mLightsButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    mLightsButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mLightsButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
     mLightsButton->shouldHightlght(true);
 
@@ -75,18 +74,18 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
                                             EPage::colorPage,
                                             ":/images/wheels/color_wheel_hsv.png",
                                             this);
-    mSingleColorButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    mSingleColorButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mSingleColorButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
     mSettingsButton =
         new LeftHandButton("Settings", EPage::settingsPage, ":/images/settingsgear.png", this);
-    mSettingsButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    mSettingsButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mSettingsButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
 
     mTimeoutButton =
         new TimeoutButton("Timeouts", EPage::timeoutPage, ":/images/timer.png", mComm, mData, this);
-    mTimeoutButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    mTimeoutButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mTimeoutButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
     PresetPalettes palettes;
@@ -95,7 +94,7 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     state.palette(palettes.palette(EPalette::water));
     state.isOn(true);
     mMultiColorButton = new LeftHandButton("Multi Color", EPage::palettePage, state, this);
-    mMultiColorButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    mMultiColorButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mMultiColorButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
     cor::LightState moodState;
@@ -103,7 +102,7 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     moodState.palette(palettes.palette(EPalette::fire));
     moodState.isOn(true);
     mMoodButton = new LeftHandButton("Moods", EPage::moodPage, moodState, this);
-    mMoodButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    mMoodButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mMoodButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
     // by default, initialize with certain buttons disabled until a connection to any light is made
@@ -140,9 +139,9 @@ void LeftHandMenu::resize() {
     auto buttonHeight = mRowHeight;
     auto yPos = int(height() * 0.02);
 
-    mSpacer->setGeometry(0, 0, this->width(), height());
+    mSpacer->setGeometry(0, 0, width, height());
 
-    mLightsButton->setGeometry(0, yPos, this->width(), buttonHeight);
+    mLightsButton->setGeometry(0, yPos, width, buttonHeight);
     yPos += mLightsButton->height();
 
     mSingleColorButton->setGeometry(0, yPos, this->width(), buttonHeight);

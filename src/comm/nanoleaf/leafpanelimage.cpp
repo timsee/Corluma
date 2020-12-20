@@ -93,6 +93,21 @@ void LeafPanelImage::drawPanels(const Panels& panels, int rotation) {
             painter.translate(panelRect.center());
             painter.rotate(rotation);
 
+            // catch a special case for nanoleaf shapes where it seems like the data is mirrored
+            // horizontally. I'm not sure why? Is this a bug in my code? Is it Nanoleaf's? Why would
+            // it only impact the shapes? These are the questions that keep me up at night.
+            if (!panels.positionLayout().empty()) {
+                auto firstPanel = panels.positionLayout()[0];
+                if (firstPanel.shape() == EShapeType::controllerShapes
+                    || firstPanel.shape() == EShapeType::heaxagonShapes
+                    || firstPanel.shape() == EShapeType::miniTriangleShapes
+                    || firstPanel.shape() == EShapeType::triangleShapes) {
+                    QTransform trans = painter.transform();
+                    trans.scale(-1, 1);
+                    painter.setTransform(trans);
+                }
+            }
+
             // loop each image
             for (const auto& panel : panels.positionLayout()) {
                 // draw each image on the canvas

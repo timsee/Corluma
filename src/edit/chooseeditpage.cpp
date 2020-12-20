@@ -20,12 +20,6 @@ ChooseEditPage::ChooseEditPage(QWidget* parent)
     connect(mAddButton, SIGNAL(clicked(bool)), this, SLOT(addPressed(bool)));
     connect(mEditButton, SIGNAL(clicked(bool)), this, SLOT(editPressed(bool)));
     connect(mDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deletePressed(bool)));
-
-#ifdef MOBILE_BUILD
-    mTopHeight = cor::applicationSize().height() * 0.075;
-#else
-    mTopHeight = int(cor::applicationSize().height() * 0.1);
-#endif
 }
 
 void ChooseEditPage::pushIn(const QPoint& startPoint, const QPoint& endPoint) {
@@ -53,6 +47,11 @@ void ChooseEditPage::resizeCloseButton() {
 }
 
 void ChooseEditPage::resizeEvent(QResizeEvent*) {
+#ifdef MOBILE_BUILD
+    mTopHeight = cor::applicationSize().height() * 0.075;
+#else
+    mTopHeight = int(cor::applicationSize().height() * 0.1);
+#endif
     resizeCloseButton();
     int yPos = mTopHeight;
     int buttonHeight = this->height() / 4;

@@ -139,17 +139,13 @@ int main(int argc, char* argv[]) {
 #ifdef MOBILE_BUILD
     QScreen* screen = QApplication::screens().at(0);
     QSize size = screen->size();
-    QSize startingSize(size);
-    QSize minimumSize(size);
 #elif FORCE_PORTRAIT
-    QSize startingSize(400, 600);
-    QSize minimumSize(400, 600);
+    QSize size(400, 600);
 #else
-    QSize startingSize(700, 600);
-    QSize minimumSize(700, 600);
+    QSize size(700, 600);
 #endif
 
-    MainWindow window(nullptr, startingSize, minimumSize);
+    MainWindow window(nullptr, size, size);
     // set the icon
     window.setWindowIcon(icon);
 
