@@ -100,6 +100,9 @@ public:
     /// handles which brightness slider should be showed
     void handleBrightnessSliders();
 
+    /// called during intialization to resize
+    void handleLayoutSetup();
+
     /// getter for single color state widget
     SingleColorStateWidget* singleColorStateWidget() { return mSingleColorStateWidget; }
 

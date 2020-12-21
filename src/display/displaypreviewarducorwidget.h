@@ -99,48 +99,20 @@ public:
                 if (!mIcons.empty()) {
                     if (mIcons.size() == 1) {
                         auto iconHeight = this->height() / 2;
-                        auto i = 0;
-                        if (mIconPixmaps[i].size() != QSize(iconHeight, iconHeight)) {
-                            mIcons[i]->setGeometry(i * (1.1 * iconHeight),
-                                                   yPos,
-                                                   iconHeight,
-                                                   iconHeight);
-                            mIconPixmaps[i] =
-                                lightHardwareTypeToPixmap(mController.hardwareTypes()[i]);
-                            mIconPixmaps[i] = mIconPixmaps[i].scaled(iconHeight,
-                                                                     iconHeight,
-                                                                     Qt::IgnoreAspectRatio,
-                                                                     Qt::SmoothTransformation);
-                            mIcons[i]->setPixmap(mIconPixmaps[i]);
-                            mIcons[i]->setVisible(true);
-                        }
+                        createHardwareIcon(0, iconHeight, yPos);
                         mLightVector->setGeometry(iconHeight * 1.1, yPos, iconHeight, iconHeight);
-                        mLightVector->setVisible(true);
                     } else {
                         auto iconHeight = this->height() / 3;
                         for (auto i = 0u; i < mIcons.size(); ++i) {
-                            if (mIconPixmaps[i].size() != QSize(iconHeight, iconHeight)) {
-                                mIcons[i]->setGeometry(i * (1.1 * iconHeight),
-                                                       yPos,
-                                                       iconHeight,
-                                                       iconHeight);
-                                mIconPixmaps[i] =
-                                    lightHardwareTypeToPixmap(mController.hardwareTypes()[i]);
-                                mIconPixmaps[i] = mIconPixmaps[i].scaled(iconHeight,
-                                                                         iconHeight,
-                                                                         Qt::IgnoreAspectRatio,
-                                                                         Qt::SmoothTransformation);
-                                mIcons[i]->setPixmap(mIconPixmaps[i]);
-                                mIcons[i]->setVisible(true);
-                            }
+                            createHardwareIcon(i, iconHeight, yPos);
                         }
                         mLightVector->setGeometry(0u,
                                                   yPos + iconHeight,
                                                   (iconHeight * 1.1) * mIcons.size(),
                                                   iconHeight);
-                        mLightVector->setVisible(true);
                         yPos += mLightVector->height();
                     }
+                    mLightVector->setVisible(true);
                 }
                 yPos += mIcons[0]->height();
             }
@@ -195,7 +167,7 @@ private:
             mSyncWidget->changeState(ESyncState::syncing);
         } else {
             mSyncWidget->setVisible(false);
-            auto numOfLights = std::min(std::uint32_t(controller.names().size()), 6u);
+            auto numOfLights = std::min(std::uint32_t(controller.names().size()), 5u);
             if (mIcons.size() != numOfLights || mIconPixmaps.size() != numOfLights) {
                 clearIconMemory();
                 mIconPixmaps = std::vector<QPixmap>(numOfLights);
@@ -213,7 +185,8 @@ private:
     void updateLights(const std::vector<cor::Light>& lights) {
         // allocate the widgets when we know how many lights there are
         if (mLightVector == nullptr) {
-            mLightVector = new cor::LightVectorWidget(lights.size(), 1, true, this);
+            auto numOfLights = std::min(std::uint32_t(mController.names().size()), 5u);
+            mLightVector = new cor::LightVectorWidget(numOfLights, 1, true, this);
             mLightVector->enableButtonInteraction(false);
             mLightVector->setStyleSheet(kTransparentStyleSheet);
             if (lights.size() == 1) {
@@ -232,6 +205,20 @@ private:
         }
         mIcons.clear();
         mIconPixmaps.clear();
+    }
+
+    /// creates a hardwareIcon.
+    void createHardwareIcon(std::uint32_t i, std::uint32_t iconHeight, std::uint32_t yPos) {
+        if (mIconPixmaps[i].size() != QSize(iconHeight, iconHeight)) {
+            mIcons[i]->setGeometry(i * (1.1 * iconHeight), yPos, iconHeight, iconHeight);
+            mIconPixmaps[i] = lightHardwareTypeToPixmap(mLights[i].hardwareType());
+            mIconPixmaps[i] = mIconPixmaps[i].scaled(iconHeight,
+                                                     iconHeight,
+                                                     Qt::IgnoreAspectRatio,
+                                                     Qt::SmoothTransformation);
+            mIcons[i]->setPixmap(mIconPixmaps[i]);
+            mIcons[i]->setVisible(true);
+        }
     }
 
     /// label to display name

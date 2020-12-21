@@ -16,14 +16,14 @@
 
 namespace cor {
 
-QSize handleSize(int height) {
+QSize handleSize(int width, int height) {
     // slider handle is only controllable via stylesheets but the values needed for style sheets
     // breaks in some environments (such as high pixel density android screens). to get around this,
     // we always set the handle size programmatically whenever we udpate the stylesheet.
     if (cor::applicationSize().width() > cor::applicationSize().height()) {
-        return QSize(int(cor::applicationSize().width() / 20.0), int(height * 1.125));
+        return QSize(int(width / 20.0), int(height * 1.125));
     } else {
-        return QSize(int(cor::applicationSize().width() / 15.0), int(height * 1.125));
+        return QSize(int(width / 15.0), int(height * 1.125));
     }
 }
 
@@ -46,7 +46,7 @@ Slider::Slider(QWidget* parent) : QSlider(Qt::Horizontal, parent) {
 }
 
 void Slider::resize() {
-    mHandleSize = handleSize(height());
+    mHandleSize = handleSize(width(), height());
     switch (mType) {
         case ESliderType::colorLeftBlackRight:
             setColor(mSliderColor);

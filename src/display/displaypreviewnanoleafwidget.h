@@ -53,6 +53,8 @@ public:
     /// update the nanoleaf
     void updateNanoleaf(const nano::LeafMetadata& metadata, nano::ELeafDiscoveryState status) {
         mLeafMetadata = metadata;
+        // pick up when status changes for edge cases.
+        bool statusChanged = (status != mStatus);
         mStatus = status;
         handleStatusPrompt();
         if (mStatus == nano::ELeafDiscoveryState::searchingIP
@@ -63,6 +65,10 @@ public:
             mStatusPrompt->setVisible(true);
             mSyncWidget->changeState(ESyncState::syncing);
         } else {
+            if (statusChanged) {
+                // resize when status changes
+                resize();
+            }
             mSyncWidget->setVisible(false);
             mStatusPrompt->setVisible(true);
 

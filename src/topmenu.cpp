@@ -729,7 +729,8 @@ void TopMenu::updateScheme(const std::vector<QColor>& colors, std::uint32_t inde
 }
 
 void TopMenu::handleBrightnessSliders() {
-    if (mData->empty() || (mCurrentPage == EPage::lightsPage || mCurrentPage == EPage::settingsPage)) {
+    if (mData->empty()
+        || (mCurrentPage == EPage::lightsPage || mCurrentPage == EPage::settingsPage)) {
         // hide both, its empty
         mSingleLightBrightness->pushOut();
         mGlobalBrightness->pushOut();

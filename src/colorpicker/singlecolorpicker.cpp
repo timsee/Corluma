@@ -83,20 +83,21 @@ void SingleColorPicker::updateBottomMenuState(bool enable) {
         opacity = 1.0;
     }
 
+
     mRGBSliders->enable(enable);
-    auto effect = new QGraphicsOpacityEffect(mRGBSliders);
-    effect->setOpacity(opacity);
-    mRGBSliders->setGraphicsEffect(effect);
+    //    auto effect = new QGraphicsOpacityEffect(mRGBSliders);
+    //    effect->setOpacity(opacity);
+    //    mRGBSliders->setGraphicsEffect(effect);
 
     mHSVSliders->enable(enable);
-    auto effect2 = new QGraphicsOpacityEffect(mHSVSliders);
-    effect2->setOpacity(opacity);
-    mHSVSliders->setGraphicsEffect(effect2);
+    //    auto effect2 = new QGraphicsOpacityEffect(mHSVSliders);
+    //    effect2->setOpacity(opacity);
+    //    mHSVSliders->setGraphicsEffect(effect2);
 
     mTempBrightSliders->enable(enable);
-    auto effect3 = new QGraphicsOpacityEffect(mTempBrightSliders);
-    effect3->setOpacity(opacity);
-    mTempBrightSliders->setGraphicsEffect(effect3);
+    //    auto effect3 = new QGraphicsOpacityEffect(mTempBrightSliders);
+    //    effect3->setOpacity(opacity);
+    //    mTempBrightSliders->setGraphicsEffect(effect3);
 
     if (mCurrentMode == ESingleColorPickerMode::HSV) {
         mColorWheel->updateBrightness(mHSVSliders->brightness());

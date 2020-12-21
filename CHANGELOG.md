@@ -1013,3 +1013,9 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed a bug (?) with displaying panel layouts for Nanoleaf Shapes.
 - Started to move all important widgets to initializer lists.
 - Moved the `SettingsPage` to the `MainViewport`.
+
+### **v0.21.4**
+### Bug Fixes
+- Fixed bugs with resizing.
+- Changed the layout of `DisplayArduCorControllerWidget` when the ArduCor only has one light. 
+- Fixed miscellaneous bugs.

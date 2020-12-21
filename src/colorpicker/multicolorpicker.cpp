@@ -83,12 +83,12 @@ void MultiColorPicker::updateBottomMenuState(bool enable) {
         opacity = 1.0;
     }
 
-    auto effect = new QGraphicsOpacityEffect(mColorSchemeCircles);
-    effect->setOpacity(opacity);
-    auto effect2 = new QGraphicsOpacityEffect(mColorSchemeChooser);
-    effect2->setOpacity(opacity);
+    //    auto effect = new QGraphicsOpacityEffect(mColorSchemeCircles);
+    //    effect->setOpacity(opacity);
+    //    auto effect2 = new QGraphicsOpacityEffect(mColorSchemeChooser);
+    //    effect2->setOpacity(opacity);
 
-    mColorSchemeChooser->setGraphicsEffect(effect2);
+    //  mColorSchemeChooser->setGraphicsEffect(effect2);
     mColorSchemeCircles->setEnabled(enable);
 }
 

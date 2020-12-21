@@ -11,12 +11,14 @@
 #include "comm/commarducor.h"
 #include "comm/commlayer.h"
 #include "cor/lightlist.h"
+#include "cor/widgets/button.h"
 #include "cor/widgets/checkbox.h"
 #include "cor/widgets/expandingtextscrollarea.h"
 #include "menu/displaymoodmetadata.h"
 #include "menu/groupstatelistmenu.h"
 #include "menu/lightslistmenu.h"
 #include "utils/qt.h"
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2020.
@@ -40,10 +42,17 @@ public:
           mLights{new LightsListMenu(this, true)},
           mCheckBox{new cor::CheckBox(this)},
           mMetadata{new cor::ExpandingTextScrollArea(this)},
-          mDeleteButton{new QPushButton("Delete", this)} {
+          mDeleteButton{new QPushButton("Delete", this)},
+          mStateButton{new cor::Button(this, {})},
+          mSingleLightIcon{new QLabel(this)} {
         auto font = mName->font();
         font.setPointSize(20);
         mName->setFont(font);
+
+        mStateButton->setVisible(false);
+        mStateButton->setIconPercent(0.85);
+
+        mSingleLightIcon->setVisible(false);
 
         connect(mDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteButtonPressed(bool)));
         mDeleteButton->setStyleSheet("background-color:rgb(110,30,30);");
@@ -78,9 +87,27 @@ public:
         handleCheckboxState();
 
         auto lights = mComm->arducor()->lightsFromNames(mController.names());
-        mLights->updateLights();
-        mLights->showLights(lights);
-        highlightLights();
+        if (lights.size() == 1) {
+            // hide the lights menu and show the icons when theres only one light
+            mLightsLabel->setVisible(false);
+            mLights->setVisible(false);
+            mSingleLightIcon->setVisible(true);
+            mStateButton->setVisible(true);
+            // update the icons
+            updateSingleIcon();
+            auto singleLightVector = mComm->arducor()->lightsFromNames(mController.names());
+            mStateButton->updateRoutine(singleLightVector[0].state());
+        } else {
+            // hide the icons and show the lights list when theres only one light
+            mLightsLabel->setVisible(true);
+            mLights->setVisible(true);
+            mSingleLightIcon->setVisible(false);
+            mStateButton->setVisible(false);
+            // update the lights menu
+            mLights->updateLights();
+            mLights->showLights(lights);
+            highlightLights();
+        }
 
         updateMetadata(mController);
         resize();
@@ -108,35 +135,43 @@ public:
         int xSpacer = this->width() / 20;
 
         // top of both
-        mName->setGeometry(xSpacer / 2,
-                           yPosColumn1,
-                           this->width() - xSpacer / 2 - buttonHeight,
-                           buttonHeight);
+        auto nameWidth = this->width() - xSpacer / 2 - buttonHeight;
+        if (isSingleLight()) {
+            nameWidth -= (buttonHeight + xSpacer / 2);
+        }
+        mName->setGeometry(xSpacer / 2, yPosColumn1, nameWidth, buttonHeight);
         headerX += mName->width() + mName->geometry().x();
+        if (isSingleLight()) {
+            mStateButton->setGeometry(headerX, yPosColumn1, buttonHeight, buttonHeight);
+            headerX += mStateButton->width() + xSpacer / 2;
+        }
         mCheckBox->setGeometry(headerX, yPosColumn1, buttonHeight, buttonHeight);
         mCheckBox->resize();
+
 
         yPosColumn1 += mName->height();
         yPosColumn2 += mName->height();
 
-        // column 1
+        mLightsLabel->setGeometry(xSpacer, yPosColumn1, columnWidth - xSpacer, buttonHeight);
         yPosColumn1 += mLightsLabel->height();
-        mMetadata->setGeometry(xSpacer, yPosColumn1, columnWidth, buttonHeight * 4);
-        yPosColumn1 += mMetadata->height();
+
+        // column 1
+        if (isSingleLight()) {
+            // update the icons
+            int side = iconSide();
+            mSingleLightIcon->setGeometry(xSpacer, yPosColumn1, side, side);
+            yPosColumn1 += mSingleLightIcon->height();
+            updateSingleIcon();
+        } else {
+            QRect selectedLightsRect(xSpacer, yPosColumn1, columnWidth - xSpacer, buttonHeight * 7);
+            mLights->resize(selectedLightsRect, mRowHeight);
+            yPosColumn1 += mLights->height();
+        }
 
         // column 2
-        mLightsLabel->setGeometry(xSecondColumnStart,
-                                  yPosColumn2,
-                                  columnWidth - xSpacer,
-                                  buttonHeight);
         yPosColumn2 += mLightsLabel->height();
-
-        QRect selectedLightsRect(xSecondColumnStart,
-                                 yPosColumn2,
-                                 columnWidth - xSpacer,
-                                 buttonHeight * 7);
-        mLights->resize(selectedLightsRect, mRowHeight);
-        yPosColumn2 += mLights->height();
+        mMetadata->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, buttonHeight * 4);
+        yPosColumn2 += mMetadata->height();
 
         // put delete button on bottom of column
         mDeleteButton->setGeometry(xSecondColumnStart,
@@ -240,6 +275,23 @@ private:
         }
     }
 
+    /// update the icon for the single light case.
+    void updateSingleIcon() {
+        int side = iconSide();
+        if (mHardwareIcon.size() != QSize(side, side)) {
+            mHardwareIcon = lightHardwareTypeToPixmap(mController.hardwareTypes()[0]);
+            mHardwareIcon =
+                mHardwareIcon.scaled(side, side, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+            mSingleLightIcon->setPixmap(mHardwareIcon);
+        }
+    }
+
+    /// true if single light, false if multiple lights
+    bool isSingleLight() { return mController.hardwareTypes().size() == 1; }
+
+    /// getter for iconSide
+    int iconSide() { return std::min(height() * 2 / 10, width() / 2); }
+
     /// pointer to comm data
     CommLayer* mComm;
 
@@ -266,6 +318,15 @@ private:
 
     /// button for deleting the currently selected controller
     QPushButton* mDeleteButton;
+
+    /// state button for the single light case
+    cor::Button* mStateButton;
+
+    /// single light icon to show the hardware type.
+    QLabel* mSingleLightIcon;
+
+    /// stores the hardware icon in the single light case
+    QPixmap mHardwareIcon;
 
     /// the height of a row in a scroll area
     int mRowHeight;

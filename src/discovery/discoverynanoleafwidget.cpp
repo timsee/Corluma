@@ -196,7 +196,6 @@ void DiscoveryNanoLeafWidget::resize() {
     for (auto widget : mListWidget->widgets()) {
         auto nanoleafWidget = dynamic_cast<DisplayPreviewNanoleafWidget*>(widget);
         nanoleafWidget->setGeometry(0, yHeight, widgetSize.width(), widgetSize.height());
-        nanoleafWidget->resize();
         yHeight += nanoleafWidget->height();
     }
     mListWidget->mainWidget()->setFixedHeight(yHeight);

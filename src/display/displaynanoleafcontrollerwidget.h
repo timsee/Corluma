@@ -65,6 +65,8 @@ public:
         connect(mGreyout, SIGNAL(clicked()), this, SLOT(greyOutClicked()));
         mGreyout->greyOut(false);
 
+        mStateButton->setIconPercent(0.85);
+
         mSchedulesLabel->setVisible(false);
         mSchedulesWidget->setVisible(false);
 
@@ -132,14 +134,12 @@ public:
         mGreyout->resize();
 
         // top of both
-        mName->setGeometry(xSpacer / 2,
-                           yPosColumn1,
-                           this->width() - xSpacer / 2 - buttonHeight * 2,
-                           buttonHeight);
+        auto nameWidth = this->width() - xSpacer - buttonHeight * 2;
+        mName->setGeometry(xSpacer / 2, yPosColumn1, nameWidth, buttonHeight);
         headerX += mName->width() + mName->x();
 
         mStateButton->setGeometry(headerX, yPosColumn1, buttonHeight, buttonHeight);
-        headerX += mStateButton->width();
+        headerX += mStateButton->width() + xSpacer / 2;
         mCheckBox->setGeometry(headerX, yPosColumn1, buttonHeight, buttonHeight);
         mCheckBox->resize();
         headerX += mCheckBox->width();

@@ -57,10 +57,10 @@ public:
 
     /// helper to print out all helper values, for debugging
     static void printAllTimeValues(tm tm) {
-        qDebug() << " tm_gmtoff: " << tm.tm_gmtoff << " tm_hour: " << tm.tm_hour
+        qDebug() << " tm_hour: " << tm.tm_hour
                  << " isdst: " << tm.tm_isdst << " mday: " << tm.tm_mday << " min: " << tm.tm_min
                  << " mon: " << tm.tm_mon << " sec: " << tm.tm_sec << " wday: " << tm.tm_wday
-                 << " yday: " << tm.tm_yday << " year: " << tm.tm_year << " zone: " << tm.tm_zone;
+                 << " yday: " << tm.tm_yday << " year: " << tm.tm_year;;
     }
 
     /// checks if JSON represents a LeafDate
