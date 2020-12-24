@@ -73,6 +73,24 @@ public:
         }
     }
 
+    /// true if shapes, false if a different product line.
+    bool isShapes() const noexcept {
+        switch (mShape) {
+            case EShapeType::heaxagonShapes:
+            case EShapeType::miniTriangleShapes:
+            case EShapeType::triangleShapes:
+            case EShapeType::controllerShapes:
+                return true;
+            case EShapeType::triangle:
+            case EShapeType::square:
+            case EShapeType::controlSquareMaster:
+            case EShapeType::controlSquarePassive:
+            case EShapeType::rhythm:
+            default:
+                return false;
+        }
+    }
+
     /// getter for side length, inferred by shapeType.
     int sideLength() const {
         switch (mShape) {

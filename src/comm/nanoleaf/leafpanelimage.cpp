@@ -98,10 +98,7 @@ void LeafPanelImage::drawPanels(const Panels& panels, int rotation) {
             // it only impact the shapes? These are the questions that keep me up at night.
             if (!panels.positionLayout().empty()) {
                 auto firstPanel = panels.positionLayout()[0];
-                if (firstPanel.shape() == EShapeType::controllerShapes
-                    || firstPanel.shape() == EShapeType::heaxagonShapes
-                    || firstPanel.shape() == EShapeType::miniTriangleShapes
-                    || firstPanel.shape() == EShapeType::triangleShapes) {
+                if (firstPanel.isShapes()) {
                     QTransform trans = painter.transform();
                     trans.scale(-1, 1);
                     painter.setTransform(trans);

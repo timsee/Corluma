@@ -252,13 +252,6 @@ private:
     NoWifiWidget* mNoWifiWidget;
 
     //------------------
-    // Helper Widgets
-    //------------------
-
-    /// adds space to top of window
-    QWidget* mSpacer;
-
-    //------------------
     // Backend Data
     //------------------
 
@@ -321,12 +314,6 @@ private:
     /// push out a widget that takes up the full page
     void pushOutFullPageWidget(QWidget* widget);
 
-    /*!
-     * \brief mGreyOut overlay that greys out the entire main window. Used in conjunction with the
-     * mEditPage
-     */
-    GreyOutOverlay* mGreyOut;
-
     /// listens to mouse and touch events on the MainWindow and handles moving widgets around and
     /// spawning events.
     TouchListener* mTouchListener;
@@ -374,8 +361,17 @@ private:
     /// widget for choosing a mood to either delete or edit
     ChooseMoodWidget* mChooseMoodWidget;
 
+    /*!
+     * \brief mGreyOut overlay that greys out the entire main window. Used in conjunction with the
+     * mEditPage
+     */
+    GreyOutOverlay* mGreyOut;
+
     /// sets up the object that listens to the states of various apps
     void setupStateObserver();
+
+    /// sets up the backend for the application, called by the constructor.
+    void setupBackend();
 };
 
 #endif // MAINWINDOW_H

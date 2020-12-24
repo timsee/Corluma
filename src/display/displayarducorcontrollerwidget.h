@@ -53,6 +53,7 @@ public:
         mStateButton->setIconPercent(0.85);
 
         mSingleLightIcon->setVisible(false);
+        mSingleLightIcon->setAlignment(Qt::AlignHCenter);
 
         connect(mDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteButtonPressed(bool)));
         mDeleteButton->setStyleSheet("background-color:rgb(110,30,30);");
@@ -158,8 +159,7 @@ public:
         // column 1
         if (isSingleLight()) {
             // update the icons
-            int side = iconSide();
-            mSingleLightIcon->setGeometry(xSpacer, yPosColumn1, side, side);
+            mSingleLightIcon->setGeometry(xSpacer, yPosColumn1, columnWidth, buttonHeight * 4);
             yPosColumn1 += mSingleLightIcon->height();
             updateSingleIcon();
         } else {
@@ -281,7 +281,7 @@ private:
         if (mHardwareIcon.size() != QSize(side, side)) {
             mHardwareIcon = lightHardwareTypeToPixmap(mController.hardwareTypes()[0]);
             mHardwareIcon =
-                mHardwareIcon.scaled(side, side, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+                mHardwareIcon.scaled(side, side, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             mSingleLightIcon->setPixmap(mHardwareIcon);
         }
     }

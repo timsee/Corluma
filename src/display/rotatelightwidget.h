@@ -5,6 +5,7 @@
 #include "comm/nanoleaf/leafmetadata.h"
 #include "comm/nanoleaf/leafpanelimage.h"
 #include "cor/objects/page.h"
+#include "cor/widgets/slider.h"
 #include "utils/qt.h"
 
 /*!
@@ -47,6 +48,12 @@ signals:
 
 private slots:
 
+    /// slider value changed
+    void sliderChanged(int);
+
+    /// released the slider
+    void releasedSlider();
+
     /// handles when OK is clicked
     void clickedOK() { emit valueChanged(mValue); }
 
@@ -54,12 +61,6 @@ private slots:
     void clickedCancel() { emit cancelClicked(); }
 
 protected:
-    /// pick up when mouse is pressed
-    void mousePressEvent(QMouseEvent*);
-
-    /// pick up when mouse is moved
-    void mouseMoveEvent(QMouseEvent*);
-
     /// used to render the kitchen timer
     void paintEvent(QPaintEvent*);
 
@@ -67,13 +68,6 @@ protected:
     void resizeEvent(QResizeEvent*);
 
 private:
-    /*!
-     * \brief handleMouseEvent handles all the mouse events used in the rotatelight widget.
-     *        The mousePressEvent and mouseReleaseEvent both map to this function.
-     * \param event the mouse event that is getting processed.
-     */
-    void handleMouseEvent(QMouseEvent* event);
-
     /// draw the nanoleaf
     void drawNanoleaf();
 
@@ -85,6 +79,9 @@ private:
 
     /// instructions for the rotation
     QLabel* mInstructionLabel;
+
+    /// slider that rotates the widget
+    cor::Slider* mRotationSlider;
 
     /// pixamp to draw the rotated light
     QPixmap mPixmap;

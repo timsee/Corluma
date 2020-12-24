@@ -20,7 +20,7 @@ MoodDetailedWidget::MoodDetailedWidget(QWidget* parent, GroupData* groups, CommL
       mMoodWidget{new DisplayMoodWidget(this, mComm, groups)},
       mMoodSyncWidget{new MoodSyncWidget(this, mComm)},
       mOnOffSwitch{new cor::Switch(this)},
-      mFloatingMenu{new FloatingLayout(parent)} {
+      mFloatingMenu{new FloatingLayout(this)} {
     mOnOffSwitch->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     connect(mOnOffSwitch, SIGNAL(switchChanged(bool)), this, SLOT(changedSwitchState(bool)));
     mOnOffSwitch->setSwitchState(ESwitchState::off);
@@ -32,6 +32,7 @@ MoodDetailedWidget::MoodDetailedWidget(QWidget* parent, GroupData* groups, CommL
             SLOT(floatingLayoutButtonPressed(QString)));
     std::vector<QString> buttons = {QString("Group_Edit")};
     mFloatingMenu->setupButtons(buttons, EButtonSize::small);
+    mFloatingMenu->setVisible(false);
 
     //------------
     // ScrollArea Widget

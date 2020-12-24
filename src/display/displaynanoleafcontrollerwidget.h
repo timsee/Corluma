@@ -62,6 +62,8 @@ public:
         connect(mChangeRotation, SIGNAL(clicked(bool)), this, SLOT(rotateButtonPressed(bool)));
         mDeleteButton->setStyleSheet("background-color:rgb(110,30,30);");
 
+        mDisplayLights->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+
         connect(mGreyout, SIGNAL(clicked()), this, SLOT(greyOutClicked()));
         mGreyout->greyOut(false);
 
@@ -279,9 +281,9 @@ private slots:
     void rotateButtonPressed(bool) {
         mGreyout->greyOut(true);
         setVisible(true);
-        mRotateLightWidget->setNanoleaf(mLeaf, mLeaf.rotation());
         mRotateLightWidget->raise();
         mRotateLightWidget->pushIn();
+        mRotateLightWidget->setNanoleaf(mLeaf, mLeaf.rotation());
     }
 
     /// rotate widget closed

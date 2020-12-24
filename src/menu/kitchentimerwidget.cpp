@@ -80,7 +80,10 @@ void KitchenTimerWidget::paintEvent(QPaintEvent*) {
     } else {
         painter.setBrush(QBrush(QColor(183, 182, 182, 80)));
     }
-    QRect halfCircleRect(this->width() * 0.1f, this->height() * 0.05, this->width() * 0.8f, height() * 1.4);
+    QRect halfCircleRect(this->width() * 0.1f,
+                         this->height() * 0.05,
+                         this->width() * 0.8f,
+                         height() * 1.4);
     painter.drawPie(halfCircleRect, startAngle * 16, span * 16);
 
     // draw line showing angle
@@ -95,25 +98,25 @@ void KitchenTimerWidget::paintEvent(QPaintEvent*) {
     painter.drawLine(mLine);
 
 
-    if (isEnabled()) {
-        float opacity = 1.0f;
-        auto effect = new QGraphicsOpacityEffect(mMinutesButton);
-        effect->setOpacity(opacity);
-        mMinutesButton->setGraphicsEffect(effect);
+    //    if (isEnabled()) {
+    //        float opacity = 1.0f;
+    //        auto effect = new QGraphicsOpacityEffect(mMinutesButton);
+    //        effect->setOpacity(opacity);
+    //        mMinutesButton->setGraphicsEffect(effect);
 
-        auto effect2 = new QGraphicsOpacityEffect(mHoursButton);
-        effect2->setOpacity(opacity);
-        mHoursButton->setGraphicsEffect(effect2);
-    } else {
-        float opacity = 0.33f;
-        auto effect = new QGraphicsOpacityEffect(mMinutesButton);
-        effect->setOpacity(opacity);
-        mMinutesButton->setGraphicsEffect(effect);
+    //        auto effect2 = new QGraphicsOpacityEffect(mHoursButton);
+    //        effect2->setOpacity(opacity);
+    //        mHoursButton->setGraphicsEffect(effect2);
+    //    } else {
+    //        float opacity = 0.33f;
+    //        auto effect = new QGraphicsOpacityEffect(mMinutesButton);
+    //        effect->setOpacity(opacity);
+    //        mMinutesButton->setGraphicsEffect(effect);
 
-        auto effect2 = new QGraphicsOpacityEffect(mHoursButton);
-        effect2->setOpacity(opacity);
-        mHoursButton->setGraphicsEffect(effect2);
-    }
+    //        auto effect2 = new QGraphicsOpacityEffect(mHoursButton);
+    //        effect2->setOpacity(opacity);
+    //        mHoursButton->setGraphicsEffect(effect2);
+    //    }
 }
 
 float KitchenTimerWidget::angleToValue(float angle) {

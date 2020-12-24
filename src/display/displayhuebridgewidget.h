@@ -62,6 +62,11 @@ public:
         font.setPointSize(20);
         mName->setFont(font);
 
+        mInfoButton->setCheckable(true);
+        mLightsButton->setCheckable(true);
+        mGroupsButton->setCheckable(true);
+        mScheduleButton->setCheckable(true);
+
         connect(mInfoButton, SIGNAL(clicked(bool)), this, SLOT(infoButtonPressed(bool)));
         connect(mLightsButton, SIGNAL(clicked(bool)), this, SLOT(lightsButtonPressed(bool)));
         connect(mGroupsButton, SIGNAL(clicked(bool)), this, SLOT(groupsButtonPressed(bool)));
@@ -74,7 +79,11 @@ public:
         mLightInfoWidget->setVisible(false);
 
         connect(mLights, SIGNAL(clickedLight(cor::Light)), this, SLOT(lightClicked(cor::Light)));
-        this->setStyleSheet("background-color:rgb(33,32,32);");
+        auto styleSheet = "background-color:rgb(33,32,32);";
+        mName->setStyleSheet(styleSheet);
+        mLightsLabel->setStyleSheet(styleSheet);
+
+        handleButtonHighlight(mInfoButton->text());
     }
 
     /// getter for hue::Bridge represented by the widget
@@ -223,6 +232,7 @@ private slots:
     void infoButtonPressed(bool) {
         mState = EDisplayHueBridgeState::info;
         handleState();
+        handleButtonHighlight(mInfoButton->text());
     }
 
     /// lights button pressed
@@ -230,13 +240,20 @@ private slots:
         mState = EDisplayHueBridgeState::lights;
         mLightInfoWidget->scrollArea()->updateHues(mComm->hue()->discovery()->lights());
         handleState();
+        handleButtonHighlight(mLightsButton->text());
     }
 
     /// groups button pressed
-    void groupsButtonPressed(bool) { mState = EDisplayHueBridgeState::groups; }
+    void groupsButtonPressed(bool) {
+        mState = EDisplayHueBridgeState::groups;
+        handleButtonHighlight(mGroupsButton->text());
+    }
 
     /// schedule buttons pressed
-    void scheduleButtonPressed(bool) { mState = EDisplayHueBridgeState::schedule; }
+    void scheduleButtonPressed(bool) {
+        mState = EDisplayHueBridgeState::schedule;
+        handleButtonHighlight(mScheduleButton->text());
+    }
 
 private:
     /// handle states
@@ -271,6 +288,13 @@ private:
         }
     }
 
+    /// handle the highlight of buttons
+    void handleButtonHighlight(const QString& key) {
+        mInfoButton->setChecked(key == mInfoButton->text());
+        mLightsButton->setChecked(key == mLightsButton->text());
+        mGroupsButton->setChecked(key == mGroupsButton->text());
+        mScheduleButton->setChecked(key == mScheduleButton->text());
+    }
 
     /// pointer to comm data
     CommLayer* mComm;

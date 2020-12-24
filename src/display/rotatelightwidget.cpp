@@ -11,13 +11,23 @@
 RotateLightWidget::RotateLightWidget(QWidget* parent)
     : QWidget(parent),
       mButtonOK(new QPushButton("Save", this)),
-      mButtonCancel(new QPushButton("X", this)),
+      mButtonCancel(new QPushButton("Cancel", this)),
       mInstructionLabel{new QLabel(this)},
+      mRotationSlider{new cor::Slider(this)},
       mLeafPanelImage{new nano::LeafPanelImage(this)},
       mLightImage{new QLabel(this)} {
     connect(mButtonOK, SIGNAL(clicked()), this, SLOT(clickedOK()));
     connect(mButtonCancel, SIGNAL(clicked()), this, SLOT(clickedCancel()));
     setVisible(false);
+
+    mRotationSlider->setRange(-160, 159);
+    mRotationSlider->setValue(0);
+    mRotationSlider->setColor(QColor(255, 127, 0));
+    mRotationSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    connect(mRotationSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderChanged(int)));
+    connect(mRotationSlider, SIGNAL(sliderReleased()), this, SLOT(releasedSlider()));
+
+    mLightImage->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
     mInstructionLabel->setWordWrap(true);
     mInstructionLabel->setText("Rotate the Nanoleafs to their proper orientation.");
@@ -26,6 +36,24 @@ RotateLightWidget::RotateLightWidget(QWidget* parent)
 void RotateLightWidget::setNanoleaf(const nano::LeafMetadata& leaf, int rotation) {
     mLeaf = leaf;
     mValue = rotation;
+
+    // handle rotation input, which is a slider and a label that shows the value.
+    bool blocked = mRotationSlider->blockSignals(true);
+    mRotationSlider->setValue(rotation);
+    mRotationSlider->blockSignals(blocked);
+
+    drawNanoleaf();
+}
+
+void RotateLightWidget::sliderChanged(int value) {
+    if (value < 0) {
+        value += 360;
+    }
+    mValue = value;
+   // drawNanoleaf();
+}
+
+void RotateLightWidget::releasedSlider() {
     drawNanoleaf();
 }
 
@@ -55,25 +83,6 @@ void RotateLightWidget::paintEvent(QPaintEvent*) {
     painter.setRenderHint(QPainter::Antialiasing);
     painter.fillRect(rect(), QBrush(QColor(48, 47, 47)));
 }
-
-void RotateLightWidget::mousePressEvent(QMouseEvent* event) {
-    handleMouseEvent(event);
-}
-
-void RotateLightWidget::mouseMoveEvent(QMouseEvent* event) {
-    handleMouseEvent(event);
-}
-
-void RotateLightWidget::handleMouseEvent(QMouseEvent* event) {
-    if ((event->x() > 0) && (event->x() < width()) && (event->y() > 0) && (event->y() < height())) {
-        auto centerPoint = QPoint(width() / 2, height() / 2);
-        auto line = QLineF(centerPoint, event->pos());
-        auto angle = line.angle();
-        mValue = angle;
-        drawNanoleaf();
-    }
-}
-
 
 void RotateLightWidget::pushIn() {
     auto size = cor::applicationSize();
@@ -123,17 +132,16 @@ void RotateLightWidget::resize() {
     }
 
     int yPos = 0;
-    auto buttonHeight = height() / 5;
-    mButtonCancel->setGeometry(0, yPos, width() / 6, buttonHeight);
-    auto instructionLabelWidth = width() - mButtonCancel->width() * 1.05;
-    mInstructionLabel->setGeometry(mButtonCancel->width(),
-                                   yPos,
-                                   instructionLabelWidth,
-                                   mButtonCancel->height());
-    yPos += mButtonCancel->height();
+    auto buttonHeight = height() / 6;
+    mInstructionLabel->setGeometry(0, yPos, width(), mButtonCancel->height());
+    yPos += mInstructionLabel->height();
+
+    mRotationSlider->setGeometry(0, yPos, width(), buttonHeight);
+    yPos += mRotationSlider->height();
 
     mLightImage->setGeometry(0, yPos, width(), buttonHeight * 3);
     yPos += mLightImage->height();
 
-    mButtonOK->setGeometry(0, yPos, width(), buttonHeight);
+    mButtonCancel->setGeometry(0, yPos, width() / 2, buttonHeight);
+    mButtonOK->setGeometry(mButtonCancel->width(), yPos, width() / 2, buttonHeight);
 }

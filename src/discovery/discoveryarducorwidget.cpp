@@ -19,7 +19,6 @@ DiscoveryArduCorWidget::DiscoveryArduCorWidget(QWidget* parent,
     : DiscoveryTypeWidget(parent, comm, controllerPage),
       mSelectedLights{selectedLights} {
     mListWidget = new cor::ListWidget(this, cor::EListType::linear);
-    mListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mListWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     QScroller::grabGesture(mListWidget->viewport(), QScroller::LeftMouseButtonGesture);
 

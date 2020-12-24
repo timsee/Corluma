@@ -24,7 +24,6 @@ ListWidget::ListWidget(QWidget* parent, EListType type) : QScrollArea(parent), m
 
     mWidget = new QWidget(this);
     mWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mWidget->setFixedWidth(viewport()->width());
 
     setContentsMargins(0, 0, 0, 0);
     QString backgroundStyleSheet = "border: none; background:rgba(0, 0, 0, 0%);";
@@ -79,13 +78,7 @@ void ListWidget::resizeWidgets() {
             }
         }
     }
-    // qDebug() << " new height is " << newHeight << " yPos " << yPos   << " vs " <<
-    // viewport()->height();
     mWidget->setFixedHeight(newHeight);
-}
-
-void ListWidget::setFixedWidgetHeight(int height) {
-    mWidget->setFixedHeight(height);
 }
 
 void ListWidget::show() {
@@ -104,16 +97,17 @@ void ListWidget::clearAll() {
 }
 
 void ListWidget::resize() {
-    auto width = std::max(geometry().width() - verticalScrollBar()->width()
-                              - contentsMargins().left() - contentsMargins().right(),
-                          10);
+    auto contentSpace = this->width() - contentsMargins().left() - contentsMargins().right();
+    if (verticalScrollBar()->isVisible()) {
+        contentSpace -= verticalScrollBar()->width();
+    }
+    auto width = std::max(contentSpace, 10);
     mWidget->setFixedWidth(width);
-    setMinimumWidth(mWidget->minimumSizeHint().width() + verticalScrollBar()->width());
     for (auto widget : mListLayout.widgets()) {
         if (mListLayout.type() == cor::EListType::linear) {
-            widget->setFixedWidth(mWidget->geometry().width());
+            widget->setFixedWidth(mWidget->width());
         } else if (mListLayout.type() == cor::EListType::grid) {
-            widget->setFixedWidth(mWidget->geometry().width() / 2);
+            widget->setFixedWidth(mWidget->width() / 2);
         }
     }
 }

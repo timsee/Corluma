@@ -189,6 +189,7 @@ void DiscoveryNanoLeafWidget::resize() {
     yPos += mLabel->height();
     mListWidget->setGeometry(int(width() * 0.025), yPos, int(width() * 0.95), int(height() * 0.9));
     mGreyout->resize();
+    mListWidget->mainWidget()->setFixedWidth(width());
 
     // call resize function of each widget
     auto yHeight = 0u;

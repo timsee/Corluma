@@ -61,9 +61,6 @@ public:
     /// call to set up the listwidget when showing it.
     void show();
 
-    /// set the height of the scrolling widget, if not using ListWidget::resizeWidgets()
-    void setFixedWidgetHeight(int);
-
     /// resets the list widget to its uninitialized state.
     void clearAll();
 

@@ -65,7 +65,11 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
       mEditMoodPage{new cor::EditMoodPage(this, mComm, mGroups, mData)},
       mChooseEditPage{new ChooseEditPage(this)},
       mChooseGroupWidget{new ChooseGroupWidget(this, mComm, mGroups)},
-      mChooseMoodWidget{new ChooseMoodWidget(this, mComm, mGroups)} {
+      mChooseMoodWidget{new ChooseMoodWidget(this, mComm, mGroups)},
+      mGreyOut{new GreyOutOverlay(!mLeftHandMenu->alwaysOpen(), this)} {
+    // set title
+    setWindowTitle("Corluma");
+
     // initialize geometry
     setGeometry(0, 0, startingSize.width(), startingSize.height());
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
@@ -81,7 +85,6 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
                            mMainViewport->lightsPage(),
                            mMainViewport->palettePage(),
                            mMainViewport->colorPage());
-    mSpacer = new QWidget(this);
     mStateObserver = new cor::StateObserver(mData,
                                             mComm,
                                             mGroups,
@@ -91,11 +94,12 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
                                             mMainViewport->lightsPage()->discoveryWidget(),
                                             mTopMenu,
                                             this);
-    mGreyOut = new GreyOutOverlay(!mLeftHandMenu->alwaysOpen(), this);
 
+    mTouchListener = new TouchListener(this, mLeftHandMenu, mTopMenu, mData);
 
-    // set title
-    setWindowTitle("Corluma");
+    setupBackend();
+    loadPages();
+    setupStateObserver();
 
     connect(mShareUtils, SIGNAL(fileUrlReceived(QString)), this, SLOT(receivedURL(QString)));
 
@@ -107,23 +111,6 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
 
     mNoWifiWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mNoWifiWidget->setVisible(true);
-
-    // --------------
-    // Setup Backend
-    // --------------
-    connect(mDataSyncArduino,
-            SIGNAL(statusChanged(EDataSyncType, bool)),
-            mSyncStatus,
-            SLOT(syncStatusChanged(EDataSyncType, bool)));
-    connect(mDataSyncHue,
-            SIGNAL(statusChanged(EDataSyncType, bool)),
-            mSyncStatus,
-            SLOT(syncStatusChanged(EDataSyncType, bool)));
-    connect(mDataSyncNanoLeaf,
-            SIGNAL(statusChanged(EDataSyncType, bool)),
-            mSyncStatus,
-            SLOT(syncStatusChanged(EDataSyncType, bool)));
-    // timeout does not announce its sync status since its run in the background.
 
     // --------------
     // Settings Page
@@ -140,6 +127,58 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
             SIGNAL(enableDebugMode()),
             this,
             SLOT(debugModeClicked()));
+
+
+    // --------------
+    // Setup Left Hand Menu
+    // --------------
+    mLeftHandMenu->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mLeftHandMenu->updateTimeoutButton(mAppSettings->timeoutEnabled(), mAppSettings->timeout());
+    connect(mLeftHandMenu,
+            SIGNAL(pressedButton(EPage)),
+            this,
+            SLOT(leftHandMenuButtonPressed(EPage)));
+    connect(mLeftHandMenu, SIGNAL(createNewGroup()), this, SLOT(openEditGroupMenu()));
+
+    // --------------
+    // Setup GreyOut View
+    // --------------
+    mGreyOut->resize();
+    connect(mGreyOut, SIGNAL(clicked()), this, SLOT(greyoutClicked()));
+
+    reorderWidgets();
+    resize();
+    mMainViewport->pageChanged(EPage::lightsPage, true);
+    if (!mLeftHandMenu->alwaysOpen()) {
+        pushInLeftHandMenu();
+    }
+    mTopMenu->showFloatingLayout(EPage::lightsPage);
+    //    mGreyOut->raise();
+    //    mLeftHandMenu->raise();
+
+    // add hardcoded values from start of application
+    mEditMoodPage->changeRowHeight(mLeftHandMenu->height() / 18);
+    mEditGroupPage->changeRowHeight(mLeftHandMenu->height() / 18);
+    mMainViewport->timeoutPage()->changeRowHeight(mLeftHandMenu->height() / 18);
+    mMainViewport->lightsPage()->controllerWidget()->changeRowHeight(mLeftHandMenu->height() / 18);
+    mLeftHandMenu->changeRowHeight(mLeftHandMenu->height() / 20);
+}
+
+
+void MainWindow::setupBackend() {
+    connect(mDataSyncArduino,
+            SIGNAL(statusChanged(EDataSyncType, bool)),
+            mSyncStatus,
+            SLOT(syncStatusChanged(EDataSyncType, bool)));
+    connect(mDataSyncHue,
+            SIGNAL(statusChanged(EDataSyncType, bool)),
+            mSyncStatus,
+            SLOT(syncStatusChanged(EDataSyncType, bool)));
+    connect(mDataSyncNanoLeaf,
+            SIGNAL(statusChanged(EDataSyncType, bool)),
+            mSyncStatus,
+            SLOT(syncStatusChanged(EDataSyncType, bool)));
+    // timeout does not announce its sync status since its run in the background.
 
     // --------------
     // Start Discovery
@@ -160,108 +199,12 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
         }
     }
 
-
-    // --------------
-    // Setup Left Hand Menu
-    // --------------
-    mLeftHandMenu->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mLeftHandMenu->updateTimeoutButton(mAppSettings->timeoutEnabled(), mAppSettings->timeout());
-    connect(mLeftHandMenu,
-            SIGNAL(pressedButton(EPage)),
-            this,
-            SLOT(leftHandMenuButtonPressed(EPage)));
-    connect(mLeftHandMenu, SIGNAL(createNewGroup()), this, SLOT(openEditGroupMenu()));
-
-    loadPages();
-    setupStateObserver();
-
-    // --------------
-    // Setup GreyOut View
-    // --------------
-    mGreyOut->resize();
-    connect(mGreyOut, SIGNAL(clicked()), this, SLOT(greyoutClicked()));
-
-    reorderWidgets();
-    resize();
-    mMainViewport->pageChanged(EPage::lightsPage, true);
-    if (!mLeftHandMenu->alwaysOpen()) {
-        pushInLeftHandMenu();
-    }
-    mTopMenu->showFloatingLayout(EPage::lightsPage);
-    mGreyOut->raise();
-    mLeftHandMenu->raise();
-
-    mEditMoodPage->changeRowHeight(mLeftHandMenu->height() / 18);
-    mEditGroupPage->changeRowHeight(mLeftHandMenu->height() / 18);
-    mMainViewport->timeoutPage()->changeRowHeight(mLeftHandMenu->height() / 18);
-    mMainViewport->lightsPage()->controllerWidget()->changeRowHeight(mLeftHandMenu->height() / 18);
-    mLeftHandMenu->changeRowHeight(mLeftHandMenu->height() / 20);
-    mTouchListener = new TouchListener(this, mLeftHandMenu, mTopMenu, mData);
-
     // --------------
     // Finish up wifi check
     // --------------
     mWifiChecker->start(2500);
 }
 
-void MainWindow::shareChecker() {
-    if (mSharePath.contains("json", Qt::CaseInsensitive)) {
-        QString text =
-            "You are attempting to share a .json file with Corluma. If you continue, your "
-            "current lights, groups, and moods information will all be overwritten by the data "
-            "in the JSON file. This cannot be undone and it is recommended that you back up your "
-            "save data beforehand. Are you sure you want to continue? ";
-        auto reply = QMessageBox::question(this,
-                                           "Load New App Data?",
-                                           text,
-                                           QMessageBox::Yes | QMessageBox::No);
-        if (reply == QMessageBox::Yes) {
-            loadJSON(mSharePath);
-            // check if external save data can be loaded
-            // interact with mainwindow here?
-            if (!mGroups->loadExternalData(mSharePath)) {
-                qDebug() << "WARNING: loading external data failed at " << mSharePath;
-            } else {
-                qDebug() << "New app data saved!";
-            }
-        }
-    } else {
-        QString text = "Please share a .json file with Corluma if you want to load new save data.";
-        QMessageBox::warning(this, " Incompatible File ", text);
-    }
-
-#ifdef MOBILE_BUILD
-    mShareUtils->clearTempDir();
-#endif // MOBILE_BUILD
-}
-
-void MainWindow::loadJSON(QString path) {
-    if (mGroups->checkIfValidJSON(path)) {
-        mMainViewport->moodPage()->clearWidgets();
-        mLeftHandMenu->clearWidgets();
-        mData->clearLights();
-        mGroups->removeAppData();
-        mComm->hue()->discovery()->reloadGroupData();
-        if (!mGroups->loadExternalData(path)) {
-            qDebug() << "WARNING: loading external data failed at " << path;
-        } else {
-            qDebug() << "New app data saved!";
-            mMainViewport->loadMoodPage();
-        }
-    } else {
-        qDebug() << " file provided is not parseable JSON";
-    }
-}
-
-void MainWindow::receivedURL(QString url) {
-    QFileInfo file(url);
-    if (file.exists()) {
-        mSharePath = url;
-        mShareChecker->singleShot(100, this, SLOT(shareChecker()));
-    } else {
-        qDebug() << " File not found!";
-    }
-}
 
 void MainWindow::loadPages() {
     // --------------
@@ -335,6 +278,165 @@ void MainWindow::loadPages() {
 }
 
 
+void MainWindow::setupStateObserver() {
+    // color page setup
+    connect(mMainViewport->colorPage(),
+            SIGNAL(colorUpdate(QColor)),
+            mStateObserver,
+            SLOT(colorChanged(QColor)));
+
+    connect(mMainViewport->colorPage(),
+            SIGNAL(ambientUpdate(std::uint32_t, std::uint32_t)),
+            mStateObserver,
+            SLOT(ambientColorChanged(std::uint32_t, std::uint32_t)));
+
+    // palette page setup
+    connect(mMainViewport->palettePage(),
+            SIGNAL(paletteUpdate(EPalette)),
+            mStateObserver,
+            SLOT(paletteChanged(EPalette)));
+
+    connect(mMainViewport->palettePage()->colorPicker(),
+            SIGNAL(schemeUpdate(std::vector<QColor>, std::uint32_t)),
+            mStateObserver,
+            SLOT(updateScheme(std::vector<QColor>, std::uint32_t)));
+
+    connect(mMainViewport->palettePage()->colorPicker(),
+            SIGNAL(selectionChanged(std::uint32_t, QColor)),
+            mStateObserver,
+            SLOT(multiColorSelectionChange(std::uint32_t, QColor)));
+
+    connect(mMainViewport->palettePage()->colorPicker(),
+            SIGNAL(schemeUpdated(EColorSchemeType)),
+            mStateObserver,
+            SLOT(colorSchemeTypeChanged(EColorSchemeType)));
+
+    // timeout setup
+    connect(mMainViewport->timeoutPage(),
+            SIGNAL(timeoutUpdated(bool, std::uint32_t)),
+            mStateObserver,
+            SLOT(timeoutChanged(bool, std::uint32_t)));
+
+    // brightness slider
+    connect(mTopMenu->globalBrightness(),
+            SIGNAL(brightnessChanged(std::uint32_t)),
+            mStateObserver,
+            SLOT(globalBrightnessChanged(std::uint32_t)));
+
+    connect(mTopMenu->globalBrightness(),
+            SIGNAL(isOnUpdate(bool)),
+            mStateObserver,
+            SLOT(isOnChanged(bool)));
+
+    // single light brightness
+    connect(mTopMenu->singleLightBrightness(),
+            SIGNAL(brightnessChanged(std::uint32_t)),
+            mStateObserver,
+            SLOT(singleLightBrightnessChanged(std::uint32_t)));
+
+    // mood page
+    connect(mMainViewport->moodPage()->moodDetailedWidget(),
+            SIGNAL(enableMood(std::uint64_t)),
+            mStateObserver,
+            SLOT(moodChanged(std::uint64_t)));
+
+    // settings page
+    connect(mMainViewport->settingsPage()->globalWidget(),
+            SIGNAL(protocolSettingsUpdate(EProtocolType, bool)),
+            mStateObserver,
+            SLOT(protocolSettingsChanged(EProtocolType, bool)));
+
+    // routine state widget
+    connect(mRoutineWidget,
+            SIGNAL(newRoutineSelected(ERoutine)),
+            mStateObserver,
+            SLOT(routineChanged(ERoutine)));
+
+    // left hand menu changes
+    connect(mLeftHandMenu, SIGNAL(changedLightCount()), mStateObserver, SLOT(lightCountChanged()));
+
+    // sync status
+    connect(mSyncStatus, SIGNAL(statusChanged(bool)), mStateObserver, SLOT(dataInSync(bool)));
+
+    // setup deleting lights
+    connect(mMainViewport->lightsPage()->controllerWidget(),
+            SIGNAL(lightSelected(QString, bool)),
+            mStateObserver,
+            SLOT(lightCountChangedFromControllerPage(QString, bool)));
+
+    // set up changes to connection state
+    connect(mMainViewport->lightsPage()->discoveryWidget(),
+            SIGNAL(connectionStateChanged(EProtocolType, EConnectionState)),
+            mStateObserver,
+            SLOT(connectionStateChanged(EProtocolType, EConnectionState)));
+
+    // light info widget
+    connect(mMainViewport->lightsPage()->controllerWidget()->lightInfoWidget(),
+            SIGNAL(lightNameChanged(QString, QString)),
+            mStateObserver,
+            SLOT(lightNameChange(QString, QString)));
+}
+
+void MainWindow::shareChecker() {
+    if (mSharePath.contains("json", Qt::CaseInsensitive)) {
+        QString text =
+            "You are attempting to share a .json file with Corluma. If you continue, your "
+            "current lights, groups, and moods information will all be overwritten by the data "
+            "in the JSON file. This cannot be undone and it is recommended that you back up "
+            "your "
+            "save data beforehand. Are you sure you want to continue? ";
+        auto reply = QMessageBox::question(this,
+                                           "Load New App Data?",
+                                           text,
+                                           QMessageBox::Yes | QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+            loadJSON(mSharePath);
+            // check if external save data can be loaded
+            // interact with mainwindow here?
+            if (!mGroups->loadExternalData(mSharePath)) {
+                qDebug() << "WARNING: loading external data failed at " << mSharePath;
+            } else {
+                qDebug() << "New app data saved!";
+            }
+        }
+    } else {
+        QString text = "Please share a .json file with Corluma if you want to load new save data.";
+        QMessageBox::warning(this, " Incompatible File ", text);
+    }
+
+#ifdef MOBILE_BUILD
+    mShareUtils->clearTempDir();
+#endif // MOBILE_BUILD
+}
+
+void MainWindow::loadJSON(QString path) {
+    if (mGroups->checkIfValidJSON(path)) {
+        mMainViewport->moodPage()->clearWidgets();
+        mLeftHandMenu->clearWidgets();
+        mData->clearLights();
+        mGroups->removeAppData();
+        mComm->hue()->discovery()->reloadGroupData();
+        if (!mGroups->loadExternalData(path)) {
+            qDebug() << "WARNING: loading external data failed at " << path;
+        } else {
+            qDebug() << "New app data saved!";
+            mMainViewport->loadMoodPage();
+        }
+    } else {
+        qDebug() << " file provided is not parseable JSON";
+    }
+}
+
+void MainWindow::receivedURL(QString url) {
+    QFileInfo file(url);
+    if (file.exists()) {
+        mSharePath = url;
+        mShareChecker->singleShot(100, this, SLOT(shareChecker()));
+    } else {
+        qDebug() << " File not found!";
+    }
+}
+
 // ----------------------------
 // Slots
 // ----------------------------
@@ -404,9 +506,9 @@ void MainWindow::editPageClosePressed() {
     pushOutEditPage();
     pushOutChooseEditPage();
     // this fixes the higlight of the left hand menu when its always open. "Settings" only gets
-    // highlighted if its always open. Checking if discovery page is open fixes an edge case where
-    // settings is called from discovery. this makes settings overlay over discovery, so correcting
-    // the left hand menu isnt necessary.
+    // highlighted if its always open. Checking if discovery page is open fixes an edge case
+    // where settings is called from discovery. this makes settings overlay over discovery, so
+    // correcting the left hand menu isnt necessary.
     if (mLeftHandMenu->alwaysOpen() && !mMainViewport->lightsPage()->isOpen()) {
         mLeftHandMenu->buttonPressed(mMainViewport->currentPage());
     }
@@ -450,7 +552,6 @@ void MainWindow::resize() {
         mTopMenu->resize(0);
     }
 
-    mSpacer->setGeometry(mTopMenu->geometry());
     int xPos = 5u;
     int width = this->width() - 10;
     if (mLeftHandMenu->alwaysOpen()) {
@@ -769,105 +870,6 @@ void MainWindow::reorderWidgets() {
     mLeftHandMenu->raise();
 
     mGreyOut->raise();
-}
-
-void MainWindow::setupStateObserver() {
-    // color page setup
-    connect(mMainViewport->colorPage(),
-            SIGNAL(colorUpdate(QColor)),
-            mStateObserver,
-            SLOT(colorChanged(QColor)));
-
-    connect(mMainViewport->colorPage(),
-            SIGNAL(ambientUpdate(std::uint32_t, std::uint32_t)),
-            mStateObserver,
-            SLOT(ambientColorChanged(std::uint32_t, std::uint32_t)));
-
-    // palette page setup
-    connect(mMainViewport->palettePage(),
-            SIGNAL(paletteUpdate(EPalette)),
-            mStateObserver,
-            SLOT(paletteChanged(EPalette)));
-
-    connect(mMainViewport->palettePage()->colorPicker(),
-            SIGNAL(schemeUpdate(std::vector<QColor>, std::uint32_t)),
-            mStateObserver,
-            SLOT(updateScheme(std::vector<QColor>, std::uint32_t)));
-
-    connect(mMainViewport->palettePage()->colorPicker(),
-            SIGNAL(selectionChanged(std::uint32_t, QColor)),
-            mStateObserver,
-            SLOT(multiColorSelectionChange(std::uint32_t, QColor)));
-
-    connect(mMainViewport->palettePage()->colorPicker(),
-            SIGNAL(schemeUpdated(EColorSchemeType)),
-            mStateObserver,
-            SLOT(colorSchemeTypeChanged(EColorSchemeType)));
-
-    // timeout setup
-    connect(mMainViewport->timeoutPage(),
-            SIGNAL(timeoutUpdated(bool, std::uint32_t)),
-            mStateObserver,
-            SLOT(timeoutChanged(bool, std::uint32_t)));
-
-    // brightness slider
-    connect(mTopMenu->globalBrightness(),
-            SIGNAL(brightnessChanged(std::uint32_t)),
-            mStateObserver,
-            SLOT(globalBrightnessChanged(std::uint32_t)));
-
-    connect(mTopMenu->globalBrightness(),
-            SIGNAL(isOnUpdate(bool)),
-            mStateObserver,
-            SLOT(isOnChanged(bool)));
-
-    // single light brightness
-    connect(mTopMenu->singleLightBrightness(),
-            SIGNAL(brightnessChanged(std::uint32_t)),
-            mStateObserver,
-            SLOT(singleLightBrightnessChanged(std::uint32_t)));
-
-    // mood page
-    connect(mMainViewport->moodPage()->moodDetailedWidget(),
-            SIGNAL(enableMood(std::uint64_t)),
-            mStateObserver,
-            SLOT(moodChanged(std::uint64_t)));
-
-    // settings page
-    connect(mMainViewport->settingsPage()->globalWidget(),
-            SIGNAL(protocolSettingsUpdate(EProtocolType, bool)),
-            mStateObserver,
-            SLOT(protocolSettingsChanged(EProtocolType, bool)));
-
-    // routine state widget
-    connect(mRoutineWidget,
-            SIGNAL(newRoutineSelected(ERoutine)),
-            mStateObserver,
-            SLOT(routineChanged(ERoutine)));
-
-    // left hand menu changes
-    connect(mLeftHandMenu, SIGNAL(changedLightCount()), mStateObserver, SLOT(lightCountChanged()));
-
-    // sync status
-    connect(mSyncStatus, SIGNAL(statusChanged(bool)), mStateObserver, SLOT(dataInSync(bool)));
-
-    // setup deleting lights
-    connect(mMainViewport->lightsPage()->controllerWidget(),
-            SIGNAL(lightSelected(QString, bool)),
-            mStateObserver,
-            SLOT(lightCountChangedFromControllerPage(QString, bool)));
-
-    // set up changes to connection state
-    connect(mMainViewport->lightsPage()->discoveryWidget(),
-            SIGNAL(connectionStateChanged(EProtocolType, EConnectionState)),
-            mStateObserver,
-            SLOT(connectionStateChanged(EProtocolType, EConnectionState)));
-
-    // light info widget
-    connect(mMainViewport->lightsPage()->controllerWidget()->lightInfoWidget(),
-            SIGNAL(lightNameChanged(QString, QString)),
-            mStateObserver,
-            SLOT(lightNameChange(QString, QString)));
 }
 
 void MainWindow::debugModeClicked() {

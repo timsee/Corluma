@@ -1017,5 +1017,11 @@ _This is the first of a series of updates to address design issues in the `ListR
 ### **v0.21.4**
 ### Bug Fixes
 - Fixed bugs with resizing.
-- Changed the layout of `DisplayArduCorControllerWidget` when the ArduCor only has one light. 
+- Changed the layout of `DisplayArduCorControllerWidget` when the ArduCor only has one light.
+- Fixed miscellaneous bugs.
+
+### **v0.21.45**
+### Bug Fixes
+- Fixed a memory leak during initialization of pages.
+- Cleaned up the `RotateLightWidget`.
 - Fixed miscellaneous bugs.

@@ -43,6 +43,7 @@ LightVectorWidget::LightVectorWidget(std::uint32_t width,
             state.routine(ERoutine::singleSolid);
             state.color(QColor(0, 0, 0));
             mArrayColorsButtons[i] = new cor::Button(this, state);
+            mArrayColorsButtons[i]->setIconPercent(0.9);
             mArrayColorsButtons[i]->setLabelMode(true);
             mArrayColorsButtons[i]->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
             connect(mArrayColorsButtons[std::size_t(i)],
