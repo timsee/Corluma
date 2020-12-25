@@ -62,12 +62,6 @@ signals:
     /// signals the bridge's key when the discover hues button is pressed
     void discoverHuesPressed(QString);
 
-    /// groups button is pressed. signals the bridge ID
-    void groupsPressed(QString);
-
-    /// schedules button is pressed. signals the bridge ID
-    void schedulesPressed(QString);
-
     /// name changed is pressed. signals the bridge ID and the new name
     void nameChanged(QString, QString);
 
@@ -99,12 +93,6 @@ private slots:
 
     /// handles when the discover hues button is pressed
     void pressedDiscoverHues();
-
-    /// handles when the schedules button is pressed
-    void schedulesListPressed();
-
-    /// handles when the groups button is pressed
-    void groupsListPressed();
 
     /// handles when the name is changed from the EditableFieldWidget
     void changedName(const QString&);
@@ -175,12 +163,6 @@ private:
 
     /// button that allows the user to discover new hue lights.
     QPushButton* mDiscoverHueButton;
-
-    /// button used for viewing the schedules of a bridge
-    QPushButton* mSchedulesButton;
-
-    /// button used for viewing the groups of a bridge.
-    QPushButton* mGroupsButton;
 
     /// reachable count
     std::uint32_t mReachableCount;

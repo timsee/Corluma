@@ -64,6 +64,9 @@ public:
     /// resets the list widget to its uninitialized state.
     void clearAll();
 
+    /// set a preferred height for each widget in the list.
+    void setPreferredWidgetHeight(int);
+
 protected:
     /// handles when the widget resizes
     void resizeEvent(QResizeEvent*);
@@ -78,8 +81,11 @@ private:
     /// widget used for scroll area.
     QWidget* mWidget;
 
-    /// size of overall background of grid.
-    QSize mWidgetSize;
+    /// true to use a fixed height, false to use a default height
+    bool mUseWidgetHeight;
+
+    /// fixed height of a widget
+    int mWidgetHeight;
 };
 
 } // namespace cor

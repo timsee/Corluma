@@ -6,7 +6,6 @@
 #include <QWidget>
 #include "edit/editpagechildwidget.h"
 #include "menu/displaygroupwidget.h"
-#include "menu/statelesslightslistmenu.h"
 #include "utils/qt.h"
 
 /*!

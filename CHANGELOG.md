@@ -1025,3 +1025,10 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed a memory leak during initialization of pages.
 - Cleaned up the `RotateLightWidget`.
 - Fixed miscellaneous bugs.
+
+### **v0.21.5**
+### Bug Fixes
+- Fixed a memory leak during first load of pages.
+- Fixed bugs in the `LeftHandMenu`.
+- Moved the groups and schedules widgets to the `DisplayHueBridgeWidget`.
+- Fixed miscellaneous bugs.

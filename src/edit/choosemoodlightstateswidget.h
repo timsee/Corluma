@@ -34,7 +34,8 @@ public:
           mLeftButton{new QPushButton(this)},
           mRightButton{new QPushButton(this)},
           mLightWidget{new ListLightWidget({}, false, EListLightWidgetType::standard, this)},
-          mStateWidget{new ChooseStateWidget(this)} {
+          mStateWidget{new ChooseStateWidget(this)},
+          mRowHeight{10} {
         mBottomButtons->enableForward(false);
 
         mLightsMenu->singleLightsMode(true);

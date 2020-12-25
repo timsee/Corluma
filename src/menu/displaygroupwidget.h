@@ -27,7 +27,8 @@ public:
           mName{new QLabel(this)},
           mDescription{new cor::ExpandingTextScrollArea(this)},
           mMetadata{new DisplayGroupMetadata(this, groups)},
-          mLights{new StatelessLightsListMenu(this, comm, false)} {
+          mLights{new StatelessLightsListMenu(this, comm, false)},
+          mRowHeight{10} {
         auto font = mName->font();
         font.setPointSize(20);
         mName->setFont(font);
@@ -55,7 +56,10 @@ public:
     }
 
     /// changes the row height of rows in scroll areas.
-    void changeRowHeight(int height) { mRowHeight = height; }
+    void changeRowHeight(int height) {
+        mRowHeight = height;
+        resize();
+    }
 
     /// reset the widget to showing no group
     void reset() {

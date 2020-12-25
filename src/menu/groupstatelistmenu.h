@@ -11,7 +11,7 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief The StatelessLightsListMenu class is a simple menu that displays a list of lights. By
+ * \brief The GroupStateListMenu class is a simple menu that displays a list of lights. By
  * default it displays the state of the lights, but that can be toggled by calling
  * displayState(bool)
  */

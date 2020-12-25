@@ -7,7 +7,6 @@
 #include "cor/lightlist.h"
 #include "edit/editpagechildwidget.h"
 #include "menu/displaymoodwidget.h"
-#include "menu/statelesslightslistmenu.h"
 #include "utils/qt.h"
 
 /*!

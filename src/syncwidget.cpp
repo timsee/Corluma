@@ -10,6 +10,7 @@
 SyncWidget::SyncWidget(QWidget* parent) : QWidget(parent), mState{ESyncState::notSynced} {
     mLabel = new QLabel(this);
     mLabel->setFixedSize(size());
+    mLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     changeState(ESyncState::notSynced);
 
     mMovie = new QMovie(":/images/syncing.gif");
@@ -40,6 +41,6 @@ void SyncWidget::changeState(ESyncState state) {
 
 void SyncWidget::resizeEvent(QResizeEvent*) {
     auto height = this->height();
-    mLabel->setFixedSize(QSize(height, height));
+    mLabel->setFixedSize(QSize(width(), height));
     mMovie->setScaledSize(QSize(height, height));
 }

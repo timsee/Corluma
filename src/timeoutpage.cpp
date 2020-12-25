@@ -15,7 +15,7 @@ TimeoutPage::TimeoutPage(QWidget* parent,
       mSyncWidget{new SyncWidget(this)},
       mLights{new LightsTimeoutMenu(this, false, comm)},
       mRenderTimer{new QTimer(this)},
-      mRowHeight{0} {
+      mRowHeight{10} {
     connect(mRenderTimer, SIGNAL(timeout()), this, SLOT(renderUI()));
     mRenderTimer->start(333);
 

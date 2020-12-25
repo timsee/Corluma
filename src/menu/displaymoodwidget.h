@@ -34,7 +34,8 @@ public:
           mDescription{new cor::ExpandingTextScrollArea(this)},
           mMetadata{new DisplayMoodMetadata(this, comm, groups)},
           mLights{new LightsListMenu(this, false)},
-          mGroupDefaults{new GroupStateListMenu(this, false)} {
+          mGroupDefaults{new GroupStateListMenu(this, false)},
+          mRowHeight{10} {
         auto font = mName->font();
         font.setPointSize(20);
         mName->setFont(font);

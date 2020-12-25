@@ -18,6 +18,8 @@
 #include "comm/arducor/controller.h"
 #include "comm/commhue.h"
 #include "comm/commlayer.h"
+#include "comm/hue/bridgegroupswidget.h"
+#include "comm/hue/bridgescheduleswidget.h"
 #include "cor/lightlist.h"
 #include "cor/widgets/checkbox.h"
 #include "cor/widgets/expandingtextscrollarea.h"
@@ -57,6 +59,9 @@ public:
           mLights{new LightsListMenu(this, true)},
           mMetadata{new cor::ExpandingTextScrollArea(this)},
           mCheckBox{new cor::CheckBox(this)},
+          mGroupsWidget{new hue::BridgeGroupsWidget(this)},
+          mSchedulesWidget{new hue::BridgeSchedulesWidget(this)},
+          mRowHeight{10},
           mState{EDisplayHueBridgeState::info} {
         auto font = mName->font();
         font.setPointSize(20);
@@ -67,13 +72,17 @@ public:
         mGroupsButton->setCheckable(true);
         mScheduleButton->setCheckable(true);
 
+        mGroupsWidget->setVisible(false);
+        mGroupsWidget->isOpen(false);
+
+        mSchedulesWidget->setVisible(false);
+        mSchedulesWidget->isOpen(false);
+
+
         connect(mInfoButton, SIGNAL(clicked(bool)), this, SLOT(infoButtonPressed(bool)));
         connect(mLightsButton, SIGNAL(clicked(bool)), this, SLOT(lightsButtonPressed(bool)));
         connect(mGroupsButton, SIGNAL(clicked(bool)), this, SLOT(groupsButtonPressed(bool)));
         connect(mScheduleButton, SIGNAL(clicked(bool)), this, SLOT(scheduleButtonPressed(bool)));
-
-        mGroupsButton->setEnabled(false);
-        mScheduleButton->setEnabled(false);
 
         mLightInfoWidget->isOpen(false);
         mLightInfoWidget->setVisible(false);
@@ -156,12 +165,35 @@ public:
 
         if (mState == EDisplayHueBridgeState::lights) {
             mLightInfoWidget->isOpen(true);
+            mSchedulesWidget->setVisible(false);
+            mGroupsWidget->setVisible(false);
+            mGroupsWidget->isOpen(false);
+            mSchedulesWidget->isOpen(false);
             mLightInfoWidget->raise();
             mLightInfoWidget->setVisible(true);
             mLightInfoWidget->setGeometry(0, yPosColumn1, width(), height() - yPosColumn1);
             mLightInfoWidget->resize();
+        } else if (mState == EDisplayHueBridgeState::groups) {
+            mLightInfoWidget->setVisible(false);
+            mGroupsWidget->setVisible(true);
+            mSchedulesWidget->setVisible(false);
+            mSchedulesWidget->isOpen(false);
+            mGroupsWidget->setGeometry(0, yPosColumn1, width(), height() - yPosColumn1);
+            displayGroups();
+        } else if (mState == EDisplayHueBridgeState::schedule) {
+            mLightInfoWidget->setVisible(false);
+            mGroupsWidget->setVisible(false);
+            mSchedulesWidget->setVisible(true);
+            mGroupsWidget->isOpen(false);
+            mSchedulesWidget->raise();
+            mSchedulesWidget->setGeometry(0, yPosColumn1, width(), height() - yPosColumn1);
+            displaySchedules();
         } else {
             mLightInfoWidget->setVisible(false);
+            mGroupsWidget->setVisible(false);
+            mSchedulesWidget->setVisible(false);
+            mGroupsWidget->isOpen(false);
+            mSchedulesWidget->isOpen(false);
         }
 
         // column 1
@@ -246,16 +278,38 @@ private slots:
     /// groups button pressed
     void groupsButtonPressed(bool) {
         mState = EDisplayHueBridgeState::groups;
+        handleState();
         handleButtonHighlight(mGroupsButton->text());
     }
 
     /// schedule buttons pressed
     void scheduleButtonPressed(bool) {
         mState = EDisplayHueBridgeState::schedule;
+        handleState();
         handleButtonHighlight(mScheduleButton->text());
     }
 
 private:
+    /// display the groups widget
+    void displayGroups() {
+        mGroupsWidget->updateGroups(mBridge.groupsWithIDs(), mBridge.roomsWithIDs());
+        mGroupsWidget->isOpen(true);
+        mGroupsWidget->setVisible(true);
+        mGroupsWidget->show();
+        mGroupsWidget->resize();
+        mGroupsWidget->raise();
+    }
+
+    /// display the schedules widget
+    void displaySchedules() {
+        mSchedulesWidget->updateSchedules(mBridge.schedules().items());
+        mSchedulesWidget->isOpen(true);
+        mSchedulesWidget->setVisible(true);
+        mSchedulesWidget->show();
+        mSchedulesWidget->resize();
+        mSchedulesWidget->raise();
+    }
+
     /// handle states
     void handleState() { resize(); }
 
@@ -334,6 +388,12 @@ private:
 
     /// checkbox to select/deselect the bridge.
     cor::CheckBox* mCheckBox;
+
+    /// widget for showing the groups on the bridge.
+    hue::BridgeGroupsWidget* mGroupsWidget;
+
+    /// widget for showing the schedules on the bridge.
+    hue::BridgeSchedulesWidget* mSchedulesWidget;
 
     /// the height of a row in a scroll area
     int mRowHeight;

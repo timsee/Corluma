@@ -40,6 +40,7 @@ public:
         mReviewPage->editMode(true, group.uniqueID());
     }
 
+
     /// clear all data from the page, and reset it to its default state.
     void clearGroup() override {
         mMetadataWidget->clear();

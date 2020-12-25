@@ -6,6 +6,7 @@ LightsListMenu::LightsListMenu(QWidget* parent, bool allowInteraction)
     : QWidget(parent),
       mScrollArea{new QScrollArea(this)},
       mLightContainer{new MenuLightContainer(mScrollArea, allowInteraction)},
+      mRowHeight{10},
       mSingleLightMode{false} {
     mLightContainer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mLightContainer, SIGNAL(clickedLight(QString)), this, SLOT(lightClicked(QString)));

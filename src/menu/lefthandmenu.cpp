@@ -34,7 +34,8 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
       mComm{comm},
       mData{lights},
       mGroups{groups},
-      mLastRenderTime{QTime::currentTime()} {
+      mLastRenderTime{QTime::currentTime()},
+      mRowHeight{10} {
     auto width = int(parent->size().width() * 0.66f);
     setGeometry(width * -1, 0, width, parent->height());
     mIsIn = false;
@@ -246,25 +247,26 @@ void LeftHandMenu::buttonPressed(EPage page) {
             qDebug() << "Do not recognize key " << pageToString(page);
         }
     } else {
-        if (page != EPage::settingsPage) {
-            mLightsButton->shouldHightlght(false);
-            mSingleColorButton->shouldHightlght(false);
-            mMultiColorButton->shouldHightlght(false);
-            mMoodButton->shouldHightlght(false);
-            mTimeoutButton->shouldHightlght(false);
-            if (page == EPage::lightsPage) {
-                mLightsButton->shouldHightlght(true);
-            } else if (page == EPage::colorPage) {
-                mSingleColorButton->shouldHightlght(true);
-            } else if (page == EPage::palettePage) {
-                mMultiColorButton->shouldHightlght(true);
-            } else if (page == EPage::moodPage) {
-                mMoodButton->shouldHightlght(true);
-            } else if (page == EPage::timeoutPage) {
-                mTimeoutButton->shouldHightlght(true);
-            } else {
-                qDebug() << "Do not recognize key " << pageToString(page);
-            }
+        mLightsButton->shouldHightlght(false);
+        mSingleColorButton->shouldHightlght(false);
+        mMultiColorButton->shouldHightlght(false);
+        mMoodButton->shouldHightlght(false);
+        mTimeoutButton->shouldHightlght(false);
+        mSettingsButton->shouldHightlght(false);
+        if (page == EPage::lightsPage) {
+            mLightsButton->shouldHightlght(true);
+        } else if (page == EPage::colorPage) {
+            mSingleColorButton->shouldHightlght(true);
+        } else if (page == EPage::palettePage) {
+            mMultiColorButton->shouldHightlght(true);
+        } else if (page == EPage::moodPage) {
+            mMoodButton->shouldHightlght(true);
+        } else if (page == EPage::timeoutPage) {
+            mTimeoutButton->shouldHightlght(true);
+        } else if (page == EPage::settingsPage) {
+            mSettingsButton->shouldHightlght(true);
+        } else {
+            qDebug() << "Do not recognize key " << pageToString(page);
         }
     }
 

@@ -25,6 +25,7 @@ GroupStateListMenu::GroupStateListMenu(QWidget* parent, bool allowInteraction)
     : QWidget(parent),
       mScrollArea{new QScrollArea(this)},
       mStateContainer{new MenuGroupStateContainer(mScrollArea, allowInteraction)},
+      mRowHeight{10},
       mSingleStateMode{false} {
     mStateContainer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mStateContainer, SIGNAL(clickedState(QString)), this, SLOT(stateClicked(QString)));

@@ -50,7 +50,8 @@ public:
           mSchedulesWidget{new DisplayNanoleafSchedulesWidget(this)},
           mGreyout{new GreyOutOverlay(true, parentWidget()->parentWidget())},
           mChangeNameInput{new cor::TextInputWidget(parentWidget()->parentWidget())},
-          mRotateLightWidget{new RotateLightWidget(parentWidget()->parentWidget())} {
+          mRotateLightWidget{new RotateLightWidget(parentWidget()->parentWidget())},
+          mRowHeight{10} {
         auto font = mName->font();
         font.setPointSize(20);
         mName->setFont(font);

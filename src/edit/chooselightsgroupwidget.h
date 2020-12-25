@@ -40,7 +40,10 @@ public:
     }
 
     /// programmatically changes the height of rows in scrolling menus
-    void changeRowHeight(int height) { mRowHeight = height; }
+    void changeRowHeight(int height) {
+        mRowHeight = height;
+        resize();
+    }
 
     /// prefill the lights widget with lights already selected, so that the user can edit that
     /// preexisting selection
@@ -59,18 +62,21 @@ public:
 
     /// setup the the page as choosing for groups, showing all available lights
     void setupAsGroup() {
+        resize();
+
         // set visibility of the proper light menu
         mRoomLights->setVisible(false);
         mLightsMenu->setVisible(true);
 
         mIsRoom = false;
-
-        resize();
     }
 
     /// setup the the page as choosing for rooms, showing only lights that exist either in the
     /// current room or no room.
     void setupAsRoom(const std::vector<QString>& roomLights) {
+        mIsRoom = true;
+
+        resize();
         // start with the room lights
         auto lights = roomLights;
         // add in the orphan lights
@@ -81,10 +87,6 @@ public:
         // set visibility of the proper light menu
         mRoomLights->setVisible(true);
         mLightsMenu->setVisible(false);
-
-        mIsRoom = true;
-
-        resize();
     }
 
     /// clears all data currently on the page.

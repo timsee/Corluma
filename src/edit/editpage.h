@@ -129,6 +129,9 @@ protected:
     /// will not show on the lights.
     QPushButton* mPreviewButton;
 
+    /// placeholder for the main page of the widget
+    QWidget* mPlaceholder;
+
 private:
     /// handles sizing the close button
     void resizeCloseButton();
@@ -154,9 +157,6 @@ private:
 
     /// groups parser
     GroupData* mGroups;
-
-    /// placeholder for the main page of the widget
-    QWidget* mPlaceholder;
 
     /// button placed at left hand side of widget
     QPushButton* mCloseButton;

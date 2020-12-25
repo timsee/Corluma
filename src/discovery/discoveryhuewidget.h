@@ -80,18 +80,6 @@ private slots:
     /// handles when the close button is pressed
     void hueDiscoveryClosePressed();
 
-    /// closes the group widget
-    void groupsClosePressed();
-
-    /// closes the schedule widget
-    void schedulesClosePressed();
-
-    /// handles when the schedules button is pressed for a hue::BridgeInfoWidget
-    void schedulesPressed(const QString&);
-
-    /// handles when the groups button is pressed for a hue::BridgeInfoWidget
-    void groupsPressed(const QString&);
-
     /// handles when a name change is trigged from a hue::BridgeInfoWidget
     void changedName(const QString&, const QString&);
 
@@ -121,12 +109,6 @@ private:
 
     /// widget for discovering hue lights
     hue::LightDiscovery* mHueLightDiscovery;
-
-    /// widget for displaying the groups of a bridge
-    hue::BridgeGroupsWidget* mBridgeGroupsWidget;
-
-    /// widget for displaying the schedules of a widget
-    hue::BridgeSchedulesWidget* mBridgeSchedulesWidget;
 
     /// label to prompt the user through the application.
     QLabel* mLabel;

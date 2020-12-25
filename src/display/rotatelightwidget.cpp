@@ -20,7 +20,7 @@ RotateLightWidget::RotateLightWidget(QWidget* parent)
     connect(mButtonCancel, SIGNAL(clicked()), this, SLOT(clickedCancel()));
     setVisible(false);
 
-    mRotationSlider->setRange(-160, 159);
+    mRotationSlider->setRange(-240, 239);
     mRotationSlider->setValue(0);
     mRotationSlider->setColor(QColor(255, 127, 0));
     mRotationSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -50,7 +50,7 @@ void RotateLightWidget::sliderChanged(int value) {
         value += 360;
     }
     mValue = value;
-   // drawNanoleaf();
+    // drawNanoleaf();
 }
 
 void RotateLightWidget::releasedSlider() {

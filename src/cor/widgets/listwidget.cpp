@@ -19,7 +19,11 @@ struct subWidgetCompare {
 };
 
 
-ListWidget::ListWidget(QWidget* parent, EListType type) : QScrollArea(parent), mListLayout(type) {
+ListWidget::ListWidget(QWidget* parent, EListType type)
+    : QScrollArea(parent),
+      mListLayout(type),
+      mUseWidgetHeight{false},
+      mWidgetHeight{0} {
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
     mWidget = new QWidget(this);
@@ -32,6 +36,10 @@ ListWidget::ListWidget(QWidget* parent, EListType type) : QScrollArea(parent), m
     setWidget(mWidget);
 }
 
+void ListWidget::setPreferredWidgetHeight(int height) {
+    mUseWidgetHeight = true;
+    mWidgetHeight = height;
+}
 
 void ListWidget::resizeEvent(QResizeEvent*) {
     resize();
@@ -52,32 +60,42 @@ void ListWidget::resizeWidgets() {
     // TODO: do not infer size based off of parent
     int yPos = 0;
     int newHeight = 0;
+
+    auto widgetHeight = mWidgetHeight;
+    if (!mUseWidgetHeight) {
+        if (mListLayout.type() == cor::EListType::linear) {
+            widgetHeight = parentWidget()->height() / 8;
+        } else if (mListLayout.type() == cor::EListType::grid) {
+            widgetHeight = parentWidget()->height() / 6;
+        }
+    }
     if (mListLayout.type() == cor::EListType::linear) {
         int maxWidth = parentWidget()->width();
-        int height = parentWidget()->height() / 8;
         for (auto widget : mListLayout.widgets()) {
             QSize size = widget->geometry().size();
             if (size.width() > maxWidth) {
                 maxWidth = size.width();
             }
-            widget->setGeometry(0, yPos, maxWidth, height);
+            widget->setGeometry(0, yPos, maxWidth, widgetHeight);
             widget->setHidden(false);
             yPos += size.height();
         }
-        newHeight = std::max(yPos, viewport()->height());
     } else if (mListLayout.type() == cor::EListType::grid) {
         for (auto widget : mListLayout.widgets()) {
             int maxWidth = parentWidget()->width() / 2;
             // TODO: should this be using its parents width for height?
-            int height = parentWidget()->width() / 6;
             QPoint position = mListLayout.widgetPosition(widget);
-            widget->setGeometry(position.x() * maxWidth, position.y() * height, maxWidth, height);
+            widget->setGeometry(position.x() * maxWidth,
+                                position.y() * widgetHeight,
+                                maxWidth,
+                                widgetHeight);
             widget->setHidden(false);
             if (position.x() == 0) {
                 newHeight += widget->height();
             }
         }
     }
+    newHeight = std::max(yPos, viewport()->height());
     mWidget->setFixedHeight(newHeight);
 }
 

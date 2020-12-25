@@ -36,6 +36,12 @@ public:
           mLeafMetadata{leafMetadata},
           mStatus{status} {
         updateNanoleaf(leafMetadata, status);
+
+        mPanelLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+        mName->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+        mStatusPrompt->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+        mName->setWordWrap(true);
+        mStatusPrompt->setWordWrap(true);
     }
 
     /// getter for the nanoleaf
@@ -93,24 +99,24 @@ public:
     /// resize the widget programmatically.
     void resize() {
         auto yPos = 0u;
+        auto rowHeight = this->height() / 4;
+
         if (mStatus == nano::ELeafDiscoveryState::searchingIP
             || mStatus == nano::ELeafDiscoveryState::searchingAuth
             || mStatus == nano::ELeafDiscoveryState::reverifying) {
-            auto iconHeight = this->height() / 2;
-            mSyncWidget->setGeometry(0, yPos, iconHeight, iconHeight);
+            mSyncWidget->setGeometry(0, yPos, this->width(), rowHeight * 2);
             yPos += mSyncWidget->height();
-            mName->setGeometry(0, yPos, this->width(), this->height() / 4);
+            mName->setGeometry(0, yPos, this->width(), rowHeight);
             yPos += mName->height();
-            mStatusPrompt->setGeometry(0, yPos, this->width(), this->height() / 4);
+            mStatusPrompt->setGeometry(0, yPos, this->width(), rowHeight);
             yPos += mStatusPrompt->height();
         } else if (mStatus == nano::ELeafDiscoveryState::connected) {
-            auto iconHeight = this->height() * 3 / 4;
-            mPanelLabel->setGeometry(0, yPos, this->width() / 2, iconHeight);
+            mPanelLabel->setGeometry(0, yPos, this->width(), rowHeight * 3);
 
             drawPanels();
             yPos += mPanelLabel->height();
 
-            mName->setGeometry(0, yPos, this->width(), this->height() / 4);
+            mName->setGeometry(0, yPos, this->width(), rowHeight);
             yPos += mName->height();
         }
     }
@@ -142,12 +148,13 @@ protected:
         }
 
         // draw line at bottom of widget
-        QRect area(x(), y(), width(), height());
+        QRect area(0, y(), width(), height());
+        auto lineOffset = 3;
         QPainter linePainter(this);
         linePainter.setRenderHint(QPainter::Antialiasing);
         linePainter.setBrush(QBrush(QColor(255, 255, 255)));
-        QLine spacerLine(QPoint(area.x(), area.height() - 3),
-                         QPoint(area.width(), area.height() - 3));
+        QLine spacerLine(QPoint(area.x(), area.height() - lineOffset),
+                         QPoint(area.width(), area.height() - lineOffset));
         linePainter.drawLine(spacerLine);
     }
 
@@ -165,11 +172,11 @@ private:
                 text = "Light found! Hold the power button for around 5 seconds.";
                 break;
             case nano::ELeafDiscoveryState::reverifying:
-                text = "Testing connection with IP " + nanoleaf().IP() + "...";
+                text = "Testing: " + nanoleaf().IP();
                 break;
 
             case nano::ELeafDiscoveryState::searchingIP:
-                text = "Searching for new light at " + nanoleaf().IP() + "...";
+                text = "Searching: " + nanoleaf().IP();
                 break;
 
             case nano::ELeafDiscoveryState::connected:

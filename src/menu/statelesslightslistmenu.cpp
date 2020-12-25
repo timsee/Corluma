@@ -8,7 +8,8 @@ StatelessLightsListMenu::StatelessLightsListMenu(QWidget* parent,
     : QWidget(parent),
       mComm{comm},
       mScrollArea{new QScrollArea(this)},
-      mLightContainer{new MenuLightContainer(mScrollArea, allowInteraction)} {
+      mLightContainer{new MenuLightContainer(mScrollArea, allowInteraction)},
+      mRowHeight{10} {
     mLightContainer->displayState(false);
     mLightContainer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mLightContainer, SIGNAL(clickedLight(QString)), this, SLOT(lightClicked(QString)));

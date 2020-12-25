@@ -717,18 +717,17 @@ void MainWindow::pushOutFullPageWidget(QWidget*) {
 }
 
 void MainWindow::pushInEditGroupPage(std::uint64_t key) {
-    if (key != 0u) {
-        auto group = mGroups->groupFromID(key);
-        mEditGroupPage->prefillGroup(group);
-    } else {
-        mEditGroupPage->clearGroup();
-    }
-
     pushInFullPageWidget(mEditGroupPage);
     if (mLeftHandMenu->alwaysOpen()) {
         mEditGroupPage->pushIn(QPoint(width(), 0), QPoint(mLeftHandMenu->width(), 0));
     } else {
         mEditGroupPage->pushIn(QPoint(width(), 0), QPoint(0u, 0u));
+    }
+    if (key != 0u) {
+        auto group = mGroups->groupFromID(key);
+        mEditGroupPage->prefillGroup(group);
+    } else {
+        mEditGroupPage->clearGroup();
     }
 }
 

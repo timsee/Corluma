@@ -44,7 +44,8 @@ public:
           mMetadata{new cor::ExpandingTextScrollArea(this)},
           mDeleteButton{new QPushButton("Delete", this)},
           mStateButton{new cor::Button(this, {})},
-          mSingleLightIcon{new QLabel(this)} {
+          mSingleLightIcon{new QLabel(this)},
+          mRowHeight{10} {
         auto font = mName->font();
         font.setPointSize(20);
         mName->setFont(font);

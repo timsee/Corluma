@@ -73,6 +73,11 @@ void ChooseGroupWidget::clickedGroup(std::uint64_t key) {
 }
 
 void ChooseGroupWidget::resizeCloseButton() {
+#ifdef MOBILE_BUILD
+    mTopHeight = cor::applicationSize().height() * 0.075;
+#else
+    mTopHeight = int(cor::applicationSize().height() * 0.1);
+#endif
     QPixmap pixmap(":images/closeX.png");
     int closeSize = int(mTopHeight * 0.8);
     int finalSize = int(mTopHeight * 0.5);

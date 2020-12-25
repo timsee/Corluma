@@ -23,7 +23,7 @@ DiscoveryNanoLeafWidget::DiscoveryNanoLeafWidget(QWidget* parent,
     mLabel->setText("Looking for NanoLeaf...");
     mLabel->setAlignment(Qt::AlignLeft | Qt::AlignBottom);
 
-    mListWidget = new cor::ListWidget(this, cor::EListType::linear);
+    mListWidget = new cor::ListWidget(this, cor::EListType::grid);
     mListWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     QScroller::grabGesture(mListWidget->viewport(), QScroller::LeftMouseButtonGesture);
 }
@@ -191,16 +191,8 @@ void DiscoveryNanoLeafWidget::resize() {
     mGreyout->resize();
     mListWidget->mainWidget()->setFixedWidth(width());
 
-    // call resize function of each widget
-    auto yHeight = 0u;
-    QSize widgetSize(mListWidget->width(), int(mListWidget->height() * 0.33));
-    for (auto widget : mListWidget->widgets()) {
-        auto nanoleafWidget = dynamic_cast<DisplayPreviewNanoleafWidget*>(widget);
-        nanoleafWidget->setGeometry(0, yHeight, widgetSize.width(), widgetSize.height());
-        yHeight += nanoleafWidget->height();
-    }
-    mListWidget->mainWidget()->setFixedHeight(yHeight);
-    mListWidget->mainWidget()->setFixedWidth(width());
+    mListWidget->setPreferredWidgetHeight(height() / 3);
+    mListWidget->resizeWidgets();
 }
 
 void DiscoveryNanoLeafWidget::nanoleafClicked(QString nanoleaf) {

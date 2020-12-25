@@ -34,7 +34,8 @@ public:
           mLeftButton{new QPushButton(this)},
           mRightButton{new QPushButton(this)},
           mTopStateWidget{new GroupStateWidget(cor::GroupState(), this)},
-          mStateWidget{new ChooseStateWidget(this)} {
+          mStateWidget{new ChooseStateWidget(this)},
+          mRowHeight{10} {
         mBottomButtons->enableForward(false);
 
         mGroupsWidget->displayState(false);

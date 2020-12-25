@@ -16,9 +16,9 @@ namespace cor {
 EditPage::EditPage(QWidget* parent, CommLayer* comm, GroupData* groups, bool showPreviewButton)
     : QWidget(parent),
       mPreviewButton{new QPushButton("Preview", this)},
+      mPlaceholder{new QWidget(this)},
       mComm(comm),
       mGroups(groups),
-      mPlaceholder{new QWidget(this)},
       mCloseButton{new QPushButton(this)},
       mUsePreviewButton{showPreviewButton} {
     connect(mCloseButton, SIGNAL(clicked(bool)), this, SLOT(closePressed(bool)));
@@ -155,6 +155,11 @@ void EditPage::showAndResizePage(std::uint32_t i) {
 }
 
 void EditPage::resizeCloseButton() {
+#ifdef MOBILE_BUILD
+    mTopHeight = cor::applicationSize().height() * 0.075;
+#else
+    mTopHeight = int(cor::applicationSize().height() * 0.1);
+#endif
     QPixmap pixmap(":images/closeX.png");
     int closeSize = int(mTopHeight * 0.8);
     int finalSize = int(mTopHeight * 0.5);
@@ -166,6 +171,11 @@ void EditPage::resizeCloseButton() {
 }
 
 void EditPage::resizeEvent(QResizeEvent*) {
+#ifdef MOBILE_BUILD
+    mTopHeight = cor::applicationSize().height() * 0.075;
+#else
+    mTopHeight = int(cor::applicationSize().height() * 0.1);
+#endif
     resizeCloseButton();
     int yPos = mTopHeight;
     // width of progress widget should be relatively fixed

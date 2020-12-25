@@ -34,28 +34,13 @@ public:
      */
     void resize();
 
-signals:
-    /*!
-     * \brief pressedClose emited when the close button is pressed.
-     */
-    void closePressed();
-
 protected:
     /*!
      * \brief paintEvent used to draw the background of the widget.
      */
     void paintEvent(QPaintEvent*);
 
-private slots:
-    /*!
-     * \brief closePressed close button pressed from top widget.
-     */
-    void pressedClose(bool);
-
 private:
-    /// title and close button at top of widget.
-    cor::TopWidget* mTopWidget;
-
     /// layout for widget
     QVBoxLayout* mMainLayout;
 

@@ -83,26 +83,14 @@ DisplayPreviewBridgeWidget::DisplayPreviewBridgeWidget(const hue::Bridge& bridge
     connect(mDiscoverHueButton, SIGNAL(clicked()), this, SLOT(pressedDiscoverHues()));
     mDiscoverHueButton->setStyleSheet(buttonStyleSheet);
 
-    mGroupsButton = new QPushButton("View Groups", this);
-    mGroupsButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(mGroupsButton, SIGNAL(clicked()), this, SLOT(groupsListPressed()));
-    mGroupsButton->setStyleSheet(buttonStyleSheet);
 
-    mSchedulesButton = new QPushButton("Schedules", this);
-    mSchedulesButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(mSchedulesButton, SIGNAL(clicked()), this, SLOT(schedulesListPressed()));
-    mSchedulesButton->setStyleSheet(buttonStyleSheet);
 
     mButtonsLayout = new QGridLayout;
     mButtonsLayout->addWidget(mDiscoverHueButton, 0, 0);
-    mButtonsLayout->addWidget(mGroupsButton, 0, 1);
     auto margin = int(this->width() * 0.05);
     mButtonsLayout->setSpacing(margin * 2);
     mButtonsLayout->setContentsMargins(margin, margin, margin, margin);
-    mButtonsLayout->addWidget(mSchedulesButton, 1, 0);
-    mSchedulesButton->setEnabled(false);
     mDiscoverHueButton->setEnabled(false);
-    mGroupsButton->setEnabled(false);
 
     //-----
     // Top right widget
@@ -146,8 +134,6 @@ void DisplayPreviewBridgeWidget::handleBridgeState(EBridgeDiscoveryState state) 
     if (state == EBridgeDiscoveryState::connected) {
         mBridgePixmap = QPixmap(":images/Hue-Bridge.png");
         mDiscoverHueButton->setEnabled(true);
-        mGroupsButton->setEnabled(true);
-        mSchedulesButton->setEnabled(true);
         mImage->setPixmap(
             mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     } else if (state == EBridgeDiscoveryState::lookingForUsername) {
@@ -210,14 +196,6 @@ void DisplayPreviewBridgeWidget::pressedDiscoverHues() {
     emit discoverHuesPressed(mBridge.id());
 }
 
-void DisplayPreviewBridgeWidget::groupsListPressed() {
-    emit groupsPressed(mBridge.id());
-}
-
-void DisplayPreviewBridgeWidget::schedulesListPressed() {
-    emit schedulesPressed(mBridge.id());
-}
-
 void DisplayPreviewBridgeWidget::changedName(const QString& newName) {
     emit nameChanged(mBridge.id(), newName);
 }
@@ -240,7 +218,7 @@ void DisplayPreviewBridgeWidget::deleteButtonPressed() {
 
 
 void DisplayPreviewBridgeWidget::calculateButtonFontSize() {
-    const auto& text = mGroupsButton->text();
+    const auto& text = mDiscoverHueButton->text();
     auto widget = mDiscoverHueButton;
     // calcuate the text's size
     auto systemFontWidth = widget->fontMetrics().boundingRect(text).width();
@@ -270,9 +248,7 @@ void DisplayPreviewBridgeWidget::calculateButtonFontSize() {
             }
         }
     }
-    mSchedulesButton->setFont(font);
     mDiscoverHueButton->setFont(font);
-    mGroupsButton->setFont(font);
 }
 
 void DisplayPreviewBridgeWidget::highlightLights() {
