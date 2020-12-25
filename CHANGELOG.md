@@ -1032,3 +1032,9 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed bugs in the `LeftHandMenu`.
 - Moved the groups and schedules widgets to the `DisplayHueBridgeWidget`.
 - Fixed miscellaneous bugs.
+
+### **v0.21.51**
+### The Nanoleaf Deletion Update
+- Fixed the delete button for Nanoleafs.
+- Fixed how Hues edit existing groups.
+- Fixed miscellaneous bugs.

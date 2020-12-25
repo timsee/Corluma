@@ -106,7 +106,7 @@ void DiscoveryHueWidget::checkIfIPExists(const QString& IP) {
     }
 }
 
-void DiscoveryHueWidget::deleteLight(const QString& light) {}
+void DiscoveryHueWidget::deleteLight(const QString&) {}
 
 void DiscoveryHueWidget::updateBridgeGUI() {
     auto bridgeList = mComm->hue()->bridges().items();

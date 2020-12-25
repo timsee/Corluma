@@ -152,6 +152,16 @@ private:
     QString mUniqueID;
 };
 
+/// converts a vector of lights to a vector of IDs that represent the lights
+inline std::vector<QString> hueVectorToIDs(const std::vector<HueMetadata>& lightVector) {
+    std::vector<QString> retVector;
+    retVector.reserve(lightVector.size());
+    for (const auto& light : lightVector) {
+        retVector.emplace_back(light.uniqueID());
+    }
+    return retVector;
+}
+
 /// basic constructor for a cor::Light variant for hues
 class HueLight : public cor::Light {
 public:

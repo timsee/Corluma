@@ -67,7 +67,7 @@ public:
     void connectUPnPDiscovery(UPnPDiscovery* UPnP);
 
     /// deletes the light from the save data and device table
-    void deleteLight(const cor::Light& light);
+    bool deleteNanoleaf(const QString& serialNumber, const QString& IP);
 
     /// getter for the discovery state of the nanoleaf
     ENanoleafDiscoveryState discoveryState() { return mDiscovery->state(); }

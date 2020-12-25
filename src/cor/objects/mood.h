@@ -108,6 +108,30 @@ public:
                && object["devices"].isArray();
     }
 
+    /// creates a new mood with the light removed.
+    cor::Mood removeLight(const QString& lightID) const {
+        auto lights = mLights;
+        auto lightToRemove = cor::Light{};
+        // look for the light ID in the lights
+        for (auto light : mLights) {
+            if (light.uniqueID() == lightID) {
+                lightToRemove = light;
+            }
+        }
+        // if a light is removable, remove it.
+        if (lightToRemove.isValid()) {
+            auto findLight = std::find(lights.begin(), lights.end(), lightID);
+            if (findLight != lights.end()) {
+                lights.erase(findLight);
+            }
+        }
+        cor::Mood newMood(mUniqueID, mName, lights);
+        newMood.additionalInfo(mAdditionalInfo);
+        newMood.defaults(mDefaults);
+        newMood.description(mDescription);
+        return newMood;
+    }
+
     /// json representation of the mood
     QJsonObject toJson() const noexcept {
         QJsonObject object;

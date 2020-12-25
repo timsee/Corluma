@@ -805,7 +805,7 @@ void BridgeDiscovery::updateJSONLights(const hue::Bridge& bridge, const QJsonArr
             }
             if (!deletedLights.empty()) {
                 for (const auto& id : deletedLights) {
-                    mGroups->lightDeleted(id);
+                    mGroups->lightDeleted(ECommType::hue, id);
                 }
             }
         }

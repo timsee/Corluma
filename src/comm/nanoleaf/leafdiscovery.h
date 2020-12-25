@@ -66,20 +66,30 @@ public:
     std::pair<QString, bool> nameFromSerial(const QString& serialNumber);
 
     /// removes the nanoleaf from the save data and discovered data
-    void removeNanoleaf(const nano::LeafMetadata& light);
+    bool removeNanoleaf(const nano::LeafMetadata& light);
 
     /// change the rotation of a nanoleaf light, which reflects how it is mounted in physical
     /// reality. This is not a value stored in a nanoleaf, but is useful when rendering the light.
     void changeRotation(const nano::LeafMetadata& light, int rotation);
 
     /*!
-     * \brief findLightBySerial looks for the LeafMetadata of a light based off of its serial
-     * number.
+     * \brief findDiscoveredLightBySerial looks for the LeafMetadata of a light based off of its
+     * serial number. This looks only in the discovered lights list.
      * \param serialNumber serial number to look for
      * \return true if the serial number exists and a proper light was returned, false if the lookup
      * was unsucessful
      */
-    std::pair<nano::LeafMetadata, bool> findLightBySerial(const QString& serialNumber);
+    std::pair<nano::LeafMetadata, bool> findDiscoveredLightBySerial(const QString& serialNumber);
+
+    /*!
+     * \brief findLightBySerial looks for the LeafMetadata of a light based off of its
+     * serial number.
+     * \param serialNumber serial number to look for
+     * \return true if the serial number exists and a proper light was returned, false if the lookup
+     * was unsucessful
+     */
+    std::pair<nano::LeafMetadata, bool> findLightBySerialOrIP(const QString& serialNumber,
+                                                              const QString& IP);
 
     /*!
      * \brief handleUndiscoveredLight handles a partial LeafMetadata thats received a payload and

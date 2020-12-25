@@ -118,7 +118,7 @@ private slots:
         if (reply == QMessageBox::Yes) {
             if (mEditMode) {
                 // remove the existing group
-                mGroups->removeGroup(mGroupWidget->group().uniqueID());
+                // mGroups->removeGroup(mGroupWidget->group().uniqueID());
                 qDebug() << "INFO: editing group" << group.toJson();
             } else {
                 qDebug() << "INFO: adding new group" << group.toJson();

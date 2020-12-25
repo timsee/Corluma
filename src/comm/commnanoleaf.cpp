@@ -351,7 +351,7 @@ void CommNanoleaf::stateUpdate() {
 void CommNanoleaf::sendPacket(const QJsonObject& object) {
     if (object["uniqueID"].isString() && !lightDict().empty()) {
         // get the light
-        auto result = mDiscovery->findLightBySerial(object["uniqueID"].toString());
+        auto result = mDiscovery->findDiscoveredLightBySerial(object["uniqueID"].toString());
         auto light = result.first;
         if (result.second) {
             if (object["isOn"].isBool()) {
@@ -376,7 +376,7 @@ void CommNanoleaf::sendPacket(const QJsonObject& object) {
 }
 
 std::pair<nano::LeafMetadata, bool> CommNanoleaf::findNanoLeafLight(const QString& serialNumber) {
-    return mDiscovery->findLightBySerial(serialNumber);
+    return mDiscovery->findDiscoveredLightBySerial(serialNumber);
 }
 
 std::pair<nano::LeafLight, bool> CommNanoleaf::lightFromMetadata(
@@ -1103,14 +1103,13 @@ void CommNanoleaf::brightnessChange(const nano::LeafMetadata& leafLight, int bri
     putJSON(request, json);
 }
 
-void CommNanoleaf::deleteLight(const cor::Light& leafLight) {
-    auto result = mDiscovery->findLightBySerial(leafLight.uniqueID());
-    auto light = result.first;
-    if (result.second) {
-        // remove from comm data
-        removeLight(light.serialNumber());
+bool CommNanoleaf::deleteNanoleaf(const QString& serialNumber, const QString& IP) {
+    auto leafMetadataResult = mDiscovery->findLightBySerialOrIP(serialNumber, IP);
+    auto leafMetadata = leafMetadataResult.first;
 
-        // remove from saved data
-        mDiscovery->removeNanoleaf(light);
-    }
+    // remove from comm data
+    removeLight(serialNumber);
+
+    // remove from saved data
+    return mDiscovery->removeNanoleaf(leafMetadata);
 }

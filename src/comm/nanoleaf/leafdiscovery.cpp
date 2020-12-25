@@ -88,17 +88,17 @@ void LeafDiscovery::foundNewLight(nano::LeafMetadata newLight) {
     updateJSON(newLight);
 }
 
-void LeafDiscovery::removeNanoleaf(const nano::LeafMetadata& controllerToRemove) {
+bool LeafDiscovery::removeNanoleaf(const nano::LeafMetadata& controllerToRemove) {
 #ifdef DEBUG_LEAF_DISCOVERY
     qDebug() << __func__;
 #endif
-    bool updateJson = false;
+    bool foundLight = false;
     // check if the controller exists in the unknown group, delete if found
     for (auto unknownController : mUnknownLights) {
         if (unknownController.hardwareName() == controllerToRemove.hardwareName()) {
-            auto it = std::find(mNotFoundLights.begin(), mNotFoundLights.end(), unknownController);
+            auto it = std::find(mUnknownLights.begin(), mUnknownLights.end(), unknownController);
             mUnknownLights.erase(it);
-            updateJson = true;
+            foundLight = true;
             break;
         }
     }
@@ -108,7 +108,7 @@ void LeafDiscovery::removeNanoleaf(const nano::LeafMetadata& controllerToRemove)
         if (notFoundController.authToken() == controllerToRemove.authToken()) {
             auto it = std::find(mNotFoundLights.begin(), mNotFoundLights.end(), notFoundController);
             mNotFoundLights.erase(it);
-            updateJson = true;
+            foundLight = true;
             break;
         }
     }
@@ -116,7 +116,7 @@ void LeafDiscovery::removeNanoleaf(const nano::LeafMetadata& controllerToRemove)
     bool deleteFromDict = false;
     for (const auto& foundController : mFoundLights.items()) {
         if (foundController.serialNumber() == controllerToRemove.serialNumber()) {
-            updateJson = true;
+            foundLight = true;
             deleteFromDict = true;
         }
     }
@@ -124,7 +124,7 @@ void LeafDiscovery::removeNanoleaf(const nano::LeafMetadata& controllerToRemove)
         mFoundLights.removeKey(controllerToRemove.serialNumber().toStdString());
     }
 
-    if (updateJson) {
+    if (foundLight) {
         QJsonArray array = mJsonData.array();
         bool shouldSave = false;
         int i = 0;
@@ -143,6 +143,7 @@ void LeafDiscovery::removeNanoleaf(const nano::LeafMetadata& controllerToRemove)
             saveJSON();
         }
     }
+    return foundLight;
 }
 
 void LeafDiscovery::receivedUPnP(const QHostAddress&, const QString& payload) {
@@ -426,8 +427,36 @@ nano::LeafMetadata LeafDiscovery::findLightByIP(const QString& IP) {
     return {};
 }
 
-std::pair<nano::LeafMetadata, bool> LeafDiscovery::findLightBySerial(const QString& serialNumber) {
+std::pair<nano::LeafMetadata, bool> LeafDiscovery::findDiscoveredLightBySerial(
+    const QString& serialNumber) {
     return mFoundLights.item(serialNumber.toStdString());
+}
+
+std::pair<nano::LeafMetadata, bool> LeafDiscovery::findLightBySerialOrIP(
+    const QString& serialNumber,
+    const QString& IP) {
+    // first look in found lights.
+    auto foundResult = mFoundLights.item(serialNumber.toStdString());
+    if (foundResult.second) {
+        return foundResult;
+    }
+
+    // if not in found lights, search by serial in notFound lights
+    for (auto notFoundController : mNotFoundLights) {
+        if (notFoundController.serialNumber() == serialNumber) {
+            return std::make_pair(notFoundController, true);
+        }
+    }
+
+    // if still not found, use IP to search in unknown lights
+    for (auto unknownLight : mUnknownLights) {
+        if (unknownLight.IP() == IP) {
+            return std::make_pair(unknownLight, true);
+        }
+    }
+
+    // return false if still not found
+    return std::make_pair(nano::LeafMetadata{}, false);
 }
 
 void LeafDiscovery::updateFoundLight(const nano::LeafMetadata& controller) {

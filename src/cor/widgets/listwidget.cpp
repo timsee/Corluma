@@ -91,7 +91,7 @@ void ListWidget::resizeWidgets() {
                                 widgetHeight);
             widget->setHidden(false);
             if (position.x() == 0) {
-                newHeight += widget->height();
+                yPos += widget->height();
             }
         }
     }

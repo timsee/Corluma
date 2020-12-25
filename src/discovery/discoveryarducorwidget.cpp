@@ -144,9 +144,7 @@ void DiscoveryArduCorWidget::controllerClicked(QString controller) {
                 emit showControllerWidget();
                 mControllerPage->showArduCor(arduCorWidget->controller());
             } else {
-                QMessageBox::StandardButton warning;
-                QString text = "Light not discovered yet.";
-                warning = QMessageBox::warning(this, "Not Discovered", text);
+                QMessageBox::warning(this, "Not Discovered", "Light not discovered yet.");
             }
         }
     }

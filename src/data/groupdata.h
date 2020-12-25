@@ -180,14 +180,6 @@ public:
     bool mergeExternalData(const QString& file, bool keepFileChanges);
 
     /*!
-     * \brief lightDeleted removes a light from all moods and collections based off of its unique
-     * ID. This is called when a light is detected as deleted elsewhere in the application
-     *
-     * \param uniqueID the unique ID of a light
-     */
-    void lightDeleted(const QString& uniqueID);
-
-    /*!
      * \brief removeAppData delete .json file from local data. Will delete all saved json data
      * permanently.
      *
@@ -209,9 +201,13 @@ public slots:
     /// adds a light to group metadata
     void addLightToGroups(ECommType, const QString& uniqueID);
 
-    /// removes a light from group metadata
-    void removeLightFromGroups(ECommType, const QString& uniqueID);
-
+    /*!
+     * \brief lightDeleted removes a light from all moods and collections based off of its unique
+     * ID. This is called when a light is detected as deleted elsewhere in the application
+     *
+     * \param uniqueID the unique ID of a light
+     */
+    void lightDeleted(ECommType, const QString& uniqueID);
 signals:
 
     /*!

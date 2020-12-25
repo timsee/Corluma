@@ -97,8 +97,29 @@ void GroupData::saveNewGroup(const cor::Group& group) {
     auto groupObject = group.toJson();
     if (!mJsonData.isNull() && !group.lights().empty()) {
         if (mJsonData.isArray()) {
-            auto array = mJsonData.array();
-            mJsonData.array().push_front(groupObject);
+            // delete the pre-existing group(s)
+            QJsonArray array = mJsonData.array();
+            int groupIndex = 0;
+            std::vector<int> indicesToRemove;
+            // loop through array of all group data
+            for (const auto value : array) {
+                // convert to a json object
+                const auto& object = value.toObject();
+                // search for the unique ID in its devices array
+                QString objectName = object["name"].toString();
+                if (objectName == group.name()) {
+                    indicesToRemove.push_back(groupIndex);
+                }
+                groupIndex++;
+            }
+            // sort elements in descending order, since removeAt will shift the indices after the
+            // removed one.
+            std::sort(indicesToRemove.begin(), indicesToRemove.end(), std::greater<>());
+            if (!indicesToRemove.empty()) {
+                for (auto index : indicesToRemove) {
+                    array.removeAt(index);
+                }
+            }
             array.push_front(groupObject);
             mJsonData.setArray(array);
 
@@ -169,7 +190,9 @@ void GroupData::updateExternallyStoredGroups(const std::vector<cor::Group>& exte
     updateGroupMetadata();
 }
 
-void GroupData::lightDeleted(const QString& uniqueID) {
+void GroupData::lightDeleted(ECommType, const QString& uniqueID) {
+    bool anyUpdates = false;
+
     if (!mJsonData.isNull()) {
         if (mJsonData.isArray()) {
             QJsonArray array = mJsonData.array();
@@ -191,6 +214,7 @@ void GroupData::lightDeleted(const QString& uniqueID) {
                     deviceIndex++;
                 }
                 if (detectChanges) {
+                    anyUpdates = true;
                     // add back devices array, modified
                     object["devices"] = devicesArray;
                     // remove old object at position
@@ -199,21 +223,43 @@ void GroupData::lightDeleted(const QString& uniqueID) {
                     array.push_back(object);
                 }
             }
+
             groupIndex++;
             mJsonData.setArray(array);
-            saveJSON();
-            updateGroupMetadata();
         }
     }
-    // parse the moods, remove from list if needed
+
+    // parse the moods, remove from dict if needed
     for (const auto& mood : mMoodDict.items()) {
-        auto itemVector = mMoodDict.items();
-        for (const auto& lightID : mood.lights()) {
-            if (lightID.uniqueID() == uniqueID) {
-                mMoodDict.update(QString::number(mood.uniqueID()).toStdString(), mood);
-                break;
+        for (const auto& moodLight : mood.lights()) {
+            if (mood.lights().size() == 1 && (moodLight.uniqueID() == uniqueID)
+                && mood.defaults().empty()) {
+                // edge case where the mood only exists for this one light, remove it entirely
+                mMoodDict.removeKey(QString::number(mood.uniqueID()).toStdString());
+            } else if (moodLight.uniqueID() == uniqueID) {
+                // standard case, make a new mood without the light
+                auto newMood = mood.removeLight(moodLight.uniqueID());
+                mMoodDict.update(QString::number(mood.uniqueID()).toStdString(), newMood);
             }
         }
+    }
+
+    // parse the groups, remove from dict if needed
+    for (const auto& group : mGroupDict.items()) {
+        for (const auto& groupLight : group.lights()) {
+            if (group.lights().size() == 1 && (groupLight == uniqueID)) {
+                // edge case where the mood only exists for this one light, remove it entirely
+                mGroupDict.removeKey(QString::number(group.uniqueID()).toStdString());
+            } else if (groupLight == uniqueID) {
+                // standard case, make a new mood without the light
+                auto newGroup = group.removeLight(uniqueID);
+                mGroupDict.update(QString::number(group.uniqueID()).toStdString(), newGroup);
+            }
+        }
+    }
+    if (anyUpdates) {
+        updateGroupMetadata();
+        saveJSON();
     }
 }
 
@@ -377,10 +423,6 @@ void GroupData::addLightToGroups(ECommType, const QString& uniqueID) {
     // qDebug() << " add light to groups " << uniqueID;
     mOrphans.addNewLight(uniqueID, mGroupDict.items());
     updateGroupMetadata();
-}
-
-void GroupData::removeLightFromGroups(ECommType, const QString& uniqueID) {
-    // qDebug() << " remove light from groups" << uniqueID;
 }
 
 std::uint64_t GroupData::generateNewUniqueKey() {

@@ -1050,6 +1050,49 @@ std::vector<cor::Group> CommHue::groups(const hue::Bridge& bridge) {
     return mDiscovery->bridgeFromIP(bridge.IP()).groups();
 }
 
+std::vector<cor::Group> CommHue::groupsAndRooms(const hue::Bridge& bridge) {
+    auto groups = mDiscovery->bridgeFromIP(bridge.IP()).groups();
+    auto rooms = mDiscovery->bridgeFromIP(bridge.IP()).rooms();
+    groups.insert(groups.end(), rooms.begin(), rooms.end());
+    return groups;
+}
+
+
+bool CommHue::saveNewGroup(const cor::Group& group, const std::vector<HueMetadata>& hueLights) {
+    for (const auto& bridge : bridges().items()) {
+        // sort out lights only in this bridge
+        auto hueLightsInBridge = bridge.lightsInBridge(hueLights);
+        if (!hueLightsInBridge.empty()) {
+            auto lightIDs = hueVectorToIDs(hueLights);
+
+            // check if group already exists
+            bool groupExists = false;
+            for (const auto& hueGroup : groupsAndRooms(bridge)) {
+                if (hueGroup.name() == group.name()) {
+                    groupExists = true;
+                    // detect if any changes are made on existing group by comparing the new hues
+                    // with the old hues
+                    auto sortedHueGroupLights = hueGroup.lights();
+                    std::sort(sortedHueGroupLights.begin(), sortedHueGroupLights.end());
+                    auto sortedNewLights = lightIDs;
+                    std::sort(sortedNewLights.begin(), sortedNewLights.end());
+                    if (sortedHueGroupLights != sortedNewLights) {
+                        // an update is picked up for a pre-existing hue group
+                        qDebug() << "INFO: sending an update messeage for a hue group";
+                        updateGroup(bridge, hueGroup, hueLights);
+                    }
+                }
+            }
+            if (!groupExists) {
+                qDebug() << "INFO: creating a new hue group";
+                createGroup(bridge, group.name(), hueLights, group.type() == cor::EGroupType::room);
+            }
+        }
+    }
+    // this reloads externally saved data into the GroupsData.
+    mDiscovery->reloadGroupData();
+    return true;
+}
 
 hue::Bridge CommHue::bridgeFromLight(const cor::Light& light) {
     return mDiscovery->bridgeFromLight(hueLightFromLight(light));

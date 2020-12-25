@@ -37,7 +37,7 @@ public:
     void showArduCor(const cor::Controller& controller);
 
     /// show a nanoleaf controller
-    void showNanoleaf(const nano::LeafMetadata& metadata);
+    void showNanoleaf(const nano::LeafMetadata& metadata, nano::ELeafDiscoveryState discoveryState);
 
     /// show a Hue Bridge
     void showHueBridge(const hue::Bridge& bridge);
@@ -79,6 +79,9 @@ private slots:
 
     /// handle when a light is deleted.
     void handleDeleteLight(QString);
+
+    /// handle when a nanoleaf is deleted.
+    void handleDeleteNanoleaf(QString, QString);
 
     /// handle when a full controller is deleted. this deletes all of its lights.
     void handleDeleteController(QString, EProtocolType);

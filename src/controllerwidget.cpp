@@ -13,7 +13,10 @@ ControllerWidget::ControllerWidget(QWidget* parent, CommLayer* comm, cor::LightL
       mHueBridgeWidget{new DisplayHueBridgeWidget(this, comm, selectedLights)} {
     connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(backButtonPressed(bool)));
 
-    connect(mNanoleafWidget, SIGNAL(deleteLight(QString)), this, SLOT(handleDeleteLight(QString)));
+    connect(mNanoleafWidget,
+            SIGNAL(deleteNanoleaf(QString, QString)),
+            this,
+            SLOT(handleDeleteNanoleaf(QString, QString)));
     connect(mNanoleafWidget,
             SIGNAL(lightClicked(QString, bool)),
             this,
@@ -69,6 +72,7 @@ void ControllerWidget::renderUI() {
         if (lightResult.second) {
             mNanoleafWidget->updateLeafMetadata(
                 mNanoleafWidget->metadata(),
+                mNanoleafWidget->discoveryState(),
                 mSelectedLights->doesLightExist(mNanoleafWidget->metadata().serialNumber()));
         }
     }
@@ -88,8 +92,10 @@ void ControllerWidget::showArduCor(const cor::Controller& controller) {
     mHueBridgeWidget->setVisible(false);
 }
 
-void ControllerWidget::showNanoleaf(const nano::LeafMetadata& metadata) {
+void ControllerWidget::showNanoleaf(const nano::LeafMetadata& metadata,
+                                    nano::ELeafDiscoveryState discoveryState) {
     mNanoleafWidget->updateLeafMetadata(metadata,
+                                        discoveryState,
                                         mSelectedLights->doesLightExist(metadata.serialNumber()));
     mArduCorWidget->setVisible(false);
     mNanoleafWidget->setVisible(true);
@@ -112,6 +118,22 @@ void ControllerWidget::changeRowHeight(int height) {
 void ControllerWidget::handleDeleteLight(QString uniqueID) {
     // delete the light
     emit deleteLight(uniqueID);
+
+    auto light = mComm->lightByID(uniqueID);
+
+    // close the page, it will no longer exist
+    emit backButtonPressed();
+}
+
+void ControllerWidget::handleDeleteNanoleaf(QString serialNumber, QString IP) {
+    // delete the light
+    emit deleteLight(serialNumber);
+
+    // delete the light from the comm layer, which signals to delete it from groups
+    bool result = mComm->nanoleaf()->deleteNanoleaf(serialNumber, IP);
+    if (!result) {
+        qDebug() << "WARNING: error deleting " << serialNumber << " IP: " << IP;
+    }
     // close the page, it will no longer exist
     emit backButtonPressed();
 }
@@ -149,7 +171,9 @@ void ControllerWidget::lightClicked(QString lightKey, bool) {
     }
 }
 
-void ControllerWidget::controllerClicked(QString controller, EProtocolType protocol, bool selectAll) {
+void ControllerWidget::controllerClicked(QString controller,
+                                         EProtocolType protocol,
+                                         bool selectAll) {
     if (protocol == EProtocolType::arduCor) {
         auto controllerResult =
             mComm->arducor()->discovery()->findControllerByControllerName(controller);

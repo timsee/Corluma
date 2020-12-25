@@ -199,7 +199,7 @@ void DiscoveryNanoLeafWidget::nanoleafClicked(QString nanoleaf) {
     for (auto widget : mListWidget->widgets()) {
         auto nanoleafWidget = dynamic_cast<DisplayPreviewNanoleafWidget*>(widget);
         if (nanoleafWidget->nanoleaf().name() == nanoleaf) {
-            mControllerPage->showNanoleaf(nanoleafWidget->nanoleaf());
+            mControllerPage->showNanoleaf(nanoleafWidget->nanoleaf(), nanoleafWidget->status());
             emit showControllerWidget();
         }
     }

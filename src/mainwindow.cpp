@@ -190,7 +190,7 @@ void MainWindow::setupBackend() {
     connect(mComm,
             SIGNAL(lightDeleted(ECommType, QString)),
             mGroups,
-            SLOT(removeLightFromGroups(ECommType, QString)));
+            SLOT(lightDeleted(ECommType, QString)));
     for (int i = 0; i < int(EProtocolType::MAX); ++i) {
         auto type = EProtocolType(i);
         if (mAppSettings->enabled(type)) {

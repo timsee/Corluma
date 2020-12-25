@@ -113,10 +113,6 @@ CommType* CommLayer::commByType(ECommType type) const {
 }
 
 
-bool CommLayer::removeLight(const cor::Light& light) {
-    return commByType(light.commType())->removeLight(light);
-}
-
 bool CommLayer::fillLight(cor::Light& light) {
     return commByType(light.commType())->fillLight(light);
 }
@@ -219,24 +215,10 @@ bool CommLayer::saveNewGroup(const cor::Group& group) {
     nonHueGroup.description(group.description());
     mGroups->saveNewGroup(nonHueGroup);
 
+    auto hueResult = true;
     // check if any hues are used
     if (!hueLights.empty()) {
-        for (const auto& bridge : mHue->bridges().items()) {
-            // check if group already exists
-            bool groupExists = false;
-            for (const auto& hueGroup : mHue->groups(bridge)) {
-                if (hueGroup.name() == group.name()) {
-                    groupExists = true;
-                    mHue->updateGroup(bridge, hueGroup, hueLights);
-                }
-            }
-            if (!groupExists) {
-                mHue->createGroup(bridge,
-                                  group.name(),
-                                  hueLights,
-                                  group.type() == cor::EGroupType::room);
-            }
-        }
+        hueResult = mHue->saveNewGroup(group, hueLights);
     }
     return true;
 }

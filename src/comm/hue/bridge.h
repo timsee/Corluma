@@ -120,11 +120,17 @@ public:
     const cor::Dictionary<HueMetadata>& lights() const noexcept { return mLights; }
 
     /// returns a vector of all the uniqueIDs of each light associated with the bridge.
-    std::vector<QString> lightIDs() const noexcept {
-        std::vector<QString> retVector;
-        retVector.reserve(mLights.size());
-        for (const auto& light : mLights.items()) {
-            retVector.emplace_back(light.uniqueID());
+    std::vector<QString> lightIDs() const noexcept { return hueVectorToIDs(mLights.items()); }
+
+    /// takes a list of lights as input, and returns a list of all lights from the original list
+    /// contained in this bridge.
+    std::vector<HueMetadata> lightsInBridge(const std::vector<HueMetadata>& lightsToTest) const {
+        std::vector<HueMetadata> retVector;
+        for (auto light : lightsToTest) {
+            auto lightResult = mLights.item(light.uniqueID().toStdString());
+            if (lightResult.second) {
+                retVector.push_back(light);
+            }
         }
         return retVector;
     }

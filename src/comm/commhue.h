@@ -221,12 +221,18 @@ public:
     /// not the schedule exists.
     std::pair<hue::Schedule, bool> timeoutSchedule(const cor::Light& light);
 
+    /// save a new group to one or more bridges. A bridge stores all group information.
+    bool saveNewGroup(const cor::Group& group, const std::vector<HueMetadata>& hueLights);
+
     /*!
      * \brief groups getter for a list of all know groups
      * \param bridge bridge to get all groups from
      * \return list of all known groups
      */
     std::vector<cor::Group> groups(const hue::Bridge& bridge);
+
+    /// return a vector of both groups and rooms.
+    std::vector<cor::Group> groupsAndRooms(const hue::Bridge& bridge);
 
     /// get the hue bridge that controls a cor::Light
     hue::Bridge bridgeFromLight(const cor::Light& light);

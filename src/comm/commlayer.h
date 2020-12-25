@@ -87,9 +87,6 @@ public:
      */
     void shutdown(EProtocolType type);
 
-    /// removes light from saved data, returns true if successful
-    bool removeLight(const cor::Light& light);
-
     /*!
      * \brief fillLight use the controller name, type, and index to fill in the rest
      *        of the devices data.

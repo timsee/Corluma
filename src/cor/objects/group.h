@@ -97,6 +97,19 @@ public:
     /// setter for lights
     void lights(const std::vector<QString>& lights) { mLights = lights; }
 
+    /// creates a new group with the light removed.
+    cor::Group removeLight(const QString& lightID) const {
+        auto lights = mLights;
+        auto findLight = std::find(lights.begin(), lights.end(), lightID);
+        if (findLight != lights.end()) {
+            lights.erase(findLight);
+        }
+        cor::Group newGroup(mUniqueID, mName, mType, lights);
+        newGroup.description(mDescription);
+        return newGroup;
+    }
+
+
     /// true if JSON creates a valid group, false otherwise
     static bool isValidJson(const QJsonObject& object) {
         // check top level

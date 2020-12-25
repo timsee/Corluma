@@ -21,6 +21,7 @@
 #include "menu/groupstatelistmenu.h"
 #include "menu/lightslistmenu.h"
 #include "rotatelightwidget.h"
+#include "syncwidget.h"
 
 /*!
  * \copyright
@@ -51,6 +52,7 @@ public:
           mGreyout{new GreyOutOverlay(true, parentWidget()->parentWidget())},
           mChangeNameInput{new cor::TextInputWidget(parentWidget()->parentWidget())},
           mRotateLightWidget{new RotateLightWidget(parentWidget()->parentWidget())},
+          mSyncWidget{new SyncWidget(this)},
           mRowHeight{10} {
         auto font = mName->font();
         font.setPointSize(20);
@@ -86,9 +88,14 @@ public:
     /// getter for controller represented by the widget
     const nano::LeafMetadata& metadata() const noexcept { return mLeaf; }
 
+    nano::ELeafDiscoveryState discoveryState() const noexcept { return mDiscoveryState; }
+
     /// updates the meatadata's UI elements.
-    void updateLeafMetadata(const nano::LeafMetadata& leafMetadata, bool isSelected) {
+    void updateLeafMetadata(const nano::LeafMetadata& leafMetadata,
+                            nano::ELeafDiscoveryState discoveryState,
+                            bool isSelected) {
         mLeaf = leafMetadata;
+        mDiscoveryState = discoveryState;
 
         if (isSelected) {
             mCheckBox->checkboxState(cor::ECheckboxState::clearAll);
@@ -96,6 +103,24 @@ public:
             mCheckBox->checkboxState(cor::ECheckboxState::selectAll);
         }
 
+
+        if (mDiscoveryState != nano::ELeafDiscoveryState::connected) {
+            mStateButton->setVisible(false);
+            mChangeRotation->setVisible(false);
+            mChangeName->setVisible(false);
+            mDisplayLights->setVisible(false);
+            mCheckBox->setVisible(false);
+            mSyncWidget->setVisible(true);
+            mSyncWidget->changeState(ESyncState::syncing);
+        } else {
+            mStateButton->setVisible(true);
+            mChangeRotation->setVisible(true);
+            mChangeName->setVisible(true);
+            mCheckBox->setVisible(true);
+            mDisplayLights->setVisible(true);
+            mSyncWidget->setVisible(false);
+            mSyncWidget->changeState(ESyncState::synced);
+        }
         if (!leafMetadata.name().isEmpty()) {
             mName->setText(leafMetadata.name());
         } else {
@@ -154,7 +179,10 @@ public:
                                     yPosColumn1,
                                     this->width() - xSpacer / 2,
                                     buttonHeight * 4);
-
+        mSyncWidget->setGeometry(xSpacer / 2,
+                                 yPosColumn1,
+                                 this->width() - xSpacer / 2,
+                                 buttonHeight * 4);
         drawPanels();
         yPosColumn1 += mDisplayLights->height();
         yPosColumn2 += mDisplayLights->height();
@@ -195,7 +223,7 @@ public:
 signals:
 
     /// emit when a light is deleted
-    void deleteLight(QString);
+    void deleteNanoleaf(QString, QString);
 
     /// emit when a light is clicked
     void lightClicked(QString, bool);
@@ -242,7 +270,9 @@ private slots:
         if (!name.isEmpty()) {
             mComm->nanoleaf()->renameLight(mLeaf, name);
             mLeaf.name(name);
-            updateLeafMetadata(mLeaf, mCheckBox->checkboxState() == cor::ECheckboxState::clearAll);
+            updateLeafMetadata(mLeaf,
+                               mDiscoveryState,
+                               mCheckBox->checkboxState() == cor::ECheckboxState::clearAll);
             mGreyout->greyOut(false);
             mChangeNameInput->pushOut();
         }
@@ -274,7 +304,7 @@ private slots:
         reply = QMessageBox::question(this, "Delete?", text, QMessageBox::Yes | QMessageBox::No);
         if (reply == QMessageBox::Yes) {
             // signal to remove from app
-            emit deleteLight(mLeaf.serialNumber());
+            emit deleteNanoleaf(mLeaf.serialNumber(), mLeaf.IP());
         }
     }
 
@@ -307,38 +337,42 @@ private:
     void updateMetadata(const nano::LeafMetadata& leafMetadata) {
         std::stringstream returnString;
 
-        returnString << "<b>Model:</b> " << leafMetadata.model().toStdString() << "<br>";
-        returnString << "<b>Firmware:</b> " << leafMetadata.firmware().toStdString() << "<br>";
-        returnString << "<b>Serial:</b> " << leafMetadata.serialNumber().toStdString()
-                     << "<br><br>";
+        if (mDiscoveryState == nano::ELeafDiscoveryState::connected) {
+            returnString << "<b>Model:</b> " << leafMetadata.model().toStdString() << "<br>";
+            returnString << "<b>Firmware:</b> " << leafMetadata.firmware().toStdString() << "<br>";
+            returnString << "<b>Serial:</b> " << leafMetadata.serialNumber().toStdString()
+                         << "<br><br>";
+        }
 
         returnString << "<b>IP:</b> " << leafMetadata.IP().toStdString() << "<br>";
         returnString << "<b>Port:</b> " << leafMetadata.port() << "<br><br>";
         returnString << "<b>Hardware Name:</b> " << leafMetadata.hardwareName().toStdString()
                      << "<br>";
-        returnString << "<b>Hardware Version:</b> " << leafMetadata.hardwareVersion().toStdString()
-                     << "<br>";
-        if (leafMetadata.rhythmController().isConnected()) {
-            auto rhythmController = leafMetadata.rhythmController();
-            returnString << "<br><br><b>Rhythm Controller</b><br>";
-            returnString << "<b>ID: </b>" << rhythmController.ID() << "<br>";
-            returnString << "<b>Firmware: </b>" << rhythmController.firmwareVersion().toStdString()
-                         << "<br>";
-            returnString << "<b>Hardware Version: </b>"
-                         << rhythmController.hardwareVersion().toStdString() << "<br>";
-            returnString << "<b>Mode: </b>" << rhythmController.mode() << "<br>";
+        if (mDiscoveryState == nano::ELeafDiscoveryState::connected) {
+            returnString << "<b>Hardware Version:</b> "
+                         << leafMetadata.hardwareVersion().toStdString() << "<br>";
 
-            if (rhythmController.auxAvailable()) {
-                returnString << "<b>Aux Detected</b><br>";
-            } else {
-                returnString << "<b>No Aux Detected</b><br>";
+            if (leafMetadata.rhythmController().isConnected()) {
+                auto rhythmController = leafMetadata.rhythmController();
+                returnString << "<br><br><b>Rhythm Controller</b><br>";
+                returnString << "<b>ID: </b>" << rhythmController.ID() << "<br>";
+                returnString << "<b>Firmware: </b>"
+                             << rhythmController.firmwareVersion().toStdString() << "<br>";
+                returnString << "<b>Hardware Version: </b>"
+                             << rhythmController.hardwareVersion().toStdString() << "<br>";
+                returnString << "<b>Mode: </b>" << rhythmController.mode() << "<br>";
+
+                if (rhythmController.auxAvailable()) {
+                    returnString << "<b>Aux Detected</b><br>";
+                } else {
+                    returnString << "<b>No Aux Detected</b><br>";
+                }
+            } else if (leafMetadata.model() == "NL22") {
+                // NL22 requires a separate rhtym controller, in most newer lights, this feature is
+                // built in.
+                returnString << "<b>No Rhythm Controller Detected</b><br>";
             }
-        } else if (leafMetadata.model() == "NL22") {
-            // NL22 requires a separate rhtym controller, in most newer lights, this feature is
-            // built in.
-            returnString << "<b>No Rhythm Controller Detected</b><br>";
         }
-
         mMetadata->updateText(QString(returnString.str().c_str()));
     }
 
@@ -362,6 +396,9 @@ private:
 
     /// nanoleaf being displayed
     nano::LeafMetadata mLeaf;
+
+    /// state of discovery for nanoleaf.
+    nano::ELeafDiscoveryState mDiscoveryState;
 
     /// generates the panel image
     nano::LeafPanelImage* mPanelImage;
@@ -407,6 +444,9 @@ private:
 
     /// widget to handle rotating a light.
     RotateLightWidget* mRotateLightWidget;
+
+    /// sync widget to display when searching for the light
+    SyncWidget* mSyncWidget;
 
     /// the height of a row in a scroll area
     int mRowHeight;
