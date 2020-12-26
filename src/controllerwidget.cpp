@@ -85,8 +85,8 @@ void ControllerWidget::backButtonPressed(bool) {
     emit backButtonPressed();
 }
 
-void ControllerWidget::showArduCor(const cor::Controller& controller) {
-    mArduCorWidget->updateController(controller);
+void ControllerWidget::showArduCor(const cor::Controller& controller, cor::EArduCorStatus status) {
+    mArduCorWidget->updateController(controller, status);
     mArduCorWidget->setVisible(true);
     mNanoleafWidget->setVisible(false);
     mHueBridgeWidget->setVisible(false);
@@ -133,17 +133,38 @@ void ControllerWidget::handleDeleteNanoleaf(QString serialNumber, QString IP) {
     bool result = mComm->nanoleaf()->deleteNanoleaf(serialNumber, IP);
     if (!result) {
         qDebug() << "WARNING: error deleting " << serialNumber << " IP: " << IP;
+    } else {
+        // close the page, it will no longer exist
+        emit backButtonPressed();
     }
-    // close the page, it will no longer exist
-    emit backButtonPressed();
 }
 
 void ControllerWidget::handleDeleteController(QString uniqueID, EProtocolType protocol) {
-    qDebug() << " delete controller " << uniqueID;
+    // get controller names, if they exist
+    std::vector<QString> lightNames;
+    bool result = false;
     if (protocol == EProtocolType::arduCor) {
-        // mComm->arducor()->deleteController(uniqueID);
+        auto controllerResult =
+            mComm->arducor()->discovery()->findControllerByControllerName(uniqueID);
+        if (controllerResult.second) {
+            lightNames = controllerResult.first.names();
+        }
+        result = mComm->arducor()->deleteController(uniqueID);
+
     } else if (protocol == EProtocolType::hue) {
         //
+    }
+
+    if (!result) {
+        qDebug() << "WARNING: error deleting " << uniqueID << " IP: " << protocolToString(protocol);
+    } else {
+        emit deleteLight(uniqueID);
+        for (const auto& light : lightNames) {
+            emit deleteLight(light);
+        }
+
+        // close the page, it will no longer exist
+        emit backButtonPressed();
     }
 }
 
@@ -176,7 +197,7 @@ void ControllerWidget::controllerClicked(QString controller,
                                          bool selectAll) {
     if (protocol == EProtocolType::arduCor) {
         auto controllerResult =
-            mComm->arducor()->discovery()->findControllerByControllerName(controller);
+            mComm->arducor()->discovery()->findFoundControllerByControllerName(controller);
         if (controllerResult.second) {
             auto lights = mComm->arducor()->lightsFromNames(controllerResult.first.names());
             if (selectAll) {
@@ -216,7 +237,7 @@ void ControllerWidget::resizeEvent(QResizeEvent*) {
 
 void ControllerWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
-    opt.init(this);
+    opt.initFrom(this);
     QPainter painter(this);
 
     painter.setRenderHint(QPainter::Antialiasing);

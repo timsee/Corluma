@@ -6,7 +6,6 @@
 
 #include <QApplication>
 #include <QDebug>
-#include <QDesktopWidget>
 #include <QFile>
 #include <QSplashScreen>
 #include <QTextStream>

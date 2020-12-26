@@ -22,12 +22,10 @@ RoutineButtonsWidget::RoutineButtonsWidget(QWidget* parent)
       mMultiWidget{new QWidget(this)},
       mMultiLayout{new QGridLayout(mMultiWidget)},
       mWidgetGroup(EWidgetGroup::singleRoutines) {
-    mSingleLayout->setMargin(0);
     mSingleLayout->setContentsMargins(0, 0, 0, 0);
     mSingleLayout->setHorizontalSpacing(0);
     mSingleLayout->setVerticalSpacing(0);
 
-    mMultiLayout->setMargin(0);
     mMultiLayout->setContentsMargins(0, 0, 0, 0);
     mMultiLayout->setHorizontalSpacing(0);
     mMultiLayout->setVerticalSpacing(0);

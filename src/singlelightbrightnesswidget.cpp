@@ -128,7 +128,7 @@ void SingleLightBrightnessWidget::brightnessSliderChanged(int newBrightness) {
 
 void SingleLightBrightnessWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
-    opt.init(this);
+    opt.initFrom(this);
     QPainter painter(this);
     QBrush brush(mBrightnessSlider->color());
     painter.setBrush(brush);

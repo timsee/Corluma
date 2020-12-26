@@ -131,7 +131,7 @@ void paintLightBarBackground(QPainter& painter, const cor::LightState& state, co
 
 void ListLightWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
-    opt.init(this);
+    opt.initFrom(this);
     QPainter painter(this);
 
     // handle highlight

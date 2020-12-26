@@ -55,7 +55,7 @@ QString HueGroupWidget::generateDescription(std::size_t lightCount, bool isRoom)
 
 void HueGroupWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
-    opt.init(this);
+    opt.initFrom(this);
     QPainter painter(this);
 
     painter.setRenderHint(QPainter::Antialiasing);

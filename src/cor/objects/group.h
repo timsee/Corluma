@@ -5,6 +5,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QString>
+#include <set>
 #include <vector>
 
 #include "utils/exception.h"
@@ -60,7 +61,7 @@ public:
         }
         QJsonArray deviceArray = object["devices"].toArray();
         std::vector<QString> lightList;
-        foreach (const QJsonValue& value, deviceArray) {
+        for (const QJsonValue& value : deviceArray) {
             QJsonObject device = value.toObject();
             if (device["uniqueID"].isString()) {
                 mLights.push_back(device["uniqueID"].toString());
@@ -118,7 +119,7 @@ public:
             return false;
         }
         QJsonArray deviceArray = object["devices"].toArray();
-        foreach (const QJsonValue& value, deviceArray) {
+        for (const QJsonValue& value : deviceArray) {
             QJsonObject device = value.toObject();
             if (!(device["uniqueID"].isString())) {
                 qDebug() << "one of the objects is invalid!" << device;
@@ -128,8 +129,20 @@ public:
         return true;
     }
 
+    bool containsOnlyIgnoredLights(const std::set<QString>& ignoredLights) const {
+        for (const auto& lightID : lights()) {
+            // if a light cannot be found in ignoredLights, return false.
+            if (ignoredLights.find(lightID) == ignoredLights.end()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /// represents group as json
-    QJsonObject toJson() const noexcept {
+    QJsonObject toJson() const noexcept { return toJsonWitIgnoredLights({}); }
+
+    QJsonObject toJsonWitIgnoredLights(const std::set<QString>& ignoredLights) const {
         QJsonObject object;
         object["name"] = name();
         object["isMood"] = false;
@@ -149,9 +162,11 @@ public:
         // create string of jsondata to add to file
         QJsonArray lightArray;
         for (const auto& lightID : lights()) {
-            QJsonObject object;
-            object["uniqueID"] = lightID;
-            lightArray.append(object);
+            if (ignoredLights.find(lightID) == ignoredLights.end()) {
+                QJsonObject object;
+                object["uniqueID"] = lightID;
+                lightArray.append(object);
+            }
         }
 
         object["devices"] = lightArray;

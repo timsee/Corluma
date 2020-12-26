@@ -92,7 +92,7 @@ void CommHTTP::replyFinished(QNetworkReply* reply) {
     if (reply->error() == QNetworkReply::NoError) {
         QString payload = reply->readAll().trimmed();
         // check if controller is already connected
-        auto result = mDiscovery->findControllerByControllerName(IP);
+        auto result = mDiscovery->findFoundControllerByControllerName(IP);
         bool isDiscovery = payload.contains(ArduCorDiscovery::kDiscoveryPacketIdentifier);
         if (result.second && !isDiscovery) {
             emit packetReceived(IP, payload, mType);

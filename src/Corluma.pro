@@ -24,8 +24,8 @@ equals (QT_MAJOR_VERSION, 5)  {
     error(ERROR: Qt5 is installed, but it is not a recent enough version. This project uses QT5.13 or later)
   }
 }
-!equals(QT_MAJOR_VERSION, 5) {
-    error(ERROR: Qt5 is not installed. This project uses QT5.13 or later)
+equals(QT_MAJOR_VERSION, 4) {
+    error(ERROR: Qt5 or Qt6 is not installed. This project uses QT5.13 or later)
 }
 
 CONFIG += c++17 #adds C++17 support
@@ -57,6 +57,7 @@ win32 {
     }
 }
 
+SHOULD_USE_SERIAL = 0
 
 #----------
 # Qt Linking
@@ -65,8 +66,9 @@ QT   += core gui widgets network
 
 # Does not set up the qt serial port on mobile devices
 # since they can't support it.
-!android:!ios {
-  QT +=  serialport
+equals(SHOULD_USE_SERIAL, 1) {
+  DEFINES += USE_SERIAL=1
+  QT += serialport
 }
 
 # MOBILE_BUILD is a flag that gets set for only MOBILE targets.
@@ -437,9 +439,9 @@ HEADERS  += cor/objects/light.h \
 # Desktop builds only
 #----------
 
-!android:!ios {
-HEADERS  +=  comm/commserial.h
-SOURCES += comm/commserial.cpp
+equals(SHOULD_USE_SERIAL, 1) {
+ HEADERS  +=  comm/commserial.h
+ SOURCES += comm/commserial.cpp
 }
 
 #--------

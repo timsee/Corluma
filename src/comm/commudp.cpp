@@ -144,7 +144,7 @@ void CommUDP::readPendingDatagrams() {
         if (payload.contains(";")) {
             // this may contain multiple packets in a single packet, split and handle as separate
             // messages.
-            QRegExp rx("(\\;)");
+            QRegularExpression rx("(\\;)");
             QStringList payloads = payload.split(rx);
             for (const auto& payload : payloads) {
                 mDiscovery->handleIncomingPacket(mType, sender.toString(), payload);

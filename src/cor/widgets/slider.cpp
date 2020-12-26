@@ -234,7 +234,7 @@ void Slider::resizeEvent(QResizeEvent*) {
 void Slider::paintEvent(QPaintEvent* event) {
     if (tickPosition() != QSlider::NoTicks) {
         QStyleOption opt;
-        opt.init(this);
+        opt.initFrom(this);
         QPainter painter(this);
 
         painter.setRenderHint(QPainter::Antialiasing);

@@ -2,6 +2,7 @@
 #define DISPLAYARDUCORCONTROLLER_H
 
 
+#include <QMessageBox>
 #include <QPainter>
 #include <QPushButton>
 #include <QStyleOption>
@@ -17,6 +18,7 @@
 #include "menu/displaymoodmetadata.h"
 #include "menu/groupstatelistmenu.h"
 #include "menu/lightslistmenu.h"
+#include "syncwidget.h"
 #include "utils/qt.h"
 
 /*!
@@ -37,6 +39,7 @@ public:
         : QWidget(parent),
           mComm{comm},
           mSelectedLights{selectedLights},
+          mStatus{cor::EArduCorStatus::searching},
           mName{new QLabel(this)},
           mLightsLabel{new QLabel("<b>Lights:</b>", this)},
           mLights{new LightsListMenu(this, true)},
@@ -45,6 +48,7 @@ public:
           mDeleteButton{new QPushButton("Delete", this)},
           mStateButton{new cor::Button(this, {})},
           mSingleLightIcon{new QLabel(this)},
+          mSyncWidget{new SyncWidget(this)},
           mRowHeight{10} {
         auto font = mName->font();
         font.setPointSize(20);
@@ -82,19 +86,31 @@ public:
     }
 
     /// updates the controller's UI elements.
-    void updateController(const cor::Controller& controller) {
+    void updateController(const cor::Controller& controller, cor::EArduCorStatus status) {
         mController = controller;
-        mName->setText(cor::controllerToGenericName(mController, cor::EArduCorStatus::connected));
-
+        mStatus = status;
+        mName->setText(cor::controllerToGenericName(mController, status));
         handleCheckboxState();
 
         auto lights = mComm->arducor()->lightsFromNames(mController.names());
-        if (lights.size() == 1) {
+        if (mStatus == cor::EArduCorStatus::searching) {
+            // handle when light is not discovered
+            mSyncWidget->changeState(ESyncState::syncing);
+            mLightsLabel->setVisible(false);
+            mLights->setVisible(false);
+            mSingleLightIcon->setVisible(false);
+            mCheckBox->setVisible(false);
+            mStateButton->setVisible(false);
+            mSyncWidget->setVisible(true);
+        } else if (lights.size() == 1) {
             // hide the lights menu and show the icons when theres only one light
             mLightsLabel->setVisible(false);
             mLights->setVisible(false);
+            mSyncWidget->setVisible(false);
+            mCheckBox->setVisible(true);
             mSingleLightIcon->setVisible(true);
             mStateButton->setVisible(true);
+            mSyncWidget->changeState(ESyncState::synced);
             // update the icons
             updateSingleIcon();
             auto singleLightVector = mComm->arducor()->lightsFromNames(mController.names());
@@ -105,6 +121,9 @@ public:
             mLights->setVisible(true);
             mSingleLightIcon->setVisible(false);
             mStateButton->setVisible(false);
+            mCheckBox->setVisible(true);
+            mSyncWidget->setVisible(false);
+            mSyncWidget->changeState(ESyncState::synced);
             // update the lights menu
             mLights->updateLights();
             mLights->showLights(lights);
@@ -158,7 +177,10 @@ public:
         yPosColumn1 += mLightsLabel->height();
 
         // column 1
-        if (isSingleLight()) {
+        if (mStatus == cor::EArduCorStatus::searching) {
+            mSyncWidget->setGeometry(xSpacer, yPosColumn1, columnWidth, buttonHeight * 4);
+            yPosColumn1 += mSyncWidget->height();
+        } else if (isSingleLight()) {
             // update the icons
             mSingleLightIcon->setGeometry(xSpacer, yPosColumn1, columnWidth, buttonHeight * 4);
             yPosColumn1 += mSingleLightIcon->height();
@@ -200,7 +222,7 @@ protected:
     /// paints the dark grey background
     void paintEvent(QPaintEvent*) {
         QStyleOption opt;
-        opt.init(this);
+        opt.initFrom(this);
         QPainter painter(this);
         painter.fillRect(rect(), QBrush(QColor(32, 31, 31, 255)));
     }
@@ -228,7 +250,15 @@ private slots:
 
     /// delete is clicked for a controller.
     void deleteButtonPressed(bool) {
-        emit deleteController(mController.name(), EProtocolType::arduCor);
+        QMessageBox::StandardButton reply;
+        QString text =
+            "Delete " + mController.name() + "? This will remove it from the app memory.";
+
+        reply = QMessageBox::question(this, "Delete?", text, QMessageBox::Yes | QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+            // signal to remove from app
+            emit deleteController(mController.name(), EProtocolType::arduCor);
+        }
     }
 
 private:
@@ -236,8 +266,10 @@ private:
     void updateMetadata(const cor::Controller& controller) {
         std::stringstream returnString;
 
-        returnString << "<b>Protocol:</b> " << commTypeToString(controller.type()).toStdString()
-                     << "<br>";
+        if (mStatus == cor::EArduCorStatus::connected) {
+            returnString << "<b>Protocol:</b> " << commTypeToString(controller.type()).toStdString()
+                         << "<br>";
+        }
         if (controller.type() == ECommType::UDP || controller.type() == ECommType::HTTP) {
             returnString << "<b>IP:</b> " << controller.name().toStdString() << "<br>";
         } else {
@@ -245,16 +277,18 @@ private:
         }
         returnString << "<b>API:</b> " << controller.majorAPI() << "." << controller.minorAPI()
                      << "<br>";
-        returnString << "<b>Hardware Count:</b> " << controller.maxHardwareIndex() << "<br>";
-        returnString << "<b>Max Packet Size:</b> " << controller.maxPacketSize() << "<br>";
-        returnString << "<b>Using CRC: </b>";
-        if (controller.isUsingCRC()) {
-            returnString << "true<br>";
-        } else {
-            returnString << "false<br>";
-        }
-        if (controller.hardwareCapabilities()) {
-            returnString << "<b>Raspberry Pi</b>";
+        if (mStatus == cor::EArduCorStatus::connected) {
+            returnString << "<b>Hardware Count:</b> " << controller.maxHardwareIndex() << "<br>";
+            returnString << "<b>Max Packet Size:</b> " << controller.maxPacketSize() << "<br>";
+            returnString << "<b>Using CRC: </b>";
+            if (controller.isUsingCRC()) {
+                returnString << "true<br>";
+            } else {
+                returnString << "false<br>";
+            }
+            if (controller.hardwareCapabilities()) {
+                returnString << "<b>Raspberry Pi</b>";
+            }
         }
         std::string result = returnString.str();
         mMetadata->updateText(QString(result.c_str()));
@@ -302,6 +336,9 @@ private:
     /// The controller being displayed.
     cor::Controller mController;
 
+    /// status of the controller (whether it is connected or searching)
+    cor::EArduCorStatus mStatus;
+
     /// name of the group
     QLabel* mName;
 
@@ -325,6 +362,9 @@ private:
 
     /// single light icon to show the hardware type.
     QLabel* mSingleLightIcon;
+
+    /// sync widget to display when searching for the light
+    SyncWidget* mSyncWidget;
 
     /// stores the hardware icon in the single light case
     QPixmap mHardwareIcon;

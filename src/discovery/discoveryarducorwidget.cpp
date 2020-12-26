@@ -79,8 +79,10 @@ void DiscoveryArduCorWidget::handleController(const cor::Controller& controller,
         ++i;
     }
 
-    // if it doesnt exist, add it
-    if (!foundWidget) {
+    // if it doesnt exist and it isn't ignored, add it
+    if (!foundWidget
+        && (std::find(mIgnoredLights.begin(), mIgnoredLights.end(), controller.name())
+            == mIgnoredLights.end())) {
         auto widget = new DisplayPreviewArduCorWidget(controller,
                                                       status,
                                                       mSelectedLights,
@@ -140,22 +142,30 @@ void DiscoveryArduCorWidget::controllerClicked(QString controller) {
     for (auto widget : mListWidget->widgets()) {
         auto arduCorWidget = dynamic_cast<DisplayPreviewArduCorWidget*>(widget);
         if (arduCorWidget->controller().name() == controller) {
-            if (arduCorWidget->status() == cor::EArduCorStatus::connected) {
-                emit showControllerWidget();
-                mControllerPage->showArduCor(arduCorWidget->controller());
-            } else {
-                QMessageBox::warning(this, "Not Discovered", "Light not discovered yet.");
-            }
+            emit showControllerWidget();
+            mControllerPage->showArduCor(arduCorWidget->controller(), arduCorWidget->status());
         }
     }
 }
 
 void DiscoveryArduCorWidget::deleteLight(const QString& light) {
+    std::vector<QString> widgetsToRemove;
     for (auto widget : mListWidget->widgets()) {
         auto arduCorWidget = dynamic_cast<DisplayPreviewArduCorWidget*>(widget);
         if (arduCorWidget->controller().name() == light) {
-            // TODO
+            auto lightResult = std::find(mIgnoredLights.begin(), mIgnoredLights.end(), light);
+            if (lightResult == mIgnoredLights.end()) {
+                mIgnoredLights.push_back(light);
+                widgetsToRemove.emplace_back(arduCorWidget->key());
+            }
         }
+    }
+    bool shouldResize = !widgetsToRemove.empty();
+    for (auto widgetToRemove : widgetsToRemove) {
+        mListWidget->removeWidget(widgetToRemove);
+    }
+    if (shouldResize) {
+        resize();
     }
 }
 

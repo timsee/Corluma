@@ -3,7 +3,7 @@
 
 #include <QDebug>
 #include <QJsonObject>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QString>
 #include <QStringList>
 #include <QTime>
@@ -112,8 +112,8 @@ public:
     /// returns how many seconds its been since the schedule was created. Will return 0u if there
     /// are any errors.
     std::uint64_t secondsSinceCreation() {
-        QRegExp nonDigitRegex("(\\D)");
-        QRegExp tRegex("(T)");
+        QRegularExpression nonDigitRegex("(\\D)");
+        QRegularExpression tRegex("(T)");
         QStringList createdStringList = created().split(tRegex);
         createdStringList.removeAll("");
         if (createdStringList.size() != 2) {
@@ -140,7 +140,7 @@ public:
         if (!autodelete() || !name().contains("Corluma_timeout_")) {
             return -1;
         }
-        QRegExp nonDigitRegex("(\\D)");
+        QRegularExpression nonDigitRegex("(\\D)");
         auto creationSeconds = secondsSinceCreation();
         // convert timeout string to minutes
         auto localTimeStringList = localtime().split(nonDigitRegex);
@@ -168,9 +168,9 @@ public:
         result += " time: " + time();
         result += " localtime: " + localtime();
         result += " created: " + created();
-        result += " status: " + QString(status());
-        result += " index: " + QString(index());
-        result += " autodelete: " + QString(autodelete());
+        result += " status: " + QString::number(status());
+        result += " index: " + QString::number(index());
+        result += " autodelete: " + QString::number(autodelete());
         return result;
     }
 

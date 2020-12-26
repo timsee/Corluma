@@ -1038,3 +1038,11 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed the delete button for Nanoleafs.
 - Fixed how Hues edit existing groups.
 - Fixed miscellaneous bugs.
+
+### **v0.21.56**
+### The Qt 6.0 Update
+- Removed deprecated functions in prep for upgrading to Qt 6.0
+- Moved `QSerialPort` usage from the `MOBILE_BUILD` flag to its own unique, `USE_SERIAL` flag.
+- Fixed deleting `ArduCor` lights.
+- Fixed bugs with maintaining json data in `GroupData`.
+- Fixed miscellaneous bugs.

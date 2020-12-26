@@ -21,9 +21,9 @@ enum class ECommType {
     UDP,
     hue,
     nanoleaf,
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
     serial,
-#endif // MOBILE_BUILD
+#endif // USE_SERIAL
     MAX
 };
 Q_DECLARE_METATYPE(ECommType)
@@ -42,7 +42,7 @@ inline QString commTypeToString(ECommType type) {
         return "Nanoleaf";
     } else if (type == ECommType::hue) {
         return "Hue";
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
     } else if (type == ECommType::serial) {
         return "Serial";
 #endif // MOBILE_BUILD
@@ -67,10 +67,10 @@ inline ECommType stringToCommType(const QString& type) {
         return ECommType::nanoleaf;
     } else if (type == "Hue") {
         return ECommType::hue;
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
     } else if (type == "Serial") {
         return ECommType::serial;
-#endif // MOBILE_BUILD
+#endif // USE_SERIAL
     } else {
         return ECommType::MAX;
     }
@@ -848,7 +848,7 @@ inline EProtocolType convertCommTypeToProtocolType(ECommType type) {
     switch (type) {
         case ECommType::HTTP:
         case ECommType::UDP:
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
         case ECommType::serial:
 #endif
             return EProtocolType::arduCor;

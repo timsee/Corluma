@@ -68,7 +68,7 @@ void KitchenTimerWidget::resizeEvent(QResizeEvent*) {
 
 void KitchenTimerWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
-    opt.init(this);
+    opt.initFrom(this);
 
     auto startAngle = 0;
     auto span = 180;

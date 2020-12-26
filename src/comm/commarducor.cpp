@@ -10,7 +10,7 @@
 #include "comm/commudp.h"
 #include "utils/exception.h"
 #include "utils/qt.h"
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
 #include "comm/commserial.h"
 #endif
 
@@ -45,7 +45,7 @@ CommArduCor::CommArduCor(QObject* parent) : QObject(parent) {
             this,
             SLOT(deletedLight(ECommType, QString)));
 
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
     mSerial = std::make_shared<CommSerial>();
     connect(mSerial.get(),
             SIGNAL(packetReceived(QString, QString, ECommType)),
@@ -68,7 +68,7 @@ CommArduCor::CommArduCor(QObject* parent) : QObject(parent) {
     mDiscovery = new ArduCorDiscovery(this,
                                       mHTTP.get(),
                                       mUDP.get()
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
                                           ,
                                       mSerial.get()
 #endif
@@ -87,7 +87,7 @@ CommArduCor::CommArduCor(QObject* parent) : QObject(parent) {
 
     mUDP->connectDiscovery(mDiscovery);
     mHTTP->connectDiscovery(mDiscovery);
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
     mSerial->connectDiscovery(mDiscovery);
 #endif
 }
@@ -100,7 +100,7 @@ bool CommArduCor::isActive() {
 
 QTime CommArduCor::lastUpdateTime() {
     auto time = mUDP->lastUpdateTime();
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
     if (time < mSerial->lastUpdateTime()) {
         time = mSerial->lastUpdateTime();
     }
@@ -136,7 +136,7 @@ void CommArduCor::sendPacket(const cor::Controller& controller, QString& payload
             mHTTP->resetStateUpdateTimeout();
         }
     }
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
     else if (controller.type() == ECommType::serial) {
         mSerial->sendPacket(controller, payload);
         if (shouldResetStateTimeout) {
@@ -155,7 +155,7 @@ void CommArduCor::sendPacket(const cor::Controller& controller, QString& payload
 void CommArduCor::startup() {
     mHTTP->startup();
     mUDP->startup();
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
     mSerial->startup();
 #endif
 }
@@ -163,7 +163,7 @@ void CommArduCor::startup() {
 void CommArduCor::shutdown() {
     mHTTP->shutdown();
     mUDP->shutdown();
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
     mSerial->shutdown();
 #endif
 }
@@ -171,7 +171,7 @@ void CommArduCor::shutdown() {
 void CommArduCor::stopStateUpdates() {
     mHTTP->stopStateUpdates();
     mUDP->stopStateUpdates();
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
     mSerial->stopStateUpdates();
 #endif
 }
@@ -179,7 +179,7 @@ void CommArduCor::stopStateUpdates() {
 void CommArduCor::resetStateUpdates() {
     mHTTP->resetStateUpdateTimeout();
     mUDP->resetStateUpdateTimeout();
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
     mSerial->resetStateUpdateTimeout();
 #endif
 }
@@ -187,7 +187,7 @@ void CommArduCor::resetStateUpdates() {
 std::vector<cor::Light> CommArduCor::lights() {
     std::vector<cor::Light> lights;
     std::vector<ECommType> commTypes = {ECommType::HTTP,
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
                                         ECommType::serial,
 #endif
                                         ECommType::UDP};
@@ -199,7 +199,7 @@ std::vector<cor::Light> CommArduCor::lights() {
     return lights;
 }
 
-void CommArduCor::deleteController(const QString& controller) {
+bool CommArduCor::deleteController(const QString& controller) {
     auto result = mDiscovery->findControllerByControllerName(controller);
     if (result.second) {
         auto controller = result.first;
@@ -208,8 +208,9 @@ void CommArduCor::deleteController(const QString& controller) {
             commByType(controller.type())->removeLight(light);
         }
         // remove from JSON data
-        mDiscovery->removeController(controller);
+        return mDiscovery->removeController(controller.name());
     }
+    return false;
 }
 
 
@@ -259,7 +260,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
     //------------------
     // Check for CRC
     //------------------
-    auto result = mDiscovery->findControllerByControllerName(sender);
+    auto result = mDiscovery->findFoundControllerByControllerName(sender);
     auto controller = result.first;
     if (result.second && (packet.length() > 0)) {
         // check if it should use CRC
@@ -268,8 +269,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
             if (crcPacketList.size() == 2) {
                 // compute CRC
                 uint32_t computedCRC = mCRC.calculate(crcPacketList[0]);
-                uint32_t givenCRC =
-                    crcPacketList[1].leftRef(crcPacketList[1].length() - 1).toUInt();
+                uint32_t givenCRC = crcPacketList[1].left(crcPacketList[1].length() - 1).toUInt();
                 if (givenCRC != computedCRC) {
                     // qDebug() << "INFO: failed CRC check for" << controller.name << "string:" <<
                     // crcPacketList[0] << "computed:" << QString::number(computedCRC) << "given:"
@@ -653,7 +653,7 @@ bool CommArduCor::verifyCustomColorUpdatePacket(const std::vector<int>& packetIn
 CommType* CommArduCor::commByType(ECommType type) {
     CommType* ptr;
     switch (type) {
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
         case ECommType::serial:
             ptr = static_cast<CommType*>(mSerial.get());
             break;

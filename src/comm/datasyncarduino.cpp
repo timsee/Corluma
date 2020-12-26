@@ -56,7 +56,8 @@ void DataSyncArduino::resetSync() {
     }
     if (!mData->empty()) {
         mDataIsInSync = false;
-        mStartTime = QTime::currentTime();
+        mStartTime = QElapsedTimer();
+        mStartTime.start();
         if (!mSyncTimer->isActive()) {
             mSyncTimer->start(mUpdateInterval);
         }
@@ -184,7 +185,8 @@ const QString DataSyncArduino::createPacket(const cor::Controller& controller,
 void DataSyncArduino::endOfSync() {
     if (!mCleanupTimer->isActive()) {
         mCleanupTimer->start(500);
-        mCleanupStartTime = QTime::currentTime();
+        mCleanupStartTime = QElapsedTimer();
+        mCleanupStartTime.start();
     }
     emit statusChanged(mType, true);
 

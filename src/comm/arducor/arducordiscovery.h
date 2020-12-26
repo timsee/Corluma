@@ -12,7 +12,7 @@
 
 class CommUDP;
 class CommHTTP;
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
 class CommSerial;
 #endif
 /*!
@@ -33,7 +33,7 @@ public:
     explicit ArduCorDiscovery(QObject* parent,
                               CommHTTP* http,
                               CommUDP* udp
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
                               ,
                               CommSerial* serial
 #endif
@@ -51,7 +51,7 @@ public:
      */
     void addManualIP(const QString& ip);
 
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
     /// adds a serial port to notFound list
     void addSerialPort(const QString& serialName);
 #endif
@@ -76,7 +76,9 @@ public:
     /// finds a controller based on a device name
     std::pair<cor::Controller, bool> findControllerByDeviceName(const QString& deviceName);
 
-    /// finds a controller based on its name
+    /// finds a found controller based on its name
+    std::pair<cor::Controller, bool> findFoundControllerByControllerName(const QString& name);
+
     std::pair<cor::Controller, bool> findControllerByControllerName(const QString& controllerName);
 
     /*!
@@ -87,7 +89,7 @@ public:
     void setupConnectionList(ECommType type);
 
     /// removes controller from data and saved data
-    void removeController(const QString& controller);
+    bool removeController(const QString& controller);
 
     /// returns true if the IP already exists in either not found or found controllers.
     bool doesIPExist(const QString& ip);
@@ -140,7 +142,7 @@ private:
     /// pointer to object that handles the UDP communication
     CommUDP* mUDP;
 
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
     /// pointer to object that handles the serial communication
     CommSerial* mSerial;
 #endif

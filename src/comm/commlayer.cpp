@@ -9,9 +9,9 @@
 #include "comm/commarducor.h"
 #include "utils/exception.h"
 #include "utils/qt.h"
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
 #include "comm/commserial.h"
-#endif // MOBILE_BUILD
+#endif // USE_SERIAL
 #include <QDebug>
 #include <iostream>
 #include <ostream>
@@ -74,7 +74,7 @@ bool CommLayer::discoveryErrorsExist(EProtocolType type) {
 
     if (type == EProtocolType::arduCor) {
         return (!mArduCor->UDP()->portBound()
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
                 || mArduCor->serial()->serialPortErrorsExist()
 #endif // MOBILE_BUILD
         );
@@ -93,7 +93,7 @@ void CommLayer::deletedLight(ECommType type, QString uniqueID) {
 CommType* CommLayer::commByType(ECommType type) const {
     CommType* ptr;
     switch (type) {
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
         case ECommType::serial:
 #endif // MOBILE_BUILD
         case ECommType::HTTP:

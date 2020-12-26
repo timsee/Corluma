@@ -132,7 +132,8 @@ public:
      *
      * \param externalGroups groups that are stored in an external location
      */
-    void updateExternallyStoredGroups(const std::vector<cor::Group>& externalGroups);
+    void updateExternallyStoredGroups(const std::vector<cor::Group>& externalGroups,
+                                      const std::vector<QString>& ignorableLights);
 
     /*!
      * \brief saveNewMood save a new mood
@@ -265,6 +266,12 @@ private:
 
     /// stores the parent group data for moods.
     MoodParentData mMoodParents;
+
+    /// some group data can be ignored, since all of their data is stored externally.
+    std::set<QString> mIgnorableLightsForGroups;
+
+    /// loops through all objects and generates a GroupData json representation.
+    QJsonArray makeGroupData();
 };
 
 #endif // GROUPS_DATA_H

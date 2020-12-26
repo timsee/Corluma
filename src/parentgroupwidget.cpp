@@ -43,7 +43,7 @@ void ParentGroupWidget::updateCheckedLights(std::uint32_t checkedLightCount,
 
 void ParentGroupWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
-    opt.init(this);
+    opt.initFrom(this);
     QPainter painter(this);
     QPen pen(Qt::white, 5);
     painter.setPen(pen);

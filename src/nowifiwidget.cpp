@@ -30,7 +30,7 @@ NoWifiWidget::NoWifiWidget(QWidget* parent) : QWidget(parent) {
 
 void NoWifiWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
-    opt.init(this);
+    opt.initFrom(this);
     QPainter painter(this);
 
     painter.setRenderHint(QPainter::Antialiasing);

@@ -64,7 +64,7 @@ void LightInfoListWidget::deleteButtonPressed(bool) {
 
 void LightInfoListWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
-    opt.init(this);
+    opt.initFrom(this);
     QPainter painter(this);
 
     painter.setRenderHint(QPainter::Antialiasing);

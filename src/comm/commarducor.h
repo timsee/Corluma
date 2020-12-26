@@ -12,7 +12,9 @@
 
 class CommUDP;
 class CommHTTP;
+#ifdef USE_SERIAL
 class CommSerial;
+#endif
 
 /*!
  * \copyright
@@ -54,7 +56,7 @@ public:
     bool isActive();
 
     /// delete a controller, and all of its associated lights.
-    void deleteController(const QString& controller);
+    bool deleteController(const QString& controller);
 
     /*!
      * \brief commByType returns the raw CommPtr based off the given commType
@@ -63,7 +65,7 @@ public:
      */
     CommType* commByType(ECommType type);
 
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
     /// getter for serial
     CommSerial* serial() { return mSerial.get(); }
 #endif // MOBILE_BUILD
@@ -127,7 +129,7 @@ private slots:
     void deletedLight(ECommType type, QString uniqueID) { emit lightDeleted(type, uniqueID); }
 
 private:
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
     /*!
      * \brief mSerial Serial connection object
      */

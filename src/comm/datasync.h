@@ -21,7 +21,7 @@ struct SThrottle {
     /*!
      * \brief time time since last message was sent.
      */
-    QTime time;
+    QElapsedTimer time;
     /*!
      * \brief controller name of controller.
      */
@@ -130,13 +130,13 @@ protected:
      * \brief mCleanupStartTime time that sync the cleanup thread was started so that we know when
      *        to end it.
      */
-    QTime mCleanupStartTime;
+    QElapsedTimer mCleanupStartTime;
 
     /*!
      * \brief mStartTime time that sync thread was started so in case something groes wrong it
      *        can still timeout after attempting to sync for a reasonable amount of time.
      */
-    QTime mStartTime;
+    QElapsedTimer mStartTime;
 
     /*!
      * \brief mDataIsInSync true if all the datalayer and commlayer representations of devices are

@@ -63,7 +63,7 @@ void BridgeGroupsWidget::updateGroups(BridgeGroupVector groups, BridgeGroupVecto
 
 void BridgeGroupsWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
-    opt.init(this);
+    opt.initFrom(this);
     QPainter painter(this);
 
     painter.setRenderHint(QPainter::Antialiasing);

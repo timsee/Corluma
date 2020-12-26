@@ -34,7 +34,7 @@ public:
     void hidePage();
 
     /// show an arduCor controller
-    void showArduCor(const cor::Controller& controller);
+    void showArduCor(const cor::Controller& controller, cor::EArduCorStatus status);
 
     /// show a nanoleaf controller
     void showNanoleaf(const nano::LeafMetadata& metadata, nano::ELeafDiscoveryState discoveryState);

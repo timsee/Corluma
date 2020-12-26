@@ -152,7 +152,7 @@ void LeafDiscovery::receivedUPnP(const QHostAddress&, const QString& payload) {
         qDebug() << __func__ << payload;
 #endif
         // qDebug() << payload;
-        QStringList paramArray = payload.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
+        QStringList paramArray = payload.split(QRegularExpression("[\r\n]"), Qt::SkipEmptyParts);
         // parse param array for parameters about the nanoleaf
         QString ip;
         int port = -1;
@@ -160,7 +160,8 @@ void LeafDiscovery::receivedUPnP(const QHostAddress&, const QString& payload) {
         for (auto param : paramArray) {
             if (param.contains("Location: ")) {
                 QString location = param.remove("Location: ");
-                QStringList locationArray = location.split(QRegExp(":"), QString::SkipEmptyParts);
+                QStringList locationArray =
+                    location.split(QRegularExpression(":"), Qt::SkipEmptyParts);
                 if (locationArray.size() == 3) {
                     ip = locationArray[0] + ":" + locationArray[1];
                     bool ok;
@@ -564,7 +565,7 @@ bool LeafDiscovery::loadJSON() {
     if (!mJsonData.isNull()) {
         if (mJsonData.isArray()) {
             QJsonArray array = mJsonData.array();
-            foreach (const QJsonValue& value, array) {
+            for (const QJsonValue& value : array) {
                 QJsonObject object = value.toObject();
                 if (object["name"].isString() && object["IP"].isString()
                     && object["port"].isDouble() && object["serial"].isString()

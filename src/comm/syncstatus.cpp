@@ -23,6 +23,9 @@ void SyncStatus::syncStatusChanged(EDataSyncType type, bool status) {
         case EDataSyncType::settings:
             mSettingsInSync = status;
             break;
+        case EDataSyncType::timeout:
+            // not important for this sync status.
+            break;
     }
     bool nowInSync = inSync();
 

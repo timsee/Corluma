@@ -61,7 +61,8 @@ void DataSyncNanoLeaf::resetSync() {
         if (!mData->empty()) {
             mDataIsInSync = false;
             if (!mSyncTimer->isActive()) {
-                mStartTime = QTime::currentTime();
+                mStartTime = QElapsedTimer();
+                mStartTime.start();
                 mSyncTimer->start(mUpdateInterval);
             }
         }
@@ -116,7 +117,8 @@ void DataSyncNanoLeaf::syncData() {
 void DataSyncNanoLeaf::cleanupSync() {
     if (!mCleanupTimer->isActive()) {
         mCleanupTimer->start(10000);
-        mCleanupStartTime = QTime::currentTime();
+        mCleanupStartTime = QElapsedTimer();
+        mCleanupStartTime.start();
     }
 
     // update schedules of hues to
@@ -277,7 +279,8 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
 void DataSyncNanoLeaf::endOfSync() {
     if (!mCleanupTimer->isActive()) {
         mCleanupTimer->start(500);
-        mCleanupStartTime = QTime::currentTime();
+        mCleanupStartTime = QElapsedTimer();
+        mCleanupStartTime.start();
     }
 
     emit statusChanged(mType, true);

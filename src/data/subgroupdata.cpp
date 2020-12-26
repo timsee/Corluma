@@ -31,8 +31,8 @@ void insertIntoSubgroupMaps(SubgroupMap& map,
 
 QString makeSimplifiedGroupName(const QString& parent, const QString& group) {
     // split the room name by spaces
-    QStringList roomStringList = parent.split(QRegExp("\\s+"), QString::SkipEmptyParts);
-    QStringList groupStringList = group.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+    QStringList roomStringList = parent.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
+    QStringList groupStringList = group.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
     int charactersToSkip = 0;
     int smallestWordCount = std::min(roomStringList.size(), groupStringList.size());
     for (int i = 0; i < smallestWordCount; ++i) {

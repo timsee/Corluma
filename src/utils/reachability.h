@@ -9,7 +9,10 @@
 
 
 #include <QHostAddress>
-#include <QNetworkConfigurationManager>
+#include <QNetworkInterface>
+
+
+//#define DEBUG_REACHABILITY
 
 namespace cor {
 
@@ -20,20 +23,25 @@ namespace cor {
  * \return true if there is a wifi connection, false otherwise.
  */
 inline bool wifiEnabled() {
-    QNetworkConfigurationManager mgr;
-    QList<QNetworkConfiguration> activeConfigs =
-        mgr.allConfigurations(QNetworkConfiguration::Active);
     bool hasWifiEnabled = false;
-    for (const auto& config : activeConfigs) {
+    for (const QNetworkInterface& iface : QNetworkInterface::allInterfaces()) {
         // HACK: Wifi checks don't work as written for apple devices, for now do a vauge check for
         // number of configs
-#ifdef __APPLE__
-        if (activeConfigs.size() > 1) {
+        //#ifdef __APPLE__
+        //        if (activeConfigs.size() > 1) {
+        //            hasWifiEnabled = true;
+        //        }
+        //#endif
+        if ((iface.type() == QNetworkInterface::Wifi || iface.type() == QNetworkInterface::Ethernet)
+            && iface.flags().testFlag(QNetworkInterface::IsUp)
+            && iface.flags().testFlag(QNetworkInterface::IsRunning)
+            && !iface.humanReadableName().contains("dummy")) {
             hasWifiEnabled = true;
-        }
+#ifdef DEBUG_REACHABILITY
+            qDebug() << iface.humanReadableName() << "(" << iface.name() << ")"
+                          << "is up:" << iface.flags().testFlag(QNetworkInterface::IsUp)
+                          << "is running:" << iface.flags().testFlag(QNetworkInterface::IsRunning);
 #endif
-        if (config.bearerTypeName() == "WLAN" || config.bearerTypeName() == "Ethernet") {
-            hasWifiEnabled = true;
         }
     }
 // Windows doesn't really work at all... this is a bad check if its not a mobile phone.

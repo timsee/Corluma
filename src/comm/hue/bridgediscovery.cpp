@@ -140,15 +140,15 @@ void BridgeDiscovery::updateGroupsAndRooms(const hue::Bridge& bridge,
         auto foundBridge = bridgeResult.first;
         foundBridge.groupsWithIDs(groups);
         mFoundBridges.update(foundBridge.id().toStdString(), foundBridge);
-        mGroups->updateExternallyStoredGroups(foundBridge.groups());
-        mGroups->updateExternallyStoredGroups(foundBridge.rooms());
+        mGroups->updateExternallyStoredGroups(foundBridge.groups(), foundBridge.lightIDs());
+        mGroups->updateExternallyStoredGroups(foundBridge.rooms(), foundBridge.lightIDs());
     }
 }
 
 void BridgeDiscovery::reloadGroupData() {
     for (const auto& bridge : mFoundBridges.items()) {
-        mGroups->updateExternallyStoredGroups(bridge.groups());
-        mGroups->updateExternallyStoredGroups(bridge.rooms());
+        mGroups->updateExternallyStoredGroups(bridge.groups(), bridge.lightIDs());
+        mGroups->updateExternallyStoredGroups(bridge.rooms(), bridge.lightIDs());
     }
 }
 
@@ -536,7 +536,7 @@ void BridgeDiscovery::receivedUPnP(const QHostAddress& sender, const QString& pa
         // get ID from UPnP
         auto IP = sender.toString();
         QString id;
-        QStringList paramArray = payload.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
+        QStringList paramArray = payload.split(QRegularExpression("[\r\n]"), Qt::SkipEmptyParts);
         for (auto param : paramArray) {
             if (param.contains("hue-bridgeid: ")) {
                 id = param.remove("hue-bridgeid: ").toLower();
@@ -830,7 +830,7 @@ bool BridgeDiscovery::loadJSON() {
     if (!mJsonData.isNull()) {
         if (mJsonData.isArray()) {
             QJsonArray array = mJsonData.array();
-            foreach (const QJsonValue& value, array) {
+            for (const QJsonValue& value : array) {
                 QJsonObject object = value.toObject();
                 if (object["username"].isString() && object["IP"].isString()
                     && object["id"].isString()) {

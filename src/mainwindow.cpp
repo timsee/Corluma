@@ -7,7 +7,6 @@
 #include "mainwindow.h"
 
 #include <QDebug>
-#include <QDesktopWidget>
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
 #include <QPainter>
@@ -617,7 +616,7 @@ void MainWindow::wifiChecker() {
     // is the one exception to not needing wifi. This edge case only comes up if the user is
     // using arduino devices on a non-mobile build in a place where they don't have a wifi
     // connection.
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
     if (!mWifiFound) {
         mWifiFound = !mComm->lightDict(ECommType::serial).empty();
     }

@@ -11,14 +11,14 @@
 #include "comm/commhttp.h"
 #include "comm/commudp.h"
 #include "cor/protocols.h"
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
 #include "comm/commserial.h"
 #endif
 
 ArduCorDiscovery::ArduCorDiscovery(QObject* parent,
                                    CommHTTP* http,
                                    CommUDP* udp
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
                                    ,
                                    CommSerial* serial
 #endif
@@ -27,7 +27,7 @@ ArduCorDiscovery::ArduCorDiscovery(QObject* parent,
       cor::JSONSaveData("arducor"),
       mHTTP(http),
       mUDP(udp),
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
       mSerial{serial},
 #endif
       mLastTime{0} {
@@ -71,7 +71,7 @@ void ArduCorDiscovery::handleDiscovery() {
         if (notFoundController.type() == ECommType::HTTP) {
             mHTTP->testForController(notFoundController);
         }
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
         else if (notFoundController.type() == ECommType::serial) {
             mSerial->testForController(notFoundController);
         }
@@ -81,7 +81,7 @@ void ArduCorDiscovery::handleDiscovery() {
         }
     }
 
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
     mSerial->discoverSerialPorts();
 #endif
 }
@@ -237,7 +237,7 @@ void ArduCorDiscovery::addManualIP(const QString& ip) {
     startDiscovery();
 }
 
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
 void ArduCorDiscovery::addSerialPort(const QString& serial) {
     // check if IP address already exists in unknown or not found
     bool serialAlreadyFound = false;
@@ -315,7 +315,7 @@ void ArduCorDiscovery::handleDiscoveredController(const cor::Controller& discove
                 if (notFoundController.type() == ECommType::HTTP) {
                     mHTTP->addLight(light);
                 }
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
                 else if (notFoundController.type() == ECommType::serial) {
                     mSerial->addLight(light);
                 }
@@ -329,13 +329,12 @@ void ArduCorDiscovery::handleDiscoveredController(const cor::Controller& discove
     }
 }
 
-void ArduCorDiscovery::removeController(const QString& controllerName) {
+bool ArduCorDiscovery::removeController(const QString& controllerName) {
     cor::Controller controller;
     QString name;
     bool shouldDeleteNotFound = false;
     for (const auto& notFoundController : mNotFoundControllers) {
         if (notFoundController.name() == controllerName) {
-            // store con
             controller = notFoundController;
             name = controller.name();
             shouldDeleteNotFound = true;
@@ -344,6 +343,8 @@ void ArduCorDiscovery::removeController(const QString& controllerName) {
     if (shouldDeleteNotFound) {
         auto it = std::find(mNotFoundControllers.begin(), mNotFoundControllers.end(), controller);
         mNotFoundControllers.erase(it);
+        qDebug() << "INFO: Deleting a controller that hasn't been fully discovered: "
+                 << controllerName;
     }
 
     bool shouldDeleteFound = false;
@@ -357,6 +358,7 @@ void ArduCorDiscovery::removeController(const QString& controllerName) {
     }
     if (shouldDeleteFound) {
         mFoundControllers.remove(controller);
+        qDebug() << "INFO: Deleting a fully discovered controller: " << controllerName;
     }
 
     if (shouldDeleteFound || shouldDeleteNotFound) {
@@ -377,6 +379,8 @@ void ArduCorDiscovery::removeController(const QString& controllerName) {
             saveJSON();
         }
     }
+    return shouldDeleteFound || shouldDeleteNotFound;
+    ;
 }
 
 void ArduCorDiscovery::updateJSON(const cor::Controller& controller) {
@@ -439,10 +443,26 @@ std::pair<cor::Controller, bool> ArduCorDiscovery::findControllerByDeviceName(
     return std::make_pair(cor::Controller{}, false);
 }
 
-std::pair<cor::Controller, bool> ArduCorDiscovery::findControllerByControllerName(
-    const QString& controllerName) {
-    auto result = mFoundControllers.item(controllerName.toStdString());
+std::pair<cor::Controller, bool> ArduCorDiscovery::findFoundControllerByControllerName(
+    const QString& name) {
+    auto result = mFoundControllers.item(name.toStdString());
     return result;
+}
+
+
+std::pair<cor::Controller, bool> ArduCorDiscovery::findControllerByControllerName(
+    const QString& name) {
+    auto result = mFoundControllers.item(name.toStdString());
+    if (result.second) {
+        return result;
+    }
+
+    for (auto notFoundController : mNotFoundControllers) {
+        if (notFoundController.name() == name) {
+            return std::make_pair(notFoundController, true);
+        }
+    }
+    return std::make_pair(cor::Controller{}, true);
 }
 
 //---------------------

@@ -140,7 +140,7 @@ void ChooseGroupWidget::resizeEvent(QResizeEvent*) {
 
 void ChooseGroupWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
-    opt.init(this);
+    opt.initFrom(this);
     QPainter painter(this);
 
     painter.setRenderHint(QPainter::Antialiasing);

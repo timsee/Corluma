@@ -90,6 +90,10 @@ private:
 
     /// top label that explains the widget
     QLabel* mTopLabel;
+
+    /// lights that should be ignored on future updates (IE, they have been removed once, so they
+    /// shouldn't be shown again.
+    std::vector<QString> mIgnoredLights;
 };
 
 #endif // DISCOVERYARDUCORWIDGET_H

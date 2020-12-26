@@ -117,7 +117,7 @@ void ColorSchemeButton::resizeEvent(QResizeEvent*) {
 
 void ColorSchemeButton::paintEvent(QPaintEvent*) {
     QStyleOption opt;
-    opt.init(this);
+    opt.initFrom(this);
     QPainter painter(this);
     QPen pen(Qt::white, 5);
     painter.setPen(pen);

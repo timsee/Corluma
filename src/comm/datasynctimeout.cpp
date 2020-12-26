@@ -60,7 +60,8 @@ void DataSyncTimeout::resetSync() {
     if (!mData->empty()) {
         mDataIsInSync = false;
         if (!mSyncTimer->isActive()) {
-            mStartTime = QTime::currentTime();
+            mStartTime = QElapsedTimer();
+            mStartTime.start();
             mSyncTimer->start(mUpdateInterval);
         }
     }
@@ -103,7 +104,8 @@ void DataSyncTimeout::syncData() {
 void DataSyncTimeout::endOfSync() {
     if (!mCleanupTimer->isActive()) {
         mCleanupTimer->start(5000);
-        mCleanupStartTime = QTime::currentTime();
+        mCleanupStartTime = QElapsedTimer();
+        mCleanupStartTime.start();
     }
 
     emit statusChanged(mType, true);

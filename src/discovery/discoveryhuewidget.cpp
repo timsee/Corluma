@@ -6,7 +6,6 @@
 
 #include "discoveryhuewidget.h"
 
-#include <QDesktopWidget>
 #include <QGraphicsOpacityEffect>
 #include <QMessageBox>
 #include <QScroller>

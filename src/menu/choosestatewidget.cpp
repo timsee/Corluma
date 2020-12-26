@@ -130,7 +130,7 @@ void ChooseStateWidget::resize() {
 
 void ChooseStateWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
-    opt.init(this);
+    opt.initFrom(this);
     QPainter painter(this);
     painter.fillRect(rect(), QBrush(QColor(32, 31, 31)));
 }

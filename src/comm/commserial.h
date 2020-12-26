@@ -1,9 +1,9 @@
 #ifndef SERIALCOMM_H
 #define SERIALCOMM_H
 
-#include <QSerialPort>
-#include <QSerialPortInfo>
 #include <QTimer>
+#include <QtSerialPort/QSerialPort>
+#include <QtSerialPort/QSerialPortInfo>
 #include <memory>
 
 #include "comm/arducor/arducordiscovery.h"

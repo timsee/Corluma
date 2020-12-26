@@ -27,11 +27,11 @@ bool DataSync::checkThrottle(const QString& controller, ECommType type) {
 
             int throttleInterval = 0;
             switch (type) {
-#ifndef MOBILE_BUILD
+#ifdef USE_SERIAL
                 case ECommType::serial:
                     throttleInterval = 100;
                     break;
-#endif // MOBILE_BUILD
+#endif // USE_SERIAL
                 case ECommType::HTTP:
                     throttleInterval = 2000;
                     break;
@@ -60,7 +60,8 @@ bool DataSync::checkThrottle(const QString& controller, ECommType type) {
         SThrottle throttle;
         throttle.controller = controller;
         throttle.type = type;
-        throttle.time = QTime::currentTime();
+        throttle.time = QElapsedTimer();
+        throttle.time.start();
         mThrottleList.push_back(throttle);
     }
     return throttlePasses;
