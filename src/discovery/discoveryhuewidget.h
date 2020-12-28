@@ -10,7 +10,6 @@
 #include "cor/widgets/textinputwidget.h"
 #include "discovery/discoverytypewidget.h"
 #include "display/displaypreviewbridgewidget.h"
-#include "editablefieldwidget.h"
 #include "greyoutoverlay.h"
 
 /*!
@@ -68,23 +67,11 @@ private slots:
     /// handles when the greyout is clicked
     void greyOutClicked() override;
 
-    /// handles when a discover hue buttons is pressed
-    void discoverHuesPressed(const QString&);
-
     /// handles when a bridge is pressed on the bridge list
     void bridgePressed(const QString&);
 
     /// handles an IP from the IP widget, giving a warning if necessary
     void textInputAddedIP(const QString& IP);
-
-    /// handles when the close button is pressed
-    void hueDiscoveryClosePressed();
-
-    /// handles when a name change is trigged from a hue::BridgeInfoWidget
-    void changedName(const QString&, const QString&);
-
-    /// handles when a bridge is deleted from a BridgeInfoWidget
-    void deleteBridgeFromAppData(hue::Bridge);
 
 protected:
     /// called when the widget resizes
@@ -106,9 +93,6 @@ private:
 
     /// list of selected lights.
     cor::LightList* mSelectedLights;
-
-    /// widget for discovering hue lights
-    hue::LightDiscovery* mHueLightDiscovery;
 
     /// label to prompt the user through the application.
     QLabel* mLabel;

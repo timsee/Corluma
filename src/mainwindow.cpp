@@ -158,6 +158,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     // add hardcoded values from start of application
     mEditMoodPage->changeRowHeight(mLeftHandMenu->height() / 18);
     mEditGroupPage->changeRowHeight(mLeftHandMenu->height() / 18);
+    mMainViewport->moodPage()->moodDetailedWidget()->changeRowHeight(mLeftHandMenu->height() / 18);
     mMainViewport->timeoutPage()->changeRowHeight(mLeftHandMenu->height() / 18);
     mMainViewport->lightsPage()->controllerWidget()->changeRowHeight(mLeftHandMenu->height() / 18);
     mLeftHandMenu->changeRowHeight(mLeftHandMenu->height() / 20);
@@ -370,7 +371,7 @@ void MainWindow::setupStateObserver() {
             SLOT(connectionStateChanged(EProtocolType, EConnectionState)));
 
     // light info widget
-    connect(mMainViewport->lightsPage()->controllerWidget()->lightInfoWidget(),
+    connect(mMainViewport->lightsPage()->controllerWidget(),
             SIGNAL(lightNameChanged(QString, QString)),
             mStateObserver,
             SLOT(lightNameChange(QString, QString)));
@@ -520,9 +521,9 @@ void MainWindow::editButtonClicked(bool isMood) {
     pushInChooseEditPage();
 }
 
-void MainWindow::resizeFullPageWidget(QWidget* widget) {
+void MainWindow::resizeFullPageWidget(QWidget* widget, bool isOpen) {
     QSize fullScreenSize = size();
-    if (widget->isVisible()) {
+    if (isOpen) {
         pushInFullPageWidget(widget);
 
         if (mLeftHandMenu->isIn()) {
@@ -563,7 +564,7 @@ void MainWindow::resize() {
     mGreyOut->resize();
 
     if (mEditGroupPage->isOpen()) {
-        resizeFullPageWidget(mEditGroupPage);
+        resizeFullPageWidget(mEditGroupPage, mEditGroupPage->isOpen());
     } else {
         mEditGroupPage->setGeometry(geometry().width(),
                                     0,
@@ -572,7 +573,7 @@ void MainWindow::resize() {
     }
 
     if (mEditMoodPage->isOpen()) {
-        resizeFullPageWidget(mEditMoodPage);
+        resizeFullPageWidget(mEditMoodPage, mEditMoodPage->isOpen());
     } else {
         mEditMoodPage->setGeometry(geometry().width(),
                                    0,
@@ -581,7 +582,7 @@ void MainWindow::resize() {
     }
 
     if (mChooseEditPage->isOpen()) {
-        resizeFullPageWidget(mChooseEditPage);
+        resizeFullPageWidget(mChooseEditPage, mChooseEditPage->isOpen());
     } else {
         mChooseEditPage->setGeometry(geometry().width(),
                                      0,
@@ -589,8 +590,8 @@ void MainWindow::resize() {
                                      mChooseEditPage->height());
     }
 
-    resizeFullPageWidget(mChooseGroupWidget);
-    resizeFullPageWidget(mChooseMoodWidget);
+    resizeFullPageWidget(mChooseGroupWidget, mChooseGroupWidget->isOpen());
+    resizeFullPageWidget(mChooseMoodWidget, mChooseMoodWidget->isOpen());
 
     mRoutineWidget->resize(mMainViewport->x(),
                            QSize(mMainViewport->width(), mMainViewport->height()));
@@ -690,6 +691,13 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
         mTopMenu->updateLightsMenu();
     }
     mTopMenu->showFloatingLayout(page);
+
+    // handle edge case with controller widget where its visibnle but the top menu pushes its
+    // floating menus above it
+    if (mMainViewport->lightsPage()->isOpen()
+        && mMainViewport->lightsPage()->controllerWidget()->isVisible()) {
+        mMainViewport->lightsPage()->controllerWidget()->raise();
+    }
     if (!ignorePushOut) {
         pushOutLeftHandMenu();
     }
@@ -749,6 +757,8 @@ void MainWindow::pushInEditMoodPage(std::uint64_t key) {
 void MainWindow::pushOutEditPage() {
     pushOutFullPageWidget(mEditGroupPage);
     pushOutFullPageWidget(mEditMoodPage);
+    mEditGroupPage->isOpen(false);
+    mEditMoodPage->isOpen(false);
 
     mEditGroupPage->pushOut(QPoint(width(), 0u));
     mEditGroupPage->reset();
@@ -797,12 +807,15 @@ void MainWindow::pushInChooseMoodPage(cor::EGroupAction action) {
     } else {
         mChooseMoodWidget->pushIn(QPoint(width(), 0), QPoint(0u, 0u));
     }
+
+    mChooseMoodWidget->isOpen(true);
 }
 
 void MainWindow::pushOutChooseMoodPage() {
     pushOutFullPageWidget(mChooseMoodWidget);
 
     mChooseMoodWidget->pushOut(QPoint(width(), 0u));
+    mChooseMoodWidget->isOpen(false);
 }
 
 void MainWindow::selectedEditMode(EChosenEditMode mode) {

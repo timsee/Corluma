@@ -26,23 +26,11 @@ DisplayPreviewBridgeWidget::DisplayPreviewBridgeWidget(const hue::Bridge& bridge
       mSelectedLights{selectedLights} {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     setStyleSheet(styleSheet);
-
-    mDeleteButton = new QPushButton("X", this);
-    mDeleteButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(mDeleteButton, SIGNAL(clicked()), this, SLOT(deleteButtonPressed()));
-
-    mNameLabel = new QLabel("<b>Name:</b> ", this);
-    mNameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mNameLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-
-    mNameWidget = new EditableFieldWidget(bridge.customName(), this);
+    mNameWidget = new QLabel("<b>Name:</b> " + bridge.customName(), this);
     mNameWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(mNameWidget, SIGNAL(updatedField(QString)), this, SLOT(changedName(QString)));
+    mNameWidget->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mTopLayout = new QHBoxLayout;
-    mTopLayout->addWidget(mNameLabel, 2);
-    mTopLayout->addWidget(mNameWidget, 4);
-    mTopLayout->addWidget(mDeleteButton, 1);
+    // connect(mNameWidget, SIGNAL(updatedField(QString)), this, SLOT(changedName(QString)));
 
     //-----------
     // mid Left Image
@@ -78,30 +66,15 @@ DisplayPreviewBridgeWidget::DisplayPreviewBridgeWidget(const hue::Bridge& bridge
     //-----------
     const QString buttonStyleSheet = "background-color: #302F2F;";
 
-    mDiscoverHueButton = new QPushButton("Discover \r\n New Hues", this);
-    mDiscoverHueButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(mDiscoverHueButton, SIGNAL(clicked()), this, SLOT(pressedDiscoverHues()));
-    mDiscoverHueButton->setStyleSheet(buttonStyleSheet);
-
-
-
-    mButtonsLayout = new QGridLayout;
-    mButtonsLayout->addWidget(mDiscoverHueButton, 0, 0);
-    auto margin = int(this->width() * 0.05);
-    mButtonsLayout->setSpacing(margin * 2);
-    mButtonsLayout->setContentsMargins(margin, margin, margin, margin);
-    mDiscoverHueButton->setEnabled(false);
-
     //-----
     // Top right widget
     //----
 
     mTopRightLayout = new QVBoxLayout;
-    mTopRightLayout->addLayout(mTopLayout, 1);
+    mTopRightLayout->addWidget(mNameWidget, 1);
     mTopRightLayout->addWidget(mIPAddress, 1);
     mTopRightLayout->addWidget(mAPI, 1);
     mTopRightLayout->addWidget(mID, 1);
-    mTopRightLayout->addLayout(mButtonsLayout, 4);
     mTopRightLayout->addWidget(mSpacer, 1);
 
     //-----
@@ -115,7 +88,6 @@ DisplayPreviewBridgeWidget::DisplayPreviewBridgeWidget(const hue::Bridge& bridge
     mIsChecked = false;
 
     updateBridge(bridge);
-    calculateButtonFontSize();
 }
 
 void DisplayPreviewBridgeWidget::updateBridge(const hue::Bridge& bridge) {
@@ -133,7 +105,6 @@ void DisplayPreviewBridgeWidget::handleBridgeState(EBridgeDiscoveryState state) 
     auto width = int(min * 0.333f);
     if (state == EBridgeDiscoveryState::connected) {
         mBridgePixmap = QPixmap(":images/Hue-Bridge.png");
-        mDiscoverHueButton->setEnabled(true);
         mImage->setPixmap(
             mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     } else if (state == EBridgeDiscoveryState::lookingForUsername) {
@@ -183,21 +154,10 @@ void DisplayPreviewBridgeWidget::resize() {
     mMidLayout->setGeometry(QRect(0, yPos, width(), height()));
     mTopRightLayout->setGeometry(QRect(mImage->width(), yPos, width() - mImage->width(), height()));
     yPos += mMidLayout->geometry().height();
-
-    calculateButtonFontSize();
 }
 
 void DisplayPreviewBridgeWidget::resizeEvent(QResizeEvent*) {
     resize();
-}
-
-
-void DisplayPreviewBridgeWidget::pressedDiscoverHues() {
-    emit discoverHuesPressed(mBridge.id());
-}
-
-void DisplayPreviewBridgeWidget::changedName(const QString& newName) {
-    emit nameChanged(mBridge.id(), newName);
 }
 
 void DisplayPreviewBridgeWidget::setTitleFontPointSize(int pt) {
@@ -210,45 +170,6 @@ void DisplayPreviewBridgeWidget::setTitleFontPointSize(int pt) {
     QFont font(mIPAddress->font().toString(), pt);
     QFontMetrics fm(font);
     mIPAddress->setMinimumHeight(fm.height());
-}
-
-void DisplayPreviewBridgeWidget::deleteButtonPressed() {
-    emit deleteBridge(mBridge);
-}
-
-
-void DisplayPreviewBridgeWidget::calculateButtonFontSize() {
-    const auto& text = mDiscoverHueButton->text();
-    auto widget = mDiscoverHueButton;
-    // calcuate the text's size
-    auto systemFontWidth = widget->fontMetrics().boundingRect(text).width();
-    // calculate the button's size
-    auto buttonWidth = widget->width() * 0.9;
-    QFont font(widget->font());
-    auto fontPtSize = widget->font().pointSize();
-    if (systemFontWidth > buttonWidth) {
-        for (auto i = fontPtSize - 1; i > 0; --i) {
-            font.setPointSize(i);
-            widget->setFont(font);
-            auto newFontWidth = widget->fontMetrics().boundingRect(text).width();
-            if (newFontWidth < buttonWidth) {
-                // font is small enough to fit
-                break;
-            }
-        }
-    } else {
-        QFont defaultFont;
-        for (auto i = 1; i < defaultFont.pointSize(); ++i) {
-            font.setPointSize(i);
-            widget->setFont(font);
-            auto newFontWidth = widget->fontMetrics().boundingRect(text).width();
-            if (newFontWidth > buttonWidth) {
-                // font is big enough to fit
-                break;
-            }
-        }
-    }
-    mDiscoverHueButton->setFont(font);
 }
 
 void DisplayPreviewBridgeWidget::highlightLights() {

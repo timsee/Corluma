@@ -27,6 +27,9 @@ public:
      */
     void updateHues(std::vector<HueMetadata> lights);
 
+    /// getter for the hue widgets
+    std::vector<hue::HueInfoWidget*> hueWidgets() { return mHueWidgets; }
+
     /*!
      * \brief lookupCurrentLight looks up the current light based on what is currently selected
      * \return returns EProtocol::MAX if nothing is selected, otherwise, returns the current light

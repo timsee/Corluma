@@ -11,6 +11,7 @@
 #include "syncwidget.h"
 #include "utils/qt.h"
 
+#include <QMessageBox>
 #include <QPainter>
 #include <QStyleOption>
 #include <QTextEdit>
@@ -20,14 +21,16 @@
 #include "comm/commlayer.h"
 #include "comm/hue/bridgegroupswidget.h"
 #include "comm/hue/bridgescheduleswidget.h"
+#include "comm/hue/lightdiscovery.h"
 #include "cor/lightlist.h"
 #include "cor/widgets/checkbox.h"
 #include "cor/widgets/expandingtextscrollarea.h"
+#include "cor/widgets/textinputwidget.h"
+#include "greyoutoverlay.h"
 #include "lightinfolistwidget.h"
 #include "menu/displaymoodmetadata.h"
 #include "menu/groupstatelistmenu.h"
 #include "menu/lightslistmenu.h"
-
 
 enum class EDisplayHueBridgeState { info, lights, groups, schedule };
 
@@ -57,11 +60,17 @@ public:
           mName{new QLabel(this)},
           mLightsLabel{new QLabel("<b>Lights:</b>", this)},
           mLights{new LightsListMenu(this, true)},
+          mChangeName{new QPushButton("Change Bridge Name", this)},
+          mDeleteButton{new QPushButton("Delete Bridge", this)},
           mMetadata{new cor::ExpandingTextScrollArea(this)},
           mCheckBox{new cor::CheckBox(this)},
           mGroupsWidget{new hue::BridgeGroupsWidget(this)},
           mSchedulesWidget{new hue::BridgeSchedulesWidget(this)},
+          mGreyout{new GreyOutOverlay(true, parentWidget()->parentWidget())},
+          mChangeNameInput{new cor::TextInputWidget(parentWidget()->parentWidget())},
+          mHueLightDiscovery{new hue::LightDiscovery(parentWidget()->parentWidget(), comm)},
           mRowHeight{10},
+          mChangeBridgeName{false},
           mState{EDisplayHueBridgeState::info} {
         auto font = mName->font();
         font.setPointSize(20);
@@ -78,6 +87,16 @@ public:
         mSchedulesWidget->setVisible(false);
         mSchedulesWidget->isOpen(false);
 
+        connect(mChangeName, SIGNAL(clicked(bool)), this, SLOT(handleChangeBridgeNamePressed()));
+        connect(mDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteButtonPressed(bool)));
+        mDeleteButton->setStyleSheet("background-color:rgb(110,30,30);");
+
+        connect(mChangeNameInput, SIGNAL(textAdded(QString)), this, SLOT(nameChanged(QString)));
+        connect(mChangeNameInput, SIGNAL(cancelClicked()), this, SLOT(closeNameWidget()));
+        mChangeNameInput->setVisible(false);
+
+        connect(mGreyout, SIGNAL(clicked()), this, SLOT(greyOutClicked()));
+        mGreyout->greyOut(false);
 
         connect(mInfoButton, SIGNAL(clicked(bool)), this, SLOT(infoButtonPressed(bool)));
         connect(mLightsButton, SIGNAL(clicked(bool)), this, SLOT(lightsButtonPressed(bool)));
@@ -86,6 +105,18 @@ public:
 
         mLightInfoWidget->isOpen(false);
         mLightInfoWidget->setVisible(false);
+        connect(mLightInfoWidget,
+                SIGNAL(changeLightName(QString, QString)),
+                this,
+                SLOT(handleChangeNamePressed(QString, QString)));
+        connect(mLightInfoWidget,
+                SIGNAL(findNewLightClicked()),
+                this,
+                SLOT(handleFindLightClicked()));
+
+        mHueLightDiscovery->setVisible(false);
+        mHueLightDiscovery->isOpen(false);
+        connect(mHueLightDiscovery, SIGNAL(closePressed()), this, SLOT(hueDiscoveryClosePressed()));
 
         connect(mLights, SIGNAL(clickedLight(cor::Light)), this, SLOT(lightClicked(cor::Light)));
         auto styleSheet = "background-color:rgb(33,32,32);";
@@ -104,7 +135,7 @@ public:
     /// updates the controller's UI elements.
     void updateBridge(const hue::Bridge& bridge) {
         mBridge = bridge;
-        mName->setText(mBridge.name());
+        mName->setText(mBridge.customName());
 
 
         mBridge.lights();
@@ -117,7 +148,10 @@ public:
     }
 
     /// changes the row height of rows in scroll areas.
-    void changeRowHeight(int height) { mRowHeight = height; }
+    void changeRowHeight(int height) {
+        mRowHeight = height;
+        mLightInfoWidget->changeRowHeight(height);
+    }
 
     /// reset the widget to showing no group
     void reset() {
@@ -145,6 +179,9 @@ public:
         headerX += mName->width() + mName->geometry().x();
         mCheckBox->setGeometry(headerX, yPosColumn1, buttonHeight, buttonHeight);
         mCheckBox->resize();
+
+        mGreyout->resize();
+        mHueLightDiscovery->resize();
 
         yPosColumn1 += mName->height();
         yPosColumn2 += mName->height();
@@ -208,6 +245,13 @@ public:
         yPosColumn2 += mLightsLabel->height();
         mMetadata->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, buttonHeight * 4);
         yPosColumn2 += mMetadata->height();
+
+        yPosColumn2 += buttonHeight;
+        mChangeName->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, buttonHeight);
+        yPosColumn2 += mChangeName->height();
+
+        mDeleteButton->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, buttonHeight);
+        yPosColumn2 += mDeleteButton->height();
     }
 
     ///  highlight lights in the widget
@@ -222,6 +266,9 @@ signals:
 
     /// handle when deleting a full controller.
     void deleteController(QString, EProtocolType);
+
+    /// signals when a light name is changed, signaling the lights unique ID and its current name.
+    void lightNameChanged(QString uniqueID, QString name);
 
 protected:
     /*!
@@ -258,7 +305,17 @@ private slots:
     void lightClicked(cor::Light light) { emit lightClicked(light.uniqueID(), true); }
 
     /// handle when the delete button is pressed for a hue.
-    void deleteButtonPressed(bool) { emit deleteController(mBridge.id(), EProtocolType::arduCor); }
+    void deleteButtonPressed(bool) {
+        QMessageBox::StandardButton reply;
+        QString text = "Delete " + mBridge.customName()
+                       + "? This will remove it and all of its lights from the app memory.";
+
+        reply = QMessageBox::question(this, "Delete?", text, QMessageBox::Yes | QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+            // signal to remove from app
+            emit deleteController(mBridge.id(), EProtocolType::arduCor);
+        }
+    }
 
     /// info button pressed
     void infoButtonPressed(bool) {
@@ -271,6 +328,7 @@ private slots:
     void lightsButtonPressed(bool) {
         mState = EDisplayHueBridgeState::lights;
         mLightInfoWidget->scrollArea()->updateHues(mComm->hue()->discovery()->lights());
+        mLightInfoWidget->changeRowHeight(mRowHeight);
         handleState();
         handleButtonHighlight(mLightsButton->text());
     }
@@ -287,6 +345,87 @@ private slots:
         mState = EDisplayHueBridgeState::schedule;
         handleState();
         handleButtonHighlight(mScheduleButton->text());
+    }
+
+    /// handles when the change bridge name button is pressed.
+    void handleChangeBridgeNamePressed() {
+        mChangeBridgeName = true;
+        mGreyout->greyOut(true);
+        mChangeNameInput->pushIn("Change Name of Hue Bridge", mBridge.customName());
+        mChangeNameInput->setVisible(true);
+        mChangeNameInput->raise();
+    }
+
+    /// handle when the name change is pressed.
+    void handleChangeNamePressed(QString uniqueID, QString name) {
+        mLightToChangeName = uniqueID;
+        mChangeBridgeName = false;
+        mGreyout->greyOut(true);
+        mChangeNameInput->pushIn("Change Name of Hue: ", name);
+        mChangeNameInput->setVisible(true);
+        mChangeNameInput->raise();
+    }
+
+    /// change a name of a hue light or bridge.
+    void nameChanged(const QString& name) {
+        if (!name.isEmpty()) {
+            if (mChangeBridgeName) {
+                //            const auto& bridgeResult =
+                //            mComm->hue()->bridges().item(key.toStdString()); if
+                //            (bridgeResult.second)
+                //            {
+                //                mComm->hue()->discovery()->changeName(bridgeResult.first,
+                //                newName); return;
+                //            }
+
+                //            for (const auto& bridge :
+                //            mComm->hue()->discovery()->notFoundBridges()) {
+                //                if (bridge.id() == key) {
+                //                    mComm->hue()->discovery()->changeName(bridge, newName);
+                //                    return;
+                //                }
+                //            }
+            } else {
+                emit lightNameChanged(mLightToChangeName, name);
+            }
+            mGreyout->greyOut(false);
+            mChangeNameInput->pushOut();
+            mChangeNameInput->raise();
+        }
+    }
+
+    /// close the name widget
+    void closeNameWidget() {
+        mGreyout->greyOut(false);
+        mChangeNameInput->pushOut();
+    }
+
+    /// grey out clicked
+    void greyOutClicked() {
+        mChangeNameInput->pushOut();
+        mGreyout->greyOut(false);
+
+        if (mHueLightDiscovery->isOpen()) {
+            hueDiscoveryClosePressed();
+        }
+    }
+
+    /// handles when the find light button is clicked
+    void handleFindLightClicked() {
+        mGreyout->greyOut(true);
+        mHueLightDiscovery->isOpen(true);
+        mHueLightDiscovery->resize();
+        mHueLightDiscovery->setVisible(true);
+        mHueLightDiscovery->show(mBridge);
+        mHueLightDiscovery->raise();
+    }
+
+    /// handles when the hue discovery widget has its closed button pressed.
+    void hueDiscoveryClosePressed() {
+        mGreyout->greyOut(false);
+        mHueLightDiscovery->isOpen(false);
+        mHueLightDiscovery->setVisible(false);
+        mHueLightDiscovery->hide();
     }
 
 private:
@@ -383,6 +522,12 @@ private:
     /// displays the lights that are part of this group and their current states.
     LightsListMenu* mLights;
 
+    /// button to change name.
+    QPushButton* mChangeName;
+
+    /// button for deleting the currently selected nanoleaf
+    QPushButton* mDeleteButton;
+
     /// widget for metadata
     cor::ExpandingTextScrollArea* mMetadata;
 
@@ -395,8 +540,23 @@ private:
     /// widget for showing the schedules on the bridge.
     hue::BridgeSchedulesWidget* mSchedulesWidget;
 
+    /// widget for greying out widgets in the background
+    GreyOutOverlay* mGreyout;
+
+    /// input to change the name of a light
+    cor::TextInputWidget* mChangeNameInput;
+
+    /// widget for discovering hue lights
+    hue::LightDiscovery* mHueLightDiscovery;
+
     /// the height of a row in a scroll area
     int mRowHeight;
+
+    /// false to change light name, true to change bridge name
+    bool mChangeBridgeName;
+
+    /// name of light to change
+    QString mLightToChangeName;
 
     /// state of the widget
     EDisplayHueBridgeState mState;

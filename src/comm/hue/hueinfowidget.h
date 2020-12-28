@@ -3,11 +3,11 @@
 
 #include <QLabel>
 #include <QLayout>
+#include <QPushButton>
 #include <QWidget>
 
 #include "comm/hue/huemetadata.h"
 #include "comm/hue/hueprotocols.h"
-#include "editablefieldwidget.h"
 
 namespace hue {
 
@@ -36,6 +36,12 @@ public:
      * \param light new data for the light.
      */
     void updateLight(HueMetadata light);
+
+    /// change the row height of the widget
+    void changeRowHeight(int rowHeight) {
+        mRowHeight = rowHeight;
+        resize();
+    }
 
     /*!
      * \brief hideDetails true to show only the basic details of a widget, false
@@ -76,8 +82,15 @@ signals:
      */
     void clicked(QString);
 
+    /// emits when the delete button is pressed, emits the uniqueID of the light and its name
+    void clickedDelete(QString key, QString name);
+
+    /// emits when the change name button is presed, emits the unique ID fo the light and its
+    /// current name.
+    void clickedChangeName(QString key, QString name);
+
     /*!
-     * \brief changedName emits its key and the new name given by the EditableFieldWidget
+     * \brief changedName emits its key and the new name given by the
      *        when the name is changed.
      *
      * \param key key for the widget
@@ -87,11 +100,17 @@ signals:
 
 private slots:
 
+    /// handles when the change name button is pressed.
+    void changeNameButtonPressed(bool);
+
+    /// handles when the delete button is pressed.
+    void deleteButtonPressed(bool);
+
     /*!
-     * \brief nameChanged Signaled by EditableFieldWidget, emits the key of the light
+     * \brief emits the key of the light
      *        and the new name requested for the light
      *
-     * \param newName new name for the light created by the EditableFieldWidget
+     * \param newName new name for the light
      */
     void nameChanged(QString newName) { emit changedName(mKey, newName); }
 
@@ -119,11 +138,20 @@ private:
     /// true if  all info should show, false otherwise.
     bool mHideDetails;
 
+    /// height of a row.
+    int mRowHeight;
+
+    /// amount of space on the bottom of the widget.
+    int mBottomSpacer;
+
     /// name of Hue Light as an editable field.
-    EditableFieldWidget* mName;
+    QLabel* mName;
 
     /// displays the model ID of the Hue Light.
     QLabel* mModelID;
+
+    /// displays the current software version of the Hue Light.
+    QLabel* mSoftwareVersion;
 
     /// displays the type of the Hue Light, such as "extended color lamp"
     QLabel* mType;
@@ -131,8 +159,11 @@ private:
     /// unique ID for Hue Light hardware.
     QLabel* mUniqueID;
 
-    /// displays the current software version of the Hue Light.
-    QLabel* mSoftwareVersion;
+    /// button to change the bridge's name
+    QPushButton* mChangeNameButton;
+
+    /// button to delete the bridge.
+    QPushButton* mDeleteButton;
 
     /// stored data the Hue Light being displayed by this widget.
     HueMetadata mLight;
@@ -142,12 +173,6 @@ private:
 
     /// displays the type of light, such as a lightbulb or a light cube.
     QLabel* mTypeIcon;
-
-    /// layout for top of the widget
-    QHBoxLayout* mTopLayout;
-
-    /// layout for the entire widget
-    QVBoxLayout* mMainLayout;
 };
 
 } // namespace hue

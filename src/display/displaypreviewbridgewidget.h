@@ -12,7 +12,6 @@
 #include "comm/hue/huemetadata.h"
 #include "cor/lightlist.h"
 #include "cor/widgets/listitemwidget.h"
-#include "editablefieldwidget.h"
 
 namespace hue {
 
@@ -59,19 +58,10 @@ public:
 
 signals:
 
-    /// signals the bridge's key when the discover hues button is pressed
-    void discoverHuesPressed(QString);
-
-    /// name changed is pressed. signals the bridge ID and the new name
-    void nameChanged(QString, QString);
-
     /*!
      * \brief clicked emits the key of the widget whenever it is clicked.
      */
     void clicked(QString);
-
-    /// delete the bridge signaled from the delete button
-    void deleteBridge(hue::Bridge bridge);
 
 protected:
     /*!
@@ -88,17 +78,6 @@ protected:
      * \brief mouseReleaseEvent picks up when a click (or a tap on mobile) is released.
      */
     virtual void mouseReleaseEvent(QMouseEvent*);
-
-private slots:
-
-    /// handles when the discover hues button is pressed
-    void pressedDiscoverHues();
-
-    /// handles when the name is changed from the EditableFieldWidget
-    void changedName(const QString&);
-
-    /// delete the info associated with the bridge
-    void deleteButtonPressed();
 
 private:
     /// state of bridge
@@ -119,14 +98,8 @@ private:
     /// pointer to selected lights
     cor::LightList* mSelectedLights;
 
-    /// label for the name widget
-    QLabel* mNameLabel;
-
     /// editable field that lets you change the custom name of a bridge.
-    EditableFieldWidget* mNameWidget;
-
-    /// button for deleting all memory associated with a bridge.
-    QPushButton* mDeleteButton;
+    QLabel* mNameWidget;
 
     /// shows the IP address
     QLabel* mIPAddress;
@@ -158,12 +131,6 @@ private:
     /// layout for the top right of the widget
     QVBoxLayout* mTopRightLayout;
 
-    /// layout for the buttons
-    QGridLayout* mButtonsLayout;
-
-    /// button that allows the user to discover new hue lights.
-    QPushButton* mDiscoverHueButton;
-
     /// reachable count
     std::uint32_t mReachableCount;
 
@@ -172,9 +139,6 @@ private:
 
     /// true if checked, false otherwise
     bool mIsChecked;
-
-    /// calculates the font size of the buttons
-    void calculateButtonFontSize();
 };
 
 } // namespace hue

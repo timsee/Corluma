@@ -64,6 +64,7 @@ void PalettePage::setMode(EGroupMode mode) {
         switch (mode) {
             case EGroupMode::presets:
                 mPaletteScrollArea->setVisible(true);
+                mPaletteScrollArea->resize();
                 break;
             case EGroupMode::wheel:
                 mPaletteEnum = EPalette::custom;

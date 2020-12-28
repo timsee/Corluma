@@ -62,11 +62,13 @@ void HueGroupWidget::paintEvent(QPaintEvent*) {
     painter.fillRect(rect(), QBrush(QColor(32, 31, 31)));
 
     // draw line at bottom of widget
+    auto lineOffset = 3;
     QRect area(x(), y(), width(), height());
     QPainter linePainter(this);
     linePainter.setRenderHint(QPainter::Antialiasing);
     linePainter.setBrush(QBrush(QColor(255, 255, 255)));
-    QLine spacerLine(QPoint(area.x(), area.height() - 3), QPoint(area.width(), area.height() - 3));
+    QLine spacerLine(QPoint(area.x(), area.height() - lineOffset),
+                     QPoint(area.width(), area.height() - lineOffset));
     linePainter.drawLine(spacerLine);
 }
 

@@ -558,6 +558,7 @@ void TopMenu::pullLeftFloatingLayout(FloatingLayout* layout) {
 }
 
 void TopMenu::pullLeftLightsMenu() {
+    // add check to avoid showing menu when the controller widget is visible.
     auto parentSize = parentWidget()->size();
     if (mLightsFloatingLayout->geometry().x()
         != (parentSize.width() - mLightsFloatingLayout->width())) {

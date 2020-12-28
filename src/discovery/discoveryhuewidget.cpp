@@ -24,8 +24,6 @@ DiscoveryHueWidget::DiscoveryHueWidget(QWidget* parent,
       mHueDiscoveryState{EHueDiscoveryState::findingIpAddress} {
     mScale = 0.4f;
 
-    auto mainWidget = parentWidget()->parentWidget();
-
     mLabel = new QLabel(this);
     mLabel->setWordWrap(true);
     mLabel->setText("Looking for a Bridge...");
@@ -35,14 +33,6 @@ DiscoveryHueWidget::DiscoveryHueWidget(QWidget* parent,
     mListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mListWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     QScroller::grabGesture(mListWidget->viewport(), QScroller::LeftMouseButtonGesture);
-
-    // --------------
-    // Set up HueLightInfoDiscovery
-    // --------------
-    mHueLightDiscovery = new hue::LightDiscovery(mainWidget, comm);
-    mHueLightDiscovery->setVisible(false);
-    mHueLightDiscovery->isOpen(false);
-    connect(mHueLightDiscovery, SIGNAL(closePressed()), this, SLOT(hueDiscoveryClosePressed()));
 }
 
 void DiscoveryHueWidget::hueDiscoveryUpdate(EHueDiscoveryState newState) {
@@ -105,7 +95,10 @@ void DiscoveryHueWidget::checkIfIPExists(const QString& IP) {
     }
 }
 
-void DiscoveryHueWidget::deleteLight(const QString&) {}
+void DiscoveryHueWidget::deleteLight(const QString& id) {
+    // mListWidget->removeWidget(id);
+    // resize();
+}
 
 void DiscoveryHueWidget::updateBridgeGUI() {
     auto bridgeList = mComm->hue()->bridges().items();
@@ -156,66 +149,17 @@ void DiscoveryHueWidget::updateBridgeGUI() {
                                                               mSelectedLights,
                                                               mListWidget->mainWidget());
             widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-            connect(widget,
-                    SIGNAL(nameChanged(QString, QString)),
-                    this,
-                    SLOT(changedName(QString, QString)));
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(bridgePressed(QString)));
-            connect(widget,
-                    SIGNAL(discoverHuesPressed(QString)),
-                    this,
-                    SLOT(discoverHuesPressed(QString)));
-            connect(widget,
-                    SIGNAL(deleteBridge(hue::Bridge)),
-                    this,
-                    SLOT(deleteBridgeFromAppData(hue::Bridge)));
             mListWidget->insertWidget(widget);
             resize();
         }
     }
 }
 
-void DiscoveryHueWidget::hueDiscoveryClosePressed() {
-    mGreyout->greyOut(false);
-    mHueLightDiscovery->isOpen(false);
-    mHueLightDiscovery->setVisible(false);
-    mHueLightDiscovery->hide();
-}
-
-
-void DiscoveryHueWidget::changedName(const QString& key, const QString& newName) {
-    const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
-    if (bridgeResult.second) {
-        mComm->hue()->discovery()->changeName(bridgeResult.first, newName);
-        return;
-    }
-
-    for (const auto& bridge : mComm->hue()->discovery()->notFoundBridges()) {
-        if (bridge.id() == key) {
-            mComm->hue()->discovery()->changeName(bridge, newName);
-            return;
-        }
-    }
-}
-
-
-void DiscoveryHueWidget::discoverHuesPressed(const QString& key) {
-    const auto& bridgeResult = mComm->hue()->bridges().item(key.toStdString());
-    if (bridgeResult.second) {
-        mGreyout->greyOut(true);
-        mHueLightDiscovery->isOpen(true);
-        mHueLightDiscovery->resize();
-        mHueLightDiscovery->setVisible(true);
-        mHueLightDiscovery->show(bridgeResult.first);
-    }
-    mHueLightDiscovery->raise();
-}
 
 void DiscoveryHueWidget::greyOutClicked() {
     mGreyout->greyOut(false);
-    if (mHueLightDiscovery->isOpen()) {
-        hueDiscoveryClosePressed();
-    }
+
     if (mIPWidget->isOpen()) {
         closeIPWidget();
     }
@@ -273,23 +217,9 @@ void DiscoveryHueWidget::resize() {
     }
     mListWidget->mainWidget()->setFixedHeight(yHeight);
     mListWidget->mainWidget()->setFixedWidth(width());
-    mHueLightDiscovery->resize();
 }
 
 void DiscoveryHueWidget::resizeEvent(QResizeEvent*) {
     mGreyout->resize();
     resize();
-}
-
-void DiscoveryHueWidget::deleteBridgeFromAppData(hue::Bridge bridge) {
-    QMessageBox::StandardButton reply;
-    QString text = "Delete this Bridge from App Memory? This will delete all "
-                   + QString::number(bridge.lights().size())
-                   + " lights from rooms and moods. This cannot be undone.";
-    reply = QMessageBox::question(this, "Delete Bridge?", text, QMessageBox::Yes | QMessageBox::No);
-    if (reply == QMessageBox::Yes) {
-        mComm->hue()->discovery()->deleteBridge(bridge);
-        mListWidget->removeWidget(bridge.id());
-        resize();
-    }
 }

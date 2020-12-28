@@ -20,8 +20,8 @@ MoodDetailedWidget::MoodDetailedWidget(QWidget* parent, GroupData* groups, CommL
       mMoodWidget{new DisplayMoodWidget(this, mComm, groups)},
       mMoodSyncWidget{new MoodSyncWidget(this, mComm)},
       mOnOffSwitch{new cor::Switch(this)},
-      mFloatingMenu{new FloatingLayout(this)} {
-    mOnOffSwitch->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+      mFloatingMenu{new FloatingLayout(this)},
+      mRowHeight{10u} {
     connect(mOnOffSwitch, SIGNAL(switchChanged(bool)), this, SLOT(changedSwitchState(bool)));
     mOnOffSwitch->setSwitchState(ESwitchState::off);
     mOnOffSwitch->setVisible(true);
@@ -33,20 +33,6 @@ MoodDetailedWidget::MoodDetailedWidget(QWidget* parent, GroupData* groups, CommL
     std::vector<QString> buttons = {QString("Group_Edit")};
     mFloatingMenu->setupButtons(buttons, EButtonSize::small);
     mFloatingMenu->setVisible(false);
-
-    //------------
-    // ScrollArea Widget
-    //------------
-    mMoodWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-    mLayout = new QVBoxLayout(this);
-    mLayout->setContentsMargins(4, 4, 4, 4);
-    mLayout->setSpacing(2);
-
-    mLayout->addWidget(mOnOffSwitch, 1);
-    mLayout->addWidget(mMoodWidget, 8);
-
-    resize();
 }
 
 void MoodDetailedWidget::update(const cor::Mood& mood) {
@@ -59,20 +45,26 @@ void MoodDetailedWidget::update(const cor::Mood& mood) {
 }
 
 void MoodDetailedWidget::resize() {
-    mMoodWidget->changeRowHeight(this->height() / 10);
-    mMoodWidget->resize();
     QSize size = parentWidget()->size();
     setFixedSize(int(size.width() * 0.75f), int(size.height() * 0.75f));
-    mOnOffSwitch->setFixedWidth(int(size.width() * 0.2));
-    QPoint topRight(this->x() + this->width(), this->y());
-    mFloatingMenu->move(topRight);
+
+    auto yPos = 0u;
+    auto rowHeight = height() / 9;
+
+    mOnOffSwitch->setGeometry(0, yPos, int(size.width() * 0.2), rowHeight);
     auto spacer = mOnOffSwitch->width() / 8;
     auto syncWidth = this->width() - mFloatingMenu->width() - mOnOffSwitch->width()
                      - mOnOffSwitch->geometry().x() - spacer;
     mMoodSyncWidget->setGeometry(mOnOffSwitch->width() + mOnOffSwitch->geometry().x(),
-                                 mOnOffSwitch->geometry().y(),
+                                 yPos,
                                  syncWidth,
                                  mOnOffSwitch->height());
+    yPos += mOnOffSwitch->height();
+
+    QPoint topRight(this->x() + this->width(), this->y());
+    mFloatingMenu->move(topRight);
+
+    mMoodWidget->setGeometry(0, yPos, width(), rowHeight * 8);
 }
 
 void MoodDetailedWidget::paintEvent(QPaintEvent*) {

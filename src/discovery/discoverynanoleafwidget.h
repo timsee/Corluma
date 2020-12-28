@@ -7,7 +7,6 @@
 #include "cor/lightlist.h"
 #include "cor/widgets/listwidget.h"
 #include "discoverytypewidget.h"
-#include "editablefieldwidget.h"
 #include "searchwidget.h"
 
 /*!

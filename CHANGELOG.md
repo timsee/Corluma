@@ -1046,3 +1046,10 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed deleting `ArduCor` lights.
 - Fixed bugs with maintaining json data in `GroupData`.
 - Fixed miscellaneous bugs.
+
+### **v0.21.57**
+### The Hue Widget Update
+- Moved many functions from `DisplayPreviewBridgeWidget` and `DiscoveryHueWidget` to `DisplayHueBridgeWidget`.
+- Removed the `EditableFieldWidget`.
+- Changed the `PresetGroupWidget` to use a `cor::LightVectorWidget` instead of a `cor::Button`.
+- Fixed miscellaneous bugs.

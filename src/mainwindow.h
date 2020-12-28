@@ -306,7 +306,7 @@ private:
     ShareUtils* mShareUtils;
 
     /// resize a widget that takes up the full page
-    void resizeFullPageWidget(QWidget* widget);
+    void resizeFullPageWidget(QWidget* widget, bool isOpen);
 
     /// push in a widget that takes up the full page
     void pushInFullPageWidget(QWidget* widget);

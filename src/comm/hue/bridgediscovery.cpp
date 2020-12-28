@@ -830,7 +830,7 @@ bool BridgeDiscovery::loadJSON() {
     if (!mJsonData.isNull()) {
         if (mJsonData.isArray()) {
             QJsonArray array = mJsonData.array();
-            for (const QJsonValue& value : array) {
+            for (auto value : array) {
                 QJsonObject object = value.toObject();
                 if (object["username"].isString() && object["IP"].isString()
                     && object["id"].isString()) {

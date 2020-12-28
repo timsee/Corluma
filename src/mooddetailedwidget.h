@@ -34,6 +34,12 @@ public:
     /// update sync status of the widget
     void updateSyncStatus(ESyncState state);
 
+    /// change the row height programmatically.
+    void changeRowHeight(int rowHeight) {
+        mRowHeight = rowHeight;
+        mMoodWidget->changeRowHeight(rowHeight);
+    }
+
     /// resizes widget programmatically
     void resize();
 
@@ -98,8 +104,8 @@ private:
     /// pixmap for icon for the edit button
     QPixmap mEditIcon;
 
-    /// vertical layout for widget
-    QVBoxLayout* mLayout;
+    /// height of each row.
+    int mRowHeight;
 };
 
 #endif // LISTMOODDETAILEDWIDGET_H

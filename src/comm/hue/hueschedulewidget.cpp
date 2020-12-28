@@ -15,7 +15,8 @@ namespace hue {
 
 HueScheduleWidget::HueScheduleWidget(QWidget* parent, hue::Schedule schedule)
     : QWidget(parent),
-      mSchedule(schedule) {
+      mSchedule(schedule),
+      mIsTimeout{schedule.name().contains("Corluma_timeout")} {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     setStyleSheet(styleSheet);
 
@@ -78,6 +79,16 @@ void HueScheduleWidget::paintEvent(QPaintEvent*) {
 
     painter.setRenderHint(QPainter::Antialiasing);
     painter.fillRect(rect(), QBrush(QColor(32, 31, 31)));
+
+    // draw line at bottom of widget
+    auto lineOffset = 3;
+    QRect area(x(), y(), width(), height());
+    QPainter linePainter(this);
+    linePainter.setRenderHint(QPainter::Antialiasing);
+    linePainter.setBrush(QBrush(QColor(255, 255, 255)));
+    QLine spacerLine(QPoint(area.x(), area.height() - lineOffset),
+                     QPoint(area.width(), area.height() - lineOffset));
+    linePainter.drawLine(spacerLine);
 }
 
 

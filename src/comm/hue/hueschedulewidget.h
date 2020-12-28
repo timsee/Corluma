@@ -37,6 +37,9 @@ private:
     /// name for the schedule
     QLabel* mNameLabel;
 
+    /// true if is a timeout
+    bool mIsTimeout;
+
     /// displays the time in Based on ISO8601:2004
     /// TODO: convert this to a human readable format
     QLabel* mTimeLabel;

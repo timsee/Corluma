@@ -7,6 +7,7 @@
 
 #include "cor/objects/light.h"
 #include "cor/widgets/button.h"
+#include "cor/widgets/lightvectorwidget.h"
 
 /*!
  * \copyright
@@ -49,31 +50,23 @@ signals:
      * \brief presetButtonClicked signal that any of the lightsbuttons were pressed and emitting
      *        their own signal.
      */
-    void presetButtonClicked(cor::LightState);
+    void presetButtonClicked(EPalette);
 
-private slots:
-
-    /*!
-     * \brief multiButtonClicked takes the multiButtonClicked LightsButton signals emitted from each
-     * of its buttons and forwards them as a single signal.
-     *
-     * \param routine widget's lighting routine
-     * \param group widget's color palette
-     */
-    void multiButtonClicked(cor::LightState object) { emit presetButtonClicked(object); }
+protected:
+    /// handles when the mouse is released on a button. This acts as clicking a button.
+    void mouseReleaseEvent(QMouseEvent*) { emit presetButtonClicked(mPalette); }
 
 private:
-    cor::Button* mButton;
+    /// vector that shows the colors in a palette
+    cor::LightVectorWidget* mLightVector;
 
     /*!
      * \brief mLabel label for name of preset group.
      */
     QLabel* mLabel;
 
-    /*!
-     * \brief mLayout layout of widget
-     */
-    QGridLayout* mLayout;
+    /// palette enum
+    EPalette mPalette;
 
     /*!
      * \brief kCheckedStyleSheet stylesheet for when the icon is checked

@@ -61,8 +61,9 @@ public:
         connect(mChangeNameInput, SIGNAL(cancelClicked()), this, SLOT(closeNameWidget()));
         mChangeNameInput->setVisible(false);
 
-        connect(mDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteButtonPressed(bool)));
+        connect(mChangeName, SIGNAL(clicked(bool)), this, SLOT(handleChangeNamePressed()));
         connect(mChangeRotation, SIGNAL(clicked(bool)), this, SLOT(rotateButtonPressed(bool)));
+        connect(mDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteButtonPressed(bool)));
         mDeleteButton->setStyleSheet("background-color:rgb(110,30,30);");
 
         mDisplayLights->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
@@ -75,7 +76,6 @@ public:
         mSchedulesLabel->setVisible(false);
         mSchedulesWidget->setVisible(false);
 
-        connect(mChangeName, SIGNAL(clicked(bool)), this, SLOT(handleChangeNamePressed()));
         this->setStyleSheet("background-color:rgb(33,32,32);");
 
         connect(mRotateLightWidget, SIGNAL(cancelClicked()), this, SLOT(rotateWidgetClosed()));
@@ -261,8 +261,8 @@ private slots:
     void handleChangeNamePressed() {
         mGreyout->greyOut(true);
         mChangeNameInput->pushIn("Change Name of Nanoleaf", mLeaf.name());
-        mChangeNameInput->raise();
         mChangeNameInput->setVisible(true);
+        mChangeNameInput->raise();
     }
 
     /// change a name of a nanoleaf.
@@ -275,6 +275,7 @@ private slots:
                                mCheckBox->checkboxState() == cor::ECheckboxState::clearAll);
             mGreyout->greyOut(false);
             mChangeNameInput->pushOut();
+            mChangeNameInput->raise();
         }
     }
 

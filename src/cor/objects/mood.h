@@ -42,7 +42,7 @@ public:
 
         // parse devices
         const auto& deviceArray = object["devices"].toArray();
-        for (const auto& value : deviceArray) {
+        for (auto value : deviceArray) {
             const auto& device = value.toObject();
             if (cor::Light::isValidJson(device)) {
                 mLights.push_back(cor::Light(device));
@@ -53,7 +53,7 @@ public:
 
         // parse defaults
         const auto& defaultStateArray = object["defaultStates"].toArray();
-        for (const auto& value : defaultStateArray) {
+        for (auto value : defaultStateArray) {
             const auto& stateJson = value.toObject();
             if (cor::LightState::isValidJson(stateJson) && stateJson["group"].isDouble()) {
                 auto state = cor::LightState(stateJson);

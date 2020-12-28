@@ -25,41 +25,54 @@ LightInfoListWidget::LightInfoListWidget(QWidget* parent)
             SIGNAL(lightClicked(const QString&, bool)),
             this,
             SLOT(lightInfoClicked(const QString&, bool)));
-    mDeleteButton = new QPushButton("Delete", this);
-    mDeleteButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(mDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteButtonPressed(bool)));
-    mDeleteButton->setEnabled(false);
-    mDeleteButton->setStyleSheet("background-color:rgb(45,30,30);");
+
+    mNewLightButton = new QPushButton("Find New Lights", this);
+    mNewLightButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    connect(mNewLightButton, SIGNAL(clicked(bool)), this, SLOT(findNewLightButtonPressed(bool)));
+    mNewLightButton->setEnabled(true);
+    mNewLightButton->setStyleSheet("background-color:rgb(30,110,30);");
 }
 
 
 void LightInfoListWidget::resize() {
-    auto yPos = 0;
+    auto yPos = height() * 0.02;
 
-    mLightInfoScrollArea->setGeometry(int(width() * 0.01),
+    mLightInfoScrollArea->setGeometry(int(width() * 0.02),
                                       yPos,
-                                      int(width() * 0.98),
-                                      int(height() * 17 / 20));
+                                      int(width() * 0.96),
+                                      int(height() * 0.96 * 17 / 20));
     yPos += mLightInfoScrollArea->height();
 
-    mDeleteButton->setGeometry(int(width() * 0.01),
-                               yPos,
-                               int(width() * 0.98),
-                               int(height() * 3 / 20));
+    mNewLightButton->setGeometry(int(width() * 0.02),
+                                 yPos,
+                                 int(width() * 0.96),
+                                 int(height() * 0.96 * 3 / 20));
 
     mLightInfoScrollArea->resize();
 }
 
+void LightInfoListWidget::changeRowHeight(int rowHeight) {
+    for (auto widget : mLightInfoScrollArea->hueWidgets()) {
+        widget->changeRowHeight(rowHeight);
+    }
+}
 
-void LightInfoListWidget::deleteButtonPressed(bool) {
+void LightInfoListWidget::changeNamePressed(QString key, QString name) {
+    emit changeLightName(key, name);
+}
+
+void LightInfoListWidget::deleteButtonPressed(QString key, QString name) {
     QMessageBox::StandardButton reply;
-    auto lightName = scrollArea()->lookupCurrentLight();
-    QString text = "Delete " + lightName + "? This will remove it from the Hue Bridge.";
+    QString text = "Delete " + name + "? This will remove it from the Hue Bridge.";
     reply = QMessageBox::question(this, "Delete?", text, QMessageBox::Yes | QMessageBox::No);
     if (reply == QMessageBox::Yes) {
         // signal to remove from app
-        emit deleteLight(scrollArea()->key());
+        emit deleteLight(key);
     }
+}
+
+void LightInfoListWidget::findNewLightButtonPressed(bool) {
+    emit findNewLightClicked();
 }
 
 void LightInfoListWidget::paintEvent(QPaintEvent*) {
@@ -72,14 +85,6 @@ void LightInfoListWidget::paintEvent(QPaintEvent*) {
 }
 
 
-void LightInfoListWidget::lightInfoClicked(const QString&, bool shouldEnableDelete) {
-    if (shouldEnableDelete) {
-        mDeleteButton->setEnabled(true);
-        mDeleteButton->setStyleSheet("background-color:rgb(110,30,30);");
-    } else {
-        mDeleteButton->setEnabled(false);
-        mDeleteButton->setStyleSheet("background-color:rgb(45,30,30);");
-    }
-
+void LightInfoListWidget::lightInfoClicked(const QString&, bool) {
     resize();
 }

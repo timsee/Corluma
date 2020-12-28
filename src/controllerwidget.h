@@ -61,6 +61,9 @@ signals:
     /// a light is slected from the controller page, true if seleceted, false if deselected.
     void lightSelected(QString, bool);
 
+    /// emits the key and new name for light
+    void lightNameChanged(QString, QString);
+
 protected:
     /*!
      * \brief resizeEvent called every time the main window is resized.
@@ -91,6 +94,10 @@ private slots:
 
     /// handle when a controller is clicked.
     void controllerClicked(QString, EProtocolType, bool);
+
+    /// handles when a subwidget changes a light name, and signals the change to the rest of the
+    /// app.
+    void handleLightNameChanged(QString key, QString name) { emit lightNameChanged(key, name); }
 
     /// renders and UI that needs explicit updates.
     void renderUI();

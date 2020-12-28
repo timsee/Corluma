@@ -15,7 +15,7 @@ PaletteScrollArea::PaletteScrollArea(QWidget* parent) : QScrollArea(parent) {
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     QScroller::grabGesture(viewport(), QScroller::LeftMouseButtonGesture);
 
-    std::vector<QString> labels(size_t(EPalette::unknown) - 1);
+    std::vector<QString> labels(std::size_t(EPalette::unknown) - 1);
     for (std::size_t i = 0u; i < labels.size(); ++i) {
         labels[i] = paletteToString(EPalette(i + 1));
     }
@@ -37,9 +37,9 @@ PaletteScrollArea::PaletteScrollArea(QWidget* parent) : QScrollArea(parent) {
             new PresetGroupWidget(labels[groupIndex], EPalette(preset), this);
         mLayout->addWidget(mPresetWidgets[groupIndex], rowIndex, columnIndex);
         connect(mPresetWidgets[groupIndex],
-                SIGNAL(presetButtonClicked(cor::LightState)),
+                SIGNAL(presetButtonClicked(EPalette)),
                 this,
-                SLOT(buttonClicked(cor::LightState)));
+                SLOT(buttonClicked(EPalette)));
         columnIndex++;
         groupIndex++;
     }
@@ -55,8 +55,8 @@ void PaletteScrollArea::highlightButton(EPalette palette) {
     }
 }
 
-void PaletteScrollArea::buttonClicked(cor::LightState state) {
-    emit paletteClicked(state.palette().paletteEnum());
+void PaletteScrollArea::buttonClicked(EPalette palette) {
+    emit paletteClicked(palette);
 }
 
 void PaletteScrollArea::resize() {

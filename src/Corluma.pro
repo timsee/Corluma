@@ -220,7 +220,6 @@ SOURCES += main.cpp \
     topmenu.cpp \
     settingsbutton.cpp \
     globalsettingswidget.cpp \
-    editablefieldwidget.cpp \
     searchwidget.cpp \
     palettepage.cpp \
     moodpage.cpp \
@@ -386,7 +385,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     topmenu.h \
     settingsbutton.h \
     globalsettingswidget.h \
-    editablefieldwidget.h \
     searchwidget.h \
     palettepage.h \
     moodpage.h \

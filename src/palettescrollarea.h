@@ -41,7 +41,7 @@ signals:
 private slots:
 
     /// handles a button click and converts it to a signal.
-    void buttonClicked(cor::LightState);
+    void buttonClicked(EPalette);
 
 private:
     /// widget used as main widget of QScrollArea.

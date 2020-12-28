@@ -36,28 +36,26 @@ public:
     /// getter for scroll area
     LightInfoScrollArea* scrollArea() { return mLightInfoScrollArea; }
 
+    /// change the row height.
+    void changeRowHeight(int rowHeight);
+
     /*!
      * \brief resize size the widget programmatically
      */
     void resize();
 
 signals:
-    /// emits when a light name should change
-    void lightNameChanged(const QString&, const QString&);
-
     /// emits the unique ID of the light that will be deleted.
     void deleteLight(QString);
 
-private slots:
-    /*!
-     * \brief lightNameChagned a LightInfoWidget is signaling that its name should change. This
-     * signal is forwarded to a LightInfoWidget signal.
-     *
-     * \param key device index represented as a string
-     * \param name new name of the light
-     */
-    void nameChanged(QString key, QString name) { emit lightNameChanged(key, name); }
+    /// signals when any widget in the list sends a changeName signal. Sends the uniqueID of the
+    /// light and the name of the light.
+    void changeLightName(QString key, QString name);
 
+    /// handles when the find new light button is clicked.
+    void findNewLightClicked();
+
+private slots:
     /*!
      * \brief paintEvent used to draw the background of the widget.
      */
@@ -73,14 +71,20 @@ private slots:
      * \brief deleteButtonPressed delete button pressed, which triggers deleting a hue
      * light from a bridge.
      */
-    void deleteButtonPressed(bool);
+    void findNewLightButtonPressed(bool);
+
+    /// delete button is pressed from any widget in the list
+    void deleteButtonPressed(QString uniqueID, QString name);
+
+    /// change name button is pressed from any widget in the list
+    void changeNamePressed(QString uniqueID, QString name);
 
 private:
     /// scroll area that contains the information about the lights
     LightInfoScrollArea* mLightInfoScrollArea;
 
-    /// button for deleting the currently selected widget
-    QPushButton* mDeleteButton;
+    /// button for finding new lights.
+    QPushButton* mNewLightButton;
 };
 
 

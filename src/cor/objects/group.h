@@ -61,7 +61,7 @@ public:
         }
         QJsonArray deviceArray = object["devices"].toArray();
         std::vector<QString> lightList;
-        for (const QJsonValue& value : deviceArray) {
+        for (auto value : deviceArray) {
             QJsonObject device = value.toObject();
             if (device["uniqueID"].isString()) {
                 mLights.push_back(device["uniqueID"].toString());
@@ -119,7 +119,7 @@ public:
             return false;
         }
         QJsonArray deviceArray = object["devices"].toArray();
-        for (const QJsonValue& value : deviceArray) {
+        for (auto value : deviceArray) {
             QJsonObject device = value.toObject();
             if (!(device["uniqueID"].isString())) {
                 qDebug() << "one of the objects is invalid!" << device;

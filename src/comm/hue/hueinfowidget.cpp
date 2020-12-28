@@ -18,52 +18,45 @@ namespace hue {
 
 HueInfoWidget::HueInfoWidget(HueMetadata light, QWidget* parent)
     : QWidget(parent),
+      mKey{light.uniqueID()},
+      mIsChecked{false},
       mHideDetails{false},
+      mRowHeight{10},
+      mBottomSpacer{6},
+      mName{new QLabel(light.name(), this)},
+      mModelID{new QLabel("<b>Model:</b>  " + light.modelID(), this)},
+      mSoftwareVersion{new QLabel("<b>Software:</b>  " + light.softwareVersion(), this)},
+      mType{new QLabel(cor::hueTypeToString(light.hueType()), this)},
+      mUniqueID{new QLabel("<b>ID:</b>  " + light.uniqueID(), this)},
+      mChangeNameButton{new QPushButton("Change Name", this)},
+      mDeleteButton{new QPushButton("Delete Light", this)},
       mLight(light),
       mTypeIcon(new QLabel(this)) {
-    const QString styleSheet = "background-color: rgba(0,0,0,0);";
-    setStyleSheet(styleSheet);
+    const QString styleSheet = "background-color:rgba(0,0,0,0);";
 
-    mName = new EditableFieldWidget(light.name(),
-                                    this,
-                                    32,
-                                    "A hue's name must be at most 32 characters long.");
-    mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mName->setFontPointSize(14);
-    connect(mName, SIGNAL(updatedField(QString)), this, SLOT(nameChanged(QString)));
+    // mName->setFontPointSize(14);
+    mName->setStyleSheet(styleSheet);
 
-    mModelID = new QLabel("<b>Model:</b>  " + light.modelID(), this);
-    mModelID->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mModelID->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    mModelID->setStyleSheet(styleSheet);
 
-    mSoftwareVersion = new QLabel("<b>Software:</b>  " + light.softwareVersion(), this);
-    mSoftwareVersion->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mSoftwareVersion->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    mSoftwareVersion->setStyleSheet(styleSheet);
 
-    mUniqueID = new QLabel("<b>ID:</b>  " + light.uniqueID(), this);
-    mUniqueID->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mUniqueID->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    mUniqueID->setStyleSheet(styleSheet);
 
-    mType = new QLabel(cor::hueTypeToString(light.hueType()), this);
-    mType->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mType->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    mType->setStyleSheet(styleSheet);
 
-    mTopLayout = new QHBoxLayout;
-    mTopLayout->addWidget(mTypeIcon, 1);
-    mTopLayout->addWidget(mName, 5);
+    mType->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+    mTypeIcon->setStyleSheet(styleSheet);
 
-    mMainLayout = new QVBoxLayout(this);
-    mMainLayout->addLayout(mTopLayout);
-    mMainLayout->addWidget(mType);
-    mMainLayout->addWidget(mModelID);
-    mMainLayout->addWidget(mSoftwareVersion);
-    mMainLayout->addWidget(mUniqueID);
+    connect(mChangeNameButton, SIGNAL(clicked(bool)), this, SLOT(changeNameButtonPressed(bool)));
+    connect(mDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteButtonPressed(bool)));
+    mDeleteButton->setStyleSheet("background-color:rgb(110,30,30);");
 
-    mKey = light.uniqueID();
-
-    mIsChecked = false;
     hideDetails(true);
-    resize();
 }
 
 void HueInfoWidget::updateLight(HueMetadata light) {
@@ -80,8 +73,7 @@ void HueInfoWidget::updateLight(HueMetadata light) {
     mLight = light;
 }
 
-void HueInfoWidget::mouseReleaseEvent(QMouseEvent* event) {
-    Q_UNUSED(event);
+void HueInfoWidget::mouseReleaseEvent(QMouseEvent*) {
     emit clicked(mKey);
 }
 
@@ -94,18 +86,68 @@ void HueInfoWidget::hideDetails(bool shouldHide) {
     mModelID->setHidden(shouldHide);
     mSoftwareVersion->setHidden(shouldHide);
     mUniqueID->setHidden(shouldHide);
+    mChangeNameButton->setHidden(shouldHide);
+    mDeleteButton->setHidden(shouldHide);
     mHideDetails = shouldHide;
+    resize();
+}
+
+void HueInfoWidget::changeNameButtonPressed(bool) {
+    emit clickedChangeName(mLight.uniqueID(), mLight.name());
+}
+
+void HueInfoWidget::deleteButtonPressed(bool) {
+    emit clickedDelete(mLight.uniqueID(), mLight.name());
 }
 
 void HueInfoWidget::resize() {
+    auto rowHeight = mRowHeight;
+    auto topWidth = 0;
+    auto yPos = 0;
+
+    auto columnWidth = width() * 0.45;
+    auto columnSpacer = width() * 0.05;
+    auto columnStart2 = columnSpacer * 2 + columnWidth;
+
+    // top layout
+    mTypeIcon->setGeometry(columnSpacer, 0, rowHeight, rowHeight);
+    topWidth += mTypeIcon->width();
+    topWidth += columnSpacer;
+    mName->setGeometry(topWidth, 0, width() - topWidth, rowHeight);
+    yPos += mTypeIcon->height();
+
+    if (mHideDetails) {
+        // rest of layout
+        mType->setGeometry(columnSpacer, yPos, columnWidth, rowHeight);
+        yPos += mType->height();
+    } else {
+        mType->setGeometry(columnSpacer, yPos, columnWidth, rowHeight);
+        mModelID->setGeometry(columnStart2, yPos, columnWidth, rowHeight);
+        yPos += mType->height();
+
+        mSoftwareVersion->setGeometry(columnSpacer, yPos, columnWidth, rowHeight);
+        mUniqueID->setGeometry(columnStart2, yPos, columnWidth, rowHeight);
+        yPos += mUniqueID->height();
+
+        mChangeNameButton->setGeometry(columnSpacer, yPos, columnWidth, rowHeight);
+        mDeleteButton->setGeometry(columnStart2, yPos, columnWidth, rowHeight);
+        yPos += mDeleteButton->height();
+    }
+
+
     QSize size(mName->height(), mName->height());
-    mTypeIcon->setFixedSize(size);
-    mTypePixmap = lightHardwareTypeToPixmap(mLight.hardwareType());
-    mTypePixmap = mTypePixmap.scaled(size.width(),
-                                     size.height(),
-                                     Qt::IgnoreAspectRatio,
-                                     Qt::SmoothTransformation);
-    mTypeIcon->setPixmap(mTypePixmap);
+    if (mTypePixmap.size() != size) {
+        mTypeIcon->setFixedSize(size);
+        mTypePixmap = lightHardwareTypeToPixmap(mLight.hardwareType());
+        mTypePixmap = mTypePixmap.scaled(size.width(),
+                                         size.height(),
+                                         Qt::IgnoreAspectRatio,
+                                         Qt::SmoothTransformation);
+        mTypeIcon->setPixmap(mTypePixmap);
+    }
+
+    yPos += mBottomSpacer;
+    setFixedHeight(yPos);
 }
 
 void HueInfoWidget::resizeEvent(QResizeEvent*) {
@@ -130,7 +172,8 @@ void HueInfoWidget::paintEvent(QPaintEvent*) {
     QPainter linePainter(this);
     linePainter.setRenderHint(QPainter::Antialiasing);
     linePainter.setBrush(QBrush(QColor(255, 255, 255)));
-    QLine spacerLine(QPoint(area.x(), area.height() - 3), QPoint(area.width(), area.height() - 3));
+    QLine spacerLine(QPoint(area.x(), area.height() - mBottomSpacer / 2),
+                     QPoint(area.width(), area.height() - mBottomSpacer / 2));
     linePainter.drawLine(spacerLine);
 }
 

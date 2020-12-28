@@ -152,7 +152,7 @@ void ControllerWidget::handleDeleteController(QString uniqueID, EProtocolType pr
         result = mComm->arducor()->deleteController(uniqueID);
 
     } else if (protocol == EProtocolType::hue) {
-        //
+        //  mComm->hue()->discovery()->deleteBridge(bridge);
     }
 
     if (!result) {

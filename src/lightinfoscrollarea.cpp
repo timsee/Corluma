@@ -46,9 +46,15 @@ void LightInfoScrollArea::updateHues(std::vector<HueMetadata> lights) {
             widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
             connect(widget, SIGNAL(clicked(QString)), this, SLOT(clickedLight(QString)));
             connect(widget,
-                    SIGNAL(changedName(QString, QString)),
+                    SIGNAL(clickedDelete(QString, QString)),
                     parentWidget(),
-                    SLOT(nameChanged(QString, QString)));
+                    SLOT(deleteButtonPressed(QString, QString)));
+
+            connect(widget,
+                    SIGNAL(clickedChangeName(QString, QString)),
+                    parentWidget(),
+                    SLOT(changeNamePressed(QString, QString)));
+
             mHueWidgets.push_back(widget);
             mScrollLayout->addWidget(widget);
         }

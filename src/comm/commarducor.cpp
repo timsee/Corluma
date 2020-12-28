@@ -81,7 +81,9 @@ CommArduCor::CommArduCor(QObject* parent) : QObject(parent) {
             ArduCorMetadata metadata(name, controller, i);
             ArduCorLight light(metadata);
             ++i;
-            commByType(controller.type())->addLight(light);
+            if (controller.type() != ECommType::MAX) {
+                commByType(controller.type())->addLight(light);
+            }
         }
     }
 
