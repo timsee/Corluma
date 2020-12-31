@@ -35,7 +35,7 @@ DiscoveryWidget::DiscoveryWidget(QWidget* parent,
       mNanoLeafWidget{new DiscoveryNanoLeafWidget(this, comm, data, controllerPage)},
       mComm{comm},
       mType{EProtocolType::hue},
-      mConnectionStates{size_t(EProtocolType::MAX), EConnectionState::off},
+      mConnectionStates{std::size_t(EProtocolType::MAX), EConnectionState::off},
       mForceStartOpen{false},
       mAppSettings{appSettings},
       mRenderThread{new QTimer(this)} {
@@ -60,6 +60,7 @@ DiscoveryWidget::DiscoveryWidget(QWidget* parent,
             SIGNAL(connectionStatusChanged(EProtocolType, EConnectionState)),
             this,
             SLOT(widgetConnectionStateChanged(EProtocolType, EConnectionState)));
+
     connect(mHueWidget, SIGNAL(showControllerWidget()), this, SLOT(shouldShowControllerWidget()));
     mHueWidget->setVisible(false);
 
@@ -128,12 +129,11 @@ void DiscoveryWidget::protocolTypeSelected(EProtocolType type) {
 
 
 void DiscoveryWidget::changeCommTypeConnectionState(EProtocolType type, EConnectionState newState) {
-    if (mConnectionStates[size_t(type)] != newState) {
+    if (mConnectionStates[std::size_t(type)] != newState) {
         emit connectionStateChanged(type, newState);
         mConnectionStates[std::size_t(type)] = newState;
     }
 }
-
 
 // ----------------------------
 // Protected
@@ -142,10 +142,11 @@ void DiscoveryWidget::changeCommTypeConnectionState(EProtocolType type, EConnect
 
 
 void DiscoveryWidget::show() {
-    const auto renderInterval = 100u;
+    const auto renderInterval = 500u;
     mRenderThread->start(renderInterval);
     resize();
 
+    mHueWidget->showWidget();
     setVisible(true);
     isOpen(true);
 }
@@ -204,6 +205,10 @@ void DiscoveryWidget::floatingLayoutButtonPressed(const QString& button) {
             mNanoLeafWidget->openIPWidget();
         }
     }
+}
+
+void DiscoveryWidget::changeRowHeight(int rowHeight) {
+    mHueWidget->changeRowHeight(rowHeight);
 }
 
 void DiscoveryWidget::deleteLight(QString light) {

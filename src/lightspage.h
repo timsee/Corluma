@@ -39,6 +39,14 @@ public:
     /// hide widgets
     void hideWidgets();
 
+signals:
+
+    /// signals when one or more lights should be selected
+    void selectLights(std::vector<QString>);
+
+    /// signals when one or more lights should be deselected
+    void deselectLights(std::vector<QString>);
+
 protected:
     /*!
      * \brief resizeEvent called every time the main window is resized.
@@ -52,9 +60,35 @@ private slots:
     /// handles when the controller widget asks to hide itself.
     void hideControllerWidget();
 
+    /// handles when a light is selected
+    void selectLight(QString);
+
+    /// handles when a light is deselected
+    void deselectLight(QString);
+
+    /// handles when all lights for a controller should be selected
+    void selectAllControllerLights(QString, EProtocolType);
+
+    /// handles when all lights of a controller should be deselected
+    void deselectAllControllerLights(QString, EProtocolType);
+
+    /// handles when a discovery widget signals to delete a controller.
+    void deleteControllerFromDiscovery(QString, EProtocolType);
+
 private:
     /// programmatically resize
     void resize();
+
+    /// uses a controller name and type to get all the lights associated with the controller, second
+    /// flag of pair is whether or not the lookup was successful.
+    std::pair<std::vector<cor::Light>, bool> getLightsFromController(const QString& controllerName,
+                                                                     EProtocolType type);
+
+    /// pointer to comm data
+    CommLayer* mComm;
+
+    /// pointer to selected lights, to add or remove selections.
+    cor::LightList* mSelectedLights;
 
     /// pointer to controller widget, which shows information about a light controller (IE, a
     /// Philips Bridge or a NanoLeaf Controller).

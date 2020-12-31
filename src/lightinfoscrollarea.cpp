@@ -22,6 +22,14 @@ LightInfoScrollArea::LightInfoScrollArea(QWidget* parent)
 
 
 void LightInfoScrollArea::updateHues(std::vector<HueMetadata> lights) {
+    for (auto widget : mHueWidgets) {
+        mScrollLayout->removeWidget(widget);
+        delete widget;
+    }
+
+    // clear vector
+    mHueWidgets.clear();
+
     // sort alphabetically
     auto sortedLights = lights;
     auto lambda = [](const HueMetadata& a, const HueMetadata& b) -> bool {
@@ -59,6 +67,7 @@ void LightInfoScrollArea::updateHues(std::vector<HueMetadata> lights) {
             mScrollLayout->addWidget(widget);
         }
     }
+    resize();
 }
 
 void LightInfoScrollArea::clickedLight(const QString& key) {
@@ -109,7 +118,6 @@ void LightInfoScrollArea::resize() {
 
 
 QString LightInfoScrollArea::lookupCurrentLight() {
-    QString lightName;
     for (auto widget : mHueWidgets) {
         if (widget->key() == mLastHueKey) {
             return widget->light().name();

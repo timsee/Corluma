@@ -1,6 +1,7 @@
 #include "controllerwidget.h"
 #include <QPainter>
 #include <QStyleOption>
+#include "comm/hue/bridge.h"
 
 ControllerWidget::ControllerWidget(QWidget* parent, CommLayer* comm, cor::LightList* selectedLights)
     : QWidget(parent),
@@ -17,36 +18,30 @@ ControllerWidget::ControllerWidget(QWidget* parent, CommLayer* comm, cor::LightL
             SIGNAL(deleteNanoleaf(QString, QString)),
             this,
             SLOT(handleDeleteNanoleaf(QString, QString)));
-    connect(mNanoleafWidget,
-            SIGNAL(lightClicked(QString, bool)),
-            this,
-            SLOT(lightClicked(QString, bool)));
+    // TODO: handle this more elegantly
+    //    connect(mNanoleafWidget,
+    //            SIGNAL(lightNameChanged(QString, QString)),
+    //            this,
+    //            SLOT(handleLightNameChanged(QString, QString)));
 
     connect(mArduCorWidget,
             SIGNAL(deleteController(QString, EProtocolType)),
             this,
             SLOT(handleDeleteController(QString, EProtocolType)));
-    connect(mArduCorWidget,
-            SIGNAL(controllerClicked(QString, EProtocolType, bool)),
-            this,
-            SLOT(controllerClicked(QString, EProtocolType, bool)));
-    connect(mArduCorWidget,
-            SIGNAL(lightClicked(QString, bool)),
-            this,
-            SLOT(lightClicked(QString, bool)));
+
 
     connect(mHueBridgeWidget,
             SIGNAL(deleteController(QString, EProtocolType)),
             this,
             SLOT(handleDeleteController(QString, EProtocolType)));
     connect(mHueBridgeWidget,
-            SIGNAL(controllerClicked(QString, EProtocolType, bool)),
+            SIGNAL(deleteLight(QString)),
             this,
-            SLOT(controllerClicked(QString, EProtocolType, bool)));
+            SLOT(handleDeleteHueLight(QString)));
     connect(mHueBridgeWidget,
-            SIGNAL(lightClicked(QString, bool)),
+            SIGNAL(lightNameChanged(QString, QString)),
             this,
-            SLOT(lightClicked(QString, bool)));
+            SLOT(handleLightNameChanged(QString, QString)));
 
     connect(mRenderTimer, SIGNAL(timeout()), this, SLOT(renderUI()));
     mRenderTimer->start(333);
@@ -103,6 +98,7 @@ void ControllerWidget::showNanoleaf(const nano::LeafMetadata& metadata,
 }
 
 void ControllerWidget::showHueBridge(const hue::Bridge& bridge) {
+    mHueBridgeWidget->showWidget();
     mHueBridgeWidget->updateBridge(bridge);
     mArduCorWidget->setVisible(false);
     mNanoleafWidget->setVisible(false);
@@ -115,25 +111,28 @@ void ControllerWidget::changeRowHeight(int height) {
     mHueBridgeWidget->changeRowHeight(height);
 }
 
-void ControllerWidget::handleDeleteLight(QString uniqueID) {
-    // delete the light
-    emit deleteLight(uniqueID);
+void ControllerWidget::handleDeleteHueLight(QString uniqueID) {
+    qDebug() << " TODO: delete hue " << uniqueID;
+    //    // delete the light
+    //    emit deleteLight(uniqueID);
 
-    auto light = mComm->lightByID(uniqueID);
-
-    // close the page, it will no longer exist
-    emit backButtonPressed();
+    //    auto light = mComm->lightByID(uniqueID);
+    //    if (light.isValid()) {
+    //        if (light.protocol() == EProtocolType::nanoleaf) {
+    //            // close the page, it will no longer exist
+    //            emit backButtonPressed();
+    //        }
+    //    }
 }
 
 void ControllerWidget::handleDeleteNanoleaf(QString serialNumber, QString IP) {
-    // delete the light
-    emit deleteLight(serialNumber);
-
     // delete the light from the comm layer, which signals to delete it from groups
     bool result = mComm->nanoleaf()->deleteNanoleaf(serialNumber, IP);
     if (!result) {
         qDebug() << "WARNING: error deleting " << serialNumber << " IP: " << IP;
     } else {
+        // delete the light
+        emit deleteLight(serialNumber);
         // close the page, it will no longer exist
         emit backButtonPressed();
     }
@@ -152,12 +151,24 @@ void ControllerWidget::handleDeleteController(QString uniqueID, EProtocolType pr
         result = mComm->arducor()->deleteController(uniqueID);
 
     } else if (protocol == EProtocolType::hue) {
-        //  mComm->hue()->discovery()->deleteBridge(bridge);
+        auto bridgeResult = mComm->hue()->discovery()->bridgeFromDiscoveryID(uniqueID);
+        // TODO: find a bridge a properly
+        if (bridgeResult.second) {
+            auto bridge = bridgeResult.first;
+            // gather light UUIDs from bridge
+            for (auto light : bridge.lights().items()) {
+                lightNames.push_back(light.uniqueID());
+            }
+            result = mComm->hue()->discovery()->deleteBridge(bridgeResult.first);
+        }
     }
 
     if (!result) {
-        qDebug() << "WARNING: error deleting " << uniqueID << " IP: " << protocolToString(protocol);
+        qDebug() << "WARNING: error deleting " << uniqueID
+                 << " protocol: " << protocolToString(protocol);
     } else {
+        qDebug() << "INFO: Deleted controller: " << uniqueID
+                 << " protocol: " << protocolToString(protocol);
         emit deleteLight(uniqueID);
         for (const auto& light : lightNames) {
             emit deleteLight(light);
@@ -175,53 +186,6 @@ void ControllerWidget::highlightLights() {
 
     if (mHueBridgeWidget->isVisible()) {
         mHueBridgeWidget->highlightLights();
-    }
-}
-
-void ControllerWidget::lightClicked(QString lightKey, bool) {
-    auto light = mComm->lightByID(lightKey);
-    auto state = light.state();
-    if (light.isReachable()) {
-        if (mSelectedLights->doesLightExist(light)) {
-            mSelectedLights->removeLight(light);
-            emit lightSelected(lightKey, false);
-        } else {
-            mSelectedLights->addLight(light);
-            emit lightSelected(lightKey, true);
-        }
-    }
-}
-
-void ControllerWidget::controllerClicked(QString controller,
-                                         EProtocolType protocol,
-                                         bool selectAll) {
-    if (protocol == EProtocolType::arduCor) {
-        auto controllerResult =
-            mComm->arducor()->discovery()->findFoundControllerByControllerName(controller);
-        if (controllerResult.second) {
-            auto lights = mComm->arducor()->lightsFromNames(controllerResult.first.names());
-            if (selectAll) {
-                mSelectedLights->addLights(lights);
-            } else {
-                mSelectedLights->removeLights(lights);
-            }
-            for (auto light : lights) {
-                emit lightSelected(light.uniqueID(), selectAll);
-            }
-        }
-    } else if (protocol == EProtocolType::hue) {
-        auto controllerResult = mComm->hue()->discovery()->bridgeFromID(controller);
-        if (controllerResult.second) {
-            auto lights = mComm->hue()->lightsFromMetadata(controllerResult.first.lights().items());
-            if (selectAll) {
-                mSelectedLights->addLights(lights);
-            } else {
-                mSelectedLights->removeLights(lights);
-            }
-            for (auto light : lights) {
-                emit lightSelected(light.uniqueID(), selectAll);
-            }
-        }
     }
 }
 

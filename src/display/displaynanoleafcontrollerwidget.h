@@ -225,8 +225,11 @@ signals:
     /// emit when a light is deleted
     void deleteNanoleaf(QString, QString);
 
-    /// emit when a light is clicked
-    void lightClicked(QString, bool);
+    /// emits when a light should be selected
+    void selectLight(QString);
+
+    /// emits when a light should be deselected
+    void deselectLight(QString);
 
 protected:
     /*!
@@ -247,10 +250,10 @@ protected:
         if (cor::isMouseEventTouchUpInside(event, mCheckBox, false)) {
             if (mCheckBox->checkboxState() == cor::ECheckboxState::clearAll) {
                 mCheckBox->checkboxState(cor::ECheckboxState::selectAll);
-                emit lightClicked(mLeaf.serialNumber(), false);
+                emit deselectLight(mLeaf.serialNumber());
             } else {
                 mCheckBox->checkboxState(cor::ECheckboxState::clearAll);
-                emit lightClicked(mLeaf.serialNumber(), true);
+                emit selectLight(mLeaf.serialNumber());
             }
         }
         event->ignore();

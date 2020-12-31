@@ -7,6 +7,7 @@
 #include "displaypreviewbridgewidget.h"
 
 #include <QGraphicsOpacityEffect>
+#include <QMessageBox>
 #include <QScroller>
 #include <QStyleOption>
 #include <QtCore>
@@ -19,71 +20,31 @@ DisplayPreviewBridgeWidget::DisplayPreviewBridgeWidget(const hue::Bridge& bridge
                                                        const QString& key,
                                                        CommLayer* comm,
                                                        cor::LightList* selectedLights,
+                                                       int rowHeight,
                                                        QWidget* parent)
     : cor::ListItemWidget(key, parent),
       mState{EBridgeDiscoveryState::unknown},
       mComm{comm},
-      mSelectedLights{selectedLights} {
+      mSelectedLights{selectedLights},
+      mLights{new LightsListMenu(this, true)},
+      mImage{new QLabel(this)},
+      mCheckBox{new cor::CheckBox(this)},
+      mMetadata{new QLabel(this)},
+      mManageButton{new QPushButton("Manage", this)},
+      mRowHeight{rowHeight} {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     setStyleSheet(styleSheet);
     mNameWidget = new QLabel("<b>Name:</b> " + bridge.customName(), this);
-    mNameWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mNameWidget->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    // connect(mNameWidget, SIGNAL(updatedField(QString)), this, SLOT(changedName(QString)));
+    mMetadata->setWordWrap(true);
 
-    //-----------
-    // mid Left Image
-    //-----------
+    connect(mLights, SIGNAL(clickedLight(cor::Light)), this, SLOT(clickedLight(cor::Light)));
 
-    mImage = new QLabel(this);
+    connect(mManageButton, SIGNAL(clicked(bool)), this, SLOT(manageButtonPressed(bool)));
+
     mImage->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    mImage->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     mMovie = new QMovie(":/images/loading_icon.gif");
-
-    //-----------
-    // mid Right info
-    //-----------
-
-    mIPAddress = new QLabel(this);
-    mIPAddress->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mIPAddress->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-
-    mAPI = new QLabel(this);
-    mAPI->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mAPI->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-
-    mID = new QLabel(this);
-    mID->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mID->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-
-    mSpacer = new QLabel(this);
-    mSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mSpacer->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-
-    //-----------
-    // Bottom
-    //-----------
-    const QString buttonStyleSheet = "background-color: #302F2F;";
-
-    //-----
-    // Top right widget
-    //----
-
-    mTopRightLayout = new QVBoxLayout;
-    mTopRightLayout->addWidget(mNameWidget, 1);
-    mTopRightLayout->addWidget(mIPAddress, 1);
-    mTopRightLayout->addWidget(mAPI, 1);
-    mTopRightLayout->addWidget(mID, 1);
-    mTopRightLayout->addWidget(mSpacer, 1);
-
-    //-----
-    // mid widget
-    //----
-
-    mMidLayout = new QHBoxLayout;
-    mMidLayout->addWidget(mImage);
-    mMidLayout->addLayout(mTopRightLayout);
 
     mIsChecked = false;
 
@@ -92,10 +53,14 @@ DisplayPreviewBridgeWidget::DisplayPreviewBridgeWidget(const hue::Bridge& bridge
 
 void DisplayPreviewBridgeWidget::updateBridge(const hue::Bridge& bridge) {
     mNameWidget->setText(bridge.customName());
-    mIPAddress->setText("<b>IP:</b>  " + bridge.IP());
-    mAPI->setText("<b>API:</b>  " + bridge.API());
-    mID->setText("<b>ID:</b>  " + bridge.id());
+
+    auto updatedLights = mComm->hue()->lightsFromMetadata(bridge.lights().items());
+    if (!cor::compareTwoLightVectors(updatedLights, mLights->lights())) {
+        mLights->showLights(updatedLights);
+    }
     handleBridgeState(bridge.state());
+    handleButtonState();
+    updateMetadata(bridge);
     highlightLights();
     mBridge = bridge;
 }
@@ -103,27 +68,52 @@ void DisplayPreviewBridgeWidget::updateBridge(const hue::Bridge& bridge) {
 void DisplayPreviewBridgeWidget::handleBridgeState(EBridgeDiscoveryState state) {
     auto min = width();
     auto width = int(min * 0.333f);
-    if (state == EBridgeDiscoveryState::connected) {
-        mBridgePixmap = QPixmap(":images/Hue-Bridge.png");
-        mImage->setPixmap(
-            mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    } else if (state == EBridgeDiscoveryState::lookingForUsername) {
-        mBridgePixmap = QPixmap(":images/pressHueBridgeImage.png");
-        mImage->setPixmap(
-            mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    } else if (state == EBridgeDiscoveryState::lookingForResponse
-               || state == EBridgeDiscoveryState::testingConnectionInfo) {
-        mImage->setMovie(mMovie);
-        mMovie->start();
+    if (state != mState
+        || ((state != EBridgeDiscoveryState::testingConnectionInfo)
+            && mBridgePixmap.size() != QSize(width, width))) {
+        if (state == EBridgeDiscoveryState::connected) {
+            mBridgePixmap = QPixmap(":images/Hue-Bridge.png");
+            mBridgePixmap =
+                mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            mImage->setPixmap(mBridgePixmap);
+            mCheckBox->setVisible(true);
+        } else if (state == EBridgeDiscoveryState::lookingForUsername) {
+            mBridgePixmap = QPixmap(":images/pressHueBridgeImage.png");
+            mBridgePixmap =
+                mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            mImage->setPixmap(mBridgePixmap);
+            mCheckBox->setVisible(false);
+        } else if (state == EBridgeDiscoveryState::lookingForResponse
+                   || state == EBridgeDiscoveryState::testingConnectionInfo) {
+            mImage->setMovie(mMovie);
+            mMovie->start();
+            mCheckBox->setVisible(false);
+        }
+        mState = state;
     }
-    mState = state;
-    mImage->setFixedWidth(width);
-    adjustSize();
 }
 
 void DisplayPreviewBridgeWidget::setChecked(bool checked) {
     mIsChecked = checked;
     update();
+}
+
+void DisplayPreviewBridgeWidget::handleButtonState() {
+    if (mState == EBridgeDiscoveryState::connected) {
+        mManageButton->setText("Manage");
+        mManageButton->setStyleSheet("background-color: rgb(48,47,47);");
+    } else {
+        mManageButton->setText("Delete");
+        mManageButton->setStyleSheet("background-color: rgb(110,32,32);");
+    }
+}
+
+void DisplayPreviewBridgeWidget::clickedLight(cor::Light light) {
+    if (mSelectedLights->doesLightExist(light.uniqueID())) {
+        emit deselectLight(light.uniqueID());
+    } else {
+        emit selectLight(light.uniqueID());
+    }
 }
 
 void DisplayPreviewBridgeWidget::paintEvent(QPaintEvent*) {
@@ -133,56 +123,105 @@ void DisplayPreviewBridgeWidget::paintEvent(QPaintEvent*) {
 
     painter.setRenderHint(QPainter::Antialiasing);
     painter.fillRect(rect(), cor::computeHighlightColor(mSelectedCount, mReachableCount));
-
-    // draw line at bottom of widget
-    QRect area(x(), y(), width(), height());
-    QPainter linePainter(this);
-    linePainter.setRenderHint(QPainter::Antialiasing);
-    linePainter.setBrush(QBrush(QColor(255, 255, 255)));
-    QLine spacerLine(QPoint(area.x(), area.height() - 3), QPoint(area.width(), area.height() - 3));
-    linePainter.drawLine(spacerLine);
 }
 
-void DisplayPreviewBridgeWidget::mouseReleaseEvent(QMouseEvent*) {
-    emit clicked(mBridge.id());
+void DisplayPreviewBridgeWidget::manageButtonPressed(bool) {
+    if (mState == EBridgeDiscoveryState::connected) {
+        emit bridgeClicked(mBridge.id());
+    } else {
+        QMessageBox::StandardButton reply;
+        QString text =
+            "Delete " + mBridge.customName() + "? This bridge has not been fully discovered.";
+
+        reply = QMessageBox::question(this, "Delete?", text, QMessageBox::Yes | QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+            // signal to remove from app
+            emit deleteBridge(mBridge.id(), EProtocolType::hue);
+        }
+    }
 }
 
 void DisplayPreviewBridgeWidget::resize() {
     handleBridgeState(mBridge.state());
-    auto yPos = 0;
+    auto yPosFirstColumn = 0;
+    auto yPosSecondColumn = 0;
+    auto xSpacer = width() * 0.00;
+    auto columnWidth = width() * 0.33;
+    auto xSecondColumnStart = columnWidth + xSpacer * 2;
 
-    mMidLayout->setGeometry(QRect(0, yPos, width(), height()));
-    mTopRightLayout->setGeometry(QRect(mImage->width(), yPos, width() - mImage->width(), height()));
-    yPos += mMidLayout->geometry().height();
+    auto rowHeight = height() / 8;
+
+    mNameWidget->setGeometry(xSpacer, yPosFirstColumn, columnWidth * 2, rowHeight);
+    mCheckBox->setGeometry(width() - rowHeight, yPosFirstColumn, rowHeight, rowHeight);
+    mCheckBox->resize();
+    yPosSecondColumn += mNameWidget->height();
+    yPosFirstColumn += mNameWidget->height();
+
+    mImage->setGeometry(xSpacer, yPosFirstColumn, columnWidth, rowHeight * 4);
+    yPosFirstColumn += mImage->height();
+    mMetadata->setGeometry(xSpacer, yPosFirstColumn, columnWidth, rowHeight * 2);
+    yPosFirstColumn += mMetadata->height();
+    mManageButton->setGeometry(xSpacer, yPosFirstColumn, columnWidth, rowHeight);
+
+    QRect selectedLightsRect(xSecondColumnStart,
+                             yPosSecondColumn,
+                             columnWidth * 2 - xSpacer,
+                             rowHeight * 7);
+    mLights->resize(selectedLightsRect, mRowHeight);
+    yPosSecondColumn += mLights->height();
 }
 
 void DisplayPreviewBridgeWidget::resizeEvent(QResizeEvent*) {
     resize();
 }
 
-void DisplayPreviewBridgeWidget::setTitleFontPointSize(int pt) {
-    if (pt <= 0) {
-        pt = 1;
+/// handle when a mouse release event occurs.
+void DisplayPreviewBridgeWidget::mouseReleaseEvent(QMouseEvent* event) {
+    if (cor::isMouseEventTouchUpInside(event, mCheckBox, false)) {
+        if (mCheckBox->checkboxState() == cor::ECheckboxState::clearAll) {
+            mCheckBox->checkboxState(cor::ECheckboxState::selectAll);
+            emit deselectAllClicked(mBridge.id(), EProtocolType::hue);
+            mLights->highlightLights({});
+        } else {
+            mCheckBox->checkboxState(cor::ECheckboxState::clearAll);
+            emit selectAllClicked(mBridge.id(), EProtocolType::hue);
+            mLights->highlightLights(mBridge.lightIDs());
+        }
     }
-    QString stylesheet = "font-size:" + QString::number(pt) + "pt;";
-    mIPAddress->setStyleSheet(stylesheet);
+    event->ignore();
+}
 
-    QFont font(mIPAddress->font().toString(), pt);
-    QFontMetrics fm(font);
-    mIPAddress->setMinimumHeight(fm.height());
+void DisplayPreviewBridgeWidget::updateMetadata(const hue::Bridge& bridge) {
+    if (bridge.state() == EBridgeDiscoveryState::connected) {
+        std::stringstream returnString;
+        returnString << "<b>Lights: </b>" << bridge.lightIDs().size() << "<br>";
+        returnString << "<b>Groups: </b>" << bridge.groups().size() << "<br>";
+        returnString << "<b>Schedules: </b>" << bridge.schedules().size() << "<br>";
+        std::string result = returnString.str();
+        mMetadata->setText(QString(result.c_str()));
+    } else if (bridge.state() == EBridgeDiscoveryState::lookingForUsername) {
+        mMetadata->setText("Bridge found! Please press the Link Button...");
+    } else if (bridge.state() == EBridgeDiscoveryState::lookingForResponse) {
+        mMetadata->setText("Looking for bridge...");
+    }
 }
 
 void DisplayPreviewBridgeWidget::highlightLights() {
     mReachableCount = 0u;
     mSelectedCount = 0u;
+    std::vector<QString> lightsToHighlight;
     for (auto light : mComm->hue()->lightsFromMetadata(mBridge.lights().items())) {
         if (light.isReachable()) {
             mReachableCount++;
         }
         if (mSelectedLights->doesLightExist(light.uniqueID())) {
+            lightsToHighlight.push_back(light.uniqueID());
             mSelectedCount++;
         }
     }
+
+    handleCheckboxState();
+    mLights->highlightLights(lightsToHighlight);
     update();
 }
 

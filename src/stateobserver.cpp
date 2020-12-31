@@ -277,7 +277,11 @@ void StateObserver::lightNameChange(const QString& key, const QString& name) {
     mComm->lightNameChange(key, name);
 }
 
-void StateObserver::lightCountChangedFromControllerPage(QString, bool) {
+void StateObserver::lightDeleted(const QString& key) {
+    qDebug() << "TODO: light deleted";
+}
+
+void StateObserver::lightCountChangedFromLightsPage(std::vector<QString>) {
     mMainWindow->leftHandMenu()->lightCountChanged();
     mMainWindow->leftHandMenu()->updateLights();
     lightCountChanged();

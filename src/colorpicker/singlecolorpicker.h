@@ -52,12 +52,6 @@ public:
     /// @copydoc ColorPicker::enable(bool,EColorPickerType)
     void enable(bool shouldEnable, EColorPickerType bestType) override;
 
-    /*!
-     * \brief changeMode sets the layout using the available layout modes.
-     * \param layout the layout you want to use.
-     */
-    void changeMode(ESingleColorPickerMode mode);
-
     /// getter for current mode of colorpicker
     ESingleColorPickerMode mode() const noexcept { return mCurrentMode; }
 
@@ -119,6 +113,12 @@ private slots:
     void wheelCTChanged(std::uint32_t brightness, std::uint32_t temperature);
 
 private:
+    /*!
+     * \brief changeMode sets the layout using the available layout modes.
+     * \param layout the layout you want to use.
+     */
+    void changeMode(ESingleColorPickerMode mode);
+
     /// sets the background color for a slider widget
     void setBackgroundForSliders(QWidget* sliders);
 

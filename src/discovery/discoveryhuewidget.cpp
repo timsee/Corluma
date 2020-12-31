@@ -21,19 +21,11 @@ DiscoveryHueWidget::DiscoveryHueWidget(QWidget* parent,
     : DiscoveryTypeWidget(parent, comm, controllerPage),
       mBridgeDiscovered{false},
       mSelectedLights{selectedLights},
-      mHueDiscoveryState{EHueDiscoveryState::findingIpAddress} {
-    mScale = 0.4f;
-
-    mLabel = new QLabel(this);
-    mLabel->setWordWrap(true);
-    mLabel->setText("Looking for a Bridge...");
-    mLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
-    mListWidget = new cor::ListWidget(this, cor::EListType::linear);
-    mListWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mListWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    QScroller::grabGesture(mListWidget->viewport(), QScroller::LeftMouseButtonGesture);
-}
+      mBridgeButtons{std::vector<hue::BridgeButton*>(3, nullptr)},
+      mBridgeWidgets{std::vector<hue::DisplayPreviewBridgeWidget*>(3, nullptr)},
+      mBridgeIndex{0},
+      mRowHeight{10u},
+      mHueDiscoveryState{EHueDiscoveryState::findingIpAddress} {}
 
 void DiscoveryHueWidget::hueDiscoveryUpdate(EHueDiscoveryState newState) {
     if (newState != mHueDiscoveryState) {
@@ -41,34 +33,38 @@ void DiscoveryHueWidget::hueDiscoveryUpdate(EHueDiscoveryState newState) {
 
         switch (mHueDiscoveryState) {
             case EHueDiscoveryState::findingIpAddress:
-                mLabel->setText(QString("Looking for Bridge..."));
+                // mLabel->setText(QString("Looking for Bridge..."));
                 // qDebug() << "Hue Update: Finding IP Address";
                 emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
                 break;
             case EHueDiscoveryState::findingDeviceUsername:
-                mLabel->setText(QString("Bridge Found! Please press Link button..."));
+                // mLabel->setText(QString("Bridge Found! Please press Link button..."));
                 // qDebug() << "Hue Update: Bridge is waiting for link button to be pressed.";
                 emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
                 break;
             case EHueDiscoveryState::testingFullConnection:
-                mLabel->setText(QString("Testing full connection..."));
+                // mLabel->setText(QString("Testing full connection..."));
                 // qDebug() << "Hue Update: IP and Username received, testing combination. ";
                 emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
                 break;
             case EHueDiscoveryState::bridgeConnected: {
-                auto totalBridges = mComm->hue()->discovery()->bridges().size()
-                                    + mComm->hue()->discovery()->notFoundBridges().size();
-                auto notFoundBridges =
-                    totalBridges - mComm->hue()->discovery()->notFoundBridges().size();
-                mLabel->setText(
-                    QString("%1 out of %2 bridges discovered. Searching for additional bridges...")
-                        .arg(QString::number(notFoundBridges), QString::number(totalBridges)));
+                //                auto totalBridges = mComm->hue()->discovery()->bridges().size()
+                //                                    +
+                //                                    mComm->hue()->discovery()->notFoundBridges().size();
+                //                auto notFoundBridges =
+                //                    totalBridges -
+                //                    mComm->hue()->discovery()->notFoundBridges().size();
+                //                mLabel->setText(
+                //                    QString("%1 out of %2 bridges discovered. Searching for
+                //                    additional bridges...")
+                //                        .arg(QString::number(notFoundBridges),
+                //                        QString::number(totalBridges)));
                 // qDebug() << "Hue Update: Bridge Connected" << mComm->hueBridge().IP;
                 emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovered);
                 break;
             }
             case EHueDiscoveryState::allBridgesConnected:
-                mLabel->setText(QString(""));
+                //   mLabel->setText(QString(""));
                 // qDebug() << "Hue Update: All Bridges Connected" << mComm->hueBridge().IP;
                 emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovered);
                 break;
@@ -96,8 +92,31 @@ void DiscoveryHueWidget::checkIfIPExists(const QString& IP) {
 }
 
 void DiscoveryHueWidget::deleteLight(const QString& id) {
-    // mListWidget->removeWidget(id);
-    // resize();
+    int index = -1;
+    auto storedIndex = mBridgeIndex;
+    for (auto i = 0u; i < mBridgeWidgets.size(); ++i) {
+        if (mBridgeWidgets[i] != nullptr) {
+            if (mBridgeWidgets[i]->bridge().id() == id) {
+                index = i;
+                delete mBridgeWidgets[i];
+                mBridgeWidgets[i] = nullptr;
+                delete mBridgeButtons[i];
+                mBridgeButtons[i] = nullptr;
+            }
+        }
+    }
+    if (index != -1) {
+        for (auto i = 0u; i < mBridgeWidgets.size(); ++i) {
+            if (mBridgeWidgets[i] != nullptr) {
+                mBridgeIndex = i;
+                break;
+            }
+        }
+        if (storedIndex == mBridgeIndex) {
+            mBridgeIndex = 0u;
+        }
+    }
+    resize();
 }
 
 void DiscoveryHueWidget::updateBridgeGUI() {
@@ -112,50 +131,101 @@ void DiscoveryHueWidget::updateBridgeGUI() {
         // check if light already exists in list
         int widgetIndex = -1;
         int i = 0;
-        for (const auto& widget : mListWidget->widgets()) {
-            auto bridgeInfoWidget = dynamic_cast<hue::DisplayPreviewBridgeWidget*>(widget);
-            if (bridgeInfoWidget->bridge().id().isEmpty() && widget->key() == bridge.IP()) {
-                // if theres no unique ID yet for this bridge, check if we can add a username
-                if (!bridge.username().isEmpty()) {
-                    // if we can add a username, remove the current widget and re-add with a new
-                    // username
-                    mListWidget->removeWidget(bridge.IP());
-                    break;
-                } else {
-                    // only update if we still don't have a username
+        for (const auto& widget : mBridgeWidgets) {
+            if (widget != nullptr) {
+                if (widget->bridge().id().isEmpty() && widget->key() == bridge.IP()) {
+                    // if theres no unique ID yet for this bridge, check if we can add a username
+                    if (!bridge.username().isEmpty()) {
+                        // if we can add a username, remove the current widget and re-add with a new
+                        // username
+                        qDebug() << " TODO: remove widget " << bridge.IP();
+                        break;
+                    } else {
+                        // only update if we still don't have a username
+                        widgetIndex = i;
+                        widget->updateBridge(bridge);
+                    }
+                } else if (widget->key() == bridge.id()) {
+                    // standard case, theres a unique ID for this bridge
                     widgetIndex = i;
-                    bridgeInfoWidget->updateBridge(bridge);
+                    widget->updateBridge(bridge);
                 }
-            } else if (widget->key() == bridge.id()) {
-                // standard case, theres a unique ID for this bridge
-                widgetIndex = i;
-                bridgeInfoWidget->updateBridge(bridge);
             }
             ++i;
         }
 
         // if it doesnt exist, add it
         if (widgetIndex == -1) {
-            // if the bridge's key can be its id, use that. If not, we'll use a temporary widget
-            // that uses an IP address, but as soon as the real id is available, we'll delete this
-            // widget, and make a new one with the id as the key.
-            QString key = bridge.id();
-            if (key.isEmpty()) {
-                key = bridge.IP();
+            // check if there is a free index
+            int newIndex = -1;
+            for (auto i = 0u; i < mBridgeWidgets.size(); ++i) {
+                if (mBridgeWidgets[i] == nullptr) {
+                    newIndex = i;
+                    break;
+                }
             }
-            auto widget = new hue::DisplayPreviewBridgeWidget(bridge,
-                                                              key,
-                                                              mComm,
-                                                              mSelectedLights,
-                                                              mListWidget->mainWidget());
-            widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-            connect(widget, SIGNAL(clicked(QString)), this, SLOT(bridgePressed(QString)));
-            mListWidget->insertWidget(widget);
-            resize();
+            if (newIndex != -1) {
+                // if the bridge's key can be its id, use that. If not, we'll use a temporary widget
+                // that uses an IP address, but as soon as the real id is available, we'll delete
+                // this widget, and make a new one with the id as the key.
+                QString key = bridge.id();
+                if (key.isEmpty()) {
+                    key = bridge.IP();
+                }
+                auto widget = new hue::DisplayPreviewBridgeWidget(bridge,
+                                                                  key,
+                                                                  mComm,
+                                                                  mSelectedLights,
+                                                                  mRowHeight,
+                                                                  this);
+                widget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+                connect(widget, SIGNAL(bridgeClicked(QString)), this, SLOT(bridgePressed(QString)));
+                connect(widget, SIGNAL(selectLight(QString)), this, SLOT(lightSelected(QString)));
+                connect(widget,
+                        SIGNAL(deselectLight(QString)),
+                        this,
+                        SLOT(lightDeselected(QString)));
+                connect(widget,
+                        SIGNAL(selectAllClicked(QString, EProtocolType)),
+                        this,
+                        SLOT(clickedSelectAll(QString, EProtocolType)));
+                connect(widget,
+                        SIGNAL(deselectAllClicked(QString, EProtocolType)),
+                        this,
+                        SLOT(clickedDeselectAll(QString, EProtocolType)));
+                connect(widget,
+                        SIGNAL(deleteBridge(QString, EProtocolType)),
+                        this,
+                        SLOT(deleteBridgePressed(QString, EProtocolType)));
+                mBridgeWidgets[newIndex] = widget;
+
+                // make a new button for the widget
+                auto bridgeName = bridge.customName();
+                if (key.isEmpty()) {
+                    bridgeName = bridge.IP();
+                }
+                mBridgeButtons[newIndex] = new hue::BridgeButton(bridgeName, this);
+                connect(mBridgeButtons[newIndex],
+                        SIGNAL(clicked(QString)),
+                        this,
+                        SLOT(bridgeButtonPressed(QString)));
+                resize();
+            } else {
+                qDebug() << "INFO: Discovered a bridge but there are already "
+                         << mBridgeWidgets.size() << " bridges";
+            }
         }
     }
 }
 
+
+void DiscoveryHueWidget::showWidget() {
+    for (auto widget : mBridgeWidgets) {
+        if (widget != nullptr) {
+            widget->updateBridge(widget->bridge());
+        }
+    }
+}
 
 void DiscoveryHueWidget::greyOutClicked() {
     mGreyout->greyOut(false);
@@ -166,9 +236,10 @@ void DiscoveryHueWidget::greyOutClicked() {
 }
 
 void DiscoveryHueWidget::highlightLights() {
-    for (auto widget : mListWidget->widgets()) {
-        auto bridgeInfoWidget = dynamic_cast<hue::DisplayPreviewBridgeWidget*>(widget);
-        bridgeInfoWidget->highlightLights();
+    for (auto widget : mBridgeWidgets) {
+        if (widget != nullptr) {
+            widget->highlightLights();
+        }
     }
 }
 
@@ -178,6 +249,23 @@ void DiscoveryHueWidget::bridgePressed(const QString& key) {
         mControllerPage->showHueBridge(bridgeResult.first);
         emit showControllerWidget();
     }
+}
+
+
+void DiscoveryHueWidget::lightSelected(QString key) {
+    emit selectLight(key);
+}
+
+void DiscoveryHueWidget::lightDeselected(QString key) {
+    emit deselectLight(key);
+}
+
+void DiscoveryHueWidget::clickedSelectAll(QString key, EProtocolType protocol) {
+    emit selectControllerLights(key, protocol);
+}
+
+void DiscoveryHueWidget::clickedDeselectAll(QString key, EProtocolType protocol) {
+    emit deselectControllerLights(key, protocol);
 }
 
 void DiscoveryHueWidget::textInputAddedIP(const QString& IP) {
@@ -199,24 +287,63 @@ void DiscoveryHueWidget::textInputAddedIP(const QString& IP) {
     }
 }
 
+void DiscoveryHueWidget::bridgeButtonPressed(QString key) {
+    for (auto i = 0u; i < mBridgeButtons.size(); ++i) {
+        if (mBridgeButtons[i]->text() == key) {
+            mBridgeIndex = i;
+            resize();
+            break;
+        }
+    }
+}
+
+void DiscoveryHueWidget::deleteBridgePressed(QString key, EProtocolType protocol) {
+    emit deleteController(key, protocol);
+}
+
 void DiscoveryHueWidget::resize() {
     int yPos = 0;
-    mLabel->setGeometry(0, 0, int(width() * 0.7), int(height() * 0.1));
-    yPos += mLabel->height();
-    mListWidget->setGeometry(int(width() * 0.025), yPos, int(width() * 0.95), int(height() * 0.9));
+    auto rowHeight = height() / 10;
 
-    QSize widgetSize(width(), int(mListWidget->height() * 0.9));
-    int yHeight = 0;
-    for (auto widget : mListWidget->widgets()) {
-        auto bridgeInfoWidget = dynamic_cast<hue::DisplayPreviewBridgeWidget*>(widget);
-        widget->setFixedHeight(widgetSize.height());
-        widget->setGeometry(0, yHeight, widgetSize.width(), widgetSize.height());
-        widget->setVisible(true);
-        bridgeInfoWidget->resize();
-        yHeight += widgetSize.height();
+    auto buttonWidth = width() / mBridgeButtons.size();
+
+    // check if we should display the buttons, buttons should display only if theres more than one
+    int totalButtons = 0;
+    for (auto button : mBridgeButtons) {
+        if (button != nullptr) {
+            totalButtons++;
+        }
     }
-    mListWidget->mainWidget()->setFixedHeight(yHeight);
-    mListWidget->mainWidget()->setFixedWidth(width());
+    if (totalButtons < 2) {
+        for (auto button : mBridgeButtons) {
+            if (button != nullptr) {
+                button->setVisible(false);
+            }
+        }
+    } else {
+        int buttonCount = 0;
+        for (auto button : mBridgeButtons) {
+            if (button != nullptr) {
+                button->setVisible(true);
+                button->setGeometry(buttonWidth * buttonCount, yPos, buttonWidth, rowHeight);
+                buttonCount++;
+            }
+        }
+    }
+    yPos += rowHeight;
+
+    std::uint32_t index = 0u;
+    for (auto widget : mBridgeWidgets) {
+        if (widget != nullptr) {
+            if (index == mBridgeIndex) {
+                widget->setVisible(true);
+            } else {
+                widget->setVisible(false);
+            }
+            widget->setGeometry(int(width() * 0.025), yPos, int(width() * 0.95), rowHeight * 9);
+        }
+        index++;
+    }
 }
 
 void DiscoveryHueWidget::resizeEvent(QResizeEvent*) {

@@ -15,22 +15,13 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief The PresetGroupWidget is a widget used on the Preset
- * Color Groups Page to display the name and all the routine
- * options for a group group.
+ * \brief The PaletteWidget is a widget used on the PalettePage to display the name and all the
+ * routine options for a group group.
  */
-class PresetGroupWidget : public QWidget {
+class PaletteWidget : public QWidget {
     Q_OBJECT
 public:
-    /*!
-     * \brief PresetGroupWidget constructor for PresetGroupWidget
-     *
-     * \param name name of color group
-     * \param group enumerated type representation of color group
-     * \param colors colors in color group
-     * \param parent parent widget
-     */
-    explicit PresetGroupWidget(const QString& name, EPalette palette, QWidget* parent);
+    explicit PaletteWidget(const QString& name, EPalette palette, QWidget* parent);
 
     /*!
      * \brief setChecked acts similarly to the setChecked of a standard QPushButton, but
@@ -47,14 +38,17 @@ public:
 signals:
 
     /*!
-     * \brief presetButtonClicked signal that any of the lightsbuttons were pressed and emitting
+     * \brief paletteButtonClicked signal that any of the lightsbuttons were pressed and emitting
      *        their own signal.
      */
-    void presetButtonClicked(EPalette);
+    void paletteButtonClicked(EPalette);
 
 protected:
     /// handles when the mouse is released on a button. This acts as clicking a button.
-    void mouseReleaseEvent(QMouseEvent*) { emit presetButtonClicked(mPalette); }
+    void mouseReleaseEvent(QMouseEvent*) { emit paletteButtonClicked(mPalette); }
+
+    /// paint the widget
+    void paintEvent(QPaintEvent*);
 
 private:
     /// vector that shows the colors in a palette
@@ -68,15 +62,8 @@ private:
     /// palette enum
     EPalette mPalette;
 
-    /*!
-     * \brief kCheckedStyleSheet stylesheet for when the icon is checked
-     */
-    static const QString kCheckedStyleSheet;
-
-    /*!
-     * \brief kUncheckedStyleSheet stylesheet for when the icon is unchecked
-     */
-    static const QString kUncheckedStyleSheet;
+    /// true if checked, false otherwise
+    bool mIsChecked;
 };
 
 

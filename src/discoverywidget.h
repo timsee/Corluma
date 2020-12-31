@@ -45,11 +45,19 @@ public:
                              AppSettings* appSettings,
                              ControllerWidget* controllerPage);
 
+    /// getter for hue widget
+    DiscoveryHueWidget* hueWidget() { return mHueWidget; }
+
     /// debug function
     void openStartForDebug() { mForceStartOpen = true; }
 
+    /// getter for current protocol
     EProtocolType currentProtocol() { return mType; }
 
+    /// change the row height of the discovery widgets
+    void changeRowHeight(int rowHeight);
+
+    /// switch the protocol of the widget.
     void switchProtocol(EProtocolType type) {
         mType = type;
         protocolTypeSelected(mType);
@@ -78,6 +86,12 @@ signals:
 
     /// a connection state has changed for a widget.
     void connectionStateChanged(EProtocolType type, EConnectionState newState);
+
+    /// emits when an indiviual light is clicked from a controller's preview
+    void lightClicked(QString);
+
+    /// emits when a select all/none button is clicked from a controller's preview.
+    void selectAllLightsClicked(QString, EProtocolType, bool);
 
 public slots:
     /// handle when a light is deleted.

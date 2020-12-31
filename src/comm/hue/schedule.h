@@ -111,7 +111,7 @@ public:
 
     /// returns how many seconds its been since the schedule was created. Will return 0u if there
     /// are any errors.
-    std::uint64_t secondsSinceCreation() {
+    std::uint64_t secondsSinceCreation() const {
         QRegularExpression nonDigitRegex("(\\D)");
         QRegularExpression tRegex("(T)");
         QStringList createdStringList = created().split(tRegex);
@@ -135,7 +135,7 @@ public:
 
     /// returns the number of minutes until a timeout, if the schedule is a tiemout schedule. If it
     /// is not a timeout schedule, or if there are any errors, this returns -1.
-    int secondsUntilTimeout() {
+    int secondsUntilTimeout() const {
         // not all schedules are timeouts, return -1 if no timeout could exist
         if (!autodelete() || !name().contains("Corluma_timeout_")) {
             return -1;

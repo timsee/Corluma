@@ -95,6 +95,11 @@ public:
         connect(mChangeNameInput, SIGNAL(cancelClicked()), this, SLOT(closeNameWidget()));
         mChangeNameInput->setVisible(false);
 
+        connect(mLightInfoWidget,
+                SIGNAL(deleteLight(QString)),
+                this,
+                SLOT(deleteLightFromBridge(QString)));
+
         connect(mGreyout, SIGNAL(clicked()), this, SLOT(greyOutClicked()));
         mGreyout->greyOut(false);
 
@@ -124,6 +129,12 @@ public:
         mLightsLabel->setStyleSheet(styleSheet);
 
         handleButtonHighlight(mInfoButton->text());
+    }
+
+    /// called when the widget is shown
+    void showWidget() {
+        // reset the widget to the info page
+        infoButtonPressed(true);
     }
 
     /// getter for hue::Bridge represented by the widget
@@ -258,14 +269,23 @@ public:
     void highlightLights() { qDebug() << "TODO: highlight hue bridge widget"; }
 
 signals:
-    /// handle when a light is clicked
-    void lightClicked(QString, bool);
+    /// emits when a light should be selected
+    void selectLight(QString);
 
-    /// handle when a full controller is clicked
-    void controllerClicked(QString, EProtocolType, bool);
+    /// emits when a light should be deselected
+    void deselectLight(QString);
+
+    /// handle when a full controller should be selected
+    void selectControllerLights(QString, EProtocolType);
+
+    /// handle when a full controller should be deselected
+    void deselectControllerLights(QString, EProtocolType);
 
     /// handle when deleting a full controller.
     void deleteController(QString, EProtocolType);
+
+    /// signals that specific light should be deleted.
+    void deleteLight(QString);
 
     /// signals when a light name is changed, signaling the lights unique ID and its current name.
     void lightNameChanged(QString uniqueID, QString name);
@@ -289,11 +309,11 @@ protected:
         if (cor::isMouseEventTouchUpInside(event, mCheckBox, false)) {
             if (mCheckBox->checkboxState() == cor::ECheckboxState::clearAll) {
                 mCheckBox->checkboxState(cor::ECheckboxState::selectAll);
-                emit controllerClicked(mBridge.id(), EProtocolType::hue, false);
+                emit deselectControllerLights(mBridge.id(), EProtocolType::hue);
                 mLights->highlightLights({});
             } else {
                 mCheckBox->checkboxState(cor::ECheckboxState::clearAll);
-                emit controllerClicked(mBridge.id(), EProtocolType::hue, true);
+                emit selectControllerLights(mBridge.id(), EProtocolType::hue);
                 mLights->highlightLights(mBridge.lightIDs());
             }
         }
@@ -302,7 +322,13 @@ protected:
 private slots:
 
     /// handle when a light is clicked
-    void lightClicked(cor::Light light) { emit lightClicked(light.uniqueID(), true); }
+    void lightClicked(cor::Light light) {
+        if (mSelectedLights->doesLightExist(light.uniqueID())) {
+            emit deselectLight(light.uniqueID());
+        } else {
+            emit selectLight(light.uniqueID());
+        }
+    }
 
     /// handle when the delete button is pressed for a hue.
     void deleteButtonPressed(bool) {
@@ -313,9 +339,12 @@ private slots:
         reply = QMessageBox::question(this, "Delete?", text, QMessageBox::Yes | QMessageBox::No);
         if (reply == QMessageBox::Yes) {
             // signal to remove from app
-            emit deleteController(mBridge.id(), EProtocolType::arduCor);
+            emit deleteController(mBridge.id(), EProtocolType::hue);
         }
     }
+
+    /// signals when a light should be deleted from the bridge
+    void deleteLightFromBridge(QString lightID) { emit deleteLight(lightID); }
 
     /// info button pressed
     void infoButtonPressed(bool) {
@@ -327,7 +356,7 @@ private slots:
     /// lights button pressed
     void lightsButtonPressed(bool) {
         mState = EDisplayHueBridgeState::lights;
-        mLightInfoWidget->scrollArea()->updateHues(mComm->hue()->discovery()->lights());
+        mLightInfoWidget->scrollArea()->updateHues(mBridge.lights().items());
         mLightInfoWidget->changeRowHeight(mRowHeight);
         handleState();
         handleButtonHighlight(mLightsButton->text());
@@ -386,6 +415,7 @@ private slots:
                 //                }
                 //            }
             } else {
+                qDebug() << " emit that we chang ethis " << mLightToChangeName << " to " << name;
                 emit lightNameChanged(mLightToChangeName, name);
             }
             mGreyout->greyOut(false);

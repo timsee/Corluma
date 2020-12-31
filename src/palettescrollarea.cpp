@@ -20,7 +20,7 @@ PaletteScrollArea::PaletteScrollArea(QWidget* parent) : QScrollArea(parent) {
         labels[i] = paletteToString(EPalette(i + 1));
     }
 
-    mPresetWidgets = std::vector<PresetGroupWidget*>(labels.size(), nullptr);
+    mPaletteWidgets = std::vector<PaletteWidget*>(labels.size(), nullptr);
     mLayout = new QGridLayout;
     mLayout->setSpacing(0);
     mLayout->setContentsMargins(9, 0, 0, 0);
@@ -33,11 +33,10 @@ PaletteScrollArea::PaletteScrollArea(QWidget* parent) : QScrollArea(parent) {
             columnIndex = 0;
             rowIndex++;
         }
-        mPresetWidgets[groupIndex] =
-            new PresetGroupWidget(labels[groupIndex], EPalette(preset), this);
-        mLayout->addWidget(mPresetWidgets[groupIndex], rowIndex, columnIndex);
-        connect(mPresetWidgets[groupIndex],
-                SIGNAL(presetButtonClicked(EPalette)),
+        mPaletteWidgets[groupIndex] = new PaletteWidget(labels[groupIndex], EPalette(preset), this);
+        mLayout->addWidget(mPaletteWidgets[groupIndex], rowIndex, columnIndex);
+        connect(mPaletteWidgets[groupIndex],
+                SIGNAL(paletteButtonClicked(EPalette)),
                 this,
                 SLOT(buttonClicked(EPalette)));
         columnIndex++;
@@ -50,7 +49,7 @@ PaletteScrollArea::PaletteScrollArea(QWidget* parent) : QScrollArea(parent) {
 }
 
 void PaletteScrollArea::highlightButton(EPalette palette) {
-    for (auto widget : mPresetWidgets) {
+    for (auto widget : mPaletteWidgets) {
         widget->setChecked(palette);
     }
 }
@@ -60,7 +59,7 @@ void PaletteScrollArea::buttonClicked(EPalette palette) {
 }
 
 void PaletteScrollArea::resize() {
-    for (auto presetArduinoWidget : mPresetWidgets) {
+    for (auto presetArduinoWidget : mPaletteWidgets) {
         presetArduinoWidget->resize();
     }
 }

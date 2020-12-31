@@ -11,66 +11,86 @@
 #include <QtCore>
 #include <QtGui>
 
+namespace {
+const static QString kTimeoutString = "Corluma_timeout_";
+}
+
 namespace hue {
 
 HueScheduleWidget::HueScheduleWidget(QWidget* parent, hue::Schedule schedule)
     : QWidget(parent),
       mSchedule(schedule),
-      mIsTimeout{schedule.name().contains("Corluma_timeout")} {
+      mNameLabel{new QLabel(this)},
+      mTimeLabel{new QLabel(this)},
+      mStatusLabel{new QLabel(this)},
+      mIndexLabel{new QLabel(this)},
+      mAutoDeleteLabel{new QLabel(this)},
+      mIsTimeout{schedule.name().contains(kTimeoutString)} {
     const QString styleSheet = "background-color: rgba(0,0,0,0);";
     setStyleSheet(styleSheet);
 
-    mNameLabel = new QLabel("<b>Name:</b> " + schedule.name(), this);
-    mNameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mNameLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-
-    //-------------
-    // Left of widget
-    //-------------
-    mTimeLabel = new QLabel("<b>Time:</b> " + schedule.time(), this);
-    mTimeLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mTimeLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-
-    if (schedule.status()) {
-        mStatusLabel = new QLabel("<b>Status:</b> enabled", this);
-    } else {
-        mStatusLabel = new QLabel("<b>Status:</b> disabled", this);
-    }
-    mStatusLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mStatusLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-
-    mLeftLayout = new QVBoxLayout;
-    mLeftLayout->addWidget(mTimeLabel);
-    mLeftLayout->addWidget(mStatusLabel);
-
-    //-------------
-    // Right of widget
-    //-------------
-    mIndexLabel = new QLabel("<b>Index:</b> " + QString::number(schedule.index()), this);
-    mIndexLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mIndexLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-
-    if (schedule.autodelete()) {
-        mAutoDeleteLabel = new QLabel("<b>Autodelete:</b> On", this);
-    } else {
-        mAutoDeleteLabel = new QLabel("<b>Autodelete:</b> Off", this);
-    }
-    mAutoDeleteLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mAutoDeleteLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mRightLayout = new QVBoxLayout;
-    mRightLayout->addWidget(mIndexLabel);
-    mRightLayout->addWidget(mAutoDeleteLabel);
-
-    mBottomLayout = new QHBoxLayout;
-    mBottomLayout->addLayout(mLeftLayout);
-    mBottomLayout->addLayout(mRightLayout);
-
-    mMainLayout = new QVBoxLayout(this);
-    mMainLayout->addWidget(mNameLabel);
-    mMainLayout->addLayout(mBottomLayout, 3);
+    updateWidget(schedule);
 }
 
+void HueScheduleWidget::updateWidget(const hue::Schedule& schedule) {
+    if (mIsTimeout) {
+        mTimeLabel->setVisible(true);
+        mStatusLabel->setVisible(false);
+        mIndexLabel->setVisible(false);
+        mAutoDeleteLabel->setVisible(false);
+        auto lightIndex = schedule.name().mid(kTimeoutString.size());
+        mNameLabel->setText("<b>Timeout for Light Index: </b>" + lightIndex);
+        mTimeLabel->setText("<b>Minutes Until Timeout: </b> "
+                            + QString::number(schedule.secondsUntilTimeout() / 60));
+
+    } else {
+        mNameLabel->setText("<b>Name:</b> " + schedule.name());
+
+        mTimeLabel->setVisible(true);
+        mStatusLabel->setVisible(true);
+        mIndexLabel->setVisible(true);
+        mAutoDeleteLabel->setVisible(true);
+
+        mTimeLabel->setText("<b>Time:</b> " + schedule.time());
+        mStatusLabel->setText(schedule.status() ? "<b>Status:</b> enabled"
+                                                : "<b>Status:</b> disabled");
+        mIndexLabel->setText("<b>Index:</b> " + QString::number(schedule.index()));
+        mAutoDeleteLabel->setText(schedule.autodelete() ? "<b>Autodelete:</b> On"
+                                                        : "<b>Autodelete:</b> Off");
+    }
+}
+
+
+void HueScheduleWidget::resize() {
+    auto yPosColumn1 = 0u;
+    auto yPosColumn2 = 0u;
+    auto rowHeight = height() / 5;
+    auto columnWidth = width() / 2;
+
+    mNameLabel->setGeometry(0, yPosColumn1, width(), rowHeight);
+    yPosColumn1 += mNameLabel->height();
+    yPosColumn2 += mNameLabel->height();
+
+    mTimeLabel->setGeometry(0, yPosColumn1, columnWidth, rowHeight * 2);
+    yPosColumn1 += mTimeLabel->height();
+    mStatusLabel->setGeometry(0, yPosColumn1, columnWidth, rowHeight * 2);
+    yPosColumn1 += mStatusLabel->height();
+
+    mIndexLabel->setGeometry(columnWidth, yPosColumn2, columnWidth, rowHeight * 2);
+    yPosColumn2 += mIndexLabel->height();
+    mAutoDeleteLabel->setGeometry(columnWidth, yPosColumn2, columnWidth, rowHeight * 2);
+    yPosColumn2 += mAutoDeleteLabel->height();
+}
+
+void HueScheduleWidget::resizeEvent(QResizeEvent*) {
+    resize();
+}
 
 void HueScheduleWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;

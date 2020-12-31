@@ -103,6 +103,10 @@ public:
     /// get a bridge based off of its unique ID
     std::pair<hue::Bridge, bool> bridgeFromID(const QString& ID);
 
+    /// used from discovery pages, find a bridge by the ID being used by its discovery pages. This
+    /// ID is the bridge ID when the bridge is discovered, but may also be an IP in some cases.
+    std::pair<hue::Bridge, bool> bridgeFromDiscoveryID(const QString& ID);
+
     /// gets the bridge that controls a light.
     hue::Bridge bridgeFromLight(const HueMetadata& light);
 
@@ -136,7 +140,7 @@ public:
      *
      * \param bridge bridge to delete
      */
-    void deleteBridge(const hue::Bridge& bridge);
+    bool deleteBridge(const hue::Bridge& bridge);
 
     /// returns the key of a group based off of the given name
     std::uint64_t keyFromGroupName(const QString& name);

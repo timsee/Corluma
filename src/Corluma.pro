@@ -191,6 +191,7 @@ SOURCES += main.cpp \
     menu/statelesslightslistmenu.cpp \
     mooddetailedwidget.cpp \
     moodsyncwidget.cpp \
+    palettewidget.cpp \
     parentgroupwidget.cpp \
     stateobserver.cpp \
     data/subgroupdata.cpp \
@@ -212,7 +213,6 @@ SOURCES += main.cpp \
     settingspage.cpp \
     icondata.cpp \
     floatinglayout.cpp \
-    presetgroupwidget.cpp \
     greyoutoverlay.cpp \
     routinebuttonswidget.cpp \
     colorpage.cpp \
@@ -260,6 +260,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     comm/datasyncarduino.h \
     comm/datasyncnanoleaf.h \
     comm/datasynctimeout.h \
+    comm/hue/bridgebutton.h \
     comm/hue/command.h \
     comm/hue/huemetadata.h \
     comm/hue/schedule.h \
@@ -351,6 +352,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     menu/timeoutbutton.h \
     mooddetailedwidget.h \
     moodsyncwidget.h \
+    palettewidget.h \
     parentgroupwidget.h \
     singlelightbrightnesswidget.h \
     stateobserver.h \
@@ -378,7 +380,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     settingspage.h \
     icondata.h \
     floatinglayout.h \
-    presetgroupwidget.h \
     greyoutoverlay.h \
     routinebuttonswidget.h \
     colorpage.h \

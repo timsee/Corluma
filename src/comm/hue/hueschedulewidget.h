@@ -26,44 +26,41 @@ public:
     /// constructor
     explicit HueScheduleWidget(QWidget* parent, hue::Schedule schedule);
 
+    /// update the widget with a new schedule
+    void updateWidget(const hue::Schedule& schedule);
+
 protected:
     /// paints the background
     void paintEvent(QPaintEvent*);
 
+    /// resize the widget
+    void resizeEvent(QResizeEvent*);
+
 private:
+    /// resize programmatically
+    void resize();
+
     /// schedule for the widget
     hue::Schedule mSchedule;
 
     /// name for the schedule
     QLabel* mNameLabel;
 
-    /// true if is a timeout
-    bool mIsTimeout;
-
     /// displays the time in Based on ISO8601:2004
     /// TODO: convert this to a human readable format
     QLabel* mTimeLabel;
 
-    /// index of the schedule, used byt he controller
-    QLabel* mIndexLabel;
-
     /// status of the schedule, whether its enabled or not
     QLabel* mStatusLabel;
+
+    /// index of the schedule, used byt he controller
+    QLabel* mIndexLabel;
 
     /// true if this scheduel runs once, false if repeats
     QLabel* mAutoDeleteLabel;
 
-    /// main layout for the widget
-    QVBoxLayout* mMainLayout;
-
-    /// layout of the left of the widget
-    QVBoxLayout* mLeftLayout;
-
-    /// layout of the right of the widget
-    QVBoxLayout* mRightLayout;
-
-    /// bottom of the layout
-    QHBoxLayout* mBottomLayout;
+    /// true if is a timeout
+    bool mIsTimeout;
 };
 
 } // namespace hue

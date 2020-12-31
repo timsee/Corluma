@@ -159,14 +159,14 @@ void ChooseStateWidget::changeToHSV() {
     mColorPicker->setVisible(true);
     mPaletteScrollArea->setVisible(false);
     mRoutinesWidget->setVisible(false);
-    mColorPicker->changeMode(ESingleColorPickerMode::HSV);
+    mColorPicker->enable(mColorPicker->isEnabled(), EColorPickerType::color);
 }
 
 void ChooseStateWidget::changeToTemperature() {
     mColorPicker->setVisible(true);
     mPaletteScrollArea->setVisible(false);
     mRoutinesWidget->setVisible(false);
-    mColorPicker->changeMode(ESingleColorPickerMode::ambient);
+    mColorPicker->enable(mColorPicker->isEnabled(), EColorPickerType::CT);
     resize();
 }
 

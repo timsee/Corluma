@@ -78,6 +78,21 @@ signals:
      */
     void connectionStatusChanged(EProtocolType type, EConnectionState status);
 
+    /// handles when a select all button is clicked for a preview widget.
+    void selectControllerLights(QString, EProtocolType);
+
+    /// handles when a deselect all button is clicked for a preview widget.
+    void deselectControllerLights(QString, EProtocolType);
+
+    /// handles when a light should be selected
+    void selectLight(QString);
+
+    /// handles when a light should be deselected
+    void deselectLight(QString);
+
+    /// handles when a controller should be deleted.
+    void deleteController(QString, EProtocolType);
+
 protected slots:
     /// closes IP widget
     void closeIPWidget();

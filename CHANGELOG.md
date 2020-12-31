@@ -1053,3 +1053,11 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Removed the `EditableFieldWidget`.
 - Changed the `PresetGroupWidget` to use a `cor::LightVectorWidget` instead of a `cor::Button`.
 - Fixed miscellaneous bugs.
+
+### **v0.21.6**
+### The Hue Preview Widget Update
+- Rewrote `DiscoveryHueWidget` to show only one `Bridge` at a time.
+- Rewrote `DisplayHueBridgeWidget` to display more information and allow selecting and deselecting of lights.
+- Simplified the signals/slots on `LightsPage` and its subwidgets.
+- Rewrote the `HueScheduleWidget`. 
+- Fixed miscellaneous bugs.

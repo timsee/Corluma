@@ -114,8 +114,11 @@ public slots:
      */
     void lightNameChange(const QString& key, const QString& name);
 
-    /// light count changed from controller page.
-    void lightCountChangedFromControllerPage(QString, bool);
+    /// handles when a light is deleted, updates the UI
+    void lightDeleted(const QString& key);
+
+    /// light count changed from lights page.
+    void lightCountChangedFromLightsPage(std::vector<QString>);
 
 private:
     /// computes the state based off of the various states of the widget

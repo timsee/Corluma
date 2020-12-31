@@ -215,7 +215,7 @@ void Slider::mousePressEvent(QMouseEvent* event) {
     QRect sr = style()->subControlRect(QStyle::CC_Slider, &opt, QStyle::SC_SliderHandle, this);
 
     if (event->button() == Qt::LeftButton && sr.contains(event->pos()) == false) {
-        int value = minimum() + ((maximum() - minimum()) * event->x()) / width();
+        int value = minimum() + ((maximum() - minimum()) * event->pos().x()) / width();
 
         blockSignals(true);
         setValue(value);

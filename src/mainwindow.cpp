@@ -160,6 +160,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     mEditGroupPage->changeRowHeight(mLeftHandMenu->height() / 18);
     mMainViewport->moodPage()->moodDetailedWidget()->changeRowHeight(mLeftHandMenu->height() / 18);
     mMainViewport->timeoutPage()->changeRowHeight(mLeftHandMenu->height() / 18);
+    mMainViewport->lightsPage()->discoveryWidget()->changeRowHeight(mLeftHandMenu->height() / 18);
     mMainViewport->lightsPage()->controllerWidget()->changeRowHeight(mLeftHandMenu->height() / 18);
     mLeftHandMenu->changeRowHeight(mLeftHandMenu->height() / 20);
 }
@@ -359,10 +360,15 @@ void MainWindow::setupStateObserver() {
     connect(mSyncStatus, SIGNAL(statusChanged(bool)), mStateObserver, SLOT(dataInSync(bool)));
 
     // setup deleting lights
-    connect(mMainViewport->lightsPage()->controllerWidget(),
-            SIGNAL(lightSelected(QString, bool)),
+    connect(mMainViewport->lightsPage(),
+            SIGNAL(selectLights(std::vector<QString>)),
             mStateObserver,
-            SLOT(lightCountChangedFromControllerPage(QString, bool)));
+            SLOT(lightCountChangedFromLightsPage(std::vector<QString>)));
+
+    connect(mMainViewport->lightsPage(),
+            SIGNAL(deselectLights(std::vector<QString>)),
+            mStateObserver,
+            SLOT(lightCountChangedFromLightsPage(std::vector<QString>)));
 
     // set up changes to connection state
     connect(mMainViewport->lightsPage()->discoveryWidget(),
@@ -375,6 +381,11 @@ void MainWindow::setupStateObserver() {
             SIGNAL(lightNameChanged(QString, QString)),
             mStateObserver,
             SLOT(lightNameChange(QString, QString)));
+
+    connect(mMainViewport->lightsPage()->controllerWidget(),
+            SIGNAL(deleteLight(QString)),
+            mStateObserver,
+            SLOT(lightDeleted(QString)));
 }
 
 void MainWindow::shareChecker() {
@@ -689,6 +700,7 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
     mMainViewport->pageChanged(page);
     if (page == EPage::lightsPage) {
         mTopMenu->updateLightsMenu();
+        mTopMenu->pushOutTapToSelectButton();
     }
     mTopMenu->showFloatingLayout(page);
 

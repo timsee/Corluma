@@ -29,7 +29,6 @@ MultiColorPicker::MultiColorPicker(QWidget* parent)
     mColorWheel->changeType(EWheelType::HS);
     mColorSchemeCircles->setWhiteLine(false);
     mColorSchemeCircles->transparentCircles(true);
-    enable(true, EColorPickerType::color);
 }
 
 

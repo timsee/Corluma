@@ -231,6 +231,30 @@ inline cor::Light findLightInVectorByID(const std::vector<cor::Light>& lights,
     return returnLight;
 }
 
+
+/// returns true the two light vectors are identical, false if any light is different.
+inline bool compareTwoLightVectors(const std::vector<cor::Light>& vectorA,
+                                   const std::vector<cor::Light>& vectorB) {
+    if (vectorA.size() != vectorB.size()) {
+        return false;
+    }
+    auto aCopy = vectorA;
+    std::sort(aCopy.begin(), aCopy.end(), [](const auto& lhs, const auto& rhs) {
+        return lhs.uniqueID() < rhs.uniqueID();
+    });
+    auto bCopy = vectorB;
+    std::sort(bCopy.begin(), bCopy.end(), [](const auto& lhs, const auto& rhs) {
+        return lhs.uniqueID() < rhs.uniqueID();
+    });
+    for (auto i = 0u; i < aCopy.size(); ++i) {
+        if (aCopy[i] != bCopy[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
 } // namespace cor
 
 namespace std {

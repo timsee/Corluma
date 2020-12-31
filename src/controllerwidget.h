@@ -27,6 +27,15 @@ class ControllerWidget : public QWidget, public cor::Page {
 public:
     explicit ControllerWidget(QWidget* parent, CommLayer* comm, cor::LightList* selectedLights);
 
+    /// getter for nanoleaf widget
+    DisplayNanoleafControllerWidget* nanoleafWidget() { return mNanoleafWidget; }
+
+    /// getter for arducor widget
+    DisplayArduCorControllerWidget* arduCorWidget() { return mArduCorWidget; }
+
+    /// getter for hue widget
+    DisplayHueBridgeWidget* hueWidget() { return mHueBridgeWidget; }
+
     /// show page
     void showPage(QPoint);
 
@@ -50,6 +59,12 @@ public:
 
     /// returns the lightInfoWidget
     LightInfoListWidget* lightInfoWidget() { return mHueBridgeWidget->lightInfoWidget(); }
+
+public slots:
+
+    /// handle when a full controller is deleted. this deletes all of its lights.
+    void handleDeleteController(QString, EProtocolType);
+
 signals:
 
     /// back button pressed
@@ -59,10 +74,16 @@ signals:
     void deleteLight(QString);
 
     /// a light is slected from the controller page, true if seleceted, false if deselected.
-    void lightSelected(QString, bool);
+    void lightClicked(QString);
 
     /// emits the key and new name for light
     void lightNameChanged(QString, QString);
+
+    /// select lights for a controller by controller key and its protocol
+    void selectControllerLights(QString, EProtocolType);
+
+    /// deselect lights for a controller by controller key and its protocol
+    void deselectControllerLights(QString, EProtocolType);
 
 protected:
     /*!
@@ -81,19 +102,10 @@ private slots:
     void backButtonPressed(bool);
 
     /// handle when a light is deleted.
-    void handleDeleteLight(QString);
+    void handleDeleteHueLight(QString);
 
     /// handle when a nanoleaf is deleted.
     void handleDeleteNanoleaf(QString, QString);
-
-    /// handle when a full controller is deleted. this deletes all of its lights.
-    void handleDeleteController(QString, EProtocolType);
-
-    /// handle when a light is clicked.
-    void lightClicked(QString, bool);
-
-    /// handle when a controller is clicked.
-    void controllerClicked(QString, EProtocolType, bool);
 
     /// handles when a subwidget changes a light name, and signals the change to the rest of the
     /// app.

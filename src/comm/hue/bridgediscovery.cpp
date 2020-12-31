@@ -608,6 +608,23 @@ bool BridgeDiscovery::doesIPExistInSearchingLists(const QString& IP) {
     return foundIP;
 }
 
+std::pair<hue::Bridge, bool> BridgeDiscovery::bridgeFromDiscoveryID(const QString& uniqueID) {
+    // search found bridges first, using its UUID for the bridge
+    auto foundBridgesByIDResult = bridgeFromID(uniqueID);
+    if (foundBridgesByIDResult.second) {
+        return foundBridgesByIDResult;
+    }
+
+    // now search not found bridges by ID or by IP, depending on how the not found bridge was
+    // discovered, either could be known now.
+    for (auto notFoundBridge : mNotFoundBridges) {
+        if (notFoundBridge.id() == uniqueID || notFoundBridge.IP() == uniqueID) {
+            return std::make_pair(notFoundBridge, true);
+        }
+    }
+    return std::make_pair(hue::Bridge{}, false);
+}
+
 
 std::pair<HueMetadata, bool> BridgeDiscovery::metadataFromLight(const cor::Light& light) {
     for (const auto& bridge : mFoundBridges.items()) {
@@ -848,21 +865,25 @@ bool BridgeDiscovery::loadJSON() {
     return false;
 }
 
-void BridgeDiscovery::deleteBridge(const hue::Bridge& bridge) {
+bool BridgeDiscovery::deleteBridge(const hue::Bridge& bridge) {
     // remove from not found
+    bool foundBridgeToRemove = false;
     for (const auto& notFoundBridge : mNotFoundBridges) {
         if (bridge.id() == notFoundBridge.id()) {
             auto it = std::find(mNotFoundBridges.begin(), mNotFoundBridges.end(), notFoundBridge);
             mNotFoundBridges.erase(it);
+            foundBridgeToRemove = true;
             break;
         }
     }
 
-    // remove from found
-    mFoundBridges.remove(bridge);
-
-    // remove from JSON
-    removeJSONObject("id", bridge.id());
+    if (!foundBridgeToRemove) {
+        // remove from found
+        foundBridgeToRemove = mFoundBridges.remove(bridge);
+        // remove from JSON
+        removeJSONObject("id", bridge.id());
+    }
+    return foundBridgeToRemove;
 }
 
 

@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QScrollArea>
 
-#include "presetgroupwidget.h"
+#include "palettewidget.h"
 
 /*!
  * \copyright
@@ -48,10 +48,10 @@ private:
     QWidget* mScrollWidget;
 
     /*!
-     * \brief mPresetWidgets vector of all preset widgets getting displayed in the
+     * \brief mPaletteWidgets vector of all palettes widgets getting displayed in the
      * scroll area.
      */
-    std::vector<PresetGroupWidget*> mPresetWidgets;
+    std::vector<PaletteWidget*> mPaletteWidgets;
 
     /*!
      * \brief mPresetHueLayout layout of all hue preset widgets.

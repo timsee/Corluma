@@ -36,7 +36,20 @@ public:
      *
      * \param page the new page type for the hue page.
      */
-    void changePageType(ESingleColorPickerMode page) { mColorPicker->changeMode(page); }
+    void changePageType(ESingleColorPickerMode page) {
+        if (page != pageType()) {
+            switch (page) {
+                case ESingleColorPickerMode::HSV:
+                    mColorPicker->enable(mColorPicker->isEnabled(), EColorPickerType::color);
+                    break;
+                case ESingleColorPickerMode::ambient:
+                    mColorPicker->enable(mColorPicker->isEnabled(), EColorPickerType::CT);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
     /// getter for current type of color page (ambiance, RGB, etc.)
     ESingleColorPickerMode pageType() { return mColorPicker->mode(); }

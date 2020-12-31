@@ -204,11 +204,17 @@ public:
     }
 
 signals:
-    /// handle when a light is clicked
-    void lightClicked(QString, bool);
+    /// emits when a light should be selected
+    void selectLight(QString);
+
+    /// emits when a light should be deselected
+    void deselectLight(QString);
 
     /// handle when the controller is clicked
-    void controllerClicked(QString, EProtocolType, bool);
+    void selectControllerLights(QString, EProtocolType);
+
+    /// handle when all the lights from a controller should be deselected.
+    void deselectControllerLights(QString, EProtocolType);
 
     /// delete a controller
     void deleteController(QString, EProtocolType);
@@ -232,11 +238,11 @@ protected:
         if (cor::isMouseEventTouchUpInside(event, mCheckBox, false)) {
             if (mCheckBox->checkboxState() == cor::ECheckboxState::clearAll) {
                 mCheckBox->checkboxState(cor::ECheckboxState::selectAll);
-                emit controllerClicked(mController.name(), EProtocolType::arduCor, false);
+                emit deselectControllerLights(mController.name(), EProtocolType::arduCor);
                 mLights->highlightLights({});
             } else {
                 mCheckBox->checkboxState(cor::ECheckboxState::clearAll);
-                emit controllerClicked(mController.name(), EProtocolType::arduCor, true);
+                emit selectControllerLights(mController.name(), EProtocolType::arduCor);
                 mLights->highlightLights(mController.names());
             }
         }
@@ -246,7 +252,13 @@ protected:
 
 private slots:
     /// light clicked
-    void lightClicked(cor::Light light) { emit lightClicked(light.uniqueID(), true); }
+    void lightClicked(cor::Light light) {
+        if (mSelectedLights->doesLightExist(light.uniqueID())) {
+            emit deselectLight(light.uniqueID());
+        } else {
+            emit selectLight(light.uniqueID());
+        }
+    }
 
     /// delete is clicked for a controller.
     void deleteButtonPressed(bool) {

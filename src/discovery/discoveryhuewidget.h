@@ -3,6 +3,7 @@
 
 #include <QScrollArea>
 
+#include "comm/hue/bridgebutton.h"
 #include "comm/hue/bridgegroupswidget.h"
 #include "comm/hue/bridgescheduleswidget.h"
 #include "comm/hue/lightdiscovery.h"
@@ -36,6 +37,19 @@ public:
                                 CommLayer* comm,
                                 cor::LightList* selectedLights,
                                 ControllerWidget* controllerPage);
+
+    /// change the row height for the discovery hue widget
+    void changeRowHeight(int rowHeight) {
+        mRowHeight = rowHeight;
+        for (auto widget : mBridgeWidgets) {
+            if (widget != nullptr) {
+                widget->changeRowHeight(rowHeight);
+            }
+        }
+    }
+
+    /// show the widget
+    void showWidget();
 
     /// See DiscoveryWidget.h
     void handleDiscovery(bool isActive) override;
@@ -73,6 +87,24 @@ private slots:
     /// handles an IP from the IP widget, giving a warning if necessary
     void textInputAddedIP(const QString& IP);
 
+    /// handles when a light is clicked
+    void lightSelected(QString key);
+
+    /// handles when a light is deselected.
+    void lightDeselected(QString key);
+
+    /// handles when select all is clicked
+    void clickedSelectAll(QString key, EProtocolType protocol);
+
+    /// handles when deselect all is clicked
+    void clickedDeselectAll(QString key, EProtocolType protocol);
+
+    /// a button for a bridge is pressed, so this bridge should be displayed
+    void bridgeButtonPressed(QString);
+
+    /// delete a bridge is pressed, so this bridge should be deleted.
+    void deleteBridgePressed(QString, EProtocolType);
+
 protected:
     /// called when the widget resizes
     virtual void resizeEvent(QResizeEvent*) override;
@@ -94,14 +126,17 @@ private:
     /// list of selected lights.
     cor::LightList* mSelectedLights;
 
-    /// label to prompt the user through the application.
-    QLabel* mLabel;
+    /// buttons for displaying a bridge
+    std::vector<hue::BridgeButton*> mBridgeButtons;
 
-    /// widget for displaying a scrollable list of other widgets
-    cor::ListWidget* mListWidget;
+    /// vector of bridge widgets, only one is displayed on the screen at a time
+    std::vector<hue::DisplayPreviewBridgeWidget*> mBridgeWidgets;
 
-    /// scaling value for size of pngs
-    float mScale;
+    /// index of a bridge.
+    std::uint32_t mBridgeIndex;
+
+    /// height of a row of a widget
+    int mRowHeight;
 
     /*!
      * \brief updateHueStatusIcon update the main image for the hue discovery page which

@@ -11,7 +11,10 @@
 #include "comm/hue/bridge.h"
 #include "comm/hue/huemetadata.h"
 #include "cor/lightlist.h"
+#include "cor/widgets/checkbox.h"
+#include "cor/widgets/expandingtextscrollarea.h"
 #include "cor/widgets/listitemwidget.h"
+#include "menu/lightslistmenu.h"
 
 namespace hue {
 
@@ -31,10 +34,17 @@ public:
                                         const QString& key,
                                         CommLayer* comm,
                                         cor::LightList* selectedLights,
+                                        int rowHeight,
                                         QWidget* parent);
 
     /// update the bridge being shown
     void updateBridge(const hue::Bridge& bridge);
+
+    /// getter of bridge
+    hue::Bridge bridge() const { return mBridge; }
+
+    /// change the row height of menus
+    void changeRowHeight(int rowHeight) { mRowHeight = rowHeight; }
 
     /*!
      * \brief setChecked true to highlight widget and treat as checked, false to keep in regular
@@ -61,7 +71,22 @@ signals:
     /*!
      * \brief clicked emits the key of the widget whenever it is clicked.
      */
-    void clicked(QString);
+    void bridgeClicked(QString);
+
+    /// emits when a light should be selected
+    void selectLight(QString);
+
+    /// emits when a light should be deselected
+    void deselectLight(QString);
+
+    /// emits when the checkbox is clicked which selects all of the lights for the bridge.
+    void selectAllClicked(QString, EProtocolType);
+
+    /// emits when the checkbox is clicked which deselects all of the lights for the bridge.
+    void deselectAllClicked(QString, EProtocolType);
+
+    /// emits when a bridge is signaled for deletion, signals the bridge id and its protocol type.
+    void deleteBridge(QString, EProtocolType);
 
 protected:
     /*!
@@ -74,10 +99,15 @@ protected:
      */
     void paintEvent(QPaintEvent*);
 
-    /*!
-     * \brief mouseReleaseEvent picks up when a click (or a tap on mobile) is released.
-     */
-    virtual void mouseReleaseEvent(QMouseEvent*);
+    /// handles when clicks happen over the checkbox.
+    void mouseReleaseEvent(QMouseEvent* event);
+
+private slots:
+    /// handle when a light is clicked
+    void clickedLight(cor::Light light);
+
+    /// handles when the manage button is pressed.
+    void manageButtonPressed(bool);
 
 private:
     /// state of bridge
@@ -86,8 +116,28 @@ private:
     /// handles when the bridge state changes
     void handleBridgeState(EBridgeDiscoveryState state);
 
-    /// sets the title's font size
-    void setTitleFontPointSize(int pt);
+    /// handle the state of the button, which is typically for management, but if the bridge is not
+    /// fully discovered, it instead is a delete button.
+    void handleButtonState();
+
+    /// handle checkbox state
+    void handleCheckboxState() {
+        bool anyLightSelected = false;
+        for (auto light : mBridge.lightIDs()) {
+            if (mSelectedLights->doesLightExist(light)) {
+                anyLightSelected = true;
+                break;
+            }
+        }
+        if (anyLightSelected) {
+            mCheckBox->checkboxState(cor::ECheckboxState::clearAll);
+        } else {
+            mCheckBox->checkboxState(cor::ECheckboxState::selectAll);
+        }
+    }
+
+    /// update the metadata of the widget.
+    void updateMetadata(const hue::Bridge& bridge);
 
     /// bridge used to display info
     hue::Bridge mBridge;
@@ -101,23 +151,8 @@ private:
     /// editable field that lets you change the custom name of a bridge.
     QLabel* mNameWidget;
 
-    /// shows the IP address
-    QLabel* mIPAddress;
-
-    /// shows the ID of the bridge
-    QLabel* mID;
-
-    /// shows the API version of the bridge
-    QLabel* mAPI;
-
-    /// spacer used for laying out widgets
-    QLabel* mSpacer;
-
-    /// layout for top of the widget
-    QHBoxLayout* mTopLayout;
-
-    /// layout of middle of widget
-    QHBoxLayout* mMidLayout;
+    /// displays the lights that are part of this group and their current states.
+    LightsListMenu* mLights;
 
     /// image for displaying a graphic to help with current step of widget.
     QLabel* mImage;
@@ -125,11 +160,17 @@ private:
     /// Used for showing when a device is still being discovery.
     QMovie* mMovie;
 
+    /// checkbox for selecting/deselecting the lights in the bridge.
+    cor::CheckBox* mCheckBox;
+
+    /// widget for metadata
+    QLabel* mMetadata;
+
+    /// button to open the full widget.
+    QPushButton* mManageButton;
+
     /// cachced pixmap of hue bridge
     QPixmap mBridgePixmap;
-
-    /// layout for the top right of the widget
-    QVBoxLayout* mTopRightLayout;
 
     /// reachable count
     std::uint32_t mReachableCount;
@@ -139,6 +180,9 @@ private:
 
     /// true if checked, false otherwise
     bool mIsChecked;
+
+    /// height of a row.
+    int mRowHeight;
 };
 
 } // namespace hue
