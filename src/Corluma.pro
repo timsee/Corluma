@@ -13,6 +13,11 @@ TARGET = Corluma
 TEMPLATE = app
 VERSION = 1.0.0
 
+# flag to use serial. Only works in non-mobile builds and currently, non Qt6 builds.
+SHOULD_USE_SERIAL = 0
+# flag to use experimental features that may not be part of the standard release.
+USE_EXPERIMENTAL_FEATURES = 0
+
 #----------
 # Minimum Requirements Check
 #----------
@@ -57,7 +62,6 @@ win32 {
     }
 }
 
-SHOULD_USE_SERIAL = 0
 
 #----------
 # Qt Linking
@@ -69,6 +73,11 @@ QT   += core gui widgets network
 equals(SHOULD_USE_SERIAL, 1) {
   DEFINES += USE_SERIAL=1
   QT += serialport
+}
+
+# if defined, use experimental features.
+equals(USE_EXPERIMENTAL_FEATURES, 1) {
+  DEFINES += USE_EXPERIMENTAL_FEATURES=1
 }
 
 # MOBILE_BUILD is a flag that gets set for only MOBILE targets.

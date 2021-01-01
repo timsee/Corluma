@@ -167,8 +167,10 @@ private:
     /// settings button
     LeftHandButton* mSettingsButton;
 
+#ifdef USE_EXPERIMENTAL_FEATURES
     /// timeout button
     TimeoutButton* mTimeoutButton;
+#endif // USE_EXPERIMENTAL_FEATURES
 
     /// update the single color button based off of what is selected
     void updateSingleColorButton();

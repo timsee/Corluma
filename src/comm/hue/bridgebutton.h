@@ -20,6 +20,7 @@ class BridgeButton : public QPushButton {
 public:
     explicit BridgeButton(const QString& name, QWidget* parent) : QPushButton(name, parent) {
         connect(this, SIGNAL(clicked(bool)), this, SLOT(handleClicked(bool)));
+        setCheckable(true);
     }
 
 signals:

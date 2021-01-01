@@ -244,7 +244,7 @@ private:
     void updateJSONLights(const hue::Bridge& bridge, const QJsonArray& array);
 
     /// update the existin JSON data to include more bridge data such as a username or an id.
-    void updateJSON(const hue::Bridge& bridge);
+    bool updateJSON(const hue::Bridge& bridge, bool overrideCustonName);
 
     /// load the json data.
     bool loadJSON();

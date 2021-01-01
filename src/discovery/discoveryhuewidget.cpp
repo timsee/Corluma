@@ -145,10 +145,18 @@ void DiscoveryHueWidget::updateBridgeGUI() {
                         widgetIndex = i;
                         widget->updateBridge(bridge);
                     }
+
+                    if (mBridgeButtons[i]->text() != bridge.customName()) {
+                        mBridgeButtons[i]->setText(bridge.customName());
+                    }
                 } else if (widget->key() == bridge.id()) {
                     // standard case, theres a unique ID for this bridge
                     widgetIndex = i;
                     widget->updateBridge(bridge);
+
+                    if (mBridgeButtons[i]->text() != bridge.customName()) {
+                        mBridgeButtons[i]->setText(bridge.customName());
+                    }
                 }
             }
             ++i;
@@ -209,6 +217,9 @@ void DiscoveryHueWidget::updateBridgeGUI() {
                         SIGNAL(clicked(QString)),
                         this,
                         SLOT(bridgeButtonPressed(QString)));
+                if (newIndex > 0) {
+                    highlightBridgeButtons();
+                }
                 resize();
             } else {
                 qDebug() << "INFO: Discovered a bridge but there are already "
@@ -295,6 +306,20 @@ void DiscoveryHueWidget::bridgeButtonPressed(QString key) {
             break;
         }
     }
+    highlightBridgeButtons();
+}
+
+void DiscoveryHueWidget::highlightBridgeButtons() {
+    for (auto i = 0u; i < mBridgeButtons.size(); ++i) {
+        if (mBridgeButtons[i] != nullptr) {
+            mBridgeButtons[i]->setChecked(i == mBridgeIndex);
+        }
+    }
+}
+
+
+void DiscoveryHueWidget::handleBridgeNameUpdate(const QString&, const QString&) {
+    updateBridgeGUI();
 }
 
 void DiscoveryHueWidget::deleteBridgePressed(QString key, EProtocolType protocol) {

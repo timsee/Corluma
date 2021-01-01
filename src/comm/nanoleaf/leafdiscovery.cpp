@@ -564,8 +564,8 @@ void LeafDiscovery::updateJSON(const nano::LeafMetadata& controller) {
 bool LeafDiscovery::loadJSON() {
     if (!mJsonData.isNull()) {
         if (mJsonData.isArray()) {
-            QJsonArray array = mJsonData.array();
-            for (const QJsonValue& value : array) {
+            auto array = mJsonData.array();
+            for (auto value : array) {
                 QJsonObject object = value.toObject();
                 if (object["name"].isString() && object["IP"].isString()
                     && object["port"].isDouble() && object["serial"].isString()

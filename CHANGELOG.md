@@ -1059,5 +1059,13 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Rewrote `DiscoveryHueWidget` to show only one `Bridge` at a time.
 - Rewrote `DisplayHueBridgeWidget` to display more information and allow selecting and deselecting of lights.
 - Simplified the signals/slots on `LightsPage` and its subwidgets.
-- Rewrote the `HueScheduleWidget`. 
+- Rewrote the `HueScheduleWidget`.
+- Fixed miscellaneous bugs.
+
+### **v0.21.65**
+### Bug Fixes
+- Added a `USE_EXPERIMENTAL_FEATURES` preprocessor to gate features not ready for the public during releases.
+- Fixed a bug on the `MoodPage` where "Error" was displayed instead of "Miscellaneous".
+- Fixed a bug with renaming Hue Bridges.
+- Fixed a bug where the currently selected Hue Bridge didn't highlight its button.
 - Fixed miscellaneous bugs.

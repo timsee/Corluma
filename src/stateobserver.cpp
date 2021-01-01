@@ -274,11 +274,11 @@ void StateObserver::updateTime() {
 }
 
 void StateObserver::lightNameChange(const QString& key, const QString& name) {
-    mComm->lightNameChange(key, name);
+    qDebug() << " TODO: light name changed: " << key << " to " << name;
 }
 
 void StateObserver::lightDeleted(const QString& key) {
-    qDebug() << "TODO: light deleted";
+    qDebug() << "TODO: light deleted: " << key;
 }
 
 void StateObserver::lightCountChangedFromLightsPage(std::vector<QString>) {

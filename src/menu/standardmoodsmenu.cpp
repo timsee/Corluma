@@ -173,8 +173,14 @@ void StandardMoodsMenu::selectMood(std::uint64_t key) {
 }
 
 void StandardMoodsMenu::parentGroupClicked(std::uint64_t key) {
-    auto parentGroup = mGroups->groupFromID(key);
-    showParentWidget(parentGroup.name());
+    QString parentName;
+    if (key == 0u) {
+        parentName = "Miscellaneous";
+    } else {
+        auto parentGroup = mGroups->groupFromID(key);
+        parentName = parentGroup.name();
+    }
+    showParentWidget(parentName);
     mCurrentParent = key;
     changeStateToMoods();
 }

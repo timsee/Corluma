@@ -30,6 +30,7 @@ bool mDebugMode = false;
 MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& minimumSize)
     : QMainWindow(parent),
       mAnyDiscovered{false},
+      mIsFirstActivation{true},
       mWifiFound{cor::wifiEnabled()},
       mWifiChecker{new QTimer(this)},
       mShareChecker{new QTimer(this)},
@@ -145,15 +146,14 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     mGreyOut->resize();
     connect(mGreyOut, SIGNAL(clicked()), this, SLOT(greyoutClicked()));
 
-    reorderWidgets();
-    resize();
     mMainViewport->pageChanged(EPage::lightsPage, true);
     if (!mLeftHandMenu->alwaysOpen()) {
         pushInLeftHandMenu();
     }
     mTopMenu->showFloatingLayout(EPage::lightsPage);
-    //    mGreyOut->raise();
-    //    mLeftHandMenu->raise();
+
+    reorderWidgets();
+    resize();
 
     // add hardcoded values from start of application
     mEditMoodPage->changeRowHeight(mLeftHandMenu->height() / 18);
@@ -472,8 +472,24 @@ void MainWindow::resizeEvent(QResizeEvent*) {
 }
 
 void MainWindow::changeEvent(QEvent* event) {
-    // qDebug() << " EVENT OCCURED " << event->type();
+    // qDebug() << " event " << event->type();
     if (event->type() == QEvent::ActivationChange && isActiveWindow()) {
+        // handle edge case where in the time between loading the app and activating the window,
+        // check if any lights have been discovered. If lights have been discovered, default the
+        // user to a color page, instead of the lightspage, since the lightspage is meant to
+        // modify which lights are connected, but if you already have lights connected, you like
+        // want to modify the colors of the lights instead.
+        if (mIsFirstActivation) {
+            mIsFirstActivation = false;
+            if (mAnyDiscovered) {
+                mMainViewport->pageChanged(EPage::colorPage, true);
+                mLeftHandMenu->buttonPressed(EPage::colorPage);
+                if (!mLeftHandMenu->alwaysOpen()) {
+                    pushInLeftHandMenu();
+                }
+                mTopMenu->showFloatingLayout(EPage::colorPage);
+            }
+        }
         resetStateUpdates();
 
 #ifdef MOBILE_BUILD

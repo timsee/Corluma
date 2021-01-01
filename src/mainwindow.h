@@ -232,6 +232,9 @@ private:
     /// true if editing a mood, false if editing a group or room.
     bool mIsMoodEdit;
 
+    /// true if its the first time the screen is activated.
+    bool mIsFirstActivation;
+
     //------------------
     // Pages
     //------------------

@@ -159,7 +159,7 @@ void BridgeDiscovery::handleDiscovery() {
                 requestUsername(notFoundBridge);
                 // IP addresses can change, if a username exists for a previous IP but not a new
                 // one, test it on new IP
-                for (auto innerBridge : mNotFoundBridges) {
+                for (const auto& innerBridge : mNotFoundBridges) {
                     if (notFoundBridge.IP() != innerBridge.IP()
                         && !innerBridge.username().isEmpty()) {
                         notFoundBridge.username(innerBridge.username());
@@ -262,7 +262,8 @@ void BridgeDiscovery::handleNUPnPReply(const QJsonDocument& jsonResponse) {
 #ifdef DEBUG_BRIDGE_DISCOVERY
             qDebug() << __func__ << "NUPnP packet:" << jsonResponse;
 #endif
-            for (auto ref : jsonResponse.array()) {
+            auto array = jsonResponse.array();
+            for (const auto& ref : array) {
                 if (ref.isObject()) {
                     QJsonObject object = ref.toObject();
                     if (object["internalipaddress"].isString() && object["id"].isString()) {
@@ -404,7 +405,7 @@ void BridgeDiscovery::handleInitialDiscoveryPacket(const QString& fullIP,
         hue::Bridge bridgeToMove;
         bool bridgeFound = false;
         std::vector<hue::Bridge> bridgesToDelete;
-        for (auto bridge : mNotFoundBridges) {
+        for (const auto& bridge : mNotFoundBridges) {
             if ((bridge.id() == id) || (bridge.IP() == IP)) {
                 bridgesToDelete.push_back(bridge);
                 bridgeFound = true;
@@ -418,7 +419,7 @@ void BridgeDiscovery::handleInitialDiscoveryPacket(const QString& fullIP,
             bridgeToMove.username(username);
 
             // remove the examples from not found
-            for (auto bridge : bridgesToDelete) {
+            for (const auto& bridge : bridgesToDelete) {
                 auto it = std::find(mNotFoundBridges.begin(), mNotFoundBridges.end(), bridge);
                 mNotFoundBridges.erase(it);
             }
@@ -427,7 +428,7 @@ void BridgeDiscovery::handleInitialDiscoveryPacket(const QString& fullIP,
                      << "found bridge in not found bridges, removing and updating found bridges";
 #endif
             auto bridge = parseInitialUpdate(bridgeToMove, object);
-            updateJSON(bridge);
+            updateJSON(bridge, false);
         } else {
 #ifdef DEBUG_BRIDGE_DISCOVERY
             qDebug() << __func__ << "did not find bridge in list of not found bridges" << object;
@@ -584,7 +585,7 @@ EHueDiscoveryState BridgeDiscovery::state() {
     }
 
     if (!mNotFoundBridges.empty()) {
-        for (auto bridge : mNotFoundBridges) {
+        for (const auto& bridge : mNotFoundBridges) {
             if (!bridge.IP().isEmpty() && bridge.username().isEmpty()
                 && bridge.state() == EBridgeDiscoveryState::lookingForUsername) {
                 return EHueDiscoveryState::findingDeviceUsername;
@@ -600,7 +601,7 @@ EHueDiscoveryState BridgeDiscovery::state() {
 
 bool BridgeDiscovery::doesIPExistInSearchingLists(const QString& IP) {
     bool foundIP = false;
-    for (auto notFoundBridge : mNotFoundBridges) {
+    for (const auto& notFoundBridge : mNotFoundBridges) {
         if (notFoundBridge.IP() == IP) {
             foundIP = true;
         }
@@ -691,15 +692,19 @@ bool BridgeDiscovery::changeName(const hue::Bridge& bridge, const QString& newNa
     if (bridgeResult.second) {
         auto foundBridge = bridgeResult.first;
         foundBridge.customName(newName);
-        updateJSON(foundBridge);
-        return true;
+        // update the json data
+        auto jsonResult = updateJSON(foundBridge, true);
+        // if json update works and makes a change, also update the app data.
+        if (jsonResult) {
+            // return whether or not the app data update was successful
+            return mFoundBridges.update(foundBridge.id().toStdString(), foundBridge);
+        }
     }
 
     for (auto&& notFoundBridge : mNotFoundBridges) {
         if (bridge.id() == notFoundBridge.id()) {
             notFoundBridge.customName(newName);
-            updateJSON(notFoundBridge);
-            return true;
+            return updateJSON(notFoundBridge, true);
         }
     }
     return false;
@@ -709,10 +714,11 @@ bool BridgeDiscovery::changeName(const hue::Bridge& bridge, const QString& newNa
 // JSON info
 // ----------------------------
 
-void BridgeDiscovery::updateJSON(const hue::Bridge& bridge) {
+bool BridgeDiscovery::updateJSON(const hue::Bridge& bridge, bool overrideCustonName) {
     // check for changes by looping through json looking for a match.
-    QJsonArray array = mJsonData.array();
-    QJsonObject newJsonObject = bridge.toJson();
+    auto array = mJsonData.array();
+    auto newJsonObject = bridge.toJson();
+    bool anyChanges = false;
     int i = 0;
     for (auto value : array) {
         bool detectChanges = false;
@@ -740,9 +746,13 @@ void BridgeDiscovery::updateJSON(const hue::Bridge& bridge) {
                 object["api"] = bridge.API();
             }
 
-            if (jsonBridge.customName() != bridge.customName()) {
+            // since the id in json already maps to a custom name, prefer this name for the new
+            // json, unless the name is empty or if the overrideCustonName flag is used
+            if (jsonBridge.customName().isEmpty() || overrideCustonName) {
                 detectChanges = true;
                 object["customName"] = bridge.customName();
+            } else {
+                object["customName"] = jsonBridge.customName();
             }
 
             if (jsonBridge.macaddress() != bridge.macaddress() && !bridge.macaddress().isEmpty()) {
@@ -756,9 +766,11 @@ void BridgeDiscovery::updateJSON(const hue::Bridge& bridge) {
             array.push_front(object);
             mJsonData.setArray(array);
             saveJSON();
+            anyChanges = true;
         }
         ++i;
     }
+    return anyChanges;
 }
 
 
@@ -782,7 +794,8 @@ void BridgeDiscovery::updateJSONLights(const hue::Bridge& bridge, const QJsonArr
             if (newJsonObject != object) {
                 // check if the lights arrays are different
                 if (lightsArray != object["lights"].toArray()) {
-                    for (auto innerRef : object["lights"].toArray()) {
+                    auto array = object["lights"].toArray();
+                    for (auto innerRef : array) {
                         // save old light data
                         QJsonObject oldLight = innerRef.toObject();
                         bool foundMatch = false;

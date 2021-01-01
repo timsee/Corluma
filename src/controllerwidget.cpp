@@ -34,6 +34,7 @@ ControllerWidget::ControllerWidget(QWidget* parent, CommLayer* comm, cor::LightL
             SIGNAL(deleteController(QString, EProtocolType)),
             this,
             SLOT(handleDeleteController(QString, EProtocolType)));
+
     connect(mHueBridgeWidget,
             SIGNAL(deleteLight(QString)),
             this,
@@ -152,11 +153,10 @@ void ControllerWidget::handleDeleteController(QString uniqueID, EProtocolType pr
 
     } else if (protocol == EProtocolType::hue) {
         auto bridgeResult = mComm->hue()->discovery()->bridgeFromDiscoveryID(uniqueID);
-        // TODO: find a bridge a properly
         if (bridgeResult.second) {
             auto bridge = bridgeResult.first;
             // gather light UUIDs from bridge
-            for (auto light : bridge.lights().items()) {
+            for (const auto& light : bridge.lights().items()) {
                 lightNames.push_back(light.uniqueID());
             }
             result = mComm->hue()->discovery()->deleteBridge(bridgeResult.first);

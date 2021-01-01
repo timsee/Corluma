@@ -88,7 +88,10 @@ LightsPage::LightsPage(QWidget* parent,
             SIGNAL(deselectControllerLights(QString, EProtocolType)),
             this,
             SLOT(deselectAllControllerLights(QString, EProtocolType)));
-
+    connect(mControllerWidget->hueWidget(),
+            SIGNAL(controllerNameChanged(QString, QString)),
+            this,
+            SLOT(handleControllerNameChanged(QString, QString)));
 
     connect(mControllerWidget,
             SIGNAL(deleteLight(QString)),
@@ -169,6 +172,11 @@ std::pair<std::vector<cor::Light>, bool> LightsPage::getLightsFromController(
 
 void LightsPage::deleteControllerFromDiscovery(QString key, EProtocolType protocol) {
     mControllerWidget->handleDeleteController(key, protocol);
+}
+
+void LightsPage::handleControllerNameChanged(QString key, QString name) {
+    qDebug() << "INFO: Updated name of bridge: " << key << " to " << name;
+    mDiscoveryWidget->hueWidget()->handleBridgeNameUpdate(key, name);
 }
 
 void LightsPage::resizeEvent(QResizeEvent*) {

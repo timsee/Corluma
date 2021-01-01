@@ -63,7 +63,7 @@ void EditProgressWidget::updateState(std::uint32_t index, EEditProgressState sta
 void EditProgressWidget::mouseReleaseEvent(QMouseEvent* event) {
     if (cor::isMouseEventTouchUpInside(event, this, true)) {
         auto buttonRegionWidth = std::uint32_t(width()) / mNumberOfPages;
-        auto buttonPage = std::uint32_t(event->x()) / buttonRegionWidth;
+        auto buttonPage = std::uint32_t(event->pos().x()) / buttonRegionWidth;
         if (mPageState[buttonPage] != EEditProgressState::locked) {
             emit changePage(buttonPage);
         }

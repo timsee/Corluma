@@ -83,11 +83,12 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     mSettingsButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mSettingsButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
-
+#ifdef USE_EXPERIMENTAL_FEATURES
     mTimeoutButton =
         new TimeoutButton("Timeouts", EPage::timeoutPage, ":/images/timer.png", mComm, mData, this);
     mTimeoutButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mTimeoutButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
+#endif
 
     PresetPalettes palettes;
     cor::LightState state;
@@ -142,22 +143,24 @@ void LeftHandMenu::resize() {
 
     mSpacer->setGeometry(0, 0, width, height());
 
+    mSingleColorButton->setGeometry(0, yPos, width, buttonHeight);
+    yPos += mSingleColorButton->height();
+
+    mMultiColorButton->setGeometry(0, yPos, width, buttonHeight);
+    yPos += mMultiColorButton->height();
+
+    mMoodButton->setGeometry(0, yPos, width, buttonHeight);
+    yPos += mMoodButton->height();
+
     mLightsButton->setGeometry(0, yPos, width, buttonHeight);
     yPos += mLightsButton->height();
 
-    mSingleColorButton->setGeometry(0, yPos, this->width(), buttonHeight);
-    yPos += mSingleColorButton->height();
-
-    mMultiColorButton->setGeometry(0, yPos, this->width(), buttonHeight);
-    yPos += mMultiColorButton->height();
-
-    mMoodButton->setGeometry(0, yPos, this->width(), buttonHeight);
-    yPos += mMoodButton->height();
-
-    mTimeoutButton->setGeometry(0, yPos, this->width(), buttonHeight);
+#ifdef USE_EXPERIMENTAL_FEATURES
+    mTimeoutButton->setGeometry(0, yPos, width, buttonHeight);
     yPos += mTimeoutButton->height();
+#endif
 
-    mSettingsButton->setGeometry(0, yPos, this->width(), buttonHeight);
+    mSettingsButton->setGeometry(0, yPos, width, buttonHeight);
     yPos += mSettingsButton->height();
 
     mMainPalette->setGeometry(0, yPos, this->width(), int(buttonHeight * 1.2));
@@ -230,7 +233,9 @@ void LeftHandMenu::buttonPressed(EPage page) {
         mMultiColorButton->shouldHightlght(false);
         mMoodButton->shouldHightlght(false);
         mSettingsButton->shouldHightlght(false);
+#ifdef USE_EXPERIMENTAL_FEATURES
         mTimeoutButton->shouldHightlght(false);
+#endif
         if (page == EPage::lightsPage) {
             mLightsButton->shouldHightlght(true);
         } else if (page == EPage::colorPage) {
@@ -241,9 +246,13 @@ void LeftHandMenu::buttonPressed(EPage page) {
             mMoodButton->shouldHightlght(true);
         } else if (page == EPage::settingsPage) {
             mSettingsButton->shouldHightlght(true);
-        } else if (page == EPage::timeoutPage) {
+        }
+#ifdef USE_EXPERIMENTAL_FEATURES
+        else if (page == EPage::timeoutPage) {
             mTimeoutButton->shouldHightlght(true);
-        } else {
+        }
+#endif
+        else {
             qDebug() << "Do not recognize key " << pageToString(page);
         }
     } else {
@@ -251,7 +260,9 @@ void LeftHandMenu::buttonPressed(EPage page) {
         mSingleColorButton->shouldHightlght(false);
         mMultiColorButton->shouldHightlght(false);
         mMoodButton->shouldHightlght(false);
+#ifdef USE_EXPERIMENTAL_FEATURES
         mTimeoutButton->shouldHightlght(false);
+#endif
         mSettingsButton->shouldHightlght(false);
         if (page == EPage::lightsPage) {
             mLightsButton->shouldHightlght(true);
@@ -261,9 +272,13 @@ void LeftHandMenu::buttonPressed(EPage page) {
             mMultiColorButton->shouldHightlght(true);
         } else if (page == EPage::moodPage) {
             mMoodButton->shouldHightlght(true);
-        } else if (page == EPage::timeoutPage) {
+        }
+#ifdef USE_EXPERIMENTAL_FEATURES
+        else if (page == EPage::timeoutPage) {
             mTimeoutButton->shouldHightlght(true);
-        } else if (page == EPage::settingsPage) {
+        }
+#endif
+        else if (page == EPage::settingsPage) {
             mSettingsButton->shouldHightlght(true);
         } else {
             qDebug() << "Do not recognize key " << pageToString(page);
@@ -376,9 +391,11 @@ QWidget* LeftHandMenu::selectedButton() {
     if (mSettingsButton->highlighted()) {
         return mSettingsButton;
     }
+#ifdef USE_EXPERIMENTAL_FEATURES
     if (mTimeoutButton->highlighted()) {
         return mTimeoutButton;
     }
+#endif
     return nullptr;
 }
 
@@ -403,7 +420,9 @@ int LeftHandMenu::showingWidth() {
 
 
 void LeftHandMenu::updateTimeoutButton(bool enabled, std::uint32_t value) {
+#ifdef USE_EXPERIMENTAL_FEATURES
     mTimeoutButton->update(enabled, value);
+#endif
 }
 
 void LeftHandMenu::enableButtons(bool enable) {
@@ -412,5 +431,7 @@ void LeftHandMenu::enableButtons(bool enable) {
     mSingleColorButton->setEnabled(enable);
     mMultiColorButton->setEnabled(enable);
     mMoodButton->setEnabled(enable);
+#ifdef USE_EXPERIMENTAL_FEATURES
     mTimeoutButton->setEnabled(enable);
+#endif
 }

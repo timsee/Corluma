@@ -131,6 +131,11 @@ int main(int argc, char* argv[]) {
         settings.setValue(kFirstTimeOpenKey, QString::number(10));
     }
 
+    // disable experimental features if not experimental features are not enabled
+#ifndef USE_EXPERIMENTAL_FEATURES
+    settings.setValue(cor::kUseTimeoutKey, QString::number(0));
+#endif // USE_EXPERIMENTAL_FEATURES
+
     //--------------------
     // Create app window
     //--------------------
@@ -158,7 +163,7 @@ int main(int argc, char* argv[]) {
     }
 
 #ifndef DISABLE_SPLASH_SCREEN
-    int splashScreenDelay = 3000; // in milliseconds
+    int splashScreenDelay = 4000; // in milliseconds
     QTimer::singleShot(splashScreenDelay, &splash, SLOT(close()));
     QTimer::singleShot(splashScreenDelay, &window, SLOT(show()));
     splash.show();

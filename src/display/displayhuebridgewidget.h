@@ -287,6 +287,9 @@ signals:
     /// signals that specific light should be deleted.
     void deleteLight(QString);
 
+    /// emits when a bridge name is changed.
+    void controllerNameChanged(QString bridgeID, QString name);
+
     /// signals when a light name is changed, signaling the lights unique ID and its current name.
     void lightNameChanged(QString uniqueID, QString name);
 
@@ -399,23 +402,15 @@ private slots:
     void nameChanged(const QString& name) {
         if (!name.isEmpty()) {
             if (mChangeBridgeName) {
-                //            const auto& bridgeResult =
-                //            mComm->hue()->bridges().item(key.toStdString()); if
-                //            (bridgeResult.second)
-                //            {
-                //                mComm->hue()->discovery()->changeName(bridgeResult.first,
-                //                newName); return;
-                //            }
-
-                //            for (const auto& bridge :
-                //            mComm->hue()->discovery()->notFoundBridges()) {
-                //                if (bridge.id() == key) {
-                //                    mComm->hue()->discovery()->changeName(bridge, newName);
-                //                    return;
-                //                }
-                //            }
+                auto result = mComm->hue()->discovery()->changeName(mBridge, name);
+                if (result) {
+                    mName->setText(name);
+                    emit controllerNameChanged(mBridge.id(), name);
+                } else {
+                    qDebug() << "WARNING: could not change bridge name, id: " << mBridge.id()
+                             << " to: " << name;
+                }
             } else {
-                qDebug() << " emit that we chang ethis " << mLightToChangeName << " to " << name;
                 emit lightNameChanged(mLightToChangeName, name);
             }
             mGreyout->greyOut(false);

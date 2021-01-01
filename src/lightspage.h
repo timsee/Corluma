@@ -75,6 +75,9 @@ private slots:
     /// handles when a discovery widget signals to delete a controller.
     void deleteControllerFromDiscovery(QString, EProtocolType);
 
+    /// handles when a controller name changes from a controller widget, updates the DiscoveryWidget
+    void handleControllerNameChanged(QString key, QString name);
+
 private:
     /// programmatically resize
     void resize();

@@ -51,6 +51,9 @@ public:
     /// show the widget
     void showWidget();
 
+    /// handle when a bridge updates its name.
+    void handleBridgeNameUpdate(const QString& bridgeID, const QString& newName);
+
     /// See DiscoveryWidget.h
     void handleDiscovery(bool isActive) override;
 
@@ -116,6 +119,9 @@ private:
      *        state.
      */
     void hueDiscoveryUpdate(EHueDiscoveryState);
+
+    /// highlight the bridge buttons, so that the currently selected bridge is highlighted.
+    void highlightBridgeButtons();
 
     /// updates the GUI of the bridge
     void updateBridgeGUI();
