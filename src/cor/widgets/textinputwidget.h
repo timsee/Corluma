@@ -63,6 +63,7 @@ public:
 
         setVisible(true);
         isOpen(true);
+        raise();
     }
 
     /// pushes widget out

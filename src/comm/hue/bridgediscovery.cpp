@@ -466,31 +466,22 @@ hue::Bridge BridgeDiscovery::parseInitialUpdate(hue::Bridge bridge, const QJsonO
     if (object["lights"].isObject()) {
         lightsObject = object["lights"].toObject();
         QStringList keys = lightsObject.keys();
-        QJsonArray lightsArray;
-        std::vector<HueMetadata> lights;
+        // convert json to a HueMetadata array
+        std::vector<HueMetadata> metadataVector;
         for (auto& key : keys) {
             if (lightsObject.value(key).isObject()) {
                 QJsonObject innerObject = lightsObject.value(key).toObject();
                 if (innerObject["uniqueid"].isString() && innerObject["name"].isString()) {
-                    auto index = int(key.toDouble());
-
-                    HueMetadata hueLight(innerObject, bridge.id(), index);
-                    lights.push_back(hueLight);
-
-                    QJsonObject lightObject;
-                    lightObject["uniqueid"] = hueLight.uniqueID();
-                    lightObject["index"] = index;
-                    lightObject["name"] = hueLight.name();
-                    lightObject["swversion"] = hueLight.softwareVersion();
-                    lightObject["hardwareType"] = hardwareTypeToString(hueLight.hardwareType());
-                    lightsArray.push_back(lightObject);
+                    metadataVector.push_back(
+                        HueMetadata(innerObject, bridge.id(), int(key.toDouble())));
                 }
             }
         }
 
+        auto lightsArray = metadataArrayToJsonArray(metadataVector);
 
         cor::Dictionary<HueMetadata> lightDict;
-        for (const auto& light : lights) {
+        for (const auto& light : metadataVector) {
             lightDict.insert(light.uniqueID().toStdString(), light);
         }
 
@@ -517,16 +508,62 @@ hue::Bridge BridgeDiscovery::parseInitialUpdate(hue::Bridge bridge, const QJsonO
     return bridge;
 }
 
-void BridgeDiscovery::updateLight(const HueMetadata& light) {
-    auto bridge = bridgeFromLight(light);
-    if (bridge.isValid()) {
-        auto dict = bridge.lights();
-        dict.update(light.uniqueID().toStdString(), light);
-        bridge.lights(dict);
-        mFoundBridges.update(bridge.id().toStdString(), bridge);
+QJsonArray BridgeDiscovery::metadataArrayToJsonArray(
+    const std::vector<HueMetadata> metadataVector) {
+    QJsonArray jsonArray;
+    for (const auto& metadata : metadataVector) {
+        QJsonObject lightObject;
+        lightObject["uniqueid"] = metadata.uniqueID();
+        lightObject["index"] = metadata.index();
+        lightObject["name"] = metadata.name();
+        lightObject["swversion"] = metadata.softwareVersion();
+        lightObject["hardwareType"] = hardwareTypeToString(metadata.hardwareType());
+        jsonArray.push_back(lightObject);
     }
+    return jsonArray;
 }
 
+bool BridgeDiscovery::updateLight(const hue::Bridge& bridge,
+                                  const HueMetadata& light,
+                                  bool shouldUpdateJson) {
+    auto bridgeCopy = bridge;
+    auto dict = bridgeCopy.lights();
+    // check if item exists
+    if (dict.item(light.uniqueID().toStdString()).second) {
+        dict.update(light.uniqueID().toStdString(), light);
+    } else {
+        dict.insert(light.uniqueID().toStdString(), light);
+    }
+    bridgeCopy.lights(dict);
+    auto updateResult = mFoundBridges.update(bridgeCopy.id().toStdString(), bridgeCopy);
+    if (!updateResult) {
+        qDebug() << " WARNING: could not update this light: " << light.name()
+                 << " in bridge: " << bridgeCopy.id();
+        return false;
+    }
+    if (shouldUpdateJson) {
+        auto lightsArray = metadataArrayToJsonArray(bridgeCopy.lights().items());
+        updateJSONLights(bridgeCopy, lightsArray);
+    }
+    return true;
+}
+
+
+bool BridgeDiscovery::deleteLight(const hue::Bridge& bridge, const QString& uniqueID) {
+    auto bridgeCopy = bridge;
+    auto dict = bridgeCopy.lights();
+    auto removeKeyResult = dict.removeKey(uniqueID.toStdString());
+    if (!removeKeyResult) {
+        qDebug() << "WARNING: could not remove the light " << uniqueID
+                 << " from its bridge: " << bridge.id();
+        return false;
+    }
+    bridgeCopy.lights(dict);
+    mFoundBridges.update(bridgeCopy.id().toStdString(), bridgeCopy);
+    auto lightsArray = metadataArrayToJsonArray(bridgeCopy.lights().items());
+    updateJSONLights(bridgeCopy, lightsArray);
+    return true;
+}
 
 void BridgeDiscovery::receivedUPnP(const QHostAddress& sender, const QString& payload) {
     if (payload.contains(QString("IpBridge"))) {
@@ -794,48 +831,7 @@ void BridgeDiscovery::updateJSONLights(const hue::Bridge& bridge, const QJsonArr
             if (newJsonObject != object) {
                 // check if the lights arrays are different
                 if (lightsArray != object["lights"].toArray()) {
-                    auto array = object["lights"].toArray();
-                    for (auto innerRef : array) {
-                        // save old light data
-                        QJsonObject oldLight = innerRef.toObject();
-                        bool foundMatch = false;
-                        for (auto ref : lightsArray) {
-                            QJsonObject newLight = ref.toObject();
-                            if (newLight["uniqueid"].toString()
-                                == oldLight["uniqueid"].toString()) {
-                                foundMatch = true;
-                                // check name, add to copy if different
-                                if (newLight["name"].toString() != oldLight["name"].toString()) {
-                                    detectChanges = true;
-                                    // qDebug() << " new name" << newLight["name"].toString() << "
-                                    // old name" << oldLight["name"].toString();
-                                }
-                                if (int(newLight["index"].toDouble())
-                                    != int(oldLight["index"].toDouble())) {
-                                    detectChanges = true;
-                                }
-
-                                if (newLight["swversion"].toString()
-                                    != oldLight["swversion"].toString()) {
-                                    detectChanges = true;
-                                }
-
-                                if (newLight["hardwareType"].toString()
-                                    != oldLight["hardwareType"].toString()) {
-                                    detectChanges = true;
-                                }
-                            }
-                        }
-                        if (!foundMatch) {
-                            detectChanges = true;
-                            deletedLights.push_back(oldLight["uniqueid"].toString());
-                        }
-                    }
-                }
-            }
-            if (!deletedLights.empty()) {
-                for (const auto& id : deletedLights) {
-                    mGroups->lightDeleted(ECommType::hue, id);
+                    detectChanges = true;
                 }
             }
         }

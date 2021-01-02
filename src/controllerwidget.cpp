@@ -18,17 +18,11 @@ ControllerWidget::ControllerWidget(QWidget* parent, CommLayer* comm, cor::LightL
             SIGNAL(deleteNanoleaf(QString, QString)),
             this,
             SLOT(handleDeleteNanoleaf(QString, QString)));
-    // TODO: handle this more elegantly
-    //    connect(mNanoleafWidget,
-    //            SIGNAL(lightNameChanged(QString, QString)),
-    //            this,
-    //            SLOT(handleLightNameChanged(QString, QString)));
 
     connect(mArduCorWidget,
             SIGNAL(deleteController(QString, EProtocolType)),
             this,
             SLOT(handleDeleteController(QString, EProtocolType)));
-
 
     connect(mHueBridgeWidget,
             SIGNAL(deleteController(QString, EProtocolType)),
@@ -39,10 +33,6 @@ ControllerWidget::ControllerWidget(QWidget* parent, CommLayer* comm, cor::LightL
             SIGNAL(deleteLight(QString)),
             this,
             SLOT(handleDeleteHueLight(QString)));
-    connect(mHueBridgeWidget,
-            SIGNAL(lightNameChanged(QString, QString)),
-            this,
-            SLOT(handleLightNameChanged(QString, QString)));
 
     connect(mRenderTimer, SIGNAL(timeout()), this, SLOT(renderUI()));
     mRenderTimer->start(333);
@@ -112,18 +102,18 @@ void ControllerWidget::changeRowHeight(int height) {
     mHueBridgeWidget->changeRowHeight(height);
 }
 
+void ControllerWidget::updateLightNames(EProtocolType) {
+    // qDebug() << "TODO: update the light names for ControllerWidget";
+}
+
 void ControllerWidget::handleDeleteHueLight(QString uniqueID) {
     qDebug() << " TODO: delete hue " << uniqueID;
-    //    // delete the light
-    //    emit deleteLight(uniqueID);
-
-    //    auto light = mComm->lightByID(uniqueID);
-    //    if (light.isValid()) {
-    //        if (light.protocol() == EProtocolType::nanoleaf) {
-    //            // close the page, it will no longer exist
-    //            emit backButtonPressed();
-    //        }
-    //    }
+    auto light = mComm->lightByID(uniqueID);
+    if (light.isValid()) {
+        mComm->hue()->deleteLight(light);
+    } else {
+        qDebug() << "requested to delete an unknown hue: " << uniqueID;
+    }
 }
 
 void ControllerWidget::handleDeleteNanoleaf(QString serialNumber, QString IP) {

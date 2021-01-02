@@ -299,6 +299,9 @@ signals:
     /// received
     void discoveryStateChanged(EHueDiscoveryState);
 
+    /// handle when the light name changes, emitting the uniqueID and the new name of the ligh
+    void lightNameChanged(QString, QString);
+
 private slots:
 
     /*!
@@ -424,6 +427,12 @@ private:
                             const QString& key,
                             const QJsonValue& value);
 
+    /// handles an update to a light's name, updating the metadata about the light
+    void handleNameUpdateSuccess(cor::Light light, HueMetadata metadata, const QString& newName);
+
+    /// handles a success packet about a light deleting.
+    void handleLightDeleted(const hue::Bridge& bridge, const QString& deletionString);
+
     /*!
      * \brief handleScheduleSuccess handles a success packet that changes a schedule
      *
@@ -452,10 +461,7 @@ private:
      * \param i index of Hue Light.
      * \return true if successful, false if failed.
      */
-    bool updateHueLightState(const hue::Bridge& bridge,
-                             QJsonObject object,
-                             int i,
-                             bool wasDiscovered);
+    bool updateHueLightState(const hue::Bridge& bridge, QJsonObject object, int i);
 
     /*!
      * \brief updateNewHueLight a new hue light was discovered from scanning, add the meta data to

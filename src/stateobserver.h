@@ -42,8 +42,7 @@ public:
                            GroupData* groups,
                            AppSettings* appSettings,
                            MainWindow* mainWindow,
-                           ControllerWidget* controllerPage,
-                           DiscoveryWidget* discoveryPage,
+                           LightsPage* lightsPage,
                            TopMenu* topMenu,
                            QObject* parent);
 
@@ -115,7 +114,7 @@ public slots:
     void lightNameChange(const QString& key, const QString& name);
 
     /// handles when a light is deleted, updates the UI
-    void lightDeleted(const QString& key);
+    void lightsDeleted(std::vector<QString>);
 
     /// light count changed from lights page.
     void lightCountChangedFromLightsPage(std::vector<QString>);
@@ -143,11 +142,8 @@ private:
     /// main window of the app
     MainWindow* mMainWindow;
 
-    /// controller page
-    ControllerWidget* mControllerPage;
-
-    /// discovery page
-    DiscoveryWidget* mDiscoveryPage;
+    /// page for managing light connections.
+    LightsPage* mLightsPage;
 
     /// top menu of the app
     TopMenu* mTopMenu;

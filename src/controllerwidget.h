@@ -57,6 +57,9 @@ public:
     /// highlight lights on the controller page.
     void highlightLights();
 
+    /// update the light names for a specific protocol.
+    void updateLightNames(EProtocolType type);
+
     /// returns the lightInfoWidget
     LightInfoListWidget* lightInfoWidget() { return mHueBridgeWidget->lightInfoWidget(); }
 
@@ -75,9 +78,6 @@ signals:
 
     /// a light is slected from the controller page, true if seleceted, false if deselected.
     void lightClicked(QString);
-
-    /// emits the key and new name for light
-    void lightNameChanged(QString, QString);
 
     /// select lights for a controller by controller key and its protocol
     void selectControllerLights(QString, EProtocolType);
@@ -106,10 +106,6 @@ private slots:
 
     /// handle when a nanoleaf is deleted.
     void handleDeleteNanoleaf(QString, QString);
-
-    /// handles when a subwidget changes a light name, and signals the change to the rest of the
-    /// app.
-    void handleLightNameChanged(QString key, QString name) { emit lightNameChanged(key, name); }
 
     /// renders and UI that needs explicit updates.
     void renderUI();

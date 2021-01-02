@@ -16,6 +16,7 @@ RotateLightWidget::RotateLightWidget(QWidget* parent)
       mRotationSlider{new cor::Slider(this)},
       mLeafPanelImage{new nano::LeafPanelImage(this)},
       mLightImage{new QLabel(this)} {
+    isOpen(false);
     connect(mButtonOK, SIGNAL(clicked()), this, SLOT(clickedOK()));
     connect(mButtonCancel, SIGNAL(clicked()), this, SLOT(clickedCancel()));
     setVisible(false);

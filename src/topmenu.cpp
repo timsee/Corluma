@@ -752,8 +752,7 @@ void TopMenu::handleBrightnessSliders() {
             } else {
                 updateGlobalBrightness = true;
             }
-        } else if (mCurrentPage == EPage::colorPage
-                   || mCurrentPage == EPage::moodPage
+        } else if (mCurrentPage == EPage::colorPage || mCurrentPage == EPage::moodPage
                    || mCurrentPage == EPage::settingsPage) {
             updateGlobalBrightness = true;
         }
@@ -877,17 +876,17 @@ void TopMenu::updateLightsMenu() {
     }
 
     // check that commtype being shown is available, if not, adjust
-    if (!mAppSettings->enabled(mLightsPage->discoveryWidget()->currentProtocol())) {
+    if (!mAppSettings->enabled(mLightsPage->currentProtocol())) {
         if (mAppSettings->enabled(EProtocolType::hue)) {
-            mLightsPage->discoveryWidget()->switchProtocol(EProtocolType::hue);
+            mLightsPage->switchProtocol(EProtocolType::hue);
         } else if (mAppSettings->enabled(EProtocolType::nanoleaf)) {
-            mLightsPage->discoveryWidget()->switchProtocol(EProtocolType::nanoleaf);
+            mLightsPage->switchProtocol(EProtocolType::nanoleaf);
         } else if (mAppSettings->enabled(EProtocolType::arduCor)) {
-            mLightsPage->discoveryWidget()->switchProtocol(EProtocolType::arduCor);
+            mLightsPage->switchProtocol(EProtocolType::arduCor);
         }
     }
 
-    auto currentProtocol = mLightsPage->discoveryWidget()->currentProtocol();
+    auto currentProtocol = mLightsPage->currentProtocol();
     // check that if only one is available that the top menu doesn't show.
     if (buttons.size() == 1) {
         std::vector<QString> emptyVector;
@@ -904,7 +903,7 @@ void TopMenu::updateLightsMenu() {
             mLightsFloatingLayout->highlightButton("Discovery_Hue");
         }
     }
-    mLightsPage->discoveryWidget()->switchProtocol(currentProtocol);
+    mLightsPage->switchProtocol(currentProtocol);
 
     pullLeftLightsMenu();
 }

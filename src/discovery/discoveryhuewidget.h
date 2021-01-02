@@ -6,7 +6,6 @@
 #include "comm/hue/bridgebutton.h"
 #include "comm/hue/bridgegroupswidget.h"
 #include "comm/hue/bridgescheduleswidget.h"
-#include "comm/hue/lightdiscovery.h"
 #include "cor/widgets/listwidget.h"
 #include "cor/widgets/textinputwidget.h"
 #include "discovery/discoverytypewidget.h"
@@ -53,6 +52,12 @@ public:
 
     /// handle when a bridge updates its name.
     void handleBridgeNameUpdate(const QString& bridgeID, const QString& newName);
+
+    /// handle a light name update
+    void updateLightNames();
+
+    /// handle when lights are deleted.
+    void handleDeletedLights(const std::vector<QString>&);
 
     /// See DiscoveryWidget.h
     void handleDiscovery(bool isActive) override;

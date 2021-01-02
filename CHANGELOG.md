@@ -1069,3 +1069,9 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed a bug with renaming Hue Bridges.
 - Fixed a bug where the currently selected Hue Bridge didn't highlight its button.
 - Fixed miscellaneous bugs.
+
+### **v0.21.66**
+### Bug Fixes
+- Fixed bugs with updating the Hue's discovery info.
+- Fixed bugs with updating Hue names.
+- Fixed miscellaneous bugs.

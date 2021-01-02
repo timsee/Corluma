@@ -90,8 +90,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
                                             mGroups,
                                             mAppSettings,
                                             this,
-                                            mMainViewport->lightsPage()->controllerWidget(),
-                                            mMainViewport->lightsPage()->discoveryWidget(),
+                                            mMainViewport->lightsPage(),
                                             mTopMenu,
                                             this);
 
@@ -160,8 +159,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     mEditGroupPage->changeRowHeight(mLeftHandMenu->height() / 18);
     mMainViewport->moodPage()->moodDetailedWidget()->changeRowHeight(mLeftHandMenu->height() / 18);
     mMainViewport->timeoutPage()->changeRowHeight(mLeftHandMenu->height() / 18);
-    mMainViewport->lightsPage()->discoveryWidget()->changeRowHeight(mLeftHandMenu->height() / 18);
-    mMainViewport->lightsPage()->controllerWidget()->changeRowHeight(mLeftHandMenu->height() / 18);
+    mMainViewport->lightsPage()->changeRowHeight(mLeftHandMenu->height() / 18);
     mLeftHandMenu->changeRowHeight(mLeftHandMenu->height() / 20);
 }
 
@@ -271,11 +269,7 @@ void MainWindow::loadPages() {
     // --------------
 
     connect(mTopMenu, SIGNAL(buttonPressed(QString)), this, SLOT(topMenuButtonPressed(QString)));
-
-    connect(mTopMenu,
-            SIGNAL(buttonPressed(QString)),
-            mMainViewport->lightsPage()->discoveryWidget(),
-            SLOT(floatingLayoutButtonPressed(QString)));
+    mMainViewport->lightsPage()->setupTopMenu(mTopMenu);
 }
 
 
@@ -371,21 +365,32 @@ void MainWindow::setupStateObserver() {
             SLOT(lightCountChangedFromLightsPage(std::vector<QString>)));
 
     // set up changes to connection state
-    connect(mMainViewport->lightsPage()->discoveryWidget(),
+    connect(mMainViewport->lightsPage(),
             SIGNAL(connectionStateChanged(EProtocolType, EConnectionState)),
             mStateObserver,
             SLOT(connectionStateChanged(EProtocolType, EConnectionState)));
 
     // light info widget
-    connect(mMainViewport->lightsPage()->controllerWidget(),
+    connect(mMainViewport->lightsPage(),
             SIGNAL(lightNameChanged(QString, QString)),
             mStateObserver,
             SLOT(lightNameChange(QString, QString)));
 
-    connect(mMainViewport->lightsPage()->controllerWidget(),
-            SIGNAL(deleteLight(QString)),
+    connect(mMainViewport->lightsPage(),
+            SIGNAL(deleteLights(std::vector<QString>)),
             mStateObserver,
-            SLOT(lightDeleted(QString)));
+            SLOT(lightsDeleted(std::vector<QString>)));
+
+    // comm layer setup
+    connect(mComm,
+            SIGNAL(lightNameChanged(QString, QString)),
+            mStateObserver,
+            SLOT(lightNameChange(QString, QString)));
+
+    connect(mComm,
+            SIGNAL(lightsDeleted(std::vector<QString>)),
+            mStateObserver,
+            SLOT(lightsDeleted(std::vector<QString>)));
 }
 
 void MainWindow::shareChecker() {
@@ -722,10 +727,10 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
 
     // handle edge case with controller widget where its visibnle but the top menu pushes its
     // floating menus above it
-    if (mMainViewport->lightsPage()->isOpen()
-        && mMainViewport->lightsPage()->controllerWidget()->isVisible()) {
-        mMainViewport->lightsPage()->controllerWidget()->raise();
+    if (mMainViewport->lightsPage()->isOpen()) {
+        mMainViewport->lightsPage()->raiseControllerWidget();
     }
+
     if (!ignorePushOut) {
         pushOutLeftHandMenu();
     }
@@ -893,7 +898,7 @@ void MainWindow::editPageUpdateMoods() {
 
 bool MainWindow::isAnyWidgetAbove() {
     if (mMainViewport->settingsPage()->isOpen() || mEditGroupPage->isOpen()
-        || mEditMoodPage->isOpen() || mMainViewport->lightsPage()->discoveryWidget()
+        || mEditMoodPage->isOpen() || mMainViewport->lightsPage()->isAnyPageOpen()
         || mNoWifiWidget->isVisible()) {
         return true;
     }

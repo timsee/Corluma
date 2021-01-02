@@ -58,11 +58,11 @@ void DisplayPreviewBridgeWidget::updateBridge(const hue::Bridge& bridge) {
     if (!cor::compareTwoLightVectors(updatedLights, mLights->lights())) {
         mLights->showLights(updatedLights);
     }
+    mBridge = bridge;
     handleBridgeState(bridge.state());
     handleButtonState();
     updateMetadata(bridge);
     highlightLights();
-    mBridge = bridge;
 }
 
 void DisplayPreviewBridgeWidget::handleBridgeState(EBridgeDiscoveryState state) {

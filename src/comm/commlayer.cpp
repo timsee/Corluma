@@ -65,6 +65,11 @@ CommLayer::CommLayer(QObject* parent, GroupData* parser) : QObject(parent), mGro
             SIGNAL(lightDeleted(ECommType, QString)),
             this,
             SLOT(deletedLight(ECommType, QString)));
+
+    connect(mHue.get(),
+            SIGNAL(lightNameChanged(QString, QString)),
+            this,
+            SLOT(handleLightNameChanged(QString, QString)));
 }
 
 bool CommLayer::discoveryErrorsExist(EProtocolType type) {
@@ -88,6 +93,11 @@ void CommLayer::lightFound(ECommType type, QString uniqueID) {
 
 void CommLayer::deletedLight(ECommType type, QString uniqueID) {
     emit lightDeleted(type, uniqueID);
+    emit lightsDeleted({uniqueID});
+}
+
+void CommLayer::handleLightNameChanged(QString uniqueID, QString newName) {
+    emit lightNameChanged(uniqueID, newName);
 }
 
 CommType* CommLayer::commByType(ECommType type) const {
@@ -362,40 +372,6 @@ cor::Light CommLayer::lightByID(const QString& ID) const {
         }
     }
     return {};
-}
-
-void CommLayer::lightNameChange(const QString& key, const QString& name) {
-    auto light = lightByID(key);
-    if (light.protocol() == EProtocolType::hue) {
-        // get hue light from key
-        std::vector<HueMetadata> hueLights = hue()->discovery()->lights();
-        HueMetadata light;
-        bool lightFound = false;
-        for (auto hue : hueLights) {
-            if (hue.uniqueID() == key) {
-                lightFound = true;
-                light = hue;
-            }
-        }
-
-        if (lightFound) {
-            hue()->renameLight(light, name);
-        } else {
-            qDebug() << " could NOT change this key: " << key << " to this name " << name;
-        }
-    } else if (light.protocol() == EProtocolType::nanoleaf) {
-        // get nanoleaf controller from key
-        const auto& controllers = nanoleaf()->lights();
-        auto result = controllers.item(key.toStdString());
-        bool lightFound = result.second;
-        nano::LeafMetadata lightToRename = result.first;
-
-        if (lightFound) {
-            nanoleaf()->renameLight(lightToRename, name);
-        } else {
-            qDebug() << " could NOT change this key: " << key << " to this name " << name;
-        }
-    }
 }
 
 std::uint32_t CommLayer::secondsUntilTimeout(const QString& key) {

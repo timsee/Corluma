@@ -182,14 +182,6 @@ public:
     /// currently selected lights
     EColorPickerType bestColorPickerType(const std::vector<cor::Light>& lights);
 
-    /*!
-     * \brief lightNameChange change the name of a widget given the key and the new name.
-     *
-     * \param key the key for the light
-     * \param name the new name for the light.
-     */
-    void lightNameChange(const QString& key, const QString& name);
-
     /// gives the last time any specific CommType last received an update
     QTime lastUpdateTime();
 
@@ -225,6 +217,12 @@ signals:
     /// signals when an existing light is deleted
     void lightDeleted(ECommType, QString);
 
+    /// emits when one or more lights delete from the commlayer
+    void lightsDeleted(std::vector<QString>);
+
+    /// emits when a light changes its name
+    void lightNameChanged(QString, QString);
+
 private slots:
 
     /// forwards slots from internal connection objects to anything listening to CommLayer
@@ -241,6 +239,9 @@ private slots:
      * \brief hueStateChanged sent by hue whenever a packet is received that changes it state.
      */
     void hueStateChanged() { emit packetReceived(EProtocolType::hue); }
+
+    /// handles when a light name changes
+    void handleLightNameChanged(QString, QString);
 
     /// handles when new light is found
     void lightFound(ECommType, QString);

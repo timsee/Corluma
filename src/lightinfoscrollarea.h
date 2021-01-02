@@ -27,6 +27,9 @@ public:
      */
     void updateHues(std::vector<HueMetadata> lights);
 
+    /// delete a light by its uniqueID
+    void deleteLight(const QString& lightID);
+
     /// getter for the hue widgets
     std::vector<hue::HueInfoWidget*> hueWidgets() { return mHueWidgets; }
 

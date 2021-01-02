@@ -67,8 +67,8 @@ public:
     /// getter for the key of the widget.
     const QString& key() { return mKey; }
 
-    /// getter for SHueLight being represented.
-    HueMetadata light() { return mLight; }
+    /// getter for HueMetadata being represented.
+    HueMetadata metadata() { return mLight; }
 
     /// true if details are hidden, false otherwise
     bool detailsHidden() { return mHideDetails; }

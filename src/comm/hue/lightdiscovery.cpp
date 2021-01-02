@@ -122,7 +122,10 @@ void LightDiscovery::discoveryRoutine() {
 
     // iterate through all hues found
     for (auto hue : hues) {
-        mSearchWidget->addToConnectedList(hue.name());
+        auto result = mSearchWidget->addToConnectedList(hue.name());
+        if (result) {
+            emit newHueFound(hue.name());
+        }
     }
 }
 

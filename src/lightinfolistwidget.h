@@ -33,6 +33,12 @@ public:
     /// constructor
     explicit LightInfoListWidget(QWidget* parent);
 
+    /// update a light name
+    void updateLightName(QString, QString);
+
+    /// delete a light from the display.
+    void deleteLightFromDisplay(QString);
+
     /// getter for scroll area
     LightInfoScrollArea* scrollArea() { return mLightInfoScrollArea; }
 

@@ -246,6 +246,10 @@ void DiscoveryHueWidget::greyOutClicked() {
     }
 }
 
+void DiscoveryHueWidget::handleDeletedLights(const std::vector<QString>&) {
+    updateBridgeGUI();
+}
+
 void DiscoveryHueWidget::highlightLights() {
     for (auto widget : mBridgeWidgets) {
         if (widget != nullptr) {
@@ -319,6 +323,10 @@ void DiscoveryHueWidget::highlightBridgeButtons() {
 
 
 void DiscoveryHueWidget::handleBridgeNameUpdate(const QString&, const QString&) {
+    updateBridgeGUI();
+}
+
+void DiscoveryHueWidget::updateLightNames() {
     updateBridgeGUI();
 }
 

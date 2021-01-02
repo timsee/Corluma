@@ -63,6 +63,12 @@ public:
         protocolTypeSelected(mType);
     }
 
+    /// update the light names for the widget of the given protocl type
+    void updateLightNames(EProtocolType type);
+
+    /// handles the case where lights are deleted off of the LightsPage.
+    void handleDeletedLights(const std::vector<QString>& keys);
+
     /// called when the widget is shown
     void show();
 

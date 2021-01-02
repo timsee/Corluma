@@ -15,8 +15,7 @@ StateObserver::StateObserver(cor::LightList* data,
                              GroupData* groups,
                              AppSettings* appSettings,
                              MainWindow* mainWindow,
-                             ControllerWidget* controllerPage,
-                             DiscoveryWidget* discoveryPage,
+                             LightsPage* lightsPage,
                              TopMenu* topMenu,
                              QObject* parent)
     : QObject(parent),
@@ -25,8 +24,7 @@ StateObserver::StateObserver(cor::LightList* data,
       mGroups{groups},
       mAppSettings{appSettings},
       mMainWindow{mainWindow},
-      mControllerPage{controllerPage},
-      mDiscoveryPage{discoveryPage},
+      mLightsPage{lightsPage},
       mTopMenu{topMenu},
       mMainViewport{mMainWindow->viewport()},
       mColorPage{mMainViewport->colorPage()},
@@ -187,8 +185,7 @@ void StateObserver::moodChanged(std::uint64_t moodID) {
 void StateObserver::lightCountChanged() {
     mTopMenu->lightCountChanged();
     mMainViewport->timeoutPage()->updateLights();
-    mControllerPage->highlightLights();
-    mDiscoveryPage->highlightLights();
+    mLightsPage->highlightLights();
 }
 
 void StateObserver::dataInSync(bool inSync) {
@@ -273,12 +270,20 @@ void StateObserver::updateTime() {
     mTimeObserver->updateTime();
 }
 
-void StateObserver::lightNameChange(const QString& key, const QString& name) {
-    qDebug() << " TODO: light name changed: " << key << " to " << name;
+void StateObserver::lightNameChange(const QString& uniqueID, const QString&) {
+    // qDebug() << " TODO: light name changed in StateObserver: " << key << " to " << name;
+    // get light by uniqueID
+    auto light = mComm->lightByID(uniqueID);
+    if (light.isValid()) {
+        mLightsPage->updateLightNames(light.protocol());
+    }
 }
 
-void StateObserver::lightDeleted(const QString& key) {
-    qDebug() << "TODO: light deleted: " << key;
+void StateObserver::lightsDeleted(std::vector<QString> keys) {
+    qDebug() << "TODO: lights deleted: " << keys;
+    mLightsPage->handleDeletedLights(keys);
+    mMainWindow->leftHandMenu()->updateLights();
+    lightCountChanged();
 }
 
 void StateObserver::lightCountChangedFromLightsPage(std::vector<QString>) {

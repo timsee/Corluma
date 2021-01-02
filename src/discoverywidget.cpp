@@ -98,6 +98,15 @@ void DiscoveryWidget::widgetConnectionStateChanged(EProtocolType type,
     changeCommTypeConnectionState(type, connectionState);
 }
 
+void DiscoveryWidget::updateLightNames(EProtocolType type) {
+    if (type == EProtocolType::hue) {
+        mHueWidget->updateLightNames();
+    }
+}
+
+void DiscoveryWidget::handleDeletedLights(const std::vector<QString>& keys) {
+    mHueWidget->handleDeletedLights(keys);
+}
 
 // ----------------------------
 // GUI Helpers

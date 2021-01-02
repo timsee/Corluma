@@ -51,6 +51,20 @@ void LightInfoListWidget::resize() {
     mLightInfoScrollArea->resize();
 }
 
+void LightInfoListWidget::updateLightName(QString uniqueID, QString newName) {
+    for (auto widget : mLightInfoScrollArea->hueWidgets()) {
+        if (widget->key() == uniqueID) {
+            auto metadata = widget->metadata();
+            metadata.name(newName);
+            widget->updateLight(metadata);
+        }
+    }
+}
+
+void LightInfoListWidget::deleteLightFromDisplay(QString uniqueID) {
+    mLightInfoScrollArea->deleteLight(uniqueID);
+}
+
 void LightInfoListWidget::changeRowHeight(int rowHeight) {
     for (auto widget : mLightInfoScrollArea->hueWidgets()) {
         widget->changeRowHeight(rowHeight);
@@ -61,14 +75,8 @@ void LightInfoListWidget::changeNamePressed(QString key, QString name) {
     emit changeLightName(key, name);
 }
 
-void LightInfoListWidget::deleteButtonPressed(QString key, QString name) {
-    QMessageBox::StandardButton reply;
-    QString text = "Delete " + name + "? This will remove it from the Hue Bridge.";
-    reply = QMessageBox::question(this, "Delete?", text, QMessageBox::Yes | QMessageBox::No);
-    if (reply == QMessageBox::Yes) {
-        // signal to remove from app
-        emit deleteLight(key);
-    }
+void LightInfoListWidget::deleteButtonPressed(QString key, QString) {
+    emit deleteLight(key);
 }
 
 void LightInfoListWidget::findNewLightButtonPressed(bool) {

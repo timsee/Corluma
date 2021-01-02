@@ -1,4 +1,5 @@
 #include "lightinfoscrollarea.h"
+#include "utils/qt.h"
 
 #include <QScrollBar>
 #include <QScroller>
@@ -41,7 +42,7 @@ void LightInfoScrollArea::updateHues(std::vector<HueMetadata> lights) {
         int widgetIndex = -1;
         int i = 0;
         for (auto widget : mHueWidgets) {
-            if (widget->light().uniqueID() == light.uniqueID()) {
+            if (widget->metadata().uniqueID() == light.uniqueID()) {
                 widgetIndex = i;
                 widget->updateLight(light);
             }
@@ -69,6 +70,31 @@ void LightInfoScrollArea::updateHues(std::vector<HueMetadata> lights) {
     }
     resize();
 }
+
+void LightInfoScrollArea::deleteLight(const QString& lightID) {
+    hue::HueInfoWidget* widgetToDelete = nullptr;
+    for (auto widget : mHueWidgets) {
+        if (widget->key() == lightID) {
+            widgetToDelete = widget;
+            break;
+            mScrollLayout->removeWidget(widget);
+
+            delete widget;
+            return;
+        }
+    }
+    if (widgetToDelete != nullptr) {
+        mScrollLayout->removeWidget(widgetToDelete);
+        // find widget in the vector
+        auto result = std::find(mHueWidgets.begin(), mHueWidgets.end(), widgetToDelete);
+        if (result != mHueWidgets.end()) {
+            mHueWidgets.erase(result);
+        }
+        delete widgetToDelete;
+    }
+    resize();
+}
+
 
 void LightInfoScrollArea::clickedLight(const QString& key) {
     bool shouldEnableDelete = true;
@@ -111,16 +137,17 @@ void LightInfoScrollArea::resize() {
     }
 
     setMinimumWidth(parentWidget()->minimumSizeHint().width() + verticalScrollBar()->width());
-    mScrollAreaWidget->setFixedSize(geometry().width() - verticalScrollBar()->width()
-                                        - contentsMargins().left() - contentsMargins().right(),
-                                    widgetHeightY);
+    mScrollAreaWidget->setFixedSize(
+        cor::guardAgainstNegativeSize(geometry().width() - verticalScrollBar()->width()
+                                      - contentsMargins().left() - contentsMargins().right()),
+        widgetHeightY);
 }
 
 
 QString LightInfoScrollArea::lookupCurrentLight() {
     for (auto widget : mHueWidgets) {
         if (widget->key() == mLastHueKey) {
-            return widget->light().name();
+            return widget->metadata().name();
         }
     }
     return {};

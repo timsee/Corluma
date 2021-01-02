@@ -6,6 +6,7 @@
 #include "cor/objects/page.h"
 #include "discoverywidget.h"
 
+class TopMenu;
 
 /*!
  * \copyright
@@ -27,11 +28,42 @@ public:
                         cor::LightList* lights,
                         AppSettings* appSettings);
 
-    /// getter for controller widget
-    ControllerWidget* controllerWidget() { return mControllerWidget; }
+    /// change the row height of the subwidgets
+    void changeRowHeight(int rowHeight) {
+        mDiscoveryWidget->changeRowHeight(rowHeight);
+        mControllerWidget->changeRowHeight(rowHeight);
+    }
 
-    /// getter for discovery widget
-    DiscoveryWidget* discoveryWidget() { return mDiscoveryWidget; }
+    /// switch the protocol being displayed on the discovery widget
+    void switchProtocol(EProtocolType type) { mDiscoveryWidget->switchProtocol(type); }
+
+    /// getter for the current protocol shown by the LightsPage
+    EProtocolType currentProtocol() { return mDiscoveryWidget->currentProtocol(); }
+
+    /// true if any pages are open for the controller
+    bool isAnyPageOpen() { return mDiscoveryWidget->isOpen() || mControllerWidget->isOpen(); }
+
+    /// setup a (hacky) signal from TopMenu
+    void setupTopMenu(TopMenu*);
+
+    /// highlight the lights in the given widgets
+    void highlightLights() {
+        mDiscoveryWidget->highlightLights();
+        mControllerWidget->highlightLights();
+    }
+
+    /// (hacky) solution for getting around are some z-layer fudgery
+    void raiseControllerWidget() {
+        if (mControllerWidget->isVisible()) {
+            mControllerWidget->raise();
+        }
+    }
+
+    /// handle lights deleted from other places in the app.
+    void handleDeletedLights(const std::vector<QString>& keys);
+
+    /// update the light names across the LightsPage for the given protocol.
+    void updateLightNames(EProtocolType type);
 
     /// show widgets
     void showWidgets();
@@ -46,6 +78,15 @@ signals:
 
     /// signals when one or more lights should be deselected
     void deselectLights(std::vector<QString>);
+
+    /// delete lights from app memory
+    void deleteLights(std::vector<QString>);
+
+    /// emits the key and new name for light
+    void lightNameChanged(QString, QString);
+
+    /// a connection state has changed for a widget.
+    void connectionStateChanged(EProtocolType type, EConnectionState newState);
 
 protected:
     /*!
@@ -77,6 +118,22 @@ private slots:
 
     /// handles when a controller name changes from a controller widget, updates the DiscoveryWidget
     void handleControllerNameChanged(QString key, QString name);
+
+    /// handles when a light name is changed.
+    void handleLightNameChanged(QString key, QString name);
+
+    /*!
+     * \brief widgetConnectionStateChanged handles whenever a connection status changes for any
+     * commtype
+     *
+     * \param type the commtype where the connection status changes
+     * \param connectionState int representation of a EConnectionState that gives the current
+     * connection status.
+     */
+    void handleConnectionStateChanged(EProtocolType type, EConnectionState connectionState);
+
+    /// delete clicked from a controller page
+    void handleDeleteLight(QString);
 
 private:
     /// programmatically resize

@@ -53,6 +53,9 @@ signals:
      */
     void closePressed();
 
+    /// signals when a new hue is found from the discovery page.
+    void newHueFound(QString);
+
 protected:
     /// called when widget resizes
     void resizeEvent(QResizeEvent*);

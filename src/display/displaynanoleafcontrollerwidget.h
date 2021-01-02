@@ -214,6 +214,11 @@ public:
         mDeleteButton->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, buttonHeight);
         yPosColumn2 += mDeleteButton->height();
 
+        if (mChangeNameInput->isOpen()) {
+            mGreyout->raise();
+            mChangeNameInput->resize();
+            mChangeNameInput->raise();
+        }
         if (mRotateLightWidget->isOpen()) {
             mGreyout->raise();
             mRotateLightWidget->resize();

@@ -1,6 +1,7 @@
 #include "lightspage.h"
 #include "discovery/discoveryhuewidget.h"
 #include "mainwindow.h"
+#include "topmenu.h"
 
 LightsPage::LightsPage(QWidget* parent,
                        CommLayer* comm,
@@ -15,6 +16,12 @@ LightsPage::LightsPage(QWidget* parent,
             SIGNAL(showControllerWidget()),
             this,
             SLOT(shouldShowControllerWidget()));
+
+    connect(mDiscoveryWidget,
+            SIGNAL(connectionStateChanged(EProtocolType, EConnectionState)),
+            this,
+            SLOT(handleConnectionStateChanged(EProtocolType, EConnectionState)));
+
     connect(mDiscoveryWidget->hueWidget(),
             SIGNAL(selectLight(QString)),
             this,
@@ -41,6 +48,10 @@ LightsPage::LightsPage(QWidget* parent,
 
     mControllerWidget->setVisible(false);
     connect(mControllerWidget, SIGNAL(backButtonPressed()), this, SLOT(hideControllerWidget()));
+    connect(mControllerWidget,
+            SIGNAL(deleteLight(QString)),
+            this,
+            SLOT(handleDeleteLight(QString)));
 
     // add light signals
     connect(mControllerWidget->arduCorWidget(),
@@ -92,11 +103,22 @@ LightsPage::LightsPage(QWidget* parent,
             SIGNAL(controllerNameChanged(QString, QString)),
             this,
             SLOT(handleControllerNameChanged(QString, QString)));
+    connect(mControllerWidget->hueWidget(),
+            SIGNAL(lightNameChanged(QString, QString)),
+            this,
+            SLOT(handleLightNameChanged(QString, QString)));
 
     connect(mControllerWidget,
             SIGNAL(deleteLight(QString)),
             mDiscoveryWidget,
             SLOT(deleteLight(QString)));
+}
+
+void LightsPage::setupTopMenu(TopMenu* topMenu) {
+    connect(topMenu,
+            SIGNAL(buttonPressed(QString)),
+            mDiscoveryWidget,
+            SLOT(floatingLayoutButtonPressed(QString)));
 }
 
 void LightsPage::resize() {
@@ -177,6 +199,49 @@ void LightsPage::deleteControllerFromDiscovery(QString key, EProtocolType protoc
 void LightsPage::handleControllerNameChanged(QString key, QString name) {
     qDebug() << "INFO: Updated name of bridge: " << key << " to " << name;
     mDiscoveryWidget->hueWidget()->handleBridgeNameUpdate(key, name);
+}
+
+void LightsPage::handleLightNameChanged(QString key, QString name) {
+    auto light = mComm->lightByID(key);
+    if (light.protocol() == EProtocolType::hue) {
+        // get hue light from key
+        std::vector<HueMetadata> hueLights = mComm->hue()->discovery()->lights();
+        HueMetadata light;
+        bool lightFound = false;
+        for (auto hue : hueLights) {
+            if (hue.uniqueID() == key) {
+                lightFound = true;
+                light = hue;
+            }
+        }
+
+        if (lightFound) {
+            /// this sends a rename packet, which asks the Hue Bridge to rename the light. The
+            /// bridge will send a sucess packet, which will be handled by Commhue.
+            mComm->hue()->renameLight(light, name);
+        } else {
+            qDebug() << " could NOT change this key: " << key << " to this name " << name;
+        }
+    }
+}
+
+void LightsPage::handleDeleteLight(QString key) {
+    qDebug() << "TODO: handle delete light " << key;
+    emit deleteLights({key});
+}
+
+void LightsPage::handleConnectionStateChanged(EProtocolType type, EConnectionState state) {
+    emit connectionStateChanged(type, state);
+}
+
+void LightsPage::updateLightNames(EProtocolType protocol) {
+    mDiscoveryWidget->updateLightNames(protocol);
+    mControllerWidget->updateLightNames(protocol);
+}
+
+void LightsPage::handleDeletedLights(const std::vector<QString>& keys) {
+    qDebug() << "TODO: handle UI updates of light deletions " << keys;
+    mDiscoveryWidget->handleDeletedLights(keys);
 }
 
 void LightsPage::resizeEvent(QResizeEvent*) {

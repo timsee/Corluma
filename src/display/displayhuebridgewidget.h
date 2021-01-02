@@ -122,7 +122,10 @@ public:
         mHueLightDiscovery->setVisible(false);
         mHueLightDiscovery->isOpen(false);
         connect(mHueLightDiscovery, SIGNAL(closePressed()), this, SLOT(hueDiscoveryClosePressed()));
-
+        connect(mHueLightDiscovery,
+                SIGNAL(newHueFound(QString)),
+                this,
+                SLOT(hueDiscoveryFoundLight(QString)));
         connect(mLights, SIGNAL(clickedLight(cor::Light)), this, SLOT(lightClicked(cor::Light)));
         auto styleSheet = "background-color:rgb(33,32,32);";
         mName->setStyleSheet(styleSheet);
@@ -347,7 +350,16 @@ private slots:
     }
 
     /// signals when a light should be deleted from the bridge
-    void deleteLightFromBridge(QString lightID) { emit deleteLight(lightID); }
+    void deleteLightFromBridge(QString lightID) {
+        auto light = mComm->lightByID(lightID);
+        QMessageBox::StandardButton reply;
+        QString text = "Delete " + light.name() + "? This will remove it from the Hue Bridge.";
+        reply = QMessageBox::question(this, "Delete?", text, QMessageBox::Yes | QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+            mLightInfoWidget->deleteLightFromDisplay(lightID);
+            emit deleteLight(lightID);
+        }
+    }
 
     /// info button pressed
     void infoButtonPressed(bool) {
@@ -411,12 +423,18 @@ private slots:
                              << " to: " << name;
                 }
             } else {
+                mLightInfoWidget->updateLightName(mLightToChangeName, name);
                 emit lightNameChanged(mLightToChangeName, name);
             }
             mGreyout->greyOut(false);
             mChangeNameInput->pushOut();
             mChangeNameInput->raise();
         }
+    }
+
+    /// handles when the hue discovery finds a light.
+    void hueDiscoveryFoundLight(QString name) {
+        qDebug() << " TODO: found a new light from LightDiscovery:" << name;
     }
 
     /// close the name widget

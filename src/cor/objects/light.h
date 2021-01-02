@@ -125,6 +125,9 @@ public:
         if (state() != rhs.state()) {
             result = false;
         }
+        if (name() != rhs.name()) {
+            result = false;
+        }
         if (commType() != rhs.commType()) {
             result = false;
         }

@@ -133,7 +133,10 @@ public:
     HueMetadata lightFromBridgeIDAndIndex(const QString& bridgeID, int index);
 
     /// update the lights metadata
-    void updateLight(const HueMetadata& light);
+    bool updateLight(const hue::Bridge& bridge, const HueMetadata& light, bool updateJson);
+
+    /// handles when a light is deleted and updates the json data.
+    bool deleteLight(const hue::Bridge& bridge, const QString& uniqueID);
 
     /*!
      * \brief deleteBridge delete the bridge from app memory
@@ -245,6 +248,9 @@ private:
 
     /// update the existin JSON data to include more bridge data such as a username or an id.
     bool updateJSON(const hue::Bridge& bridge, bool overrideCustonName);
+
+    /// helper to convert a vector of HueMetadata to a QJsonArray.
+    QJsonArray metadataArrayToJsonArray(const std::vector<HueMetadata> metadata);
 
     /// load the json data.
     bool loadJSON();
