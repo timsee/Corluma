@@ -171,6 +171,9 @@ private:
      */
     void resize();
 
+    /// pushes out all help widgets
+    void pushOutHelpWidgets();
+
     /*!
      * \brief changeCommTypeConnectionState change the connection state and the associated UI
      *        elements based on the parameters.

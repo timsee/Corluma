@@ -140,6 +140,9 @@ public:
      */
     bool removeLight(const cor::Light& light);
 
+    /// removes all lights that match the provided uniqueIDs.
+    bool removeByIDs(const std::vector<QString>& lightIDs);
+
     /*!
      * \brief removeLightsOfType if they exist, removes lights from list list that match
      *        the protocol provided.

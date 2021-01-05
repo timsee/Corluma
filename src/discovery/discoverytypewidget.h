@@ -8,6 +8,7 @@
 
 #include "comm/commlayer.h"
 #include "cor/widgets/textinputwidget.h"
+#include "cor/widgets/webview.h"
 #include "greyoutoverlay.h"
 
 
@@ -55,6 +56,9 @@ public:
     /// default value for the IP widget
     virtual QString IPWidgetDefaultValue() = 0;
 
+    /// html to display to help the user debug discovery
+    virtual QString discoveryHelpHTML() = 0;
+
     /// delete a light from the discovery page.
     virtual void deleteLight(const QString& light) = 0;
 
@@ -63,6 +67,17 @@ public:
 
     /// opens the IP widget
     void openIPWidget();
+
+    /// open a help view to aide in debugging connections
+    void openHelpView();
+
+    /// true if the help view is open, false otherwise.
+    bool helpViewIsOpen() { return mHelpViewIsOpen; }
+
+public slots:
+
+    /// close the help view.
+    void closeHelpView();
 
 signals:
 
@@ -104,6 +119,9 @@ protected slots:
     virtual void greyOutClicked() = 0;
 
 protected:
+    /// resize the help view.
+    void resizeHelpView();
+
     /// pointer to commlayer, used for discovery
     CommLayer* mComm;
 
@@ -112,6 +130,12 @@ protected:
 
     /// widget for entering an IP manually
     cor::TextInputWidget* mIPWidget;
+
+    /// help view, used to display help in how to connect to lights
+    cor::WebView* mHelpView;
+
+    /// true if help view is open, false otherwise.
+    bool mHelpViewIsOpen;
 
     /// widget for greying out widgets in the background
     GreyOutOverlay* mGreyout;

@@ -43,7 +43,7 @@ void LightsListMenu::updateLights() {
 }
 
 void LightsListMenu::addLight(const cor::Light& light) {
-    auto vectorLight = cor::findLightInVectorByID(mLights, light);
+    auto vectorLight = cor::findLightInVectorByID(mLights, light.uniqueID());
     if (vectorLight.isValid()) {
         auto result = std::find(mLights.begin(), mLights.end(), vectorLight);
         if (result != mLights.end()) {
@@ -56,7 +56,7 @@ void LightsListMenu::addLight(const cor::Light& light) {
 }
 
 void LightsListMenu::removeLight(const cor::Light& light) {
-    auto vectorLight = cor::findLightInVectorByID(mLights, light);
+    auto vectorLight = cor::findLightInVectorByID(mLights, light.uniqueID());
     auto result = std::find(mLights.begin(), mLights.end(), vectorLight);
     if (result != mLights.end()) {
         mLights.erase(result);
@@ -65,6 +65,18 @@ void LightsListMenu::removeLight(const cor::Light& light) {
     }
     mLightContainer->showLights(mLights, mRowHeight);
 }
+
+void LightsListMenu::removeLights(const std::vector<QString>& keys) {
+    for (const auto& key : keys) {
+        auto vectorLight = cor::findLightInVectorByID(mLights, key);
+        auto result = std::find(mLights.begin(), mLights.end(), vectorLight);
+        if (result != mLights.end()) {
+            mLights.erase(result);
+        }
+    }
+    mLightContainer->showLights(mLights, mRowHeight);
+}
+
 
 void LightsListMenu::showLights(const std::vector<cor::Light>& lights) {
     mLights = lights;

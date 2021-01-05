@@ -92,10 +92,10 @@ public:
      * represents the same device.The SHueLight contains hue-specific information such as the bulb's
      * software version and model ID. This information This function takes the cor::Light and
      * returns the mapped SHueLight
-     * \param device a cor::Light that represents the SHueLight you want to receive
+     * \param light a cor::Light that represents the HueMetadata you want to receive
      * \return the SHueLight that represents the same device as the cor::Light given.
      */
-    HueMetadata hueLightFromLight(const cor::Light& device);
+    HueMetadata metadataFromLight(const cor::Light& light);
 
     /*!
      * \brief lightFromMetadata converts a vector of HueMetadata into a cor::Light.
@@ -384,6 +384,9 @@ private:
     /// list of serial numbers the hue is searching for
     std::vector<QString> mSearchingSerialNumbers;
 
+    /// pointer to group data.
+    GroupData* mGroups;
+
     /// true if scanning for lights, false otherwise.
     bool mScanIsActive;
 
@@ -506,6 +509,9 @@ private:
      * a hue bridge.
      */
     QString convertMinutesToTimeout(int minutes);
+
+    /// remove a light from the new light list when its been discovered fully.
+    void removeFromNewLightsList(const QString& light);
 };
 
 #endif // COMMHUE_H

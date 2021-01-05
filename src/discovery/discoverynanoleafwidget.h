@@ -51,6 +51,9 @@ public:
     /// handles how to higlight lights.
     void highlightLights() override;
 
+    /// html to display to help the user debug discovery
+    QString discoveryHelpHTML() override;
+
 protected:
     /// called when the widget resizes
     virtual void resizeEvent(QResizeEvent*) override;

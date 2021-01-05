@@ -1075,3 +1075,11 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed bugs with updating the Hue's discovery info.
 - Fixed bugs with updating Hue names.
 - Fixed miscellaneous bugs.
+
+### **v0.21.67**
+### Bug Fixes
+- Fixed bugs with recently discovered hues not being properly displayed.
+- Fixed bugs with deleted hues still showing up in the app.
+- Fixed bugs with updating hue save data.
+- Added support for a `HelpView` to the discovery pages.
+- Fixed miscellaneous bugs. 

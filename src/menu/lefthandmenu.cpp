@@ -296,7 +296,7 @@ void LeftHandMenu::updateSingleColorButton() {
         std::vector<HueMetadata> hues;
         for (auto& device : devices) {
             if (device.protocol() == EProtocolType::hue) {
-                hues.push_back(mComm->hue()->hueLightFromLight(device));
+                hues.push_back(mComm->hue()->metadataFromLight(device));
             }
         }
 
@@ -420,7 +420,10 @@ int LeftHandMenu::showingWidth() {
 
 
 void LeftHandMenu::updateTimeoutButton(bool enabled, std::uint32_t value) {
-#ifdef USE_EXPERIMENTAL_FEATURES
+#ifndef USE_EXPERIMENTAL_FEATURES
+    Q_UNUSED(enabled)
+    Q_UNUSED(value)
+#else
     mTimeoutButton->update(enabled, value);
 #endif
 }

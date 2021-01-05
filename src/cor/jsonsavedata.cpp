@@ -96,7 +96,7 @@ bool JSONSaveData::removeJSONObject(const QString& key, const QString& givenValu
     bool foundMatch = false;
     if (mJsonData.isArray()) {
         QJsonArray array = mJsonData.array();
-        for (const auto& value : array) {
+        for (auto value : array) {
             QJsonObject object = value.toObject();
             if (object[key].isString()) {
                 QString jsonValue = object[key].toString();

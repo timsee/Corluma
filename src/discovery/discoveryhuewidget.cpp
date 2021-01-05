@@ -246,7 +246,13 @@ void DiscoveryHueWidget::greyOutClicked() {
     }
 }
 
-void DiscoveryHueWidget::handleDeletedLights(const std::vector<QString>&) {
+void DiscoveryHueWidget::handleDeletedLights(const std::vector<QString>& keys) {
+    for (const auto& widget : mBridgeWidgets) {
+        if (widget != nullptr) {
+            widget->removeLights(keys);
+        }
+    }
+    // update the bridges in the GUI.
     updateBridgeGUI();
 }
 
@@ -340,7 +346,8 @@ void DiscoveryHueWidget::resize() {
 
     auto buttonWidth = width() / mBridgeButtons.size();
 
-    // check if we should display the buttons, buttons should display only if theres more than one
+    // check if we should display the buttons, buttons should display only if theres more than
+    // one
     int totalButtons = 0;
     for (auto button : mBridgeButtons) {
         if (button != nullptr) {
@@ -377,9 +384,28 @@ void DiscoveryHueWidget::resize() {
         }
         index++;
     }
+
+    resizeHelpView();
 }
 
 void DiscoveryHueWidget::resizeEvent(QResizeEvent*) {
     mGreyout->resize();
     resize();
+}
+
+void DiscoveryHueWidget::newHueFound(const QString& ID) {
+    auto light = mComm->lightByID(ID);
+    auto bridge = mComm->hue()->bridgeFromLight(light);
+    for (const auto& widget : mBridgeWidgets) {
+        if (widget != nullptr) {
+            if (widget->bridge().id() == bridge.id()) {
+                widget->addLight(light);
+            }
+        }
+    }
+    updateBridgeGUI();
+}
+
+QString DiscoveryHueWidget::discoveryHelpHTML() {
+    return "TODO";
 }

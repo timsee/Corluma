@@ -179,6 +179,10 @@ void ControllerWidget::highlightLights() {
     }
 }
 
+void ControllerWidget::handleDeletedLights(const std::vector<QString>& keys) {
+    mHueBridgeWidget->removeLights(keys);
+}
+
 void ControllerWidget::resizeEvent(QResizeEvent*) {
     auto yPos = 0u;
     mTopWidget->setGeometry(0, 0, this->width(), this->height() / 12);

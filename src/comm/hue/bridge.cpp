@@ -64,7 +64,7 @@ QJsonObject Bridge::toJson() const {
         jsonObject["index"] = light.index();
         jsonObject["name"] = light.name();
         jsonObject["swversion"] = light.softwareVersion();
-        jsonObject["hardwareType"] = hardwareTypeToString(light.hardwareType());
+        jsonObject["modelid"] = light.modelID();
         lightArray.push_back(jsonObject);
     }
     object["lights"] = lightArray;

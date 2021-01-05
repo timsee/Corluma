@@ -396,21 +396,17 @@ nano::LeafMetadata LeafDiscovery::findLightByIP(const QString& IP) {
         QString auth = pieces[5];
         QString name;
 
-        bool found = false;
         for (const auto& foundLight : mFoundLights.items()) {
             if (auth == foundLight.authToken()) {
-                found = true;
                 return foundLight;
             }
         }
 
-        if (!found) {
-            nano::LeafMetadata light("", name);
-            light.addConnectionInfo(IP, port);
-            light.authToken(auth);
-            light.name(name);
-            return light;
-        }
+        nano::LeafMetadata light("", name);
+        light.addConnectionInfo(IP, port);
+        light.authToken(auth);
+        light.name(name);
+        return light;
     }
 
     if (pieces.size() == 6) {
@@ -472,7 +468,6 @@ void LeafDiscovery::updateFoundLight(const nano::LeafMetadata& controller) {
 }
 
 void LeafDiscovery::changeRotation(const nano::LeafMetadata& light, int rotation) {
-    qDebug() << " light " << light << " rotation" << rotation;
     auto lightCopy = light;
     lightCopy.rotation(rotation);
     updateFoundLight(lightCopy);

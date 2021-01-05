@@ -193,6 +193,8 @@ void DiscoveryNanoLeafWidget::resize() {
 
     mListWidget->setPreferredWidgetHeight(height() / 3);
     mListWidget->resizeWidgets();
+
+    resizeHelpView();
 }
 
 void DiscoveryNanoLeafWidget::nanoleafClicked(QString nanoleaf) {
@@ -218,4 +220,8 @@ void DiscoveryNanoLeafWidget::highlightLights() {
         nanoleafWidget->setShouldHighlight(
             mSelectedLights->doesLightExist(nanoleafWidget->nanoleaf().serialNumber()));
     }
+}
+
+QString DiscoveryNanoLeafWidget::discoveryHelpHTML() {
+    return "TODO";
 }

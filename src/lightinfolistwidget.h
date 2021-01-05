@@ -8,8 +8,8 @@
 #include <QWidget>
 
 #include "appsettings.h"
-#include "comm/commhue.h"
 #include "comm/hue/hueinfowidget.h"
+#include "comm/hue/huemetadata.h"
 #include "cor/objects/page.h"
 #include "cor/widgets/topwidget.h"
 #include "lightinfoscrollarea.h"
@@ -35,6 +35,9 @@ public:
 
     /// update a light name
     void updateLightName(QString, QString);
+
+    /// add a light to the info widget.
+    void addLight(const HueMetadata& light) { mLightInfoScrollArea->addLight(light); }
 
     /// delete a light from the display.
     void deleteLightFromDisplay(QString);

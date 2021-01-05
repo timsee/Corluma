@@ -136,7 +136,7 @@ void DataSyncTimeout::cleanupSync() {
 
 bool DataSyncTimeout::handleHueTimeout(const cor::Light& light) {
     // get hue light
-    auto hueLight = mComm->hue()->hueLightFromLight(light);
+    auto hueLight = mComm->hue()->metadataFromLight(light);
     // get bridge
     auto bridge = mComm->hue()->bridgeFromLight(light);
     // search schedules

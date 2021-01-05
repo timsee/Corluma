@@ -218,22 +218,21 @@ inline std::vector<QString> lightVectorToIDs(const std::vector<cor::Light>& ligh
 }
 
 
-/// takes a std::vector of lights and a specific light, and looks for a light that matches its
+/// takes a std::vector of lights and a specific ID, and looks for a light that matches its
 /// unique ID in the vector. This is useful for looking for lights that may have changed states
 /// between being added to a vector and the current time of searching. An invalid light is returned
 /// if the light cannot be found in the vector.
 inline cor::Light findLightInVectorByID(const std::vector<cor::Light>& lights,
-                                        const cor::Light& light) {
+                                        const QString& uniqueID) {
     cor::Light returnLight;
     for (const auto& storedLight : lights) {
-        if (storedLight.uniqueID() == light.uniqueID()) {
+        if (storedLight.uniqueID() == uniqueID) {
             returnLight = storedLight;
             break;
         }
     }
     return returnLight;
 }
-
 
 /// returns true the two light vectors are identical, false if any light is different.
 inline bool compareTwoLightVectors(const std::vector<cor::Light>& vectorA,

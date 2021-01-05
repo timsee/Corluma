@@ -54,6 +54,18 @@ BridgeDiscovery::~BridgeDiscovery() {
     stopDiscovery();
 }
 
+QJsonArray BridgeDiscovery::generateJSON() {
+    QJsonArray array;
+    for (const auto& bridge : mFoundBridges.items()) {
+        array.push_back(bridge.toJson());
+    }
+
+    for (const auto& bridge : mNotFoundBridges) {
+        array.push_back(bridge.toJson());
+    }
+    return array;
+}
+
 void BridgeDiscovery::startDiscovery() {
     if (!mRoutineTimer->isActive()) {
         mRoutineTimer->start(2500);
@@ -263,7 +275,7 @@ void BridgeDiscovery::handleNUPnPReply(const QJsonDocument& jsonResponse) {
             qDebug() << __func__ << "NUPnP packet:" << jsonResponse;
 #endif
             auto array = jsonResponse.array();
-            for (const auto& ref : array) {
+            for (auto ref : array) {
                 if (ref.isObject()) {
                     QJsonObject object = ref.toObject();
                     if (object["internalipaddress"].isString() && object["id"].isString()) {
@@ -428,7 +440,7 @@ void BridgeDiscovery::handleInitialDiscoveryPacket(const QString& fullIP,
                      << "found bridge in not found bridges, removing and updating found bridges";
 #endif
             auto bridge = parseInitialUpdate(bridgeToMove, object);
-            updateJSON(bridge, false);
+            updateJSON();
         } else {
 #ifdef DEBUG_BRIDGE_DISCOVERY
             qDebug() << __func__ << "did not find bridge in list of not found bridges" << object;
@@ -478,8 +490,6 @@ hue::Bridge BridgeDiscovery::parseInitialUpdate(hue::Bridge bridge, const QJsonO
             }
         }
 
-        auto lightsArray = metadataArrayToJsonArray(metadataVector);
-
         cor::Dictionary<HueMetadata> lightDict;
         for (const auto& light : metadataVector) {
             lightDict.insert(light.uniqueID().toStdString(), light);
@@ -495,7 +505,7 @@ hue::Bridge BridgeDiscovery::parseInitialUpdate(hue::Bridge bridge, const QJsonO
             mFoundBridges.insert(bridge.id().toStdString(), bridge);
         }
 
-        updateJSONLights(bridge, lightsArray);
+        updateJSON();
 
         if (object["schedules"].isObject() && object["groups"].isObject()) {
             QJsonObject schedulesObject = object["schedules"].toObject();
@@ -508,44 +518,33 @@ hue::Bridge BridgeDiscovery::parseInitialUpdate(hue::Bridge bridge, const QJsonO
     return bridge;
 }
 
-QJsonArray BridgeDiscovery::metadataArrayToJsonArray(
-    const std::vector<HueMetadata> metadataVector) {
-    QJsonArray jsonArray;
-    for (const auto& metadata : metadataVector) {
-        QJsonObject lightObject;
-        lightObject["uniqueid"] = metadata.uniqueID();
-        lightObject["index"] = metadata.index();
-        lightObject["name"] = metadata.name();
-        lightObject["swversion"] = metadata.softwareVersion();
-        lightObject["hardwareType"] = hardwareTypeToString(metadata.hardwareType());
-        jsonArray.push_back(lightObject);
+bool BridgeDiscovery::updateLight(const QString& bridgeID, const HueMetadata& light) {
+    // light updates come in batches, and sometimes, the bridge they send with gets out of sync. fix
+    // this by searching by bridgeID and querying the bridge itself
+    auto bridgeResult = bridgeFromID(bridgeID);
+    if (bridgeResult.second) {
+        auto bridgeCopy = bridgeResult.first;
+        auto dict = bridgeCopy.lights();
+        // check if item exists
+        if (dict.item(light.uniqueID().toStdString()).second) {
+            dict.update(light.uniqueID().toStdString(), light);
+        } else {
+            auto result = dict.insert(light.uniqueID().toStdString(), light);
+            if (!result) {
+                qDebug() << " WARNING: could not insert this light: " << light.name()
+                         << " in bridge: " << bridgeCopy.id();
+            }
+        }
+        bridgeCopy.lights(dict);
+        auto updateResult = mFoundBridges.update(bridgeCopy.id().toStdString(), bridgeCopy);
+        if (!updateResult) {
+            qDebug() << " WARNING: could not update this light: " << light.name()
+                     << " in bridge: " << bridgeCopy.id();
+            return false;
+        }
+        return true;
     }
-    return jsonArray;
-}
-
-bool BridgeDiscovery::updateLight(const hue::Bridge& bridge,
-                                  const HueMetadata& light,
-                                  bool shouldUpdateJson) {
-    auto bridgeCopy = bridge;
-    auto dict = bridgeCopy.lights();
-    // check if item exists
-    if (dict.item(light.uniqueID().toStdString()).second) {
-        dict.update(light.uniqueID().toStdString(), light);
-    } else {
-        dict.insert(light.uniqueID().toStdString(), light);
-    }
-    bridgeCopy.lights(dict);
-    auto updateResult = mFoundBridges.update(bridgeCopy.id().toStdString(), bridgeCopy);
-    if (!updateResult) {
-        qDebug() << " WARNING: could not update this light: " << light.name()
-                 << " in bridge: " << bridgeCopy.id();
-        return false;
-    }
-    if (shouldUpdateJson) {
-        auto lightsArray = metadataArrayToJsonArray(bridgeCopy.lights().items());
-        updateJSONLights(bridgeCopy, lightsArray);
-    }
-    return true;
+    return false;
 }
 
 
@@ -560,8 +559,7 @@ bool BridgeDiscovery::deleteLight(const hue::Bridge& bridge, const QString& uniq
     }
     bridgeCopy.lights(dict);
     mFoundBridges.update(bridgeCopy.id().toStdString(), bridgeCopy);
-    auto lightsArray = metadataArrayToJsonArray(bridgeCopy.lights().items());
-    updateJSONLights(bridgeCopy, lightsArray);
+    updateJSON();
     return true;
 }
 
@@ -730,20 +728,21 @@ bool BridgeDiscovery::changeName(const hue::Bridge& bridge, const QString& newNa
         auto foundBridge = bridgeResult.first;
         foundBridge.customName(newName);
         // update the json data
-        auto jsonResult = updateJSON(foundBridge, true);
-        // if json update works and makes a change, also update the app data.
-        if (jsonResult) {
+        auto bridgeUpdateResult = mFoundBridges.update(foundBridge.id().toStdString(), foundBridge);
+        // if bridge update works and makes a change, also update the app data.
+        if (bridgeUpdateResult) {
             // return whether or not the app data update was successful
-            return mFoundBridges.update(foundBridge.id().toStdString(), foundBridge);
+            return updateJSON();
+        }
+    } else {
+        for (auto&& notFoundBridge : mNotFoundBridges) {
+            if (bridge.id() == notFoundBridge.id()) {
+                notFoundBridge.customName(newName);
+                return updateJSON();
+            }
         }
     }
 
-    for (auto&& notFoundBridge : mNotFoundBridges) {
-        if (bridge.id() == notFoundBridge.id()) {
-            notFoundBridge.customName(newName);
-            return updateJSON(notFoundBridge, true);
-        }
-    }
     return false;
 }
 
@@ -751,106 +750,19 @@ bool BridgeDiscovery::changeName(const hue::Bridge& bridge, const QString& newNa
 // JSON info
 // ----------------------------
 
-bool BridgeDiscovery::updateJSON(const hue::Bridge& bridge, bool overrideCustonName) {
+bool BridgeDiscovery::updateJSON() {
     // check for changes by looping through json looking for a match.
-    auto array = mJsonData.array();
-    auto newJsonObject = bridge.toJson();
-    bool anyChanges = false;
-    int i = 0;
-    for (auto value : array) {
-        bool detectChanges = false;
-        QJsonObject object = value.toObject();
-        hue::Bridge jsonBridge(bridge.state(), object);
-        if ((jsonBridge.id() == bridge.id()) && (newJsonObject != object)) {
-            // check IP, add to copy if different
-            if (jsonBridge.IP() != bridge.IP()) {
-                detectChanges = true;
-                object["IP"] = bridge.IP();
-            }
-            // check username, add to copy if different
-            if (jsonBridge.username() != bridge.username()) {
-                detectChanges = true;
-                object["username"] = bridge.username();
-            }
-
-            if (jsonBridge.name() != bridge.name()) {
-                detectChanges = true;
-                object["name"] = bridge.name();
-            }
-
-            if (jsonBridge.API() != bridge.API()) {
-                detectChanges = true;
-                object["api"] = bridge.API();
-            }
-
-            // since the id in json already maps to a custom name, prefer this name for the new
-            // json, unless the name is empty or if the overrideCustonName flag is used
-            if (jsonBridge.customName().isEmpty() || overrideCustonName) {
-                detectChanges = true;
-                object["customName"] = bridge.customName();
-            } else {
-                object["customName"] = jsonBridge.customName();
-            }
-
-            if (jsonBridge.macaddress() != bridge.macaddress() && !bridge.macaddress().isEmpty()) {
-                detectChanges = true;
-                object["macaddress"] = bridge.macaddress();
-            }
-        }
-        if (detectChanges) {
-            array.removeAt(i);
-            // add new modified values
-            array.push_front(object);
-            mJsonData.setArray(array);
-            saveJSON();
-            anyChanges = true;
-        }
-        ++i;
-    }
-    return anyChanges;
-}
-
-
-
-void BridgeDiscovery::updateJSONLights(const hue::Bridge& bridge, const QJsonArray& lightsArray) {
-    // check for changes by looping through json looking for a match.
-    QJsonArray array = mJsonData.array();
-    QJsonObject newJsonObject = bridge.toJson();
-    newJsonObject["lights"] = lightsArray;
-    std::vector<QString> deletedLights;
-    int x = 0;
-    // loop through existing controllers
-    bool foundBridge = false;
-    for (auto value : array) {
-        bool detectChanges = false;
-        QJsonObject object = value.toObject();
-        hue::Bridge jsonBridge(bridge.state(), object);
-        // check if the controller is the same but the JSON isn't
-        if (jsonBridge.id() == bridge.id()) {
-            foundBridge = true;
-            if (newJsonObject != object) {
-                // check if the lights arrays are different
-                if (lightsArray != object["lights"].toArray()) {
-                    detectChanges = true;
-                }
-            }
-        }
-
-        if (detectChanges) {
-            array.removeAt(x);
-            array.push_front(newJsonObject);
-            mJsonData.setArray(array);
-            saveJSON();
-        }
-        ++x;
-    }
-    if (!foundBridge) {
-        // add new modified values
-        array.push_front(newJsonObject);
-        mJsonData.setArray(array);
+    auto oldArray = mJsonData.array();
+    auto newArray = generateJSON();
+    if (oldArray != newArray) {
+        mJsonData.setArray(newArray);
         saveJSON();
+        return true;
     }
+    return false;
 }
+
+
 
 bool BridgeDiscovery::loadJSON() {
     if (!mJsonData.isNull()) {
@@ -964,6 +876,7 @@ QString BridgeDiscovery::generateUniqueName() {
     }
     return defaultNamePrefix + QString::number(index);
 }
+
 
 // ----------------------------
 // Settings Keys

@@ -122,6 +122,9 @@ private slots:
     /// handles when a light name is changed.
     void handleLightNameChanged(QString key, QString name);
 
+    /// handles when the commlayer finds a new light
+    void handleNewLightFound(ECommType, QString);
+
     /*!
      * \brief widgetConnectionStateChanged handles whenever a connection status changes for any
      * commtype

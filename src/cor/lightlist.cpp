@@ -309,6 +309,26 @@ bool LightList::removeLights(const std::vector<cor::Light>& list) {
     return true;
 }
 
+bool LightList::removeByIDs(const std::vector<QString>& lightIDs) {
+    std::vector<cor::Light> lightsToRemove;
+    for (const auto& lightID : lightIDs) {
+        for (auto storedLight : mLights) {
+            if (lightID == storedLight.uniqueID()) {
+                lightsToRemove.push_back(storedLight);
+            }
+        }
+    }
+    if (!lightsToRemove.empty()) {
+        for (const auto& lightToRemove : lightsToRemove) {
+            auto result = std::find(mLights.begin(), mLights.end(), lightToRemove);
+            if (result != mLights.end()) {
+                mLights.erase(result);
+            }
+        }
+        return true;
+    }
+    return false;
+}
 
 int LightList::removeLightOfType(EProtocolType type) {
     std::vector<cor::Light> removeList;

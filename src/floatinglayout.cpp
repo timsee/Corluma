@@ -96,7 +96,8 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             || mNames[i] == "Group_Lights" || mNames[i] == "Group_Details"
             || mNames[i] == "Group_Edit" || mNames[i] == "Discovery"
             || mNames[i] == "Select_Devices" || mNames[i] == "HueLightSearch"
-            || mNames[i] == "New_Group" || mNames[i] == "Plus" || mNames[i] == "Close") {
+            || mNames[i] == "New_Group" || mNames[i] == "Plus" || mNames[i] == "Help"
+            || mNames[i] == "Close") {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(true);
@@ -167,6 +168,8 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
                     cor::resizeIcon(mButtons[i], ":/images/plusIcon.png");
                 } else if (mNames[i] == "Plus") {
                     cor::resizeIcon(mButtons[i], ":/images/plusIcon.png");
+                } else if (mNames[i] == "Help") {
+                    cor::resizeIcon(mButtons[i], ":/images/questionMark.png");
                 } else if (mNames[i] == "Close") {
                     cor::resizeIcon(mButtons[i], ":/images/disabledX.png");
                 } else if (mNames[i] == "HueLightSearch") {

@@ -63,6 +63,9 @@ public:
     /// returns the lightInfoWidget
     LightInfoListWidget* lightInfoWidget() { return mHueBridgeWidget->lightInfoWidget(); }
 
+    /// handle lights deleted from the commlayer
+    void handleDeletedLights(const std::vector<QString>&);
+
 public slots:
 
     /// handle when a full controller is deleted. this deletes all of its lights.

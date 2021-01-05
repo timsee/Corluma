@@ -20,8 +20,6 @@ LightInfoScrollArea::LightInfoScrollArea(QWidget* parent)
     mScrollAreaWidget->setLayout(mScrollLayout);
 }
 
-
-
 void LightInfoScrollArea::updateHues(std::vector<HueMetadata> lights) {
     for (auto widget : mHueWidgets) {
         mScrollLayout->removeWidget(widget);
@@ -69,6 +67,15 @@ void LightInfoScrollArea::updateHues(std::vector<HueMetadata> lights) {
         }
     }
     resize();
+}
+
+void LightInfoScrollArea::addLight(const HueMetadata& light) {
+    /// get all the metadata that currently exists
+    std::vector<HueMetadata> metadataVector(1, light);
+    for (auto widget : mHueWidgets) {
+        metadataVector.push_back(widget->metadata());
+    }
+    updateHues(metadataVector);
 }
 
 void LightInfoScrollArea::deleteLight(const QString& lightID) {

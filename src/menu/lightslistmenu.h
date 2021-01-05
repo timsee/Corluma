@@ -31,6 +31,9 @@ public:
     /// remove a light from display.
     void removeLight(const cor::Light&);
 
+    /// remove lights by key.
+    void removeLights(const std::vector<QString>&);
+
     /// shows a group of lights.
     void showLights(const std::vector<cor::Light>&);
 

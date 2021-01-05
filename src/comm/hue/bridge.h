@@ -114,7 +114,7 @@ public:
     /// mac address for the bridge
     const QString& macaddress() const noexcept { return mMacaddress; }
 
-    void lights(cor::Dictionary<HueMetadata> lightsDict) { mLights = std::move(lightsDict); }
+    void lights(const cor::Dictionary<HueMetadata>& lightsDict) { mLights = lightsDict; }
 
     /// dictionary of light metadata
     const cor::Dictionary<HueMetadata>& lights() const noexcept { return mLights; }

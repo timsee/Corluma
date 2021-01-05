@@ -24,12 +24,9 @@ class ReviewMoodWidget : public EditPageChildWidget {
 public:
     explicit ReviewMoodWidget(QWidget* parent,
                               CommLayer* comm,
-                              GroupData* groups,
-                              cor::LightList* data)
+                              GroupData* groups)
         : EditPageChildWidget(parent),
-          mComm{comm},
           mGroups{groups},
-          mData{data},
           mTopLabel{new QLabel("Review:", this)},
           mMoodWidget{new DisplayMoodWidget(this, comm, groups)},
           mCreateButton{new QPushButton("Create", this)} {
@@ -132,14 +129,8 @@ private slots:
     }
 
 private:
-    /// pointer to comm layer
-    CommLayer* mComm;
-
     /// pointer to group data
     GroupData* mGroups;
-
-    /// data layer
-    cor::LightList* mData;
 
     /// label for top of widget
     QLabel* mTopLabel;

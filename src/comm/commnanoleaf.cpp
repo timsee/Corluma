@@ -712,7 +712,7 @@ void CommNanoleaf::parseScheduleUpdatePacket(const nano::LeafMetadata& light,
     qDebug() << " Received schedule packet for " << light.serialNumber()
              << " JSON: " << scheduleUpdate;
 #endif
-    for (const auto& schedule : scheduleUpdate) {
+    for (auto schedule : scheduleUpdate) {
         if (schedule.isObject()) {
             const auto& scheduleObject = schedule.toObject();
             updateSchedule(light, nano::LeafSchedule(scheduleObject));

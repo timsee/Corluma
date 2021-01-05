@@ -112,6 +112,12 @@ LightsPage::LightsPage(QWidget* parent,
             SIGNAL(deleteLight(QString)),
             mDiscoveryWidget,
             SLOT(deleteLight(QString)));
+
+    // connect the comm layer when it finds new lights
+    connect(mComm,
+            SIGNAL(newLightFound(ECommType, QString)),
+            this,
+            SLOT(handleNewLightFound(ECommType, QString)));
 }
 
 void LightsPage::setupTopMenu(TopMenu* topMenu) {
@@ -135,6 +141,13 @@ void LightsPage::resize() {
             auto rect = QRect(0, 0, mainWindow->width(), mainWindow->height());
             mControllerWidget->setGeometry(rect);
         }
+    }
+}
+
+void LightsPage::handleNewLightFound(ECommType commType, QString uniqueID) {
+    if (commType == ECommType::hue) {
+        mControllerWidget->hueWidget()->newHueFound(uniqueID);
+        mDiscoveryWidget->hueWidget()->newHueFound(uniqueID);
     }
 }
 
@@ -226,7 +239,6 @@ void LightsPage::handleLightNameChanged(QString key, QString name) {
 }
 
 void LightsPage::handleDeleteLight(QString key) {
-    qDebug() << "TODO: handle delete light " << key;
     emit deleteLights({key});
 }
 
@@ -240,8 +252,8 @@ void LightsPage::updateLightNames(EProtocolType protocol) {
 }
 
 void LightsPage::handleDeletedLights(const std::vector<QString>& keys) {
-    qDebug() << "TODO: handle UI updates of light deletions " << keys;
     mDiscoveryWidget->handleDeletedLights(keys);
+    mControllerWidget->handleDeletedLights(keys);
 }
 
 void LightsPage::resizeEvent(QResizeEvent*) {

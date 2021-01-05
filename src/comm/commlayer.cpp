@@ -213,7 +213,7 @@ bool CommLayer::saveNewGroup(const cor::Group& group) {
         auto light = lightByID(uniqueID);
         if (light.isValid()) {
             if (light.protocol() == EProtocolType::hue) {
-                hueLights.push_back(mHue->hueLightFromLight(light));
+                hueLights.push_back(mHue->metadataFromLight(light));
             } else {
                 nonHueLightIDs.push_back(light.uniqueID());
             }
@@ -340,7 +340,7 @@ EColorPickerType CommLayer::bestColorPickerType(const std::vector<cor::Light>& l
         }
 
         if (light.protocol() == EProtocolType::hue) {
-            auto hueLight = hue()->hueLightFromLight(light);
+            auto hueLight = hue()->metadataFromLight(light);
             hueLights.push_back(hueLight);
         }
     }

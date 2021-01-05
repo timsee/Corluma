@@ -27,6 +27,9 @@ public:
      */
     void updateHues(std::vector<HueMetadata> lights);
 
+    /// add a light to the scroll widget.
+    void addLight(const HueMetadata& light);
+
     /// delete a light by its uniqueID
     void deleteLight(const QString& lightID);
 

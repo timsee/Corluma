@@ -27,7 +27,6 @@ public:
     explicit DisplayMoodWidget(QWidget* parent, CommLayer* comm, GroupData* groups)
         : QWidget(parent),
           mComm{comm},
-          mGroups{groups},
           mName{new QLabel(this)},
           mLightsLabel{new QLabel("Lights:", this)},
           mGroupsLabel{new QLabel("Groups:", this)},
@@ -170,9 +169,6 @@ protected:
 private:
     /// pointer to comm data
     CommLayer* mComm;
-
-    /// pointer to group data
-    GroupData* mGroups;
 
     /// stores the group that is being displayed
     cor::Mood mMood;

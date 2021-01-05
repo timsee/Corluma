@@ -122,10 +122,6 @@ public:
         mHueLightDiscovery->setVisible(false);
         mHueLightDiscovery->isOpen(false);
         connect(mHueLightDiscovery, SIGNAL(closePressed()), this, SLOT(hueDiscoveryClosePressed()));
-        connect(mHueLightDiscovery,
-                SIGNAL(newHueFound(QString)),
-                this,
-                SLOT(hueDiscoveryFoundLight(QString)));
         connect(mLights, SIGNAL(clickedLight(cor::Light)), this, SLOT(lightClicked(cor::Light)));
         auto styleSheet = "background-color:rgb(33,32,32);";
         mName->setStyleSheet(styleSheet);
@@ -270,6 +266,29 @@ public:
 
     ///  highlight lights in the widget
     void highlightLights() { qDebug() << "TODO: highlight hue bridge widget"; }
+
+    /// remove lights by their keys from the list.
+    void removeLights(const std::vector<QString>& keys) { mLights->removeLights(keys); }
+
+    /// handles when the hue discovery finds a light.
+    void newHueFound(QString uniqueID) {
+        auto light = mComm->lightByID(uniqueID);
+        if (light.isValid()) {
+            if (light.protocol() == EProtocolType::hue) {
+                auto metadata = mComm->hue()->metadataFromLight(light);
+                mLightInfoWidget->addLight(metadata);
+                mLightInfoWidget->changeRowHeight(mRowHeight);
+                mLights->addLight(light);
+                // update the bridge of this hue
+                auto bridge = mComm->hue()->discovery()->bridgeFromLight(metadata);
+                updateBridge(bridge);
+                handleState();
+                qDebug() << " added this light: " << light;
+            }
+        } else {
+            qDebug() << " INFO: invalid light found from discovery... this shouldn't happen...";
+        }
+    }
 
 signals:
     /// emits when a light should be selected
@@ -430,11 +449,6 @@ private slots:
             mChangeNameInput->pushOut();
             mChangeNameInput->raise();
         }
-    }
-
-    /// handles when the hue discovery finds a light.
-    void hueDiscoveryFoundLight(QString name) {
-        qDebug() << " TODO: found a new light from LightDiscovery:" << name;
     }
 
     /// close the name widget

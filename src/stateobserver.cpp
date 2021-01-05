@@ -280,7 +280,7 @@ void StateObserver::lightNameChange(const QString& uniqueID, const QString&) {
 }
 
 void StateObserver::lightsDeleted(std::vector<QString> keys) {
-    qDebug() << "TODO: lights deleted: " << keys;
+    mData->removeByIDs(keys);
     mLightsPage->handleDeletedLights(keys);
     mMainWindow->leftHandMenu()->updateLights();
     lightCountChanged();

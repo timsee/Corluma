@@ -154,7 +154,7 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
     int countOutOfSync = 0;
 
     // get hue light
-    auto hueLight = mComm->hue()->hueLightFromLight(commDevice);
+    auto hueLight = mComm->hue()->metadataFromLight(commDevice);
 
     QJsonObject object;
     object["controller"] = hueLight.bridgeID();

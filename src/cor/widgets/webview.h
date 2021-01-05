@@ -40,12 +40,14 @@ public:
         mTopWidget = new cor::TopWidget(title, ":images/closeX.png", this);
         connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(closeButtonPressed(bool)));
 
-        QFile file(htmlPath);
-        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            qDebug() << "resource not found!";
+        if (!htmlPath.isEmpty()) {
+            QFile file(htmlPath);
+            if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                qDebug() << "resource not found!";
+            }
+            QTextStream in(&file);
+            mTextBrowser->setHtml(in.readAll());
         }
-        QTextStream in(&file);
-        mTextBrowser->setHtml(in.readAll());
         mTextBrowser->setOpenExternalLinks(true);
 
         mGridLayout = new QGridLayout(this);
@@ -61,6 +63,9 @@ public:
 
         setLayout(mGridLayout);
     }
+
+    /// update the html programmatically
+    void updateHTML(const QString& input) { mTextBrowser->setHtml(input); }
 
 signals:
     /// emits whenever wthe close button is pressed

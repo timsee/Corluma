@@ -136,6 +136,9 @@ void DiscoveryArduCorWidget::resize() {
     }
     mListWidget->mainWidget()->setFixedHeight(yHeight);
     mListWidget->mainWidget()->setFixedWidth(width());
+
+    // resize the help view
+    resizeHelpView();
 }
 
 void DiscoveryArduCorWidget::controllerClicked(QString controller) {
@@ -181,4 +184,8 @@ void DiscoveryArduCorWidget::highlightLights() {
         auto arduCorWidget = dynamic_cast<DisplayPreviewArduCorWidget*>(widget);
         arduCorWidget->highlightLights();
     }
+}
+
+QString DiscoveryArduCorWidget::discoveryHelpHTML() {
+    return "TODO";
 }

@@ -132,8 +132,11 @@ public:
      */
     HueMetadata lightFromBridgeIDAndIndex(const QString& bridgeID, int index);
 
-    /// update the lights metadata
-    bool updateLight(const hue::Bridge& bridge, const HueMetadata& light, bool updateJson);
+    /// update the lights metadata, this does not upate the metadata in json
+    bool updateLight(const QString& bridgeID, const HueMetadata& light);
+
+    /// update the existin JSON data to include more bridge data such as a username or an id.
+    bool updateJSON();
 
     /// handles when a light is deleted and updates the json data.
     bool deleteLight(const hue::Bridge& bridge, const QString& uniqueID);
@@ -242,16 +245,6 @@ private:
     /// groups info.
     hue::Bridge parseInitialUpdate(hue::Bridge bridge, const QJsonObject& json);
 
-    /// update the existing JSON data to include lights data, in order to check for hardware changes
-    /// on bootup.
-    void updateJSONLights(const hue::Bridge& bridge, const QJsonArray& array);
-
-    /// update the existin JSON data to include more bridge data such as a username or an id.
-    bool updateJSON(const hue::Bridge& bridge, bool overrideCustonName);
-
-    /// helper to convert a vector of HueMetadata to a QJsonArray.
-    QJsonArray metadataArrayToJsonArray(const std::vector<HueMetadata> metadata);
-
     /// load the json data.
     bool loadJSON();
 
@@ -278,6 +271,9 @@ private:
     /// change. This takes a QJsonObject and sees if we can extract the unique ID. returns an
     /// empty string if it cannot parse the document properly.
     QString idFromBridgePacket(const QJsonObject&);
+
+    /// generate the json representation of the bridges.
+    QJsonArray generateJSON();
 
     /// pointer to the parent CommHue object.
     CommHue* mHue;

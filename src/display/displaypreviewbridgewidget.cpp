@@ -52,13 +52,13 @@ DisplayPreviewBridgeWidget::DisplayPreviewBridgeWidget(const hue::Bridge& bridge
 }
 
 void DisplayPreviewBridgeWidget::updateBridge(const hue::Bridge& bridge) {
+    mBridge = bridge;
     mNameWidget->setText(bridge.customName());
 
     auto updatedLights = mComm->hue()->lightsFromMetadata(bridge.lights().items());
     if (!cor::compareTwoLightVectors(updatedLights, mLights->lights())) {
         mLights->showLights(updatedLights);
     }
-    mBridge = bridge;
     handleBridgeState(bridge.state());
     handleButtonState();
     updateMetadata(bridge);
@@ -223,6 +223,15 @@ void DisplayPreviewBridgeWidget::highlightLights() {
     handleCheckboxState();
     mLights->highlightLights(lightsToHighlight);
     update();
+}
+
+void DisplayPreviewBridgeWidget::removeLights(const std::vector<QString>& keys) {
+    mLights->removeLights(keys);
+}
+
+void DisplayPreviewBridgeWidget::addLight(const cor::Light& light) {
+    mLights->addLight(light);
+    resize();
 }
 
 } // namespace hue

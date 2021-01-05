@@ -110,7 +110,7 @@ private slots:
     void lightClicked(cor::Light light) {
         bool shouldRemove = (light.uniqueID() == mLightWidget->light().uniqueID());
         auto lights = mMoodLights->lights();
-        auto lightResult = cor::findLightInVectorByID(lights, light);
+        auto lightResult = cor::findLightInVectorByID(lights, light.uniqueID());
         // deselect whatever is selected on the selected lights menu
         mMoodLights->highlightLights({});
         if (shouldRemove) {

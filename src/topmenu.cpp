@@ -150,7 +150,7 @@ TopMenu::TopMenu(QWidget* parent,
             SIGNAL(buttonPressed(QString)),
             this,
             SLOT(floatingLayoutButtonPressed(QString)));
-    std::vector<QString> verticalButtons = {QString("Plus")};
+    std::vector<QString> verticalButtons = {QString("Plus"), QString("Help")};
     mAddLightsFloatingLayout->setupButtons(verticalButtons, EButtonSize::small);
 
     connect(mLightsFloatingLayout,
@@ -344,7 +344,7 @@ void TopMenu::floatingLayoutButtonPressed(const QString& button) {
         emit buttonPressed("Settings");
     } else if (button.contains("Discovery_")) {
         emit buttonPressed(button);
-    } else if (button.contains("Plus")) {
+    } else if (button.contains("Plus") || button.contains("Help")) {
         emit buttonPressed(button);
         mAddLightsFloatingLayout->highlightButton("");
     } else {

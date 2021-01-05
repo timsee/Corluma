@@ -51,6 +51,9 @@ public:
     /// handles how to higlight lights.
     void highlightLights() override;
 
+    /// html to display to help the user debug discovery
+    QString discoveryHelpHTML() override;
+
 private slots:
 
     /// handles when the greyout is clicked

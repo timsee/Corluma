@@ -29,7 +29,7 @@ public:
           mMetadataWidget{new ChooseMetadataWidget(this, true)},
           mLightsStateWidget{new ChooseMoodLightStatesWidget(this, comm, groups)},
           mGroupsStateWidget{new ChooseMoodGroupStatesWidget(this, groups)},
-          mReviewPage{new ReviewMoodWidget(this, comm, groups, data)} {
+          mReviewPage{new ReviewMoodWidget(this, comm, groups)} {
         setupWidgets({mMetadataWidget, mLightsStateWidget, mGroupsStateWidget, mReviewPage});
 
         connect(mPreviewButton, SIGNAL(clicked(bool)), this, SLOT(previewPressed(bool)));
@@ -108,9 +108,6 @@ private slots:
     }
 
 private:
-    /// true if room, false otherwise
-    bool mIsRoom;
-
     /// pointer to comm data.
     CommLayer* mComm;
 

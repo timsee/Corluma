@@ -58,6 +58,13 @@ void SingleColorPicker::enable(bool shouldEnable, EColorPickerType bestType) {
         shouldEnable = false;
     }
 
+    if (bestType == EColorPickerType::color && mCurrentMode != ESingleColorPickerMode::HSV) {
+        changeMode(ESingleColorPickerMode::HSV);
+    } else if (bestType == EColorPickerType::CT
+               && mCurrentMode != ESingleColorPickerMode::ambient) {
+        changeMode(ESingleColorPickerMode::ambient);
+    }
+
     if (shouldEnable) {
         setEnabled(true);
         updateBottomMenuState(true);
@@ -66,13 +73,6 @@ void SingleColorPicker::enable(bool shouldEnable, EColorPickerType bestType) {
         setEnabled(false);
         updateBottomMenuState(false);
         mSelectionCircle->setVisible(false);
-    }
-
-    if (bestType == EColorPickerType::color && mCurrentMode != ESingleColorPickerMode::HSV) {
-        changeMode(ESingleColorPickerMode::HSV);
-    } else if (bestType == EColorPickerType::CT
-               && mCurrentMode != ESingleColorPickerMode::ambient) {
-        changeMode(ESingleColorPickerMode::ambient);
     }
 
     mColorWheel->enable(shouldEnable);

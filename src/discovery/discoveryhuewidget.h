@@ -59,6 +59,9 @@ public:
     /// handle when lights are deleted.
     void handleDeletedLights(const std::vector<QString>&);
 
+    /// a new light (not a bridge) is found, update the bridge that contains it
+    void newHueFound(const QString& ID);
+
     /// See DiscoveryWidget.h
     void handleDiscovery(bool isActive) override;
 
@@ -84,6 +87,9 @@ public:
 
     /// handles how to higlight lights.
     void highlightLights() override;
+
+    /// html to display to help the user debug discovery
+    QString discoveryHelpHTML() override;
 
 private slots:
     /// handles when the greyout is clicked

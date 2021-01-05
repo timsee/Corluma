@@ -201,10 +201,13 @@ void DiscoveryWidget::resize() {
 void DiscoveryWidget::floatingLayoutButtonPressed(const QString& button) {
     if (button == "Discovery_ArduCor") {
         protocolTypeSelected(EProtocolType::arduCor);
+        pushOutHelpWidgets();
     } else if (button == "Discovery_Hue") {
         protocolTypeSelected(EProtocolType::hue);
+        pushOutHelpWidgets();
     } else if (button == "Discovery_NanoLeaf") {
         protocolTypeSelected(EProtocolType::nanoleaf);
+        pushOutHelpWidgets();
     } else if (button == "Plus") {
         if (mType == EProtocolType::hue) {
             mHueWidget->openIPWidget();
@@ -213,6 +216,24 @@ void DiscoveryWidget::floatingLayoutButtonPressed(const QString& button) {
         } else if (mType == EProtocolType::nanoleaf) {
             mNanoLeafWidget->openIPWidget();
         }
+    } else if (button == "Help") {
+        if (mType == EProtocolType::hue) {
+            mHueWidget->openHelpView();
+        } else if (mType == EProtocolType::arduCor) {
+            mArduCorWidget->openHelpView();
+        } else if (mType == EProtocolType::nanoleaf) {
+            mNanoLeafWidget->openHelpView();
+        }
+    }
+}
+
+void DiscoveryWidget::pushOutHelpWidgets() {
+    if (mHueWidget->helpViewIsOpen()) {
+        mHueWidget->closeHelpView();
+    } else if (mArduCorWidget->helpViewIsOpen()) {
+        mArduCorWidget->closeHelpView();
+    } else if (mNanoLeafWidget->helpViewIsOpen()) {
+        mNanoLeafWidget->closeHelpView();
     }
 }
 

@@ -66,6 +66,12 @@ public:
     /// highlight bridge based on the number of lights.
     void highlightLights();
 
+    /// add an individual light to the preview
+    void addLight(const cor::Light& light);
+
+    /// remove lights by keys from the light list.
+    void removeLights(const std::vector<QString>& keys);
+
 signals:
 
     /*!

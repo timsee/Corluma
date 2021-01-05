@@ -170,6 +170,7 @@ void GroupData::updateExternallyStoredGroups(const std::vector<cor::Group>& exte
 }
 
 void GroupData::lightDeleted(ECommType, const QString& uniqueID) {
+    qDebug() << "INFO: light: " << uniqueID << " deleted from group data.";
     bool anyUpdates = false;
     if (!mJsonData.isNull()) {
         if (mJsonData.isArray()) {
@@ -207,9 +208,13 @@ void GroupData::lightDeleted(ECommType, const QString& uniqueID) {
                     }
                 }
             }
+
+            // update metadata
+            mOrphans.removeLight(uniqueID);
+            updateGroupMetadata();
+
             if (anyUpdates) {
                 mJsonData.setArray(makeGroupData());
-                updateGroupMetadata();
                 saveJSON();
             }
         }
@@ -326,7 +331,7 @@ bool GroupData::loadJSON() {
     if (!mJsonData.isNull()) {
         if (mJsonData.isArray()) {
             QJsonArray array = mJsonData.array();
-            foreach (const QJsonValue& value, array) {
+            for (auto value : array) {
                 QJsonObject object = value.toObject();
                 if (cor::Group::isValidJson(object)) {
                     if (object["isMood"].toBool()) {

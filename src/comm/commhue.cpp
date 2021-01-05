@@ -11,6 +11,7 @@
 #include "comm/hue/bridge.h"
 #include "comm/hue/hueprotocols.h"
 #include "cor/objects/light.h"
+#include "data/groupdata.h"
 #include "utils/color.h"
 #include "utils/cormath.h"
 #include "utils/exception.h"
@@ -25,6 +26,7 @@
 
 CommHue::CommHue(UPnPDiscovery* UPnP, GroupData* groups)
     : CommType(ECommType::hue),
+      mGroups{groups},
       mScanIsActive{false} {
     mStateUpdateInterval = 1000;
 
@@ -38,7 +40,9 @@ CommHue::CommHue(UPnPDiscovery* UPnP, GroupData* groups)
 
     for (const auto& bridge : mDiscovery->notFoundBridges()) {
         for (const auto& light : bridge.lights().items()) {
-            addLight(HueLight(light));
+            groups->addLightToGroups(ECommType::hue, light.uniqueID());
+            HueLight hue(light);
+            addLight(hue);
         }
     }
 
@@ -174,6 +178,8 @@ void CommHue::bridgeDiscovered(const hue::Bridge& bridge,
             updateHueLightState(bridge, lightsObject.value(key).toObject(), int(key.toDouble()));
         }
     }
+    // update the json with the new lights
+    mDiscovery->updateJSON();
 
     hue::BridgeGroupVector groupVector;
     std::vector<cor::Group> groups;
@@ -247,7 +253,7 @@ std::uint32_t CommHue::timeoutFromLight(const cor::Light& light) {
 }
 
 std::pair<hue::Schedule, bool> CommHue::timeoutSchedule(const cor::Light& light) {
-    auto hue = hueLightFromLight(light);
+    auto hue = metadataFromLight(light);
     auto bridge = bridgeFromLight(light);
     auto timeoutName = "Corluma_timeout_" + QString::number(hue.index());
     return bridge.schedules().item(timeoutName.toStdString());
@@ -419,7 +425,7 @@ void CommHue::handleSuccessPacket(const hue::Bridge& bridge,
         }
     } else if (list.size() <= 2 && value.toString().contains("Searching for new")) {
         qDebug() << "INFO: searching for new hues...";
-    } else {
+    } else if (key != "id") {
         qDebug() << "not recognzied " << key << "value" << value;
     }
 }
@@ -467,7 +473,7 @@ void CommHue::handleStateSuccess(cor::Light light,
     if (valueChanged) {
         light.state(state);
         updateLight(light);
-        mDiscovery->updateLight(mDiscovery->bridgeFromLight(metadata), metadata, false);
+        mDiscovery->updateLight(mDiscovery->bridgeFromLight(metadata).id(), metadata);
     }
 }
 
@@ -481,7 +487,8 @@ void CommHue::handleNameUpdateSuccess(cor::Light light,
     // update the metadata
     metadata.name(newName);
     // update the bridge with the new metadata, and update its json
-    auto result = mDiscovery->updateLight(mDiscovery->bridgeFromLight(metadata), metadata, true);
+    auto result = mDiscovery->updateLight(mDiscovery->bridgeFromLight(metadata).id(), metadata);
+    mDiscovery->updateJSON();
     if (!result) {
         qDebug() << "WARNING: light name could not be changed";
     } else {
@@ -586,7 +593,6 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge, QJsonObject object,
             HueMetadata metadata(object, bridge.id(), i);
             HueLight hue(metadata);
             bool wasDiscovered = fillLight(hue);
-            hue.hardwareType(metadata.hardwareType());
 
             auto state = hue.state();
             hue.isReachable(stateObject["reachable"].toBool());
@@ -666,10 +672,18 @@ bool CommHue::updateHueLightState(const hue::Bridge& bridge, QJsonObject object,
             hue.state(state);
             if (wasDiscovered) {
                 updateLight(hue);
-                mDiscovery->updateLight(bridge, metadata, false);
+                mDiscovery->updateLight(bridge.id(), metadata);
             } else {
+                // add the light to groups first, this won't signal anything
+                mGroups->addLightToGroups(ECommType::hue, metadata.uniqueID());
+                // next, add it to the discovery function, so that HueMetadata lookups will work
+                mDiscovery->updateLight(bridge.id(), metadata);
+                mDiscovery->updateJSON();
+                // remove from new lights list, if it was discovered that way.
+                removeFromNewLightsList(metadata.name());
+                // finally, add it to the standard commtype dict, which will signal the light exists
+                // to the rest of the app.
                 addLight(hue);
-                mDiscovery->updateLight(bridge, metadata, true);
             }
 
             return true;
@@ -728,6 +742,14 @@ bool CommHue::updateNewHueLight(const hue::Bridge& bridge, QJsonObject object, i
     return false;
 }
 
+
+void CommHue::removeFromNewLightsList(const QString& lightName) {
+    auto result = std::find(mNewLights.begin(), mNewLights.end(), lightName);
+    if (result != mNewLights.end()) {
+        mNewLights.erase(result);
+    }
+}
+
 bool CommHue::updateScanState(QJsonObject object) {
     if (object["lastscan"].isString()) {
         QString lastScanString = object["lastscan"].toString();
@@ -761,7 +783,7 @@ EHueUpdates CommHue::checkTypeOfUpdate(QJsonObject object) {
     }
 }
 
-HueMetadata CommHue::hueLightFromLight(const cor::Light& light) {
+HueMetadata CommHue::metadataFromLight(const cor::Light& light) {
     auto result = mDiscovery->metadataFromLight(light);
     if (result.second) {
         return result.first;
@@ -1094,7 +1116,7 @@ void CommHue::renameLight(HueMetadata light, const QString& newName) {
 }
 
 void CommHue::deleteLight(const cor::Light& light) {
-    auto hueLight = hueLightFromLight(light);
+    auto hueLight = metadataFromLight(light);
     auto bridge = mDiscovery->bridgeFromLight(hueLight);
     QString urlString = urlStart(bridge) + "/lights/" + QString::number(hueLight.index());
     mNetworkManager->deleteResource(QNetworkRequest(QUrl(urlString)));
@@ -1153,5 +1175,5 @@ bool CommHue::saveNewGroup(const cor::Group& group, const std::vector<HueMetadat
 }
 
 hue::Bridge CommHue::bridgeFromLight(const cor::Light& light) {
-    return mDiscovery->bridgeFromLight(hueLightFromLight(light));
+    return mDiscovery->bridgeFromLight(metadataFromLight(light));
 }
