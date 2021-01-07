@@ -8,9 +8,11 @@
 
 //#define DEBUG_UPNP
 
-UPnPDiscovery::UPnPDiscovery(QObject* parent) : QObject(parent) {
-    mListenerCount = 0;
-    mSocket = new QUdpSocket(this);
+UPnPDiscovery::UPnPDiscovery(QObject* parent)
+    : QObject(parent),
+      mSocket{new QUdpSocket(this)},
+      mListenerCount{0},
+      mHasReceivedTraffic{false} {
     connect(mSocket, SIGNAL(readyRead()), this, SLOT(readPendingUPnPDatagrams()));
 }
 
@@ -22,6 +24,7 @@ UPnPDiscovery::~UPnPDiscovery() {
 
 void UPnPDiscovery::readPendingUPnPDatagrams() {
     while (mSocket->hasPendingDatagrams()) {
+        mHasReceivedTraffic = true;
         QByteArray datagram;
         datagram.resize(int(mSocket->pendingDatagramSize()));
         QHostAddress sender;
@@ -31,7 +34,6 @@ void UPnPDiscovery::readPendingUPnPDatagrams() {
 #ifdef DEBUG_UPNP
         qDebug() << __func__ << sender << ":" << payload;
 #endif
-
         emit UPnPPacketReceived(sender, payload);
     }
 }

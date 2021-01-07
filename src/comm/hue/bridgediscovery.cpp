@@ -22,7 +22,8 @@ BridgeDiscovery::BridgeDiscovery(QObject* parent, UPnPDiscovery* UPnP, GroupData
       cor::JSONSaveData("hue"),
       mUPnP{UPnP},
       mLastTime{0},
-      mGroups{groups} {
+      mGroups{groups},
+      mReceivedNUPnPTraffic{false} {
     mHue = qobject_cast<CommHue*>(parent);
     connect(UPnP,
             SIGNAL(UPnPPacketReceived(QHostAddress, QString)),
@@ -271,6 +272,7 @@ void BridgeDiscovery::requestUsername(const hue::Bridge& bridge) {
 void BridgeDiscovery::handleNUPnPReply(const QJsonDocument& jsonResponse) {
     if (jsonResponse.isArray()) {
         if (!jsonResponse.array().empty()) {
+            mReceivedNUPnPTraffic = true;
 #ifdef DEBUG_BRIDGE_DISCOVERY
             qDebug() << __func__ << "NUPnP packet:" << jsonResponse;
 #endif

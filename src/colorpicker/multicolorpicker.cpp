@@ -77,10 +77,10 @@ void MultiColorPicker::enable(bool shouldEnable, EColorPickerType bestType) {
 }
 
 void MultiColorPicker::updateBottomMenuState(bool enable) {
-    qreal opacity(0.33);
-    if (enable) {
-        opacity = 1.0;
-    }
+    //    qreal opacity(0.33);
+    //    if (enable) {
+    //        opacity = 1.0;
+    //    }
 
     //    auto effect = new QGraphicsOpacityEffect(mColorSchemeCircles);
     //    effect->setOpacity(opacity);

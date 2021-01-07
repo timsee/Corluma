@@ -11,6 +11,8 @@
 #include <QScroller>
 
 #include "comm/commhue.h"
+#include "comm/hue/bridgediscovery.h"
+#include "comm/upnpdiscovery.h"
 #include "mainwindow.h"
 #include "utils/qt.h"
 
@@ -407,5 +409,39 @@ void DiscoveryHueWidget::newHueFound(const QString& ID) {
 }
 
 QString DiscoveryHueWidget::discoveryHelpHTML() {
-    return "TODO";
+    std::stringstream sstream;
+    sstream << "<b>General Tips</b>";
+    sstream << "<ul>";
+    sstream << "<li> Give Corluma up to a minute to automatically discover the Bridge via UPnP or "
+               "NUPnP. </li>";
+    sstream << "<li> If this fails, you know the IP address of the bridge, enter the IP "
+               "address by clicking the + button. </li>";
+    sstream << "<li> If the IP address fails, or you do not know it, verify the IP address in the "
+               "Hue App. "
+               "</li>";
+    sstream << "<li> If the Hue App can't connect, verify that the Bridge is connected via "
+               "ethernet and is receiving power. "
+               "</li>";
+    sstream << "</ul>";
+    sstream << "<b>Debugging Connections</b>";
+    sstream << "<ul>";
+    if (!QSslSocket::supportsSsl()) {
+        sstream << "<li> SSL support was not found, so the app cannot received NUPnP packets. This "
+                   "means discovery relies on UPnP, which will take up to a minute. </li>";
+    } else if (mComm->hue()->discovery()->receivedNUPnPTraffic()) {
+        sstream << "<li> Rceived NUPnP traffic. All known Bridges have been updated.</li>";
+    } else {
+        sstream << "<li> NUPnP has not sent a response. This typically takes less than 30 seconds, "
+                   "and cannot be achieved on a VPN. </li>";
+    }
+    if (mComm->UPnP()->isStateConnected() && mComm->UPnP()->hasReceivedTraffic()) {
+        sstream << "<li> UPnP is active, and has received traffic. New bridges can be found "
+                   "without an IP address.</li>";
+    } else if (mComm->UPnP()->isStateConnected() && !mComm->UPnP()->hasReceivedTraffic()) {
+        sstream << "<li> UPnP is active, but has not yet received traffic. </li>";
+    } else {
+        sstream << "<li> ERROR: UPnP is not active. </li>";
+    }
+    sstream << "</ul>";
+    return QString(sstream.str().c_str());
 }

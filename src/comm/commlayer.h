@@ -10,7 +10,6 @@
 #include "comm/commtype.h"
 #include "comm/hue/huemetadata.h"
 #include "comm/hue/hueprotocols.h"
-#include "comm/upnpdiscovery.h"
 #include "cor/objects/light.h"
 #include "cor/presetpalettes.h"
 #include "cor/protocols.h"
@@ -18,6 +17,7 @@
 
 #include "colorpicker/colorpicker.h"
 
+class UPnPDiscovery;
 class CommArduCor;
 class CommHue;
 class CommNanoleaf;
@@ -198,6 +198,8 @@ public:
     /// seconds until a group of lights timeout
     std::vector<std::uint32_t> secondsUntilTimeout(const std::vector<QString>& lights);
 
+    /// getter for UPnP object
+    UPnPDiscovery* UPnP() { return mUPnP; }
 signals:
 
     /*!

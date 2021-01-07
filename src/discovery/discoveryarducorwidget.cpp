@@ -187,5 +187,36 @@ void DiscoveryArduCorWidget::highlightLights() {
 }
 
 QString DiscoveryArduCorWidget::discoveryHelpHTML() {
-    return "TODO";
+    std::stringstream sstream;
+    sstream << "<b>General Tips</b>";
+    sstream << "<ul>";
+    sstream << "<li> The Arduino should be running v3.3.3 or later of <a"
+               "href=\"https://github.com/timsee/arducor\">ArduCor</a>.</li>";
+    sstream << "<li> Both UDP and HTML is supported from Arduino Yuns. UDP is recommended due to "
+               "less latency and higher bandwidth.</li>";
+    sstream
+        << "<li> ArduCor samples that use a Raspberry Pi as passthrough are also supported.</li>";
+#ifndef MOBILE_BUILD
+#ifdef SHOULD_USE_SERIAL
+    sstream << "<li> This build supports serial connections. Lights connected via a serial port "
+               "will be discovered automatically.</li>";
+#else
+    sstream << "<li> This build does <b>not</b> support serial connections directly, serial lights "
+               "must pass through a Raspberry Pi.</li>";
+#endif // SHOULD_USE_SERIAL
+#endif // MOBILE_BUILD
+    sstream << "<li> The names of the lights are assumed to be unique. Controlling multiple lights "
+               "with the same name may result in unexpected behavior.</li>";
+    sstream << "</ul>";
+
+    sstream << "<b>Debugging Connections</b>";
+    sstream << "<ul>";
+    if (mComm->discoveryErrorsExist(EProtocolType::arduCor)) {
+        sstream << "<li> ERROR: Cannot connect to the UDP port for UDP connections. Please close "
+                   "any applications that may be connected to 10008.</li>";
+    } else {
+        sstream << "<li> UDP port is bound, UDP lights can connect succesfully.</li>";
+    }
+    sstream << "</ul>";
+    return QString(sstream.str().c_str());
 }

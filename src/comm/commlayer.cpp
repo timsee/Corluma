@@ -21,6 +21,7 @@
 #include "comm/commhue.h"
 #include "comm/commnanoleaf.h"
 #include "comm/commudp.h"
+#include "comm/upnpdiscovery.h"
 
 CommLayer::CommLayer(QObject* parent, GroupData* parser) : QObject(parent), mGroups(parser) {
     mUPnP = new UPnPDiscovery(this);

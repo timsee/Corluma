@@ -1082,4 +1082,8 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed bugs with deleted hues still showing up in the app.
 - Fixed bugs with updating hue save data.
 - Added support for a `HelpView` to the discovery pages.
-- Fixed miscellaneous bugs. 
+- Fixed miscellaneous bugs.
+
+### **v0.21.68**
+### The Debugging Help Update
+- Added help for the `DiscoveryHueWidget`, `DiscoveryNanoleafWidget`, and `DiscoveryArduCorWidget` to aid in discovering in new lights.

@@ -37,6 +37,12 @@ public:
      */
     void removeListener();
 
+    /// true if UPnP is connected, false otherwise
+    bool isStateConnected() { return mSocket->state() == QAbstractSocket::BoundState; }
+
+    /// true if it has received any traffic
+    bool hasReceivedTraffic() { return mHasReceivedTraffic; }
+
 signals:
     /*!
      * \brief UPnPPacketReceived sends ouit the QHostAddress and the payload associated
@@ -65,7 +71,10 @@ private:
     void shutdown();
 
     /// counts the number of listeners for UPnP packets.
-    uint32_t mListenerCount;
+    std::uint32_t mListenerCount;
+
+    /// true if it has received any traffic
+    bool mHasReceivedTraffic;
 };
 
 #endif // UPNPDISCOVERY_H

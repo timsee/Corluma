@@ -154,6 +154,9 @@ public:
     /// generates a new unique key.
     std::uint64_t generateNewUniqueKey();
 
+    /// true if any NUPnP traffic has been received, false otherwise.
+    bool receivedNUPnPTraffic() { return mReceivedNUPnPTraffic; }
+
 private slots:
 
     /*!
@@ -280,6 +283,9 @@ private:
 
     /// group data, used for generating keys
     GroupData* mGroups;
+
+    /// true if any NUPnP traffic has been received, false otherwise.
+    bool mReceivedNUPnPTraffic;
 
     /*!
      * \brief kAppName application name, required by Philips in devicetype.

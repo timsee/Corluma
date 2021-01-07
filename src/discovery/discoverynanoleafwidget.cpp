@@ -223,5 +223,28 @@ void DiscoveryNanoLeafWidget::highlightLights() {
 }
 
 QString DiscoveryNanoLeafWidget::discoveryHelpHTML() {
-    return "TODO";
+    std::stringstream sstream;
+    sstream << "<b>General Tips</b>";
+    sstream << "<ul>";
+    sstream << "<li> Original Nanoleafs must be using firmware vTODO or later to connect. Nanoleaf "
+               "shapes and panels are supported on all firmwares. </li>";
+    sstream << "<li> Corluma assumes that the Nanoleaf has already completed first time setup and "
+               "can connect to your local Wifi. If this has not happened yet, use the official "
+               "Nanoleaf app to discover the lights once first. </li>";
+    sstream << "<li> Nanoleafs can sometimes become unresponsive. To test this, try pressing their "
+               "power button once. If they do not turn on, unplug and replug them. </li>";
+    sstream << "</ul>";
+
+    sstream << "<b>Debugging Connections</b>";
+    sstream << "<ul>";
+    if (mComm->UPnP()->isStateConnected() && mComm->UPnP()->hasReceivedTraffic()) {
+        sstream << "<li> UPnP is active, and has received traffic. New Nanoleafs can be found "
+                   "without an IP address.</li>";
+    } else if (mComm->UPnP()->isStateConnected() && !mComm->UPnP()->hasReceivedTraffic()) {
+        sstream << "<li> UPnP is active, but has not yet received traffic. </li>";
+    } else {
+        sstream << "<li> ERROR: UPnP is not active. </li>";
+    }
+    sstream << "</ul>";
+    return QString(sstream.str().c_str());
 }
