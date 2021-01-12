@@ -35,7 +35,7 @@ const int kTimeoutID = 51;
  */
 class LeafSchedule {
 public:
-    LeafSchedule() {}
+    LeafSchedule() : mRepeatType{ERepeat::once}, mIsEnabled{false} {}
 
     LeafSchedule(bool enabled,
                  ERepeat type,

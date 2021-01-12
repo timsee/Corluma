@@ -525,7 +525,7 @@ private:
     /// handle the state of the checkbox.
     void handleCheckboxState() {
         bool anyLightSelected = false;
-        for (auto light : mBridge.lightIDs()) {
+        for (const auto& light : mBridge.lightIDs()) {
             if (mSelectedLights->doesLightExist(light)) {
                 anyLightSelected = true;
                 break;

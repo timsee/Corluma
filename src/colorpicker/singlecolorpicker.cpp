@@ -81,10 +81,10 @@ void SingleColorPicker::enable(bool shouldEnable, EColorPickerType bestType) {
 
 
 void SingleColorPicker::updateBottomMenuState(bool enable) {
-    qreal opacity(0.33);
-    if (enable) {
-        opacity = 1.0;
-    }
+    //    qreal opacity(0.33);
+    //    if (enable) {
+    //        opacity = 1.0;
+    //    }
 
 
     mRGBSliders->enable(enable);

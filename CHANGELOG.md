@@ -1087,3 +1087,14 @@ _This is the first of a series of updates to address design issues in the `ListR
 ### **v0.21.68**
 ### The Debugging Help Update
 - Added help for the `DiscoveryHueWidget`, `DiscoveryNanoleafWidget`, and `DiscoveryArduCorWidget` to aid in discovering in new lights.
+
+### **v0.21.69**
+### The Linux Deploy and Clang Tidy Update
+- Added a script for deploying a linux .deb.
+- Added support for static builds
+- Rewrote the qmake to be more manageable.
+- Ran clang-tidy on a subset of files
+- Fixed a bug with discovering Hues.
+- Added the app's version string to the `SettingsPage`.
+- Added support for Qt5.12.5 builds.
+- Fixed miscellaneous bugs.

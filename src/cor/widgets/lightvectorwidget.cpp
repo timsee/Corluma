@@ -38,7 +38,6 @@ LightVectorWidget::LightVectorWidget(std::uint32_t width,
     std::uint32_t i = 0;
     for (std::uint32_t h = 0; h < mHeight; ++h) {
         for (std::uint32_t w = 0; w < mWidth; ++w) {
-            auto iString = QString::number(i);
             cor::LightState state;
             state.routine(ERoutine::singleSolid);
             state.color(QColor(0, 0, 0));

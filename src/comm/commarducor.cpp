@@ -78,7 +78,7 @@ CommArduCor::CommArduCor(QObject* parent) : QObject(parent) {
     for (const auto& controller : mDiscovery->undiscoveredControllers()) {
         int i = 1;
         for (const auto& name : controller.names()) {
-            ArduCorMetadata metadata(name, controller, i);
+            ArduCorMetadata metadata(name, controller, i, controller.hardwareTypes()[i - 1]);
             ArduCorLight light(metadata);
             ++i;
             if (controller.type() != ECommType::MAX) {
@@ -205,7 +205,7 @@ bool CommArduCor::deleteController(const QString& controller) {
     auto result = mDiscovery->findControllerByControllerName(controller);
     if (result.second) {
         auto controller = result.first;
-        for (auto light : controller.names()) {
+        for (const auto& light : controller.names()) {
             // remove from comm data
             commByType(controller.type())->removeLight(light);
         }
@@ -298,8 +298,10 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                         std::vector<ArduCorMetadata> metadataVector;
                         std::vector<cor::Light> lightVector;
                         if (index != 0) {
-                            auto metadata =
-                                ArduCorMetadata(controller.names()[index - 1], controller, index);
+                            auto metadata = ArduCorMetadata(controller.names()[index - 1],
+                                                            controller,
+                                                            index,
+                                                            controller.hardwareTypes()[index - 1]);
                             ArduCorLight light(metadata);
                             commByType(type)->fillLight(light);
                             metadataVector.push_back(metadata);

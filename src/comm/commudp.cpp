@@ -10,6 +10,7 @@
 #include <QDebug>
 #include <QNetworkInterface>
 #include <algorithm>
+#include "utils/qt.h"
 
 #include "comm/arducor/arducordiscovery.h"
 
@@ -144,8 +145,7 @@ void CommUDP::readPendingDatagrams() {
         if (payload.contains(";")) {
             // this may contain multiple packets in a single packet, split and handle as separate
             // messages.
-            QRegularExpression rx("(\\;)");
-            QStringList payloads = payload.split(rx);
+            auto payloads = cor::regexSplit(payload, "(\\;)");
             for (const auto& payload : payloads) {
                 mDiscovery->handleIncomingPacket(mType, sender.toString(), payload);
                 emit packetReceived(sender.toString(), payload, mType);

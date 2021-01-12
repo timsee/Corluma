@@ -1,0 +1,8 @@
+Package: corluma
+Version: ~~VERSION_STRING~~
+Section: base
+Priority: optional
+Architecture: amd64
+Depends: libopengl0, libxcb-xinput0, libxcb-xinerama0, libpcre2-16-0
+Maintainer: Tim Seemann <corlumalighting@gmail.com>
+Description: App to control Philip's Hues, Nanoleaf products, and Arduinos running ArduCor.

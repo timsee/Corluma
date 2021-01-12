@@ -33,8 +33,7 @@ public:
                           cor::LightList* data,
                           GroupData* groups,
                           AppSettings* settings,
-                          DataSyncTimeout* dataSyncTimeout,
-                          ShareUtils* shareUtils);
+                          DataSyncTimeout* dataSyncTimeout);
 
     /*!
      * \brief pageChanged change the QStackedWidget to the page specified

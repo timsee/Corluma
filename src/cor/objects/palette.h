@@ -35,7 +35,7 @@ public:
         std::size_t count = std::size_t(object["count"].toDouble());
         bool containsRGB = false;
         mColors = std::vector<QColor>(count, QColor(0, 0, 0));
-        for (auto color : object["colors"].toArray()) {
+        for (const auto& color : object["colors"].toArray()) {
             QJsonObject object = color.toObject();
             uint32_t index = std::uint32_t(object["index"].toDouble());
 

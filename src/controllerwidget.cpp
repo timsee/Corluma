@@ -146,9 +146,10 @@ void ControllerWidget::handleDeleteController(QString uniqueID, EProtocolType pr
         if (bridgeResult.second) {
             auto bridge = bridgeResult.first;
             // gather light UUIDs from bridge
-            for (const auto& light : bridge.lights().items()) {
-                lightNames.push_back(light.uniqueID());
-            }
+            // TODO: this currently errors out for hue not found.
+            //            for (const auto& light : bridge.lights().items()) {
+            //                lightNames.push_back(light.uniqueID());
+            //            }
             result = mComm->hue()->discovery()->deleteBridge(bridgeResult.first);
         }
     }

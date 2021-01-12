@@ -15,21 +15,22 @@
  */
 class ArduCorMetadata {
 public:
-    /// default constructor
-    ArduCorMetadata() {}
-
-    /// constructor
-    ArduCorMetadata(const QString& uniqueID, const cor::Controller& controller, int lightIndex)
+    ArduCorMetadata(const QString& uniqueID,
+                    const cor::Controller& controller,
+                    int lightIndex,
+                    ELightHardwareType hardwareType)
         : mIndex(lightIndex),
-          mMinutesUntilTimeout{},
-          mTimeout{},
+          mMinutesUntilTimeout{0u},
+          mTimeout{0u},
           mUniqueID{uniqueID},
           mController{controller.name()},
           mMajorAPI{4},
           mMinorAPI{2} {
         mCommType = controller.type();
-        mHardwareType = controller.hardwareTypes()[std::size_t(lightIndex - 1)];
+        mHardwareType = hardwareType;
     }
+
+    ArduCorMetadata() : ArduCorMetadata("ERROR_ID", {}, 1, ELightHardwareType::singleLED) {}
 
     /// getter for unique ID
     const QString& uniqueID() const noexcept { return mUniqueID; }
@@ -78,16 +79,19 @@ public:
         if (uniqueID() != rhs.uniqueID()) {
             result = false;
         }
-        if (majorAPI() != rhs.majorAPI()) {
-            result = false;
-        }
-        if (minorAPI() != rhs.minorAPI()) {
+        if (index() != rhs.index()) {
             result = false;
         }
         if (controller() != rhs.controller()) {
             result = false;
         }
         if (commType() != rhs.commType()) {
+            result = false;
+        }
+        if (majorAPI() != rhs.majorAPI()) {
+            result = false;
+        }
+        if (minorAPI() != rhs.minorAPI()) {
             result = false;
         }
 

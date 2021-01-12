@@ -312,7 +312,7 @@ bool LightList::removeLights(const std::vector<cor::Light>& list) {
 bool LightList::removeByIDs(const std::vector<QString>& lightIDs) {
     std::vector<cor::Light> lightsToRemove;
     for (const auto& lightID : lightIDs) {
-        for (auto storedLight : mLights) {
+        for (const auto& storedLight : mLights) {
             if (lightID == storedLight.uniqueID()) {
                 lightsToRemove.push_back(storedLight);
             }

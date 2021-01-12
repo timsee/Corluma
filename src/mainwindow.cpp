@@ -44,15 +44,11 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
       mDataSyncNanoLeaf{new DataSyncNanoLeaf(mData, mComm, mAppSettings)},
       mDataSyncTimeout{new DataSyncTimeout(mData, mComm, mAppSettings, this)},
       mSyncStatus{new SyncStatus(this)},
+#ifdef USE_SHARE_UTILS
       mShareUtils{new ShareUtils(this)},
+#endif
       mDebugConnections{new DebugConnectionSpoofer(mComm)},
-      mMainViewport{new MainViewport(this,
-                                     mComm,
-                                     mData,
-                                     mGroups,
-                                     mAppSettings,
-                                     mDataSyncTimeout,
-                                     mShareUtils)},
+      mMainViewport{new MainViewport(this, mComm, mData, mGroups, mAppSettings, mDataSyncTimeout)},
       mLeftHandMenu{new LeftHandMenu(
           startingSize.width() / float(startingSize.height()) > 1.0f ? true : false,
           mData,
@@ -100,7 +96,9 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     loadPages();
     setupStateObserver();
 
+#ifdef USE_SHARE_UTILS
     connect(mShareUtils, SIGNAL(fileUrlReceived(QString)), this, SLOT(receivedURL(QString)));
+#endif
 
     // --------------
     // Setup Wifi Checker
@@ -420,9 +418,11 @@ void MainWindow::shareChecker() {
         QMessageBox::warning(this, " Incompatible File ", text);
     }
 
+#ifdef USE_SHARE_UTILS
 #ifdef MOBILE_BUILD
     mShareUtils->clearTempDir();
 #endif // MOBILE_BUILD
+#endif
 }
 
 void MainWindow::loadJSON(QString path) {
@@ -497,9 +497,11 @@ void MainWindow::changeEvent(QEvent* event) {
         }
         resetStateUpdates();
 
+#ifdef USE_SHARE_UTILS
 #ifdef MOBILE_BUILD
         mShareUtils->checkPendingIntents();
 #endif // MOBILE_BUILD
+#endif
     } else if (event->type() == QEvent::ActivationChange && !isActiveWindow()) {
         for (int commInt = 0; commInt != int(EProtocolType::MAX); ++commInt) {
             auto type = static_cast<EProtocolType>(commInt);
@@ -679,9 +681,7 @@ void MainWindow::pushInLeftHandMenu() {
 void MainWindow::pushOutLeftHandMenu() {
     mGreyOut->greyOut(false);
     mLeftHandMenu->pushOut();
-    if (mData->empty()) {
-        mTopMenu->pushInTapToSelectButton();
-    }
+    pushInTapToSelectLights();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent* event) {
@@ -712,9 +712,7 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
     }
 
     if (!ignorePushOut) {
-        if ((page == EPage::colorPage || page == EPage::palettePage) && mData->empty()) {
-            mTopMenu->pushInTapToSelectButton();
-        }
+        pushInTapToSelectLights();
     }
 
 
@@ -748,12 +746,17 @@ void MainWindow::pushInFullPageWidget(QWidget* widget) {
 }
 
 void MainWindow::pushOutFullPageWidget(QWidget*) {
+    mTopMenu->showFloatingLayout(mMainViewport->currentPage());
+}
+
+void MainWindow::pushInTapToSelectLights() {
     if ((mMainViewport->currentPage() == EPage::colorPage
-         || mMainViewport->currentPage() == EPage::palettePage)
+         || mMainViewport->currentPage() == EPage::palettePage
+         || mMainViewport->currentPage() == EPage::timeoutPage
+         || mMainViewport->currentPage() == EPage::settingsPage)
         && mData->empty() && !mLeftHandMenu->isIn()) {
         mTopMenu->pushInTapToSelectButton();
     }
-    mTopMenu->showFloatingLayout(mMainViewport->currentPage());
 }
 
 void MainWindow::pushInEditGroupPage(std::uint64_t key) {
@@ -911,9 +914,14 @@ void MainWindow::openEditGroupMenu() {
 
 void MainWindow::reorderWidgets() {
     mTopMenu->showMenu();
-    mLeftHandMenu->raise();
 
-    mGreyOut->raise();
+    if (mLeftHandMenu->alwaysOpen()) {
+        mLeftHandMenu->raise();
+        mGreyOut->raise();
+    } else {
+        mGreyOut->raise();
+        mLeftHandMenu->raise();
+    }
 }
 
 void MainWindow::debugModeClicked() {

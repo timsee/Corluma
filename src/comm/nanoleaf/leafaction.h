@@ -36,7 +36,7 @@ public:
         }
     }
 
-    LeafAction() {}
+    LeafAction() : mIsOn{false} {}
 
     LeafAction(const QJsonObject& object) {
         GUARD_EXCEPTION(isValidJSON(object), "Invalid JSON passed to LeafAction");

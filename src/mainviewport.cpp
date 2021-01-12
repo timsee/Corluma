@@ -14,8 +14,7 @@ MainViewport::MainViewport(MainWindow* parent,
                            cor::LightList* data,
                            GroupData* groups,
                            AppSettings* settings,
-                           DataSyncTimeout* dataSyncTimeout,
-                           ShareUtils* shareUtils)
+                           DataSyncTimeout* dataSyncTimeout)
     : QWidget(parent),
       mComm{comm},
       mData{data},
@@ -27,7 +26,7 @@ MainViewport::MainViewport(MainWindow* parent,
       mPalettePage{new PalettePage(parent)},
       mMoodPage{new MoodPage(parent, groups, comm)},
       mTimeoutPage{new TimeoutPage(parent, comm, data, dataSyncTimeout)},
-      mSettingsPage{new SettingsPage(parent, mGroups, mComm, mAppSettings, shareUtils)} {
+      mSettingsPage{new SettingsPage(parent, mGroups, mComm, mAppSettings)} {
     // NOTE: this is mood page so that it doesn't default to light page on so when light page
     //      is turned on, we can use standard functions
     mPageIndex = EPage::moodPage;

@@ -38,6 +38,7 @@ CommHue::CommHue(UPnPDiscovery* UPnP, GroupData* groups)
 
     mDiscovery = new hue::BridgeDiscovery(this, UPnP, groups);
 
+    // this avoids making a bunch of file writes when each light is found in the hue's save data.
     for (const auto& bridge : mDiscovery->notFoundBridges()) {
         for (const auto& light : bridge.lights().items()) {
             groups->addLightToGroups(ECommType::hue, light.uniqueID());
@@ -354,7 +355,7 @@ void CommHue::parseJSONObject(const hue::Bridge& bridge, const QJsonObject& obje
 }
 
 void CommHue::parseJSONArray(const hue::Bridge& bridge, const QJsonArray& array) {
-    for (auto value : array) {
+    for (const auto& value : array) {
         if (value.isObject()) {
             QJsonObject object = value.toObject();
             // qDebug() << " object" << object;
@@ -725,7 +726,6 @@ std::pair<cor::Group, bool> CommHue::jsonToGroup(QJsonObject object,
 
 bool CommHue::updateNewHueLight(const hue::Bridge& bridge, QJsonObject object, int i) {
     if (object["name"].isString()) {
-        QString name = object["name"].toString();
         HueMetadata metadata(object, bridge.id(), i);
 
         bool searchForLight = false;
@@ -795,10 +795,7 @@ HueMetadata CommHue::metadataFromLight(const cor::Light& light) {
 
 cor::Light CommHue::lightFromMetadata(const HueMetadata& metadata) {
     auto result = lightDict().item(metadata.uniqueID().toStdString());
-    if (result.second) {
-        return result.first;
-    }
-    THROW_EXCEPTION("No hue found for unique ID" + metadata.uniqueID().toStdString());
+    return result.first;
 }
 
 std::vector<cor::Light> CommHue::lightsFromMetadata(
@@ -871,7 +868,7 @@ QString CommHue::convertMinutesToTimeout(int minutes) {
     } else if (minutes == 1) {
         // edge case with 1 minute timeouts
         hours = 0;
-        minutes = 1;
+        // minutes = 1;
         realMinutes = 1;
     } else {
         hours = 0;

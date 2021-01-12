@@ -191,7 +191,7 @@ public:
     static std::vector<Group> mergeLightGroups(const std::vector<Group>& first,
                                                const std::vector<Group>& second) {
         std::vector<Group> retList = first;
-        for (auto group : second) {
+        for (const auto& group : second) {
             // look for groups with same name and type
             auto result = std::find(retList.begin(), retList.end(), group);
             if (result == retList.end()) {

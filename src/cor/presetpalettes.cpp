@@ -27,7 +27,7 @@ PresetPalettes::PresetPalettes()
         QJsonDocument doc = QJsonDocument::fromJson(data.toUtf8(), &error);
 
         // fill the palettes into the vector
-        for (auto jsonRef : doc.array()) {
+        for (const auto& jsonRef : doc.array()) {
             if (jsonRef.isObject()) {
                 QJsonObject object = jsonRef.toObject();
                 cor::Palette palette(object);

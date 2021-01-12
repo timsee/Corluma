@@ -261,12 +261,9 @@ void TopMenu::showMenu() {
 
 void TopMenu::resize(int xOffset) {
     auto parentSize = parentWidget()->size();
-
     moveFloatingLayout();
 
     int padding = 5;
-    int topSpacer = mSize.height() / 8;
-    int yPos = topSpacer;
     mMenuButton->setGeometry(int(mSize.width() * 0.1),
                              int(mSize.height() * 0.025),
                              int(mSize.width() * 0.75f),
@@ -281,7 +278,7 @@ void TopMenu::resize(int xOffset) {
         mMainPalette->setVisible(true);
     }
 
-    yPos = mMenuButton->height() + padding;
+    int yPos = mMenuButton->height() + padding;
     mStartSelectLightsButton = yPos;
     mFloatingMenuStart = yPos;
     yPos += mSize.height() / 2;
@@ -467,8 +464,7 @@ void TopMenu::moveFloatingLayout() {
 
 
     if (mCurrentPage == EPage::settingsPage) {
-        // exit early, settings page has no floating layouts
-        return;
+        moveHiddenLayouts();
     } else if (mData->empty() && mCurrentPage == EPage::moodPage) {
         // special case where the current floating layout is shown regardless of if the data is
         // empty
@@ -562,12 +558,13 @@ void TopMenu::pullLeftLightsMenu() {
     auto parentSize = parentWidget()->size();
     if (mLightsFloatingLayout->geometry().x()
         != (parentSize.width() - mLightsFloatingLayout->width())) {
-        cor::moveWidget(mLightsFloatingLayout,
-                        QPoint(parentSize.width() + mLightsFloatingLayout->width(), 0u),
-                        QPoint(parentSize.width() - mLightsFloatingLayout->width(), 0u));
+        cor::moveWidget(
+            mLightsFloatingLayout,
+            QPoint(parentSize.width() + mLightsFloatingLayout->width(), mFloatingMenuStart),
+            QPoint(parentSize.width() - mLightsFloatingLayout->width(), mFloatingMenuStart));
     }
 
-    auto addLightsStartPoint = mLightsFloatingLayout->height();
+    auto addLightsStartPoint = mLightsFloatingLayout->height() + mLightsFloatingLayout->pos().y();
     if (mAddLightsFloatingLayout->geometry().x()
         != (parentSize.width() - mAddLightsFloatingLayout->width())) {
         cor::moveWidget(
@@ -581,12 +578,13 @@ void TopMenu::pushRightLightsMenus() {
     auto parentSize = parentWidget()->size();
     if (mLightsFloatingLayout->geometry().x()
         != (parentSize.width() + mLightsFloatingLayout->width())) {
-        cor::moveWidget(mLightsFloatingLayout,
-                        QPoint(parentSize.width() - mLightsFloatingLayout->width(), 0u),
-                        QPoint(parentSize.width() + mLightsFloatingLayout->width(), 0u));
+        cor::moveWidget(
+            mLightsFloatingLayout,
+            QPoint(parentSize.width() - mLightsFloatingLayout->width(), mFloatingMenuStart),
+            QPoint(parentSize.width() + mLightsFloatingLayout->width(), mFloatingMenuStart));
     }
 
-    auto addLightsStartPoint = mLightsFloatingLayout->height();
+    auto addLightsStartPoint = mLightsFloatingLayout->height() + mLightsFloatingLayout->pos().y();
     if (mAddLightsFloatingLayout->geometry().x()
         != (parentSize.width() + mAddLightsFloatingLayout->width())) {
         cor::moveWidget(
@@ -599,7 +597,12 @@ void TopMenu::pushRightLightsMenus() {
 void TopMenu::moveHiddenLayouts() {
     auto parentSize = parentWidget()->size();
     FloatingLayout* layout = currentFloatingLayout();
-    QPoint topRight(parentSize.width() + layout->width(), mFloatingMenuStart);
+    QPoint topRight;
+    if (layout == nullptr) {
+        topRight = QPoint(parentSize.width(), mFloatingMenuStart);
+    } else {
+        topRight = QPoint(parentSize.width() + layout->width(), mFloatingMenuStart);
+    }
     if (layout != mColorFloatingLayout) {
         mColorFloatingLayout->setGeometry(topRight.x(),
                                           topRight.y() + mColorFloatingLayout->height(),
@@ -630,8 +633,8 @@ void TopMenu::moveHiddenLayouts() {
     if (layout != mTimeoutFloatingLayout) {
         mTimeoutFloatingLayout->setGeometry(topRight.x(),
                                             topRight.y(),
-                                            mMoodsFloatingLayout->width(),
-                                            mMoodsFloatingLayout->height());
+                                            mTimeoutFloatingLayout->width(),
+                                            mTimeoutFloatingLayout->height());
     }
     if (layout != mPaletteFloatingLayout) {
         mPaletteFloatingLayout->setGeometry(topRight.x(),
@@ -730,7 +733,7 @@ void TopMenu::updateScheme(const std::vector<QColor>& colors, std::uint32_t inde
 }
 
 void TopMenu::handleBrightnessSliders() {
-    if (mData->empty() || mCurrentPage == EPage::lightsPage) {
+    if (mData->empty()) {
         // hide both, its empty
         mSingleLightBrightness->pushOut();
         mGlobalBrightness->pushOut();
@@ -753,7 +756,7 @@ void TopMenu::handleBrightnessSliders() {
                 updateGlobalBrightness = true;
             }
         } else if (mCurrentPage == EPage::colorPage || mCurrentPage == EPage::moodPage
-                   || mCurrentPage == EPage::settingsPage) {
+                   || mCurrentPage == EPage::lightsPage || mCurrentPage == EPage::settingsPage) {
             updateGlobalBrightness = true;
         }
 
@@ -914,13 +917,15 @@ void TopMenu::moveLightsMenu() {
     QPoint verticalStart(parentSize.width() + layout->width(), mFloatingMenuStart);
     if (mLightsFloatingLayout->buttonCount() == 0) {
         // theres no horizontal floating layout, so move vertical to top right
-        verticalStart = QPoint(parentSize.width(), 0u);
+        verticalStart =
+            QPoint(parentSize.width(), mLightsFloatingLayout->size().height() + mFloatingMenuStart);
     } else {
         // theres a horizontal and vertical menu, horizontal is in top right
-        QPoint topRight(parentSize.width(), 0u);
+        QPoint topRight(parentSize.width(), mFloatingMenuStart);
         mLightsFloatingLayout->move(topRight);
         // vertical is directly under it.
-        verticalStart = QPoint(parentSize.width(), mLightsFloatingLayout->size().height());
+        verticalStart =
+            QPoint(parentSize.width(), mLightsFloatingLayout->size().height() + mFloatingMenuStart);
     }
 
     mAddLightsFloatingLayout->move(verticalStart);

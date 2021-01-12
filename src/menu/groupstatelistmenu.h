@@ -69,7 +69,7 @@ private slots:
             mStateContainer->highlightStates({uniqueID});
         }
         // emit the light that was clicked
-        for (auto storedState : mStates) {
+        for (const auto& storedState : mStates) {
             if (storedState.stringUniqueID() == uniqueID) {
                 emit clickedState(storedState.stringUniqueID(), storedState.state());
             }

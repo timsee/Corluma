@@ -226,10 +226,9 @@ bool CommLayer::saveNewGroup(const cor::Group& group) {
     nonHueGroup.description(group.description());
     mGroups->saveNewGroup(nonHueGroup);
 
-    auto hueResult = true;
     // check if any hues are used
     if (!hueLights.empty()) {
-        hueResult = mHue->saveNewGroup(group, hueLights);
+        mHue->saveNewGroup(group, hueLights);
     }
     return true;
 }

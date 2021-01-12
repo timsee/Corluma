@@ -14,7 +14,6 @@
 #include "globalsettingswidget.h"
 #include "greyoutoverlay.h"
 #include "settingsbutton.h"
-#include "shareutils/shareutils.hpp"
 
 /// enum for state of corluma web views, tracks which is shown
 enum class ECorlumaWebView { FAQ, copyright, none };
@@ -50,8 +49,7 @@ public:
     explicit SettingsPage(QWidget* parent,
                           GroupData* parser,
                           CommLayer* comm,
-                          AppSettings* appSettings,
-                          ShareUtils* shareUtils);
+                          AppSettings* appSettings);
 
     /// called when the widget is shown
     void showWidget();
@@ -140,11 +138,11 @@ private:
     /// layout for scoll area
     QVBoxLayout* mScrollLayout;
 
-    /// layout for the widget
-    QVBoxLayout* mMainLayout;
-
     /// widget that contains all the advanced settings that affect the app globally
     GlobalSettingsWidget* mGlobalWidget;
+
+    /// displays the app version on the bottom right of the SettingsPage
+    QLabel* mAppVersionLabel;
 
     /// current webview displayed
     ECorlumaWebView mCurrentWebView;
@@ -190,9 +188,6 @@ private:
 
     /// widget displaying copyright information
     cor::WebView* mCopyrightWidget;
-
-    /// pointer to object that handles sharing on mobile devices.
-    ShareUtils* mShareUtils;
 
     /// pointer to comm layer
     CommLayer* mComm;

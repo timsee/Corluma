@@ -17,7 +17,9 @@
     <application android:hardwareAccelerated="true" android:name="org.qtproject.qt5.android.bindings.QtApplication" android:label="Corluma"
         android:icon="@mipmap/ic_launcher"
         android:extractNativeLibs="true">
-        <activity android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density" android:name="org.corluma.activity.QShareActivity" android:label="Corluma"
+        <activity android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density" 
+            android:name="org.corluma.activity.QShareActivity" 
+            android:label="Corluma"
             android:theme="@android:style/Theme.Black.NoTitleBar"
             android:screenOrientation="portrait"
             android:launchMode="singleInstance">

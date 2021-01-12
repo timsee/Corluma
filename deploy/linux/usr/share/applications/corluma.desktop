@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=0.21-69
+Name=Corluma
+Comment=App for controlling lights
+Exec=/usr/bin/corluma
+Icon=/usr/share/corluma/CorlumaIcon.png
+Terminal=false
+Type=Application
+Categories=Utility;Application;

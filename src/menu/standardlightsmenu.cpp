@@ -20,14 +20,19 @@ void initScrollArea(QWidget* widget, QScrollArea* scrollArea) {
     scrollArea->horizontalScrollBar()->setVisible(false);
 }
 
-std::vector<QString> generateLightsWithIgnoreList(std::vector<QString> a, std::vector<QString> b) {
-    std::unordered_multiset<QString> st;
-    st.insert(a.begin(), a.end());
-    st.insert(b.begin(), b.end());
-    auto predicate = [&st](const QString& k) { return st.count(k) > 1; };
-    a.erase(std::remove_if(a.begin(), a.end(), predicate), a.end());
-    b.erase(std::remove_if(b.begin(), b.end(), predicate), b.end());
-    return b;
+std::vector<QString> generateLightsWithIgnoreList(const std::vector<QString>& ignored,
+                                                  const std::vector<QString>& input) {
+    std::set<QString> set;
+    for (const auto& inputValue : input) {
+        set.insert(inputValue);
+    }
+    for (const auto& ignoredValue : ignored) {
+        auto result = std::find(set.begin(), set.end(), ignoredValue);
+        if (result != set.end()) {
+            set.erase(result);
+        }
+    }
+    return std::vector<QString>(set.begin(), set.end());
 }
 
 } // namespace

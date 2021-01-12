@@ -12,6 +12,7 @@
 
 #include "comm/commhue.h"
 #include "data/groupdata.h"
+#include "utils/qt.h"
 
 //#define DEBUG_BRIDGE_DISCOVERY
 
@@ -574,7 +575,7 @@ void BridgeDiscovery::receivedUPnP(const QHostAddress& sender, const QString& pa
         // get ID from UPnP
         auto IP = sender.toString();
         QString id;
-        QStringList paramArray = payload.split(QRegularExpression("[\r\n]"), Qt::SkipEmptyParts);
+        auto paramArray = cor::regexSplit(payload, "[\r\n]");
         for (auto param : paramArray) {
             if (param.contains("hue-bridgeid: ")) {
                 id = param.remove("hue-bridgeid: ").toLower();
@@ -619,6 +620,8 @@ void BridgeDiscovery::testNewlyDiscoveredBridge(const hue::Bridge& bridge) {
 EHueDiscoveryState BridgeDiscovery::state() {
     if (!mFoundBridges.empty() && mNotFoundBridges.empty()) {
         return EHueDiscoveryState::allBridgesConnected;
+    } else if (!mFoundBridges.empty()) {
+        return EHueDiscoveryState::bridgeConnected;
     }
 
     if (!mNotFoundBridges.empty()) {
@@ -626,8 +629,6 @@ EHueDiscoveryState BridgeDiscovery::state() {
             if (!bridge.IP().isEmpty() && bridge.username().isEmpty()
                 && bridge.state() == EBridgeDiscoveryState::lookingForUsername) {
                 return EHueDiscoveryState::findingDeviceUsername;
-            } else if (!mFoundBridges.empty()) {
-                return EHueDiscoveryState::bridgeConnected;
             } else if (!bridge.IP().isEmpty() && !bridge.username().isEmpty()) {
                 return EHueDiscoveryState::testingFullConnection;
             }

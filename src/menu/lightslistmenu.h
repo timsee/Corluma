@@ -68,7 +68,7 @@ private slots:
             mLightContainer->highlightLights({light});
         }
         // emit the light that was clicked
-        for (auto storedLight : mLights) {
+        for (const auto& storedLight : mLights) {
             if (storedLight.uniqueID() == light) {
                 emit clickedLight(storedLight);
             }

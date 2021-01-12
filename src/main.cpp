@@ -18,6 +18,15 @@
 #include "utils/exception.h"
 #include "utils/qt.h"
 
+#ifdef BUILD_STATIC_CORLUMA
+#include <QtPlugin>
+
+#ifdef CORLUMA_QT_STATIC_LINK_LINUX
+Q_IMPORT_PLUGIN(QXcbIntegrationPlugin)
+#endif
+
+#endif
+
 /// uncomment to wipe out all QSettings Data.
 //#define WIPE_QSETTINGS 1
 /// uncomment to print system info in debug statement

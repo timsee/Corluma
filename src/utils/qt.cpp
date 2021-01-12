@@ -55,4 +55,10 @@ MainWindow* mainWindow() {
     return nullptr;
 }
 
+#ifdef USE_SHARE_UTILS
+ShareUtils* shareUtils() {
+    return mainWindow()->shareUtils();
+}
+#endif
+
 } // namespace cor

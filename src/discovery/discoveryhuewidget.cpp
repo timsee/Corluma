@@ -35,39 +35,24 @@ void DiscoveryHueWidget::hueDiscoveryUpdate(EHueDiscoveryState newState) {
 
         switch (mHueDiscoveryState) {
             case EHueDiscoveryState::findingIpAddress:
-                // mLabel->setText(QString("Looking for Bridge..."));
                 // qDebug() << "Hue Update: Finding IP Address";
                 emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
                 break;
             case EHueDiscoveryState::findingDeviceUsername:
-                // mLabel->setText(QString("Bridge Found! Please press Link button..."));
                 // qDebug() << "Hue Update: Bridge is waiting for link button to be pressed.";
                 emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
                 break;
             case EHueDiscoveryState::testingFullConnection:
-                // mLabel->setText(QString("Testing full connection..."));
                 // qDebug() << "Hue Update: IP and Username received, testing combination. ";
                 emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovering);
                 break;
             case EHueDiscoveryState::bridgeConnected: {
-                //                auto totalBridges = mComm->hue()->discovery()->bridges().size()
-                //                                    +
-                //                                    mComm->hue()->discovery()->notFoundBridges().size();
-                //                auto notFoundBridges =
-                //                    totalBridges -
-                //                    mComm->hue()->discovery()->notFoundBridges().size();
-                //                mLabel->setText(
-                //                    QString("%1 out of %2 bridges discovered. Searching for
-                //                    additional bridges...")
-                //                        .arg(QString::number(notFoundBridges),
-                //                        QString::number(totalBridges)));
-                // qDebug() << "Hue Update: Bridge Connected" << mComm->hueBridge().IP;
+                // qDebug() << "Hue Update: Bridge Connected";
                 emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovered);
                 break;
             }
             case EHueDiscoveryState::allBridgesConnected:
-                //   mLabel->setText(QString(""));
-                // qDebug() << "Hue Update: All Bridges Connected" << mComm->hueBridge().IP;
+                // qDebug() << "Hue Update: All Bridges Connected";
                 emit connectionStatusChanged(EProtocolType::hue, EConnectionState::discovered);
                 break;
         }

@@ -15,7 +15,7 @@ namespace cor {
 cor::Controller jsonToController(const QJsonObject& object) {
     std::vector<QString> names;
     std::vector<ELightHardwareType> hardwareTypes;
-    for (auto ref : object["devices"].toArray()) {
+    for (const auto& ref : object["devices"].toArray()) {
         QJsonObject object = ref.toObject();
         names.push_back(object["name"].toString());
         hardwareTypes.push_back(stringToHardwareType(object["hardwareType"].toString()));

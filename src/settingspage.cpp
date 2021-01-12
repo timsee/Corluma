@@ -17,8 +17,10 @@
 #include "comm/commhue.h"
 #include "listlightwidget.h"
 #include "mainwindow.h"
+#include "shareutils/shareutils.hpp"
 #include "utils/qt.h"
 
+#define SHOW_APP_VERSION
 //#define USE_DEBUG_OPTIONS
 #ifdef USE_DEBUG_OPTIONS
 const static char* kDebugSpoof = "DEBUG: Spoof Connection";
@@ -27,15 +29,14 @@ const static char* kDebugSpoof = "DEBUG: Spoof Connection";
 SettingsPage::SettingsPage(QWidget* parent,
                            GroupData* parser,
                            CommLayer* comm,
-                           AppSettings* appSettings,
-                           ShareUtils* shareUtils)
+                           AppSettings* appSettings)
     : QWidget(parent),
       mGroups(parser),
       mScrollArea{new QScrollArea(this)},
       mScrollAreaWidget{new QWidget(this)},
       mScrollLayout{new QVBoxLayout(mScrollAreaWidget)},
-      mMainLayout{new QVBoxLayout(this)},
       mGlobalWidget{new GlobalSettingsWidget(mScrollAreaWidget, appSettings)},
+      mAppVersionLabel{new QLabel(APP_VERSION, this)},
       mCurrentWebView{ECorlumaWebView::none},
       mSectionTitles{"Data", "About"},
       mSectionLabels{mSectionTitles.size()},
@@ -51,9 +52,16 @@ SettingsPage::SettingsPage(QWidget* parent,
               "Copyright"},
       mButtons{mTitles.size()},
       mCopyrightWidget{new cor::WebView("Copyright", ":/resources/Copyright.html", this)},
-      mShareUtils(shareUtils),
       mComm{comm},
       mGreyOut{new GreyOutOverlay(false, parentWidget())} {
+
+
+#ifndef SHOW_APP_VERSION
+    mAppVersionLabel->setVisible(false);
+#endif
+
+    mAppVersionLabel->setText(QString("v" + mAppVersionLabel->text()));
+    mAppVersionLabel->setStyleSheet("background-color:rgba(0,0,0,0);");
 
     //------------
     // ScrollArea Widget
@@ -69,17 +77,10 @@ SettingsPage::SettingsPage(QWidget* parent,
     mScrollAreaWidget->setStyleSheet("QWidget#contentWidget{ background-color: #201F1F; } QLabel { "
                                      "background-color: #201F1F; } ");
 
+
     mScrollLayout->setSpacing(7);
     mScrollLayout->setContentsMargins(9, 9, 9, 9);
     mScrollAreaWidget->setLayout(mScrollLayout);
-
-    //------------
-    // Main Layout
-    //------------
-
-    mMainLayout->addWidget(mScrollArea, 12);
-    mMainLayout->setContentsMargins(9, 9, 9, 9);
-    mMainLayout->setSpacing(6);
 
     //------------
     // Scroll Area Contents
@@ -117,10 +118,6 @@ SettingsPage::SettingsPage(QWidget* parent,
 
     connect(mGreyOut, SIGNAL(clicked()), this, SLOT(greyOutClicked()));
 
-    //------------
-    // Final Cleanup
-    //------------
-    setLayout(mMainLayout);
 
     mScrollArea->setWidget(mScrollAreaWidget);
     enableButtons(false);
@@ -156,9 +153,19 @@ void SettingsPage::hideWidget() {
 }
 
 void SettingsPage::resizeEvent(QResizeEvent*) {
-    for (auto button : mButtons) {
-        button->setMinimumHeight(height() / 10);
-    }
+    // resize the app version label
+    QFontMetrics fm(mAppVersionLabel->font());
+    auto textWidth = int(fm.horizontalAdvance(mAppVersionLabel->text()) * 1.1);
+    mAppVersionLabel->setGeometry(this->width() - textWidth,
+                                  this->height() - mAppVersionLabel->height(),
+                                  textWidth,
+                                  mAppVersionLabel->height());
+
+    mScrollArea->setGeometry(this->width() * 0.03,
+                             this->height() * 0.03,
+                             width() * 0.94,
+                             height() * 0.97 - mAppVersionLabel->height());
+
     mScrollAreaWidget->setFixedWidth(int(width() * 0.9f));
     // mScrollAreaWidget->setFixedHeight(1.1 * (mGlobalWidget->y() + mGlobalWidget->height()));
 
@@ -174,7 +181,6 @@ void SettingsPage::resizeEvent(QResizeEvent*) {
             break;
         default:
             mCopyrightWidget->setGeometry(hiddenWidget);
-            return;
     }
 
 
@@ -203,7 +209,7 @@ void SettingsPage::loadButtonClicked() {
 void SettingsPage::saveButtonClicked() {
 #if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
     int requestID = 7;
-    mShareUtils->sendFile(mGroups->savePath(), "CorlumaSave", "application/json", requestID);
+    cor::shareUtils->sendFile(mGroups->savePath(), "CorlumaSave", "application/json", requestID);
 #else
     auto fileName = QFileDialog::getSaveFileName(this,
                                                  tr("Save Group Data"),

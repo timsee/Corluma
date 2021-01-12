@@ -63,7 +63,7 @@ void KitchenTimerWidget::resizeEvent(QResizeEvent*) {
     mMinutesButton->setGeometry(xPos, yPos, this->width() * 0.2f, this->height() * 3 / 16);
     xPos += mMinutesButton->width();
     mHoursButton->setGeometry(xPos, yPos, this->width() * 0.2f, this->height() * 3 / 16);
-    xPos += mHoursButton->width();
+    // xPos += mHoursButton->width();
 }
 
 void KitchenTimerWidget::paintEvent(QPaintEvent*) {

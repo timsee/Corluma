@@ -69,7 +69,7 @@ void DisplayMoodMetadata::update(const cor::Mood& mood, bool moodExistsAlready) 
     // verify if all lights are reachable
     auto commLights = mComm->lightsByIDs(cor::lightVectorToIDs(mood.lights()));
     bool anyLightsNotReachable = false;
-    for (auto light : commLights) {
+    for (const auto& light : commLights) {
         if (!light.isReachable()) {
             anyLightsNotReachable = true;
             break;
@@ -78,7 +78,7 @@ void DisplayMoodMetadata::update(const cor::Mood& mood, bool moodExistsAlready) 
 
     if (anyLightsNotReachable) {
         returnString << "<b>Not Reachable Lights:</b> <br>";
-        for (auto light : commLights) {
+        for (const auto& light : commLights) {
             if (!light.isReachable()) {
                 returnString << "- " << light.name().toStdString() << " <br>";
             }

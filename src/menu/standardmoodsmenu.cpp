@@ -124,7 +124,7 @@ void StandardMoodsMenu::changeState(EState state) {
 void StandardMoodsMenu::changeStateToParents() {
     changeState(EState::parents);
     std::vector<cor::Group> parentGroups;
-    for (auto moodParent : mGroups->moodParents()) {
+    for (const auto& moodParent : mGroups->moodParents()) {
         // generate group name
         if (moodParent.first == 0u) {
             parentGroups.push_back(mGroups->orphanGroup());
@@ -148,7 +148,7 @@ void StandardMoodsMenu::changeStateToMoods() {
     auto ID = mCurrentParent;
     // if theres only one parent, just show all moods.
     if (mGroups->moodParents().size() == 1) {
-        for (auto keyValuePair : mGroups->moodParents()) {
+        for (const auto& keyValuePair : mGroups->moodParents()) {
             ID = keyValuePair.first;
         }
     }

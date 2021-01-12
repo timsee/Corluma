@@ -16,10 +16,14 @@
 #include <QPropertyAnimation>
 #include <QPushButton>
 #include <QScreen>
+#ifdef USE_QT_6
+#include <QRegularExpression>
+#endif
 
 #define TRANSITION_TIME_MSEC 150
 
 class MainWindow;
+class ShareUtils;
 
 namespace cor {
 
@@ -149,6 +153,18 @@ inline int guardAgainstNegativeSize(int size) {
     return size;
 }
 
+/// QT6 and later uses QRegularExpression, Qt5 and earlier uses QRegExp, this function allows the
+/// app to compile for both.
+inline QStringList regexSplit(const QString& input, const QString& regex) {
+#ifdef USE_QT_6
+    QRegularExpression rx(regex);
+    return input.split(rx, Qt::SkipEmptyParts);
+#else
+    QRegExp rx(regex);
+    return input.split(rx, QString::SkipEmptyParts);
+#endif
+}
+
 /*!
  * \brief applicationSize this returns the size of the MainWindow, in a pretty ugly but effective
  *        way.
@@ -168,6 +184,11 @@ bool leftHandMenuMoving();
 
 /// getter for the MainWindow
 MainWindow* mainWindow();
+
+#ifdef USE_SHARE_UTILS
+/// getter for shareutils object
+ShareUtils* shareUtils();
+#endif
 
 } // namespace cor
 

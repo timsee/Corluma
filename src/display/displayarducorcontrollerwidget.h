@@ -75,7 +75,7 @@ public:
         auto lights = mComm->arducor()->lightsFromNames(mController.names());
         // highlight relevant lights
         std::vector<QString> lightsToHighlight;
-        for (auto light : lights) {
+        for (const auto& light : lights) {
             if (mSelectedLights->doesLightExist(light)) {
                 lightsToHighlight.push_back(light.uniqueID());
             }
@@ -309,7 +309,7 @@ private:
     /// handle checkbox state
     void handleCheckboxState() {
         bool anyLightSelected = false;
-        for (auto light : mController.names()) {
+        for (const auto& light : mController.names()) {
             if (mSelectedLights->doesLightExist(light)) {
                 anyLightSelected = true;
                 break;

@@ -1,6 +1,6 @@
 # Corluma
 
-Corluma is a cross-platform GUI designed to control Philips Hue lights, Nanoleaf Auroras, and arduino sketches from the [ArduCor project](https://github.com/timsee/ArduCor). It supports Windows, Linux, Mac OS X, Android, and iOS. It requires on Qt5.13 or later and C++11.
+Corluma is a cross-platform GUI designed to control Philips Hue lights, Nanoleaf Auroras, and arduino sketches from the [ArduCor project](https://github.com/timsee/ArduCor). It supports Windows, Linux, Mac OS X, Android, and iOS. It requires on Qt5.12.5 or later and C++11.
 
 ![Color Page](docs/resources/colorPagePreview.png "Color Page") ![Left Hand Menu](docs/resources/leftHandMenuPreview.png  "Left Hand Menu") ![Discovery Page](docs/resources/discoveryPagePreview.png  "Discovery Page")
 

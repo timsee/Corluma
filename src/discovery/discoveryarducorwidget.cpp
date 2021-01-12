@@ -197,13 +197,13 @@ QString DiscoveryArduCorWidget::discoveryHelpHTML() {
     sstream
         << "<li> ArduCor samples that use a Raspberry Pi as passthrough are also supported.</li>";
 #ifndef MOBILE_BUILD
-#ifdef SHOULD_USE_SERIAL
+#ifdef USE_SERIAL
     sstream << "<li> This build supports serial connections. Lights connected via a serial port "
                "will be discovered automatically.</li>";
 #else
     sstream << "<li> This build does <b>not</b> support serial connections directly, serial lights "
                "must pass through a Raspberry Pi.</li>";
-#endif // SHOULD_USE_SERIAL
+#endif // USE_SERIAL
 #endif // MOBILE_BUILD
     sstream << "<li> The names of the lights are assumed to be unique. Controlling multiple lights "
                "with the same name may result in unexpected behavior.</li>";

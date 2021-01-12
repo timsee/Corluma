@@ -356,10 +356,10 @@ cor::CirclePoint ColorWheel::findPixelByColor(const QColor& color) {
         const auto& valDistance = color.valueF() * 0.1;
 
         // only add the val distance if the saturation distance dictates it
-        auto finalDistance = satDistance;
-        if (finalDistance > 0.32) {
-            finalDistance += valDistance;
-        }
+        //        auto finalDistance = satDistance;
+        //        if (finalDistance > 0.32) {
+        //             finalDistance += valDistance;
+        //        }
         // create the line that generates the point
         QLineF line(QPointF(0.5, 0.5), QPointF(1.0, 0.5));
         line.setAngle(angle);

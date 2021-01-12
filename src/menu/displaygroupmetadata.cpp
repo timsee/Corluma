@@ -108,7 +108,7 @@ void DisplayGroupMetadata::update(const cor::Group& group, bool groupExistsAlrea
     if (!groupMetadata.groupParents.empty()) {
         returnString << "<b>Parents:</b> <br>";
         bool firstPass = true;
-        for (auto parent : groupMetadata.groupParents) {
+        for (const auto& parent : groupMetadata.groupParents) {
             if (!firstPass) {
                 returnString << ", ";
             }
@@ -125,7 +125,7 @@ void DisplayGroupMetadata::update(const cor::Group& group, bool groupExistsAlrea
     if (!groupMetadata.subgroups.empty()) {
         returnString << "<b>Subgroups:</b><br>";
         bool firstPass = true;
-        for (auto subgroup : groupMetadata.subgroups) {
+        for (const auto& subgroup : groupMetadata.subgroups) {
             if (!firstPass) {
                 returnString << ", ";
             }

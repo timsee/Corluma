@@ -222,7 +222,7 @@ std::pair<cor::Controller, bool> ArduCorDiscovery::controllerFromDiscoveryString
 void ArduCorDiscovery::addManualIP(const QString& ip) {
     // check if IP address already exists in unknown or not found
     bool IPAlreadyFound = false;
-    for (auto notFound : mNotFoundControllers) {
+    for (const auto& notFound : mNotFoundControllers) {
         if (notFound.name() == ip) {
             IPAlreadyFound = true;
         }
@@ -269,7 +269,7 @@ void ArduCorDiscovery::handleIncomingPacket(ECommType type,
 
 void ArduCorDiscovery::handleDiscoveredController(const cor::Controller& discoveredController) {
     // search for the sender in the list of discovered devices
-    for (auto notFoundController : mNotFoundControllers) {
+    for (const auto& notFoundController : mNotFoundControllers) {
         if (notFoundController.type() == discoveredController.type()
             && notFoundController.name() == discoveredController.name()) {
             // remove from the not found controllers
@@ -307,7 +307,10 @@ void ArduCorDiscovery::handleDiscoveredController(const cor::Controller& discove
 
             int i = 1;
             for (const auto& name : discoveredController.names()) {
-                ArduCorMetadata metadata(name, discoveredController, i);
+                ArduCorMetadata metadata(name,
+                                         discoveredController,
+                                         i,
+                                         discoveredController.hardwareTypes()[i - 1]);
                 ArduCorLight light(metadata);
                 ++i;
 
@@ -394,7 +397,7 @@ void ArduCorDiscovery::updateJSON(const cor::Controller& controller) {
     } else {
         int i = 0;
         bool foundLight = false;
-        for (auto value : array) {
+        for (const auto& value : array) {
             bool detectChanges = false;
             QJsonObject object = value.toObject();
             cor::Controller jsonController = cor::jsonToController(object);

@@ -51,10 +51,10 @@ void ColorPicker::showSliders(bool shouldShowSliders) {
 // ----------------------------
 
 void ColorPicker::resizeWheel() {
-    int wheelSize = int(size().height() * 0.5f);
-    if (wheelSize > size().width() * 0.85f) {
-        wheelSize = int(size().width() * 0.85f);
-    }
+    //    int wheelSize = int(size().height() * 0.5f);
+    //    if (wheelSize > size().width() * 0.85f) {
+    //        wheelSize = int(size().width() * 0.85f);
+    //    }
 
     int yPos = 0;
     if (showSliders()) {

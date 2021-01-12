@@ -25,7 +25,7 @@ public:
         auto secondsUntilTimeoutVector = mComm->secondsUntilTimeout(cor::lightVectorToIDs(mLights));
         std::vector<std::pair<QString, std::uint32_t>> keyTimeoutPairs;
         keyTimeoutPairs.reserve(mLights.size());
-        for (auto light : mLights) {
+        for (const auto& light : mLights) {
             keyTimeoutPairs.emplace_back(
                 std::make_pair(light.uniqueID(), mComm->secondsUntilTimeout(light.uniqueID())));
         }

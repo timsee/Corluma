@@ -113,7 +113,7 @@ public:
         auto lights = mLights;
         auto lightToRemove = cor::Light{};
         // look for the light ID in the lights
-        for (auto light : mLights) {
+        for (const auto& light : mLights) {
             if (light.uniqueID() == lightID) {
                 lightToRemove = light;
             }

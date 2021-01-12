@@ -73,6 +73,11 @@ public:
     /// getter for left hand menu
     LeftHandMenu* leftHandMenu() { return mLeftHandMenu; }
 
+#ifdef USE_SHARE_UTILS
+    /// pointer to object that handles sharing on mobile devices.
+    ShareUtils* shareUtils() { return mShareUtils; }
+#endif
+
     /// getter for the routine widget
     RoutineButtonsWidget* routineWidget() { return mRoutineWidget; }
 
@@ -223,6 +228,10 @@ private:
     /// TODO: can I get rid of this completely?
     void reorderWidgets();
 
+    /// handle the state management required to determine if the Tap to Select Lights button should
+    /// be pushed in.
+    void pushInTapToSelectLights();
+
     /// resize
     void resize();
 
@@ -305,8 +314,10 @@ private:
     /// tracks whether all the DataSync threads are in sync or not
     SyncStatus* mSyncStatus;
 
+#ifdef USE_SHARE_UTILS
     /// pointer to object that handles sharing on mobile devices.
     ShareUtils* mShareUtils;
+#endif
 
     /// resize a widget that takes up the full page
     void resizeFullPageWidget(QWidget* widget, bool isOpen);

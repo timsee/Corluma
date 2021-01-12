@@ -17,7 +17,12 @@ namespace nano {
  */
 class RhythmController {
 public:
-    RhythmController() : mIsConnected{false} {}
+    RhythmController()
+        : mIsConnected{false},
+          mIsActive{false},
+          mID{0},
+          mAuxAvailable{false},
+          mMode{0} {}
 
     RhythmController(const QJsonObject& object) {
         mIsConnected = object["rhythmConnected"].toBool();

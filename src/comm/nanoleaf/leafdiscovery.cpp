@@ -11,6 +11,7 @@
 #include <QStandardPaths>
 
 #include "comm/commnanoleaf.h"
+#include "utils/qt.h"
 #include "utils/reachability.h"
 
 //#define DEBUG_LEAF_DISCOVERY
@@ -56,7 +57,7 @@ void LeafDiscovery::foundNewLight(nano::LeafMetadata newLight) {
              << " rotation " << newLight.rotation();
 #endif
     // check if the controller exists in the unknown group, delete if found
-    for (auto unknownLight : mUnknownLights) {
+    for (const auto& unknownLight : mUnknownLights) {
         if (unknownLight.hardwareName() == newLight.hardwareName()) {
             auto it = std::find(mUnknownLights.begin(), mUnknownLights.end(), unknownLight);
 #ifdef DEBUG_LEAF_DISCOVERY
@@ -69,7 +70,7 @@ void LeafDiscovery::foundNewLight(nano::LeafMetadata newLight) {
     }
 
     // check if the controlle exists in the not found group, delete if found
-    for (auto notFoundController : mNotFoundLights) {
+    for (const auto& notFoundController : mNotFoundLights) {
         if (notFoundController.authToken() == newLight.authToken()) {
             newLight.name(notFoundController.name());
             newLight.rotation(notFoundController.rotation());
@@ -94,7 +95,7 @@ bool LeafDiscovery::removeNanoleaf(const nano::LeafMetadata& controllerToRemove)
 #endif
     bool foundLight = false;
     // check if the controller exists in the unknown group, delete if found
-    for (auto unknownController : mUnknownLights) {
+    for (const auto& unknownController : mUnknownLights) {
         if (unknownController.hardwareName() == controllerToRemove.hardwareName()) {
             auto it = std::find(mUnknownLights.begin(), mUnknownLights.end(), unknownController);
             mUnknownLights.erase(it);
@@ -104,7 +105,7 @@ bool LeafDiscovery::removeNanoleaf(const nano::LeafMetadata& controllerToRemove)
     }
 
     // check if the controlle exists in the not found group, delete if found
-    for (auto notFoundController : mNotFoundLights) {
+    for (const auto& notFoundController : mNotFoundLights) {
         if (notFoundController.authToken() == controllerToRemove.authToken()) {
             auto it = std::find(mNotFoundLights.begin(), mNotFoundLights.end(), notFoundController);
             mNotFoundLights.erase(it);
@@ -152,7 +153,7 @@ void LeafDiscovery::receivedUPnP(const QHostAddress&, const QString& payload) {
         qDebug() << __func__ << payload;
 #endif
         // qDebug() << payload;
-        QStringList paramArray = payload.split(QRegularExpression("[\r\n]"), Qt::SkipEmptyParts);
+        auto paramArray = cor::regexSplit(payload, "[\r\n]");
         // parse param array for parameters about the nanoleaf
         QString ip;
         int port = -1;
@@ -160,8 +161,7 @@ void LeafDiscovery::receivedUPnP(const QHostAddress&, const QString& payload) {
         for (auto param : paramArray) {
             if (param.contains("Location: ")) {
                 QString location = param.remove("Location: ");
-                QStringList locationArray =
-                    location.split(QRegularExpression(":"), Qt::SkipEmptyParts);
+                auto locationArray = cor::regexSplit(location, ":");
                 if (locationArray.size() == 3) {
                     ip = locationArray[0] + ":" + locationArray[1];
                     bool ok;
@@ -180,7 +180,7 @@ void LeafDiscovery::receivedUPnP(const QHostAddress&, const QString& payload) {
 
         // search if its found already
         bool isFound = false;
-        for (auto unknownController : mUnknownLights) {
+        for (const auto& unknownController : mUnknownLights) {
             // test by IP to handle manual discovery picked up by UPnP
             if (unknownController.IP() == light.IP()) {
                 isFound = true;
@@ -264,7 +264,7 @@ void LeafDiscovery::discoveryRoutine() {
 
     // loop through all of the unknown controllers
     if (!mUnknownLights.empty()) {
-        for (auto light : mUnknownLights) {
+        for (const auto& light : mUnknownLights) {
             if (light.authToken() != "") {
 #ifdef DEBUG_LEAF_DISCOVERY
                 qDebug() << __func__ << " testing auth of unknown " << light.hardwareName()
@@ -366,7 +366,7 @@ void LeafDiscovery::addIP(const QString& ip) {
 
 bool LeafDiscovery::doesIPExist(const QString& IP) {
     QStringList pieces = IP.split(":");
-    auto splitIP = pieces[1];
+    // auto splitIP = pieces[1];
     for (const auto& notFoundLight : mNotFoundLights) {
         if (notFoundLight.IP().contains(IP)) {
             return true;

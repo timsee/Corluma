@@ -33,7 +33,8 @@ public:
           mIsUsingCRC{false},
           mMaxPacketSize(1000),
           mMajorAPI{0},
-          mMinorAPI{0} {}
+          mMinorAPI{0},
+          mHardwareCapabilities{0u} {}
 
     Controller(QString name,
                ECommType type,
@@ -94,7 +95,7 @@ public:
         tempString << " maxPacketSize: " << maxPacketSize();
         std::uint32_t i = 0;
         tempString << " names size: " << names().size();
-        for (auto name : names()) {
+        for (const auto& name : names()) {
             tempString << " " << i << ". " << name.toStdString();
             ++i;
         }

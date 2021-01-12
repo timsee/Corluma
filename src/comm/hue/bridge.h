@@ -126,7 +126,7 @@ public:
     /// contained in this bridge.
     std::vector<HueMetadata> lightsInBridge(const std::vector<HueMetadata>& lightsToTest) const {
         std::vector<HueMetadata> retVector;
-        for (auto light : lightsToTest) {
+        for (const auto& light : lightsToTest) {
             auto lightResult = mLights.item(light.uniqueID().toStdString());
             if (lightResult.second) {
                 retVector.push_back(light);

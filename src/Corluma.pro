@@ -9,34 +9,117 @@
 #
 #-------------------------------------------------
 
-TARGET = Corluma
+TARGET = corluma
+# capitalize the target name on certain platforms
+win32:win64:android:ios {
+    TARGET = Corluma
+}
 TEMPLATE = app
-VERSION = 1.0.0
-
-# flag to use serial. Only works in non-mobile builds and currently, non Qt6 builds.
-SHOULD_USE_SERIAL = 0
-# flag to use experimental features that may not be part of the standard release.
-USE_EXPERIMENTAL_FEATURES = 0
+VERSION = 0.21.69
 
 #----------
-# Minimum Requirements Check
+# Build flags
+#----------
+
+# flag to use experimental features that may not be part of the standard release.
+SHOULD_USE_EXPERIMENTAL_FEATURES = 0
+# flag to use serial ArduCor devices. Not all versions of Qt nor do all supported devices have serial.
+SHOULD_USE_SERIAL = 1
+# flag to build in support for shareutils. This allows sharing on mobile devices, but can conflict in mobile updates
+SHOULD_USE_SHARE_UTILS = 1
+# flag to build with static version of Qt
+BUILD_STATIC_CORLUMA = 1
+
+#----------
+# Build flag edge case handling
+#----------
+
+equals (QT_MAJOR_VERSION, 6) {
+    SHOULD_USE_SERIAL = 0
+    message("DEBUG: Overriding serial setting, QT 6.0.0 does not have qserialport.")
+}
+android:ios {
+    SHOULD_USE_SERIAL = 0
+    message("DEBUG: Overriding serial setting, mobile devices do not have serial ports.")
+}
+
+#----------
+# Minimum requirements Check
 #----------
 
 # check for proper version of Qt
 message("DEBUG: Qt Version: $$QT_MAJOR_VERSION _ $$QT_MINOR_VERSION arch: $$QT_ARCH " )
-equals (QT_MAJOR_VERSION, 5)  {
-  !greaterThan(QT_MINOR_VERSION, 12) {
-    error(ERROR: Qt5 is installed, but it is not a recent enough version. This project uses QT5.13 or later)
-  }
+!greaterThan(QT_MAJOR_VERSION, 4) {
+    !greaterThan(QT_MINOR_VERSION, 11) {
+        !greaterThan(QT_PATCH_VERSION, 4) {
+            error(ERROR: This project uses Qt 5.12.5 or later.)
+        }
+    }
 }
-equals(QT_MAJOR_VERSION, 4) {
-    error(ERROR: Qt5 or Qt6 is not installed. This project uses QT5.13 or later)
-}
-
-CONFIG += c++17 #adds C++17 support
 
 #----------
-# Dependencies check
+# Variable definition
+#----------
+
+# settings defines
+equals(SHOULD_USE_EXPERIMENTAL_FEATURES, 1) {
+    DEFINES += USE_EXPERIMENTAL_FEATURES=1
+}
+equals(SHOULD_USE_SERIAL, 1) {
+    DEFINES += USE_SERIAL=1
+}
+equals(SHOULD_USE_SHARE_UTILS, 1) {
+    DEFINES += USE_SHARE_UTILS=1
+}
+
+# qt version defines
+equals (QT_MAJOR_VERSION, 6) {
+    DEFINES += USE_QT_6=1
+}
+
+# environment defines
+android:ios {
+    DEFINES += MOBILE_BUILD=1
+}
+ios {
+    DEFINES += IOS_BUILD=1
+}
+
+# static build defines
+equals(BUILD_STATIC_CORLUMA, 1) {
+    # If building a static build, it is easiest to make a unique define for each environment.
+    # This way, you can load the proper plugins per environment using macros in code.
+    DEFINES += BUILD_STATIC_CORLUMA=1
+    linux {
+        DEFINES += CORLUMA_QT_STATIC_LINK_LINUX=1
+    }
+}
+
+# stores the app version for display in app
+DEFINES += APP_VERSION=\\\"$$VERSION\\\"
+
+#----------
+# Config
+#----------
+
+CONFIG += c++17 #adds C++17 support
+equals(BUILD_STATIC_CORLUMA, 1) {
+    message("DEBUG: Building static Qt.")
+    CONFIG += static
+}
+
+#----------
+# Dependencies
+#----------
+
+QT += core gui widgets network
+equals(SHOULD_USE_SERIAL, 1) {
+  QT += serialport
+}
+
+
+#----------
+# Desktop settings
 #----------
 
 # openSSL is not included in Qt due to legal restrictions
@@ -46,10 +129,10 @@ CONFIG += c++17 #adds C++17 support
 #
 # NOTE: This dependency is currently only used for discovering
 #       Philips Hues, It is an optional dependency for discovery
-#       although it is recommended as our testing shows it to be
-#       the quickest method of discovery.
+#       although it is recommended  since it is typically the
+#       quickest method of discovery.
 
-win32 {
+win32:win64 {
     # uses default path for openSSL in 32 and 64 bit
     contains(QT_ARCH, i386) {
         # message("Using windows 32 bit libraries")
@@ -64,30 +147,10 @@ win32 {
 
 
 #----------
-# Qt Linking
+# mobile settings
 #----------
-QT   += core gui widgets network
 
-# Does not set up the qt serial port on mobile devices
-# since they can't support it.
-equals(SHOULD_USE_SERIAL, 1) {
-  DEFINES += USE_SERIAL=1
-  QT += serialport
-}
-
-# if defined, use experimental features.
-equals(USE_EXPERIMENTAL_FEATURES, 1) {
-  DEFINES += USE_EXPERIMENTAL_FEATURES=1
-}
-
-# MOBILE_BUILD is a flag that gets set for only MOBILE targets.
-# This is useful for things liek QSerialPort, which don't translate
-# well to a mobile device and are not supported by Qt.
 android {
-   DEFINES += MOBILE_BUILD=1
-   # Android Manifests are the top level global xml for things like
-   # app name, icons, screen orientations, etc.
-   OTHER_FILES += android/AndroidManifest.xml
    ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
    # adds prebuilt libcrypto and libssl from https://github.com/KDAB/android_openssl
    # you can also build your own, see here: https://doc.qt.io/qt-5/android-openssl-support.html
@@ -109,10 +172,11 @@ android {
 
     ANDROID_VERSION_NAME = $$VERSION
     ANDROID_VERSION_CODE = $$droidVersionCode($$ANDROID_VERSION_NAME)
+
+    ANDROID_ABIS = armeabi-v7a arm64-v8a
 }
 
 ios {
-   DEFINES += MOBILE_BUILD=1 IOS_BUILD=1
    # Info.plist is the top level global configuration file for iOS
    # for things like app name, icons, screen orientations, etc.
    QMAKE_INFO_PLIST = ios/Info.plist
@@ -120,6 +184,18 @@ ios {
    ios_icon.files = $$files($$PWD/ios/icon/AppIcon*.png)
    QMAKE_BUNDLE_DATA += ios_icon
 }
+
+
+#----------
+# Resources
+#----------
+
+RESOURCES  = resources.qrc
+
+# Windows icon
+RC_ICONS = images/icon.ico
+# macOS icon
+ICON = images/icon.icns
 
 #----------
 # Sources
@@ -444,51 +520,44 @@ HEADERS  += cor/objects/light.h \
 
 
 #----------
-# Desktop builds only
+# Build specific sources
 #----------
 
 equals(SHOULD_USE_SERIAL, 1) {
- HEADERS  +=  comm/commserial.h
- SOURCES += comm/commserial.cpp
+    HEADERS += comm/commserial.h
+    SOURCES += comm/commserial.cpp
 }
 
 #--------
-# Native Share Sources
+# ShareUtils setup
 #--------
 
-# shareutils.hpp contains all the C++ code needed for calling the native shares on iOS and android
-HEADERS += shareutils/shareutils.hpp
+equals(SHOULD_USE_SHARE_UTILS, 1) {
+    # shareutils.hpp contains all the C++ code needed for calling the native shares on iOS and android
+    HEADERS += shareutils/shareutils.hpp
 
-ios {
-    # Objective-C++ files are needed for code that mixes objC and C++
-    OBJECTIVE_SOURCES += shareutils/iosshareutils.mm
+    ios {
+        # Objective-C++ files are needed for code that mixes objC and C++
+        OBJECTIVE_SOURCES += shareutils/iosshareutils.mm
 
-    # Headers for objC classes must be separate from a C++ header.
-    HEADERS += shareutils/docviewcontroller.hpp
+        # Headers for objC classes must be separate from a C++ header.
+        HEADERS += shareutils/docviewcontroller.hpp
+    }
+    android {
+        # Android Manifests are the top level global xml for things like
+        # app name, icons, screen orientations, etc.
+        OTHER_FILES += android/AndroidManifest.xml
+
+        # used for JNI calls
+        QT += androidextras
+
+        # the source file that contains the JNI and the android share implementation
+        SOURCES += shareutils/androidshareutils.cpp
+
+        # this contains the java code for and parsing and sending android intents, and
+        # the android activity required to read incoming intents.
+        OTHER_FILES += android/src/org/corluma/utils/QShareUtils.java \
+            android/src/org/corluma/utils/QSharePathResolver.java \
+            android/src/org/corluma/activity/QShareActivity.java
+    }
 }
-android {
-    # used for JNI calls
-    QT += androidextras
-
-    # the source file that contains the JNI and the android share implementation
-    SOURCES += shareutils/androidshareutils.cpp
-
-    # this contains the java code for and parsing and sending android intents, and
-    # the android activity required to read incoming intents.
-    OTHER_FILES += android/src/org/corluma/utils/QShareUtils.java \
-        android/src/org/corluma/utils/QSharePathResolver.java \
-        android/src/org/corluma/activity/QShareActivity.java
-
-    ANDROID_ABIS = armeabi-v7a arm64-v8a
-}
-
-
-#----------
-# Resources
-#----------
-
-RESOURCES  = resources.qrc
-
-RC_ICONS = images/icon.ico # Windows icon
-ICON = images/icon.icns    # Mac OS X icon
-

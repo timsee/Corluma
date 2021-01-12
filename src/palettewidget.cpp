@@ -55,7 +55,7 @@ void PaletteWidget::resize() {
     yPos += mLabel->height();
 
     mLightVector->setGeometry(0, yPos, width(), rowHeight * 4);
-    yPos += mLightVector->height();
+    // yPos += mLightVector->height();
 }
 
 

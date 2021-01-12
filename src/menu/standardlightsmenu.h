@@ -125,7 +125,7 @@ private:
         const cor::Group& group) {
         std::uint32_t reachableCount = 0u;
         std::uint32_t selectedCount = 0u;
-        for (auto light : mComm->lightsByIDs(group.lights())) {
+        for (const auto& light : mComm->lightsByIDs(group.lights())) {
             if (light.isReachable()) {
                 ++reachableCount;
                 auto result =
