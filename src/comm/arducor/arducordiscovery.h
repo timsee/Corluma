@@ -94,6 +94,9 @@ public:
     /// returns true if the IP already exists in either not found or found controllers.
     bool doesIPExist(const QString& ip);
 
+    /// load the json data.
+    bool loadJSON() override;
+
     /// string at the beginning of each discovery packet.
     const static QString kDiscoveryPacketIdentifier;
 
@@ -131,10 +134,6 @@ private:
     std::pair<cor::Controller, bool> controllerFromDiscoveryString(ECommType type,
                                                                    const QString& discovery,
                                                                    const QString& controllerName);
-
-
-    /// load the json data.
-    bool loadJSON();
 
     /// pointer to object that handles the HTTP communication
     CommHTTP* mHTTP;

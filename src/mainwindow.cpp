@@ -63,6 +63,8 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
       mChooseGroupWidget{new ChooseGroupWidget(this, mComm, mGroups)},
       mChooseMoodWidget{new ChooseMoodWidget(this, mComm, mGroups)},
       mGreyOut{new GreyOutOverlay(!mLeftHandMenu->alwaysOpen(), this)} {
+    mGroups->loadJSON();
+
     // set title
     setWindowTitle("Corluma");
 
@@ -91,6 +93,9 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
                                             this);
 
     mTouchListener = new TouchListener(this, mLeftHandMenu, mTopMenu, mData);
+    if (!mLeftHandMenu->alwaysOpen()) {
+        mTopMenu->pushInTapToSelectButton();
+    }
 
     setupBackend();
     loadPages();
@@ -675,7 +680,6 @@ void MainWindow::backButtonPressed() {
 void MainWindow::pushInLeftHandMenu() {
     mGreyOut->greyOut(true);
     mLeftHandMenu->pushIn();
-    mTopMenu->pushOutTapToSelectButton();
 }
 
 void MainWindow::pushOutLeftHandMenu() {
@@ -692,7 +696,6 @@ void MainWindow::keyPressEvent(QKeyEvent* event) {
 }
 
 void MainWindow::leftHandMenuButtonPressed(EPage page) {
-    bool ignorePushOut = false;
     reorderWidgets();
 
     if (mEditGroupPage->isOpen() || mEditMoodPage->isOpen()) {
@@ -711,9 +714,8 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
         pushOutChooseMoodPage();
     }
 
-    if (!ignorePushOut) {
-        pushInTapToSelectLights();
-    }
+    pushInTapToSelectLights();
+
 
 
     mMainViewport->pageChanged(page);
@@ -729,9 +731,7 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
         mMainViewport->lightsPage()->raiseControllerWidget();
     }
 
-    if (!ignorePushOut) {
-        pushOutLeftHandMenu();
-    }
+    pushOutLeftHandMenu();
 }
 
 void MainWindow::pushInFullPageWidget(QWidget* widget) {

@@ -97,6 +97,7 @@ public class QShareActivity extends QtActivity {
     @Override
     public void onDestroy() {
         // Log.d(TAG, "onDestroy QShareActivity");
+        super.onDestroy();
     }
 
     // we start Activity with result code

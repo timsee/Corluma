@@ -102,7 +102,7 @@ protected:
 
 private slots:
     /// handles when back button is pressed
-    void backButtonPressed(bool);
+    void handleBackButtonPressed(bool);
 
     /// handle when a light is deleted.
     void handleDeleteHueLight(QString);

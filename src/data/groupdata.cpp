@@ -11,7 +11,6 @@
 #include <QStandardPaths>
 
 GroupData::GroupData(QObject* parent) : QObject(parent), cor::JSONSaveData("save") {
-    loadJSON();
     mSubgroups.updateGroupAndRoomData(mGroupDict.items());
 }
 

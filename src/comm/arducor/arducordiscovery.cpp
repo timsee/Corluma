@@ -42,8 +42,6 @@ ArduCorDiscovery::ArduCorDiscovery(QObject* parent,
     connect(mStartupTimer, SIGNAL(timeout()), this, SLOT(startupTimerTimeout()));
     mStartupTimer->start(120000); // first two minutes listen to all packets
 
-    loadJSON();
-
     startDiscovery();
 }
 
@@ -388,7 +386,7 @@ bool ArduCorDiscovery::removeController(const QString& controllerName) {
 
 void ArduCorDiscovery::updateJSON(const cor::Controller& controller) {
     // check for changes by looping through json looking for a match.
-    QJsonArray array = mJsonData.array();
+    auto array = mJsonData.array();
     QJsonObject newJsonObject = cor::controllerToJson(controller);
     if (array.empty()) {
         array.push_back(newJsonObject);
@@ -397,7 +395,7 @@ void ArduCorDiscovery::updateJSON(const cor::Controller& controller) {
     } else {
         int i = 0;
         bool foundLight = false;
-        for (const auto& value : array) {
+        for (const auto& value : qAsConst(array)) {
             bool detectChanges = false;
             QJsonObject object = value.toObject();
             cor::Controller jsonController = cor::jsonToController(object);

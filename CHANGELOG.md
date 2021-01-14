@@ -1098,3 +1098,11 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Added the app's version string to the `SettingsPage`.
 - Added support for Qt5.12.5 builds.
 - Fixed miscellaneous bugs.
+
+### **v0.21.70**
+### Bug Fixes
+- Cleaned up the `AndroidManifest.xml` template.
+- Fixed a bug where the "Tap to select lights" button showed up on the `LightsPage`.
+- Removed the `IOS_BUILD` define.
+- Fixed a bug where defaults for groups were not displaying on moods.
+- Fixed miscellaneous bugs.

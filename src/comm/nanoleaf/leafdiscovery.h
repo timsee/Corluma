@@ -137,6 +137,9 @@ public:
     /// previous data
     void updateJSON(const nano::LeafMetadata& light);
 
+    /// load the json data.
+    bool loadJSON() override;
+
 private slots:
     /// all received UPnP packets are piped here to detect if they nanoleaf related
     void receivedUPnP(const QHostAddress& sender, const QString& payload);
@@ -180,9 +183,6 @@ private:
 
     /// used to listen to the UPnP packets for packets from a nanoleaf
     UPnPDiscovery* mUPnP;
-
-    /// load the json data.
-    bool loadJSON();
 };
 
 } // namespace nano

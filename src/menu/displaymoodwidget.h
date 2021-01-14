@@ -47,6 +47,8 @@ public:
 
     /// updates the group's UI elements.
     void updateMood(const cor::Mood& mood, bool moodExistsAlready) {
+        qDebug() << " add mood " << mood.name() << " and " << mGroupsLabel->isVisible()
+                 << " bunt what abotu this " << mood.defaults().empty();
         mMood = mComm->addMetadataToMood(mood);
         mName->setText(mMood.name());
         if (mMood.description().isEmpty()) {
@@ -108,7 +110,8 @@ public:
         yPosColumn1 += mLights->height();
 
         // column 2
-        if (mGroupsLabel->isVisible()) {
+        auto hasDefaults = !mMood.defaults().empty();
+        if (hasDefaults) {
             mGroupsLabel->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, buttonHeight);
         }
         yPosColumn2 += mLightsLabel->height();
@@ -116,15 +119,15 @@ public:
         int defaultsHeight;
         int descriptionHeight;
         int metadataHeight;
-        if (mGroupDefaults->isVisible() && mDescription->isVisible()) {
-            defaultsHeight = buttonHeight * 5;
+        if (hasDefaults && mDescription->isVisible()) {
+            defaultsHeight = buttonHeight * 3;
             descriptionHeight = buttonHeight * 2;
-            metadataHeight = buttonHeight * 3;
-        } else if (mGroupDefaults->isVisible() && !mDescription->isVisible()) {
-            defaultsHeight = buttonHeight * 5;
-            descriptionHeight = 0;
             metadataHeight = buttonHeight * 5;
-        } else if (!mGroupDefaults->isVisible() && mDescription->isVisible()) {
+        } else if (hasDefaults && !mDescription->isVisible()) {
+            defaultsHeight = buttonHeight * 3;
+            descriptionHeight = 0;
+            metadataHeight = buttonHeight * 7;
+        } else if (!hasDefaults && mDescription->isVisible()) {
             defaultsHeight = 0;
             descriptionHeight = buttonHeight * 5;
             metadataHeight = buttonHeight * 5;
@@ -133,7 +136,9 @@ public:
             descriptionHeight = 0;
             metadataHeight = buttonHeight * 10;
         }
-        if (mGroupDefaults->isVisible()) {
+        if (hasDefaults) {
+            mGroupsLabel->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, buttonHeight);
+
             QRect groupStatesRect(xSecondColumnStart, yPosColumn2, columnWidth, defaultsHeight);
             mGroupDefaults->resize(groupStatesRect, mRowHeight);
             yPosColumn2 += mGroupDefaults->height();

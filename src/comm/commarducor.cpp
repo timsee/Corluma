@@ -73,6 +73,7 @@ CommArduCor::CommArduCor(QObject* parent) : QObject(parent) {
                                       mSerial.get()
 #endif
     );
+    mDiscovery->loadJSON();
 
     // make list of not found devices
     for (const auto& controller : mDiscovery->undiscoveredControllers()) {

@@ -35,7 +35,7 @@ void FloatingLayout::highlightButton(const QString& key) {
 
     auto result = std::find(mNames.begin(), mNames.end(), key);
     int index = int(std::distance(mNames.begin(), result));
-    buttonPressed(index);
+    handleButtonPressed(index);
 
     blockSignals(false);
 }
@@ -148,7 +148,9 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             mButtons[i]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
             mLayout->addWidget(mButtons[i]);
 
-            connect(mButtons[i], &QPushButton::clicked, [this, i]() { buttonPressed(int(i)); });
+            connect(mButtons[i], &QPushButton::clicked, [this, i]() {
+                handleButtonPressed(int(i));
+            });
 
             if (!isALightsButton(i)) {
                 // resize icon
@@ -278,7 +280,7 @@ void FloatingLayout::move(QPoint topRightPoint) {
 // Slots
 //--------------------------------
 
-void FloatingLayout::buttonPressed(int buttonIndex) {
+void FloatingLayout::handleButtonPressed(int buttonIndex) {
     // uncheck all other buttons
     for (std::size_t i = 0u; i < mButtons.size(); ++i) {
         mButtons[i]->setChecked(false);
@@ -332,7 +334,7 @@ void FloatingLayout::handleRectangleFontSize() {
         return;
     }
 
-#ifdef IOS_BUILD
+#if defined(Q_OS_IOS)
     const auto& text = QString("NanoLeaf");
     // calcuate the text's size
     auto systemFontWidth = widget->fontMetrics().boundingRect(text).width();
@@ -356,5 +358,5 @@ void FloatingLayout::handleRectangleFontSize() {
             button->setFont(font);
         }
     }
-#endif // IOS_BUILD
+#endif // Q_OS_IOS
 }

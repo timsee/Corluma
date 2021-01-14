@@ -17,8 +17,11 @@
 #include "comm/commhue.h"
 #include "listlightwidget.h"
 #include "mainwindow.h"
-#include "shareutils/shareutils.hpp"
 #include "utils/qt.h"
+
+#ifdef USE_SHARE_UTILS
+#include "shareutils/shareutils.hpp"
+#endif
 
 #define SHOW_APP_VERSION
 //#define USE_DEBUG_OPTIONS
@@ -208,8 +211,10 @@ void SettingsPage::loadButtonClicked() {
 
 void SettingsPage::saveButtonClicked() {
 #if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
+#ifdef USE_SHARE_UTILS
     int requestID = 7;
-    cor::shareUtils->sendFile(mGroups->savePath(), "CorlumaSave", "application/json", requestID);
+    cor::shareUtils()->sendFile(mGroups->savePath(), "CorlumaSave", "application/json", requestID);
+#endif
 #else
     auto fileName = QFileDialog::getSaveFileName(this,
                                                  tr("Save Group Data"),

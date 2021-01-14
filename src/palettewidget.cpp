@@ -15,7 +15,8 @@ PaletteWidget::PaletteWidget(const QString& name, EPalette palette, QWidget* par
     : QWidget(parent),
       mLightVector{new cor::LightVectorWidget(3, 3, true, this)},
       mLabel{new QLabel(name, this)},
-      mPalette{palette} {
+      mPalette{palette},
+      mIsChecked{false} {
     mLabel->setWordWrap(true);
     mLabel->setStyleSheet("background-color:rgba(0,0,0,0);");
 
@@ -43,7 +44,7 @@ PaletteWidget::PaletteWidget(const QString& name, EPalette palette, QWidget* par
 }
 
 void PaletteWidget::setChecked(EPalette palette) {
-    mIsChecked = palette == mPalette;
+    mIsChecked = (palette == mPalette);
     update();
 }
 

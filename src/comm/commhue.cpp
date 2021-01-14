@@ -37,6 +37,7 @@ CommHue::CommHue(UPnPDiscovery* UPnP, GroupData* groups)
             SLOT(replyFinished(QNetworkReply*)));
 
     mDiscovery = new hue::BridgeDiscovery(this, UPnP, groups);
+    mDiscovery->loadJSON();
 
     // this avoids making a bunch of file writes when each light is found in the hue's save data.
     for (const auto& bridge : mDiscovery->notFoundBridges()) {

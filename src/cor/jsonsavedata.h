@@ -32,6 +32,9 @@ public:
     /// true if save file exists, false if its never been saved
     bool saveExists();
 
+    /// load the json data into app data
+    virtual bool loadJSON() = 0;
+
 protected:
     /*!
      * \brief removeJSONObject remove the json object from the array with the given key and value
@@ -76,9 +79,6 @@ protected:
 
     /// check if JSON data exists.
     bool checkForJSON();
-
-    /// load the json data into app data
-    virtual bool loadJSON() = 0;
 
     /// directory for saving the true version of the file
     QString mSaveDirectory;

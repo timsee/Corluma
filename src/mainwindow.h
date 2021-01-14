@@ -31,8 +31,11 @@
 #include "nowifiwidget.h"
 #include "routinebuttonswidget.h"
 #include "settingspage.h"
-#include "shareutils/shareutils.hpp"
 #include "touchlistener.h"
+
+#ifdef USE_SHARE_UTILS
+#include "shareutils/shareutils.hpp"
+#endif
 
 namespace cor {
 class StateObserver;

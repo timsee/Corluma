@@ -32,8 +32,6 @@ LeafDiscovery::LeafDiscovery(QObject* parent, uint32_t interval)
     mStartupTimer->setSingleShot(true);
     connect(mStartupTimer, SIGNAL(timeout()), this, SLOT(startupTimerTimeout()));
     mStartupTimer->start(120000); // first two minutes listen to all packets
-
-    loadJSON();
 }
 
 void LeafDiscovery::foundNewAuthToken(const nano::LeafMetadata& newController,
@@ -365,7 +363,7 @@ void LeafDiscovery::addIP(const QString& ip) {
 }
 
 bool LeafDiscovery::doesIPExist(const QString& IP) {
-    QStringList pieces = IP.split(":");
+    // QStringList pieces = IP.split(":");
     // auto splitIP = pieces[1];
     for (const auto& notFoundLight : mNotFoundLights) {
         if (notFoundLight.IP().contains(IP)) {

@@ -171,10 +171,6 @@ TopMenu::TopMenu(QWidget* parent,
         selectLightsWidth = textWidth;
     }
     mSelectLightsButton->setFixedSize(selectLightsWidth, int(mSize.height() * 0.5));
-    mSelectLightsButton->setGeometry(mSelectLightsButton->width(),
-                                     mStartSelectLightsButton,
-                                     mSelectLightsButton->width(),
-                                     mSelectLightsButton->height());
 
     showFloatingLayout(mCurrentPage);
 
@@ -671,7 +667,7 @@ void TopMenu::menuButtonPressed() {
 
 void TopMenu::pushInTapToSelectButton() {
     if (!mSelectLightsButton->isIn() && !mMainWindow->leftHandMenu()->alwaysOpen() && mData->empty()
-        && mCurrentPage != EPage::lightsPage && mCurrentPage != EPage::settingsPage) {
+        && mCurrentPage != EPage::lightsPage) {
         mSelectLightsButton->pushIn(mStartSelectLightsButton);
     }
 }

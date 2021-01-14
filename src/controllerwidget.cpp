@@ -12,7 +12,7 @@ ControllerWidget::ControllerWidget(QWidget* parent, CommLayer* comm, cor::LightL
       mArduCorWidget{new DisplayArduCorControllerWidget(this, comm, selectedLights)},
       mNanoleafWidget{new DisplayNanoleafControllerWidget(this, comm)},
       mHueBridgeWidget{new DisplayHueBridgeWidget(this, comm, selectedLights)} {
-    connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(backButtonPressed(bool)));
+    connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(handleBackButtonPressed(bool)));
 
     connect(mNanoleafWidget,
             SIGNAL(deleteNanoleaf(QString, QString)),
@@ -67,7 +67,7 @@ void ControllerWidget::renderUI() {
 }
 
 
-void ControllerWidget::backButtonPressed(bool) {
+void ControllerWidget::handleBackButtonPressed(bool) {
     emit backButtonPressed();
 }
 

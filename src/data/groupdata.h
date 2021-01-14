@@ -197,6 +197,9 @@ public:
     /// computes the parent groups, subgroups, and orphan data
     void updateGroupMetadata();
 
+    /// loads json data into app data
+    bool loadJSON() override;
+
 public slots:
 
     /// adds a light to group metadata
@@ -223,9 +226,6 @@ signals:
     void newMoodAdded(QString);
 
 private:
-    /// loads json data into app data
-    bool loadJSON();
-
     /*!
      * \brief parseMood Takes a JSON representation of a mood and converts it to a std::vector
      *        of devices and then adds it to the mMoodList.

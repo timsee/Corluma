@@ -9,13 +9,12 @@
 #
 #-------------------------------------------------
 
-TARGET = corluma
-# capitalize the target name on certain platforms
-win32:win64:android:ios {
-    TARGET = Corluma
+TARGET = Corluma
+linux:!android {
+    TARGET = corluma
 }
 TEMPLATE = app
-VERSION = 0.21.69
+VERSION = 0.21.70
 
 #----------
 # Build flags
@@ -28,7 +27,7 @@ SHOULD_USE_SERIAL = 1
 # flag to build in support for shareutils. This allows sharing on mobile devices, but can conflict in mobile updates
 SHOULD_USE_SHARE_UTILS = 1
 # flag to build with static version of Qt
-BUILD_STATIC_CORLUMA = 1
+BUILD_STATIC_CORLUMA = 0
 
 #----------
 # Build flag edge case handling
@@ -38,11 +37,15 @@ equals (QT_MAJOR_VERSION, 6) {
     SHOULD_USE_SERIAL = 0
     message("DEBUG: Overriding serial setting, QT 6.0.0 does not have qserialport.")
 }
-android:ios {
+#todo: why isnt this getting caught in android
+android {
     SHOULD_USE_SERIAL = 0
-    message("DEBUG: Overriding serial setting, mobile devices do not have serial ports.")
+    message("DEBUG: Overriding serial setting, android devices do not have serial ports.")
 }
-
+ios {
+    SHOULD_USE_SERIAL = 0
+    message("DEBUG: Overriding serial setting, ios devices do not have serial ports.")
+}
 #----------
 # Minimum requirements Check
 #----------
@@ -78,11 +81,11 @@ equals (QT_MAJOR_VERSION, 6) {
 }
 
 # environment defines
-android:ios {
+android {
     DEFINES += MOBILE_BUILD=1
 }
 ios {
-    DEFINES += IOS_BUILD=1
+    DEFINES += MOBILE_BUILD=1
 }
 
 # static build defines

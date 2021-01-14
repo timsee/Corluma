@@ -157,6 +157,9 @@ public:
     /// true if any NUPnP traffic has been received, false otherwise.
     bool receivedNUPnPTraffic() { return mReceivedNUPnPTraffic; }
 
+    /// load the json data.
+    bool loadJSON() override;
+
 private slots:
 
     /*!
@@ -247,9 +250,6 @@ private:
     /// parses the initial full packet from a Bridge, which contains all its lights, schedules, and
     /// groups info.
     hue::Bridge parseInitialUpdate(hue::Bridge bridge, const QJsonObject& json);
-
-    /// load the json data.
-    bool loadJSON();
 
     /// handles when a NUPnP reply has provided a QJSONDocument. Parses the document and determines
     /// what lights to add to discovery

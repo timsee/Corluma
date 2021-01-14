@@ -142,7 +142,7 @@ int main(int argc, char* argv[]) {
 
     // disable experimental features if not experimental features are not enabled
 #ifndef USE_EXPERIMENTAL_FEATURES
-    settings.setValue(cor::kUseTimeoutKey, QString::number(0));
+    settings.setValue(cor::kUseTimeoutKey, QString::number(int(false)));
 #endif // USE_EXPERIMENTAL_FEATURES
 
     //--------------------

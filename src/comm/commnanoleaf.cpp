@@ -70,6 +70,7 @@ CommNanoleaf::CommNanoleaf() : CommType(ECommType::nanoleaf), mUPnP{nullptr} {
     mStateUpdateInterval = 1000;
 
     mDiscovery = new nano::LeafDiscovery(this, 4000);
+    mDiscovery->loadJSON();
     // make list of not found devices
     for (const auto& nanoleaf : mDiscovery->notFoundLights()) {
         addLight(nano::LeafLight(nanoleaf));

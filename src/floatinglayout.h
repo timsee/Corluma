@@ -123,7 +123,7 @@ private slots:
      * \brief buttonPressed handles whenever any button is clicked. Converts the click into a signal
      * of the button's name.
      */
-    void buttonPressed(int);
+    void handleButtonPressed(int);
 
 private:
     /// preset data for palettes from ArduCor

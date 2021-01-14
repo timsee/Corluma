@@ -290,7 +290,7 @@ bool LightList::addLight(cor::Light light) {
         mLights.push_back(light);
         emit dataUpdate();
     } else {
-        qDebug() << " not adding because light  isn't reachable " << light.name();
+        // qDebug() << " not adding because light  isn't reachable " << light.name();
     }
     return false;
 }

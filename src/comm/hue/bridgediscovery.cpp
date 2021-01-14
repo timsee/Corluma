@@ -47,8 +47,6 @@ BridgeDiscovery::BridgeDiscovery(QObject* parent, UPnPDiscovery* UPnP, GroupData
     connect(mStartupTimer, SIGNAL(timeout()), this, SLOT(startupTimerTimeout()));
     mStartupTimer->start(120000); // first two minutes listen to all packets
 
-    loadJSON();
-
     startDiscovery();
 }
 
