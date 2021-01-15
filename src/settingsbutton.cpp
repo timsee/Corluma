@@ -13,14 +13,13 @@
 
 #include "utils/qt.h"
 
-SettingsButton::SettingsButton(const QString& title, int minHeight, QWidget* parent)
+SettingsButton::SettingsButton(const QString& title, QWidget* parent)
     : QWidget(parent),
       mHighlightTimer(new QTimer(this)) {
     mHighlightTimer->setSingleShot(true);
     connect(mHighlightTimer, SIGNAL(timeout()), this, SLOT(removeHighlight()));
 
     mIsHighlighted = false;
-    setMinimumHeight(minHeight);
 
     mTitle = new QLabel(title);
     cor::changeLabelToTitleLabel(mTitle);

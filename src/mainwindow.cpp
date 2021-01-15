@@ -163,6 +163,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     mMainViewport->moodPage()->moodDetailedWidget()->changeRowHeight(mLeftHandMenu->height() / 18);
     mMainViewport->timeoutPage()->changeRowHeight(mLeftHandMenu->height() / 18);
     mMainViewport->lightsPage()->changeRowHeight(mLeftHandMenu->height() / 18);
+    mMainViewport->settingsPage()->changeRowHeight(mLeftHandMenu->height() / 13);
     mLeftHandMenu->changeRowHeight(mLeftHandMenu->height() / 20);
 }
 

@@ -19,7 +19,7 @@ class SettingsButton : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit SettingsButton(const QString& title, int minHeight, QWidget* parent);
+    explicit SettingsButton(const QString& title, QWidget* parent);
 
     /*!
      * \brief shouldHightlght highlights or unhiglights the button.

@@ -14,7 +14,6 @@
 #include <QMessageBox>
 #include <QPainter>
 #include <QStyleOption>
-#include <QTextEdit>
 #include <QWidget>
 #include "comm/arducor/controller.h"
 #include "comm/commhue.h"

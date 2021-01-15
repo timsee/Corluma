@@ -55,10 +55,10 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
         // extremely thin aspect ratios will likely make the rectangle still pretty thin, so account
         // for that
         auto ratio = float(size.height()) / size.width();
-        auto width = size.width() * 0.2f;
-        auto height = size.height() * 0.08f;
+        auto width = size.width() * 0.15f;
+        auto height = size.height() * 0.07f;
         if (ratio > 1.3f) {
-            width = size.width() * 0.25f;
+            width = size.width() * 0.2f;
             height = size.height() * 0.1f;
         }
         size = QSize(int(width), int(height));

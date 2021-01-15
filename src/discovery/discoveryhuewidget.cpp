@@ -341,6 +341,8 @@ void DiscoveryHueWidget::resize() {
             totalButtons++;
         }
     }
+    yPos += rowHeight;
+    bool buttonsShown = false;
     if (totalButtons < 2) {
         for (auto button : mBridgeButtons) {
             if (button != nullptr) {
@@ -348,6 +350,7 @@ void DiscoveryHueWidget::resize() {
             }
         }
     } else {
+        buttonsShown = true;
         int buttonCount = 0;
         for (auto button : mBridgeButtons) {
             if (button != nullptr) {
@@ -356,8 +359,8 @@ void DiscoveryHueWidget::resize() {
                 buttonCount++;
             }
         }
+        yPos += rowHeight;
     }
-    yPos += rowHeight;
 
     std::uint32_t index = 0u;
     for (auto widget : mBridgeWidgets) {
@@ -367,7 +370,11 @@ void DiscoveryHueWidget::resize() {
             } else {
                 widget->setVisible(false);
             }
-            widget->setGeometry(int(width() * 0.025), yPos, int(width() * 0.95), rowHeight * 9);
+            auto height = rowHeight * 9;
+            if (buttonsShown) {
+                height = rowHeight * 8;
+            }
+            widget->setGeometry(int(width() * 0.025), yPos, int(width() * 0.95), height);
         }
         index++;
     }

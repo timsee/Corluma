@@ -17,12 +17,8 @@ DiscoveryNanoLeafWidget::DiscoveryNanoLeafWidget(QWidget* parent,
                                                  cor::LightList* selectedLights,
                                                  ControllerWidget* controllerPage)
     : DiscoveryTypeWidget(parent, comm, controllerPage),
-      mSelectedLights{selectedLights} {
-    mLabel = new QLabel(this);
-    mLabel->setWordWrap(true);
-    mLabel->setText("Looking for NanoLeaf...");
-    mLabel->setAlignment(Qt::AlignLeft | Qt::AlignBottom);
-
+      mSelectedLights{selectedLights},
+      mLabel{new QLabel(this)} {
     mListWidget = new cor::ListWidget(this, cor::EListType::grid);
     mListWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     QScroller::grabGesture(mListWidget->viewport(), QScroller::LeftMouseButtonGesture);
@@ -62,29 +58,6 @@ void DiscoveryNanoLeafWidget::handleDiscovery(bool) {
     }
 
     removeDuplicatedNanoleafs();
-
-    ENanoleafDiscoveryState discoveryState = mComm->nanoleaf()->discovery()->state();
-    switch (discoveryState) {
-        case ENanoleafDiscoveryState::connectionError:
-        case ENanoleafDiscoveryState::discoveryOff:
-            mLabel->setText("Connection Error");
-            break;
-        case ENanoleafDiscoveryState::lookingForPreviousNanoleafs:
-            mLabel->setText("Testing previous connection data..");
-            break;
-        case ENanoleafDiscoveryState::nothingFound:
-            mLabel->setText("Looking for a NanoLeaf Aurora. This may take up to a minute...");
-            break;
-        case ENanoleafDiscoveryState::unknownNanoleafsFound:
-            mLabel->setText("Nanoleaf found!");
-            break;
-        case ENanoleafDiscoveryState::someNanoleafsConnected:
-            mLabel->setText("Additional Nanoleaf found!");
-            break;
-        case ENanoleafDiscoveryState::allNanoleafsConnected:
-            mLabel->setText("");
-            break;
-    }
 
     // handle button updates
     if (mComm->discoveryErrorsExist(EProtocolType::nanoleaf)) {
@@ -191,7 +164,7 @@ void DiscoveryNanoLeafWidget::resize() {
     mGreyout->resize();
     mListWidget->mainWidget()->setFixedWidth(width());
 
-    mListWidget->setPreferredWidgetHeight(height() / 3);
+    mListWidget->setPreferredWidgetHeight(height() / 2.7);
     mListWidget->resizeWidgets();
 
     resizeHelpView();

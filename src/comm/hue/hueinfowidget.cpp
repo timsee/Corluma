@@ -11,7 +11,7 @@
 #include <QStyleOption>
 #include <QtCore>
 #include <QtGui>
-
+#include "cor/protocols.h"
 #include "utils/qt.h"
 
 namespace hue {
@@ -26,7 +26,7 @@ HueInfoWidget::HueInfoWidget(HueMetadata light, QWidget* parent)
       mName{new QLabel(light.name(), this)},
       mModelID{new QLabel("<b>Model:</b>  " + light.modelID(), this)},
       mSoftwareVersion{new QLabel("<b>Software:</b>  " + light.softwareVersion(), this)},
-      mType{new QLabel(cor::hueTypeToString(light.hueType()), this)},
+      mType{new QLabel(hardwareTypeToString(hue::modelToHardwareType(light.modelID())), this)},
       mUniqueID{new QLabel("<b>ID:</b>  " + light.uniqueID(), this)},
       mChangeNameButton{new QPushButton("Change Name", this)},
       mDeleteButton{new QPushButton("Delete Light", this)},

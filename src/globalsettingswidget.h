@@ -98,12 +98,6 @@ private:
      */
     void checkCheckBoxes();
 
-    /// value for minimum possible height of widget
-    int mMinHeight;
-
-    /// value for space between widgets
-    int mSpacerPixels;
-
     //----------------
     // Labels
     //----------------

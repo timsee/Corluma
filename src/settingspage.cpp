@@ -37,7 +37,6 @@ SettingsPage::SettingsPage(QWidget* parent,
       mGroups(parser),
       mScrollArea{new QScrollArea(this)},
       mScrollAreaWidget{new QWidget(this)},
-      mScrollLayout{new QVBoxLayout(mScrollAreaWidget)},
       mGlobalWidget{new GlobalSettingsWidget(mScrollAreaWidget, appSettings)},
       mAppVersionLabel{new QLabel(APP_VERSION, this)},
       mCurrentWebView{ECorlumaWebView::none},
@@ -56,7 +55,8 @@ SettingsPage::SettingsPage(QWidget* parent,
       mButtons{mTitles.size()},
       mCopyrightWidget{new cor::WebView("Copyright", ":/resources/Copyright.html", this)},
       mComm{comm},
-      mGreyOut{new GreyOutOverlay(false, parentWidget())} {
+      mGreyOut{new GreyOutOverlay(false, parentWidget())},
+      mRowHeight{10u} {
 
 
 #ifndef SHOW_APP_VERSION
@@ -80,33 +80,25 @@ SettingsPage::SettingsPage(QWidget* parent,
     mScrollAreaWidget->setStyleSheet("QWidget#contentWidget{ background-color: #201F1F; } QLabel { "
                                      "background-color: #201F1F; } ");
 
-
-    mScrollLayout->setSpacing(7);
-    mScrollLayout->setContentsMargins(9, 9, 9, 9);
-    mScrollAreaWidget->setLayout(mScrollLayout);
-
     //------------
     // Scroll Area Contents
     //------------
 
-    std::uint32_t sectionIndex = 0;
-    for (std::size_t x = 0u; x < mTitles.size(); ++x) {
+    auto sectionIndex = 0u;
+    for (auto x = 0u; x < mTitles.size(); ++x) {
         if (mTitles[x] == "Backup Save Data" || mTitles[x] == "Mock Connection"
             || mTitles[x] == "Copyright") {
-            mSectionLabels[sectionIndex] = new QLabel(mSectionTitles[sectionIndex].c_str());
+            mSectionLabels[sectionIndex] =
+                new QLabel(mSectionTitles[sectionIndex].c_str(), mScrollAreaWidget);
             mSectionLabels[sectionIndex]->setStyleSheet(
                 "font:bold; font-size:20pt; color:rgba(61, 142, 201,255);");
-            mScrollLayout->addWidget(mSectionLabels[sectionIndex]);
             sectionIndex++;
         }
-        auto minHeight = height() / 10;
-        mButtons[x] = new SettingsButton(QString(mTitles[x].c_str()), minHeight, this);
-        mButtons[x]->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+        mButtons[x] = new SettingsButton(QString(mTitles[x].c_str()), mScrollAreaWidget);
         connect(mButtons[x],
                 SIGNAL(buttonPressed(QString)),
                 this,
                 SLOT(settingsButtonPressed(QString)));
-        mScrollLayout->addWidget(mButtons[x]);
     }
 
     mCopyrightWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -117,7 +109,6 @@ SettingsPage::SettingsPage(QWidget* parent,
     // Global Widget
     //------------
     mGlobalWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mScrollLayout->addWidget(mGlobalWidget);
 
     connect(mGreyOut, SIGNAL(clicked()), this, SLOT(greyOutClicked()));
 
@@ -133,6 +124,7 @@ SettingsPage::SettingsPage(QWidget* parent,
 void SettingsPage::showWidget() {
     raise();
     isOpen(true);
+    resize();
 
     mGlobalWidget->updateUI();
     mGlobalWidget->show();
@@ -147,8 +139,6 @@ void SettingsPage::showWidget() {
     // load backup
     mButtons[2]->shouldEnable(anyDiscovered);
 #endif
-    mGlobalWidget->resize();
-    mCopyrightWidget->setGeometry(geometry());
 }
 
 void SettingsPage::hideWidget() {
@@ -156,21 +146,25 @@ void SettingsPage::hideWidget() {
 }
 
 void SettingsPage::resizeEvent(QResizeEvent*) {
+    resize();
+}
+
+void SettingsPage::resize() {
     // resize the app version label
     QFontMetrics fm(mAppVersionLabel->font());
-    auto textWidth = int(fm.horizontalAdvance(mAppVersionLabel->text()) * 1.1);
+    auto textWidth = int(fm.horizontalAdvance(mAppVersionLabel->text()) * 1.3);
+    auto textHeight = int(fm.boundingRect(mAppVersionLabel->text()).height() * 1.3);
     mAppVersionLabel->setGeometry(this->width() - textWidth,
-                                  this->height() - mAppVersionLabel->height(),
+                                  this->height() - textHeight,
                                   textWidth,
-                                  mAppVersionLabel->height());
+                                  textHeight);
 
     mScrollArea->setGeometry(this->width() * 0.03,
                              this->height() * 0.03,
                              width() * 0.94,
                              height() * 0.97 - mAppVersionLabel->height());
 
-    mScrollAreaWidget->setFixedWidth(int(width() * 0.9f));
-    // mScrollAreaWidget->setFixedHeight(1.1 * (mGlobalWidget->y() + mGlobalWidget->height()));
+    resizeScrollArea();
 
     QRect shownWidget = geometry();
     QRect hiddenWidget = QRect(0, geometry().height(), width(), height());
@@ -186,10 +180,31 @@ void SettingsPage::resizeEvent(QResizeEvent*) {
             mCopyrightWidget->setGeometry(hiddenWidget);
     }
 
-
+    mGlobalWidget->resize();
     mGreyOut->resize();
 }
 
+void SettingsPage::resizeScrollArea() {
+    auto yPos = 0;
+    auto sectionIndex = 0;
+    auto xSpacer = width() * 0.02;
+    for (std::size_t x = 0u; x < mTitles.size(); ++x) {
+        if (mTitles[x] == "Backup Save Data" || mTitles[x] == "Mock Connection"
+            || mTitles[x] == "Copyright") {
+            mSectionLabels[sectionIndex]->setGeometry(xSpacer,
+                                                      yPos,
+                                                      mScrollAreaWidget->width() - xSpacer,
+                                                      mRowHeight * 0.9);
+            yPos += mSectionLabels[sectionIndex]->height();
+            sectionIndex++;
+        }
+        mButtons[x]->setGeometry(0, yPos, mScrollAreaWidget->width(), mRowHeight);
+        yPos += mButtons[x]->height();
+    }
+    mGlobalWidget->setGeometry(0, yPos, mScrollAreaWidget->width() * 0.9, mRowHeight * 3);
+    yPos += mGlobalWidget->height();
+    mScrollAreaWidget->setFixedSize(QSize(int(width() * 0.9f), yPos));
+}
 
 void SettingsPage::loadButtonClicked() {
     QFileDialog dialog(this);

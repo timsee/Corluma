@@ -153,7 +153,7 @@ private:
     /// displays the current software version of the Hue Light.
     QLabel* mSoftwareVersion;
 
-    /// displays the type of the Hue Light, such as "extended color lamp"
+    /// displays the type of the Hue Light, such as "bloom"
     QLabel* mType;
 
     /// unique ID for Hue Light hardware.

@@ -15,11 +15,6 @@
 GlobalSettingsWidget::GlobalSettingsWidget(QWidget* parent, AppSettings* appSettings)
     : QWidget(parent),
       mAppSettings(appSettings) {
-    mSpacerPixels = 5;
-
-    // set margins as spacer * 2
-    setContentsMargins(mSpacerPixels * 2, mSpacerPixels * 2, mSpacerPixels * 2, mSpacerPixels * 2);
-
     //-----------
     // Labels
     //-----------
@@ -29,8 +24,6 @@ GlobalSettingsWidget::GlobalSettingsWidget(QWidget* parent, AppSettings* appSett
 
     mEnabledConnectionsLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mEnabledConnectionsLabel->setStyleSheet(labelStyleSheet);
-
-    mMinHeight = height() / 8;
 
     //-----------
     // Enabled Connections
@@ -145,39 +138,29 @@ void GlobalSettingsWidget::timeoutCheckboxPressed(bool isChecked) {
 }
 
 void GlobalSettingsWidget::resize() {
-    int currentY = mSpacerPixels;
+    auto spacer = height() * 0.02;
+    int currentY = spacer;
 
     if (mEnabledConnectionsLabel->isVisible()) {
-        mEnabledConnectionsLabel->setGeometry(mSpacerPixels,
+        mEnabledConnectionsLabel->setGeometry(spacer * 3,
                                               currentY,
                                               mEnabledConnectionsLabel->width(),
                                               mEnabledConnectionsLabel->height());
-        currentY += mEnabledConnectionsLabel->height() + mSpacerPixels;
+        currentY += mEnabledConnectionsLabel->height() + spacer;
     }
 
-    auto buttonHeight = int(width() * 0.2f);
-    auto buttonWidth = int(width() * 0.2f);
-    const auto& appSize = cor::applicationSize();
-    auto ratio = float(appSize.height()) / appSize.width();
-    if (ratio > 1.3f) {
-        buttonWidth = int(width() * 0.3f);
-    }
+    auto buttonSide = (height() - currentY) * 0.8;
+    buttonSide = std::min(buttonSide, width() * 0.25);
 
-    mHueButton->setGeometry(mSpacerPixels, currentY, buttonWidth, buttonHeight);
+    mHueButton->setGeometry(spacer * 3, currentY, buttonSide, buttonSide);
 
-    mNanoLeafButton->setGeometry(mHueButton->geometry().x() + mHueButton->width() + mSpacerPixels,
+    mNanoLeafButton->setGeometry(mHueButton->geometry().x() + mHueButton->width() + spacer,
                                  currentY,
-                                 buttonWidth,
-                                 buttonHeight);
+                                 buttonSide,
+                                 buttonSide);
 
-    mArduCorButton->setGeometry(
-        mNanoLeafButton->geometry().x() + mNanoLeafButton->width() + mSpacerPixels,
-        currentY,
-        buttonWidth,
-        buttonHeight);
-
-    currentY += mHueButton->height() + 2 * mSpacerPixels;
-
-    setFixedHeight(currentY);
-    parentWidget()->adjustSize();
+    mArduCorButton->setGeometry(mNanoLeafButton->geometry().x() + mNanoLeafButton->width() + spacer,
+                                currentY,
+                                buttonSide,
+                                buttonSide);
 }

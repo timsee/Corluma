@@ -1106,3 +1106,9 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Removed the `IOS_BUILD` define.
 - Fixed a bug where defaults for groups were not displaying on moods.
 - Fixed miscellaneous bugs.
+
+### **v0.21.71**
+### Bug Fixes
+- Fixed spacing on `SettingsPage`.
+- Fixed display of the model type on `HueInfoListWidget`.
+- Fixed miscellaneous bugs.

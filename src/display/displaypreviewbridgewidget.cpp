@@ -68,23 +68,30 @@ void DisplayPreviewBridgeWidget::updateBridge(const hue::Bridge& bridge) {
 void DisplayPreviewBridgeWidget::handleBridgeState(EBridgeDiscoveryState state) {
     auto min = width();
     auto width = int(min * 0.333f);
-    if (state != mState
-        || ((state != EBridgeDiscoveryState::testingConnectionInfo)
-            && mBridgePixmap.size() != QSize(width, width))) {
+    auto imageSize = QSize(width, width);
+    if (state != EBridgeDiscoveryState::connected) {
+        imageSize = QSize(width * 2, width * 2);
+    }
+    if (state != mState || (mBridgePixmap.size() != QSize(width, width))) {
         if (state == EBridgeDiscoveryState::connected) {
             mBridgePixmap = QPixmap(":images/Hue-Bridge.png");
-            mBridgePixmap =
-                mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            mBridgePixmap = mBridgePixmap.scaled(imageSize.width(),
+                                                 imageSize.height(),
+                                                 Qt::KeepAspectRatio,
+                                                 Qt::SmoothTransformation);
             mImage->setPixmap(mBridgePixmap);
             mCheckBox->setVisible(true);
         } else if (state == EBridgeDiscoveryState::lookingForUsername) {
             mBridgePixmap = QPixmap(":images/pressHueBridgeImage.png");
-            mBridgePixmap =
-                mBridgePixmap.scaled(width, width, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            mBridgePixmap = mBridgePixmap.scaled(imageSize.width(),
+                                                 imageSize.height(),
+                                                 Qt::KeepAspectRatio,
+                                                 Qt::SmoothTransformation);
             mImage->setPixmap(mBridgePixmap);
             mCheckBox->setVisible(false);
         } else if (state == EBridgeDiscoveryState::lookingForResponse
                    || state == EBridgeDiscoveryState::testingConnectionInfo) {
+            mMovie->setScaledSize(imageSize);
             mImage->setMovie(mMovie);
             mMovie->start();
             mCheckBox->setVisible(false);
@@ -157,18 +164,27 @@ void DisplayPreviewBridgeWidget::resize() {
     yPosSecondColumn += mNameWidget->height();
     yPosFirstColumn += mNameWidget->height();
 
-    mImage->setGeometry(xSpacer, yPosFirstColumn, columnWidth, rowHeight * 4);
-    yPosFirstColumn += mImage->height();
-    mMetadata->setGeometry(xSpacer, yPosFirstColumn, columnWidth, rowHeight * 2);
+    if (mState == EBridgeDiscoveryState::connected) {
+        mImage->setGeometry(xSpacer, yPosFirstColumn, columnWidth, rowHeight * 4);
+        yPosFirstColumn += rowHeight * 4;
+        mMetadata->setGeometry(xSpacer, yPosFirstColumn, columnWidth, rowHeight * 2);
+    } else {
+        mMetadata->setGeometry(xSpacer, yPosFirstColumn, columnWidth, rowHeight * 2);
+        yPosFirstColumn += rowHeight * 4;
+    }
     yPosFirstColumn += mMetadata->height();
     mManageButton->setGeometry(xSpacer, yPosFirstColumn, columnWidth, rowHeight);
 
-    QRect selectedLightsRect(xSecondColumnStart,
-                             yPosSecondColumn,
-                             columnWidth * 2 - xSpacer,
-                             rowHeight * 7);
-    mLights->resize(selectedLightsRect, mRowHeight);
-    yPosSecondColumn += mLights->height();
+    if (mState == EBridgeDiscoveryState::connected) {
+        QRect selectedLightsRect(xSecondColumnStart,
+                                 yPosSecondColumn,
+                                 columnWidth * 2 - xSpacer,
+                                 rowHeight * 7);
+        mLights->resize(selectedLightsRect, mRowHeight);
+        yPosSecondColumn += mLights->height();
+    } else {
+        mImage->setGeometry(xSecondColumnStart, yPosSecondColumn, columnWidth * 2, rowHeight * 7);
+    }
 }
 
 void DisplayPreviewBridgeWidget::resizeEvent(QResizeEvent*) {

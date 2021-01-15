@@ -51,6 +51,9 @@ public:
                           CommLayer* comm,
                           AppSettings* appSettings);
 
+    /// change the height of a row.
+    void changeRowHeight(int height) { mRowHeight = height; }
+
     /// called when the widget is shown
     void showWidget();
 
@@ -126,6 +129,12 @@ protected:
     void paintEvent(QPaintEvent*);
 
 private:
+    /// resize everything in the widget
+    void resize();
+
+    /// resize the widgets in the scroll area
+    void resizeScrollArea();
+
     /// groups parser
     GroupData* mGroups;
 
@@ -134,9 +143,6 @@ private:
 
     /// widget used for scroll area.
     QWidget* mScrollAreaWidget;
-
-    /// layout for scoll area
-    QVBoxLayout* mScrollLayout;
 
     /// widget that contains all the advanced settings that affect the app globally
     GlobalSettingsWidget* mGlobalWidget;
@@ -194,6 +200,9 @@ private:
 
     /// widget for greying out the page when other widgets are overlaid
     GreyOutOverlay* mGreyOut;
+
+    /// height of each row
+    int mRowHeight;
 };
 
 #endif // SETTINGSPAGE_H

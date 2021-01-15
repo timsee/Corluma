@@ -47,8 +47,6 @@ public:
 
     /// updates the group's UI elements.
     void updateMood(const cor::Mood& mood, bool moodExistsAlready) {
-        qDebug() << " add mood " << mood.name() << " and " << mGroupsLabel->isVisible()
-                 << " bunt what abotu this " << mood.defaults().empty();
         mMood = mComm->addMetadataToMood(mood);
         mName->setText(mMood.name());
         if (mMood.description().isEmpty()) {
