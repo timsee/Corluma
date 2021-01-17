@@ -5,15 +5,10 @@
  */
 
 #include "menulightcontainer.h"
+#include "utils/qt.h"
 
-void MenuLightContainer::showLights(const std::vector<cor::Light>& lights, int height) {
-    clear();
-    updateLightWidgets(lights);
-    moveLightWidgets(QSize(parentWidget()->width(), height), QPoint(this->width() / 20, 0));
-    setFixedHeight(mLightLayout.overallSize().height());
-}
 
-void MenuLightContainer::updateLightWidgets(const std::vector<cor::Light>& lights) {
+void MenuLightContainer::addLights(const std::vector<cor::Light>& lights) {
     for (const auto& light : lights) {
         auto widgetResult = mLightLayout.widget(light.uniqueID());
         if (widgetResult.second) {
@@ -33,10 +28,21 @@ void MenuLightContainer::updateLightWidgets(const std::vector<cor::Light>& light
         }
     }
 
-    setFixedHeight(mLightLayout.overallSize().height());
     mLightLayout.sortDeviceWidgets();
+    setFixedHeight(mRowHeight * lights.size());
+    moveLightWidgets(QSize(parentWidget()->width(), mRowHeight), QPoint(this->width() / 20, 0));
 }
 
+void MenuLightContainer::updateLights(const std::vector<cor::Light>& lights) {
+    for (const auto& light : lights) {
+        auto widgetResult = mLightLayout.widget(light.uniqueID());
+        if (widgetResult.second) {
+            auto existingWidget = qobject_cast<ListLightWidget*>(widgetResult.first);
+            Q_ASSERT(existingWidget);
+            existingWidget->updateWidget(light);
+        }
+    }
+}
 
 void MenuLightContainer::moveLightWidgets(QSize size, QPoint offset) {
     auto actualSize = QSize(size.width() - offset.x(), size.height() - offset.y());
@@ -66,6 +72,12 @@ std::vector<QString> MenuLightContainer::highlightedLights() {
 
 void MenuLightContainer::clear() {
     mLightLayout.clear();
+}
+
+void MenuLightContainer::removeLight(QString lightID) {
+    mLightLayout.removeWidget(lightID);
+    setFixedHeight(mRowHeight * mLightLayout.count());
+    moveLightWidgets(QSize(parentWidget()->width(), mRowHeight), QPoint(this->width() / 20, 0));
 }
 
 void MenuLightContainer::handleLightClicked(QString light) {

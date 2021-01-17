@@ -5,7 +5,7 @@
 LightsListMenu::LightsListMenu(QWidget* parent, bool allowInteraction)
     : QWidget(parent),
       mScrollArea{new QScrollArea(this)},
-      mLightContainer{new MenuLightContainer(mScrollArea, allowInteraction)},
+      mLightContainer{new MenuLightContainer(mScrollArea, allowInteraction, "LightsListMenu")},
       mRowHeight{10},
       mSingleLightMode{false} {
     mLightContainer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -25,6 +25,7 @@ void LightsListMenu::resize(const QRect& inputRect, int buttonHeight) {
     setGeometry(inputRect);
     int offsetY = 0u;
     mRowHeight = buttonHeight;
+    mLightContainer->changeRowHeight(mRowHeight);
 
     QRect rect = QRect(0, offsetY, this->width(), this->height() - offsetY);
     int scrollAreaWidth = int(rect.width() * 1.2);
@@ -39,7 +40,7 @@ void LightsListMenu::resize(const QRect& inputRect, int buttonHeight) {
 }
 
 void LightsListMenu::updateLights() {
-    mLightContainer->updateLightWidgets(mLights);
+    mLightContainer->updateLights(mLights);
 }
 
 void LightsListMenu::addLight(const cor::Light& light) {
@@ -51,8 +52,7 @@ void LightsListMenu::addLight(const cor::Light& light) {
         }
     }
     mLights.push_back(light);
-    mLightContainer->updateLightWidgets(mLights);
-    mLightContainer->showLights(mLights, mRowHeight);
+    mLightContainer->addLights(mLights);
 }
 
 void LightsListMenu::removeLight(const cor::Light& light) {
@@ -63,7 +63,8 @@ void LightsListMenu::removeLight(const cor::Light& light) {
     } else {
         qDebug() << "ERROR: light not found, shouldn't get here " << light;
     }
-    mLightContainer->showLights(mLights, mRowHeight);
+    mLightContainer->clear();
+    mLightContainer->addLights(mLights);
 }
 
 void LightsListMenu::removeLights(const std::vector<QString>& keys) {
@@ -74,16 +75,16 @@ void LightsListMenu::removeLights(const std::vector<QString>& keys) {
             mLights.erase(result);
         }
     }
-    mLightContainer->showLights(mLights, mRowHeight);
+    mLightContainer->clear();
+    mLightContainer->addLights(mLights);
 }
 
 
-void LightsListMenu::showLights(const std::vector<cor::Light>& lights) {
+void LightsListMenu::addLights(const std::vector<cor::Light>& lights) {
     mLights = lights;
-    mLightContainer->updateLightWidgets(lights);
-    mLightContainer->showLights(lights, mRowHeight);
+    mLightContainer->addLights(mLights);
 }
 
 void LightsListMenu::clear() {
-    mLightContainer->showLights({}, mRowHeight);
+    mLightContainer->clear();
 }

@@ -13,7 +13,8 @@ MenuSubgroupContainer::MenuSubgroupContainer(QWidget* parent,
                                              cor::EWidgetType type)
     : QWidget(parent),
       mGroups{groups},
-      mType{type} {
+      mType{type},
+      mWidgetHeight{10} {
     if (mType == cor::EWidgetType::condensed) {
         mGroupCount = 1;
     } else {

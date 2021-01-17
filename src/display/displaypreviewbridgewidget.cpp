@@ -57,7 +57,7 @@ void DisplayPreviewBridgeWidget::updateBridge(const hue::Bridge& bridge) {
 
     auto updatedLights = mComm->hue()->lightsFromMetadata(bridge.lights().items());
     if (!cor::compareTwoLightVectors(updatedLights, mLights->lights())) {
-        mLights->showLights(updatedLights);
+        mLights->addLights(updatedLights);
     }
     handleBridgeState(bridge.state());
     handleButtonState();

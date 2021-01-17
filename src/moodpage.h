@@ -8,9 +8,10 @@
 
 #include "cor/objects/mood.h"
 #include "greyoutoverlay.h"
-#include "mooddetailedwidget.h"
 #include "listmoodwidget.h"
+#include "listplaceholderwidget.h"
 #include "menu/standardmoodsmenu.h"
+#include "mooddetailedwidget.h"
 
 /*!
  * \copyright
@@ -95,6 +96,9 @@ protected:
     void resizeEvent(QResizeEvent*);
 
 private:
+    /// check if any moods exist and handle which widgets are showing based off of this information.
+    void checkForMissingMoods();
+
     /// groups parser
     GroupData* mGroups;
 
@@ -103,6 +107,9 @@ private:
 
     /// menu for displaying moods.
     StandardMoodsMenu* mMoodMenu;
+
+    /// placeholder instructions for when there are no moods available.
+    ListPlaceholderWidget* mPlaceholderWidget;
 
     /*!
      * \brief mMoodDetailedWidget widget for displaying detailed information about a mood.

@@ -33,7 +33,7 @@ public:
     void removeLight(const QString&);
 
     /// shows a group of lights.
-    void showGroup(const std::vector<QString>&);
+    void addLights(const std::vector<QString>&);
 
     /// highlight all the lights provided, removing the highlight from lights not in the list.
     void highlightLights(const std::vector<QString>& lights) {

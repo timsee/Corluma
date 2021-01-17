@@ -34,6 +34,9 @@ public:
      */
     void updateLights(const std::vector<cor::Light>& lights);
 
+    /// count of how many lights are shown
+    std::uint32_t lightCount() { return mWidth * mHeight; }
+
     /// set whether or not to hide off lights
     void hideOffLights(bool shouldHide) { mHideOffLights = shouldHide; }
 

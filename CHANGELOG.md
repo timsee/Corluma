@@ -1112,3 +1112,13 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed spacing on `SettingsPage`.
 - Fixed display of the model type on `HueInfoListWidget`.
 - Fixed miscellaneous bugs.
+
+### **v0.21.72**
+### Bug Fixes
+- Fixed a potential crash when discovering ArduCor lights.
+- Fixed an issue where the light states did not display on `DisplayPreviewArduCorWidget` after initial discovery.
+- Fixed an issue where the `StandardLightsMenu` did not display updates to newly discovered lights.
+- Fixed an issue where resizing the `StandardLightsMenu` sometimes displayed extra lights.
+- Fixed a bug where experimental features were still in use when the `USE_EXPERIMENTAL_FEATURES` features flag was not defined.
+- Added a `ListPlaceholderWidget` to provide guiding text in situations where a list is empty.
+- Fixed miscellaneous bugs.

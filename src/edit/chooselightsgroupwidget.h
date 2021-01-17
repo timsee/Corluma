@@ -25,7 +25,7 @@ public:
           mSelectedLabel{new QLabel("Selected Lights:", this)},
           mComm{comm},
           mGroups{groups},
-          mLightsMenu{new StandardLightsMenu(this, comm, groups)},
+          mLightsMenu{new StandardLightsMenu(this, comm, groups, "ChooseLightsGroupMenu")},
           mRoomLights{new StatelessLightsListMenu(this, comm, true)},
           mSelectedLightsMenu{new StatelessLightsListMenu(this, comm, false)},
           mIsRoom{false} {
@@ -81,7 +81,7 @@ public:
         auto lights = roomLights;
         // add in the orphan lights
         lights.insert(lights.end(), mGroups->orphanLights().begin(), mGroups->orphanLights().end());
-        mRoomLights->showGroup(lights);
+        mRoomLights->addLights(lights);
         mRoomLights->highlightLights(roomLights);
 
         // set visibility of the proper light menu
@@ -103,7 +103,10 @@ public:
     }
 
     /// updates the lights based off of app data.
-    void updateLights() { mLightsMenu->updateLights(mSelectedLightsMenu->lightIDs()); }
+    void updateLights() {
+        mLightsMenu->updateMenu();
+        mLightsMenu->selectLights(mSelectedLightsMenu->lightIDs());
+    }
 
     /// getter for all selected lights.
     const std::vector<QString>& lightIDs() { return mSelectedLightsMenu->lightIDs(); }

@@ -19,6 +19,9 @@ MoodPage::MoodPage(QWidget* parent, GroupData* groups, CommLayer* comm)
       mGroups(groups),
       mComm{comm},
       mMoodMenu{new StandardMoodsMenu(this, comm, groups)},
+      mPlaceholderWidget{new ListPlaceholderWidget(
+          this,
+          "There are no moods saved in the app. Click the + button to make your first mood.")},
       mGreyOut{new GreyOutOverlay(false, parentWidget())},
       mCurrentMood{0} {
     connect(mMoodMenu, SIGNAL(moodClicked(std::uint64_t)), this, SLOT(moodSelected(std::uint64_t)));
@@ -39,11 +42,13 @@ MoodPage::MoodPage(QWidget* parent, GroupData* groups, CommLayer* comm)
 void MoodPage::newMoodAdded(const QString&) {
     clearWidgets();
     mMoodMenu->updateData();
+    checkForMissingMoods();
 }
 
 void MoodPage::updateMoods() {
     clearWidgets();
     mMoodMenu->updateData();
+    checkForMissingMoods();
 }
 
 
@@ -53,8 +58,15 @@ void MoodPage::selectedMood(const QString&, std::uint64_t moodKey) {
 }
 
 void MoodPage::resize() {
-    mMoodMenu->widgetHeight(this->height() / 8);
-    mMoodMenu->setGeometry(0, 0, width(), height());
+    auto mainWidgetHeight = height() * 0.97;
+    auto xSpacer = width() * 0.02;
+    auto mainRect = QRect(xSpacer, 0, width() - xSpacer * 2, mainWidgetHeight);
+    if (mGroups->moods().empty()) {
+        mPlaceholderWidget->setGeometry(mainRect);
+    } else {
+        mMoodMenu->widgetHeight(this->height() / 8);
+        mMoodMenu->setGeometry(mainRect);
+    }
     if (mMoodDetailedWidget->isOpen()) {
         mMoodDetailedWidget->resize();
     }
@@ -66,6 +78,7 @@ void MoodPage::resizeEvent(QResizeEvent*) {
 }
 
 void MoodPage::show(std::uint64_t currentMood) {
+    checkForMissingMoods();
     mMoodMenu->setVisible(true);
     mCurrentMood = currentMood;
     mMoodMenu->updateData();
@@ -104,4 +117,14 @@ void MoodPage::moodSelected(std::uint64_t key) {
 void MoodPage::detailedClosePressed() {
     mGreyOut->greyOut(false);
     mMoodDetailedWidget->pushOut();
+}
+
+void MoodPage::checkForMissingMoods() {
+    if (mGroups->moods().empty()) {
+        mPlaceholderWidget->setVisible(true);
+        mMoodMenu->setVisible(false);
+    } else {
+        mPlaceholderWidget->setVisible(false);
+        mMoodMenu->setVisible(true);
+    }
 }

@@ -113,6 +113,9 @@ public slots:
      */
     void lightNameChange(const QString& key, const QString& name);
 
+    /// handles when a light is added, updates the UI
+    void lightsAdded(std::vector<QString>);
+
     /// handles when a light is deleted, updates the UI
     void lightsDeleted(std::vector<QString>);
 

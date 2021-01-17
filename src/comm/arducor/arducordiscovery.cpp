@@ -267,65 +267,48 @@ void ArduCorDiscovery::handleIncomingPacket(ECommType type,
 
 void ArduCorDiscovery::handleDiscoveredController(const cor::Controller& discoveredController) {
     // search for the sender in the list of discovered devices
+    std::vector<cor::Controller> controllersToDelete;
     for (const auto& notFoundController : mNotFoundControllers) {
-        if (notFoundController.type() == discoveredController.type()
-            && notFoundController.name() == discoveredController.name()) {
-            // remove from the not found controllers
-            auto it = std::find(mNotFoundControllers.begin(),
-                                mNotFoundControllers.end(),
-                                notFoundController);
-            if (it != mNotFoundControllers.end()) {
-                mNotFoundControllers.erase(it);
-            }
-            if (notFoundController.type() == ECommType::HTTP) {
-                auto controllerCopy = cor::Controller(notFoundController.name(), ECommType::UDP);
-                auto it = std::find(mNotFoundControllers.begin(),
-                                    mNotFoundControllers.end(),
-                                    controllerCopy);
-                if (it != mNotFoundControllers.end()) {
-                    mNotFoundControllers.erase(it);
-                }
-            }
-            if (notFoundController.type() == ECommType::UDP) {
-                auto controllerCopy = cor::Controller(notFoundController.name(), ECommType::HTTP);
-                auto it = std::find(mNotFoundControllers.begin(),
-                                    mNotFoundControllers.end(),
-                                    controllerCopy);
-                if (it != mNotFoundControllers.end()) {
-                    mNotFoundControllers.erase(it);
-                }
-            }
+        if (discoveredController.name() == notFoundController.name()) {
+            controllersToDelete.push_back(notFoundController);
+        }
+    }
 
-            // add to the found controllers
-            mFoundControllers.insert(discoveredController.name().toStdString(),
-                                     discoveredController);
+    // delete any controllers with the same name that are not found
+    for (auto controller : controllersToDelete) {
+        auto result =
+            std::find(mNotFoundControllers.begin(), mNotFoundControllers.end(), controller);
+        if (result != mNotFoundControllers.end()) {
+            mNotFoundControllers.erase(result);
+        }
+    }
 
-            // update json data, if needed
-            updateJSON(discoveredController);
+    // add to the found controllers
+    mFoundControllers.insert(discoveredController.name().toStdString(), discoveredController);
 
-            int i = 1;
-            for (const auto& name : discoveredController.names()) {
-                ArduCorMetadata metadata(name,
-                                         discoveredController,
-                                         i,
-                                         discoveredController.hardwareTypes()[i - 1]);
-                ArduCorLight light(metadata);
-                ++i;
+    // update json data, if needed
+    updateJSON(discoveredController);
 
-                // start state updates, etc.
-                if (notFoundController.type() == ECommType::HTTP) {
-                    mHTTP->addLight(light);
-                }
+    int i = 1;
+    for (const auto& name : discoveredController.names()) {
+        ArduCorMetadata metadata(name,
+                                 discoveredController,
+                                 i,
+                                 discoveredController.hardwareTypes()[i - 1]);
+        ArduCorLight light(metadata);
+        ++i;
+
+        // start state updates, etc.
+        if (discoveredController.type() == ECommType::HTTP) {
+            mHTTP->addLight(light);
+        }
 #ifdef USE_SERIAL
-                else if (notFoundController.type() == ECommType::serial) {
-                    mSerial->addLight(light);
-                }
+        else if (discoveredController.type() == ECommType::serial) {
+            mSerial->addLight(light);
+        }
 #endif
-                else if (notFoundController.type() == ECommType::UDP) {
-                    mUDP->addLight(light);
-                }
-            }
-            break;
+        else if (discoveredController.type() == ECommType::UDP) {
+            mUDP->addLight(light);
         }
     }
 }

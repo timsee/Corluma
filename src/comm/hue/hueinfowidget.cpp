@@ -34,7 +34,6 @@ HueInfoWidget::HueInfoWidget(HueMetadata light, QWidget* parent)
       mTypeIcon(new QLabel(this)) {
     const QString styleSheet = "background-color:rgba(0,0,0,0);";
 
-    // mName->setFontPointSize(14);
     mName->setStyleSheet(styleSheet);
 
     mModelID->setAttribute(Qt::WA_TransparentForMouseEvents, true);

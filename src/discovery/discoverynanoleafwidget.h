@@ -7,6 +7,7 @@
 #include "cor/lightlist.h"
 #include "cor/widgets/listwidget.h"
 #include "discoverytypewidget.h"
+#include "listplaceholderwidget.h"
 #include "searchwidget.h"
 
 /*!
@@ -82,6 +83,12 @@ private:
 
     /// widget for displaying a scrollable list of other widgets
     cor::ListWidget* mListWidget;
+
+    /// placeholder instructions for when there are no moods available.
+    ListPlaceholderWidget* mPlaceholderWidget;
+
+    /// true if any lights have been discovered, false otherwise.
+    bool mHasLights;
 
     /// buffer for last IP address used
     QString mLastIP;

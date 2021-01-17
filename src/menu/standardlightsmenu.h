@@ -38,13 +38,19 @@ public:
     enum class EState { noGroups, parentGroups, subgroups, lights };
 
     /// constructor
-    explicit StandardLightsMenu(QWidget* parent, CommLayer* comm, GroupData* groups);
+    explicit StandardLightsMenu(QWidget* parent,
+                                CommLayer* comm,
+                                GroupData* groups,
+                                const QString& name);
 
     /// resizes programmatically
     void resize(const QRect& rect, int buttonHeight);
 
-    /// updates the lights with their current states
-    void updateLights(const std::vector<QString>& lightIDs);
+    /// updates the menu with the lights current states
+    void updateMenu();
+
+    /// selects the lights with their current states
+    void selectLights(const std::vector<QString>& lightIDs);
 
     /// clears all the info in the widget, and reset the widget to an empty state. Then it calls
     /// updateLights() and refills with new data. used to remove data or recover from a broken
@@ -205,6 +211,9 @@ private:
 
     /// list of lights to not display.
     std::vector<QString> mIgnoredLights;
+
+    /// name of menu, used for debugging.
+    QString mName;
 };
 
 #endif // LEFTHANDLIGHTMENU_H

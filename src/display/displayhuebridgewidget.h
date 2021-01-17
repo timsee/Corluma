@@ -149,7 +149,7 @@ public:
 
         mBridge.lights();
         auto lights = mComm->hue()->lightsFromMetadata(bridge.lights().items());
-        mLights->showLights(lights);
+        mLights->addLights(lights);
         highlightLights();
         handleCheckboxState();
         updateMetadata(mBridge);
@@ -166,7 +166,7 @@ public:
     void reset() {
         mBridge = {};
         mName->setText("");
-        mLights->showLights({});
+        mLights->clear();
         resize();
     }
 

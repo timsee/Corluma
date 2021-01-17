@@ -73,8 +73,7 @@ void TimeoutPage::updateLights() {
 }
 
 void TimeoutPage::renderUI() {
-    mLights->updateLights();
-    mLights->showLights(mData->lights());
+    mLights->addLights(mData->lights());
     mLights->updateTimeouts();
 
     // determine sync state

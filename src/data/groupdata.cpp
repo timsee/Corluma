@@ -168,6 +168,14 @@ void GroupData::updateExternallyStoredGroups(const std::vector<cor::Group>& exte
     updateGroupMetadata();
 }
 
+std::vector<cor::Group> GroupData::parentGroups() {
+    std::vector<cor::Group> parentGroups = groupsFromIDs(parents());
+    if (!orphanLights().empty()) {
+        parentGroups.push_back(orphanGroup());
+    }
+    return parentGroups;
+}
+
 void GroupData::lightDeleted(ECommType, const QString& uniqueID) {
     qDebug() << "INFO: light: " << uniqueID << " deleted from group data.";
     bool anyUpdates = false;

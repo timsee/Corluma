@@ -8,7 +8,8 @@ StatelessLightsListMenu::StatelessLightsListMenu(QWidget* parent,
     : QWidget(parent),
       mComm{comm},
       mScrollArea{new QScrollArea(this)},
-      mLightContainer{new MenuLightContainer(mScrollArea, allowInteraction)},
+      mLightContainer{
+          new MenuLightContainer(mScrollArea, allowInteraction, "StatelessLightsListMenu")},
       mRowHeight{10} {
     mLightContainer->displayState(false);
     mLightContainer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -28,6 +29,7 @@ void StatelessLightsListMenu::resize(const QRect& inputRect, int buttonHeight) {
     setGeometry(inputRect);
     int offsetY = 0u;
     mRowHeight = buttonHeight;
+    mLightContainer->changeRowHeight(mRowHeight);
 
     QRect rect = QRect(0, offsetY, this->width(), this->height() - offsetY);
     int scrollAreaWidth = int(rect.width() * 1.2);
@@ -43,7 +45,7 @@ void StatelessLightsListMenu::resize(const QRect& inputRect, int buttonHeight) {
 
 
 void StatelessLightsListMenu::updateLights() {
-    mLightContainer->updateLightWidgets(mComm->lightsByIDs(mLights));
+    mLightContainer->updateLights(mComm->lightsByIDs(mLights));
 }
 
 void StatelessLightsListMenu::addLight(const QString& ID) {
@@ -52,8 +54,7 @@ void StatelessLightsListMenu::addLight(const QString& ID) {
     if (result == mLights.end()) {
         mLights.push_back(ID);
     }
-    mLightContainer->updateLightWidgets(mComm->lightsByIDs(mLights));
-    mLightContainer->showLights(mComm->lightsByIDs(mLights), mRowHeight);
+    mLightContainer->addLights(mComm->lightsByIDs(mLights));
 }
 
 void StatelessLightsListMenu::removeLight(const QString& ID) {
@@ -61,15 +62,15 @@ void StatelessLightsListMenu::removeLight(const QString& ID) {
     if (result != mLights.end()) {
         mLights.erase(result);
     }
-    mLightContainer->showLights(mComm->lightsByIDs(mLights), mRowHeight);
+    mLightContainer->clear();
+    mLightContainer->addLights(mComm->lightsByIDs(mLights));
 }
 
-void StatelessLightsListMenu::showGroup(const std::vector<QString>& IDs) {
+void StatelessLightsListMenu::addLights(const std::vector<QString>& IDs) {
     mLights = IDs;
-    mLightContainer->updateLightWidgets(mComm->lightsByIDs(IDs));
-    mLightContainer->showLights(mComm->lightsByIDs(IDs), mRowHeight);
+    mLightContainer->addLights(mComm->lightsByIDs(mLights));
 }
 
 void StatelessLightsListMenu::clear() {
-    mLightContainer->showLights({}, mRowHeight);
+    mLightContainer->clear();
 }

@@ -14,7 +14,7 @@ linux:!android {
     TARGET = corluma
 }
 TEMPLATE = app
-VERSION = 0.21.71
+VERSION = 0.21.72
 
 #----------
 # Build flags
@@ -418,6 +418,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     groupstatewidget.h \
     lightspage.h \
     listmoodwidget.h \
+    listplaceholderwidget.h \
     menu/choosestatewidget.h \
     menu/displaygroupmetadata.h \
     menu/displaygroupwidget.h \

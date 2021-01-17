@@ -37,7 +37,10 @@ std::vector<QString> generateLightsWithIgnoreList(const std::vector<QString>& ig
 
 } // namespace
 
-StandardLightsMenu::StandardLightsMenu(QWidget* parent, CommLayer* comm, GroupData* groups)
+StandardLightsMenu::StandardLightsMenu(QWidget* parent,
+                                       CommLayer* comm,
+                                       GroupData* groups,
+                                       const QString& name)
     : QWidget(parent),
       mComm{comm},
       mGroups{groups},
@@ -48,10 +51,11 @@ StandardLightsMenu::StandardLightsMenu(QWidget* parent, CommLayer* comm, GroupDa
       mSubgroupContainer{
           new MenuSubgroupContainer(mSubgroupScrollArea, mGroups, cor::EWidgetType::condensed)},
       mLightScrollArea{new QScrollArea(this)},
-      mLightContainer{new MenuLightContainer(mLightScrollArea, true)},
+      mLightContainer{new MenuLightContainer(mLightScrollArea, true, name)},
       mButtonHeight{0u},
       mPositionY{0u},
-      mSingleLightMode{false} {
+      mSingleLightMode{false},
+      mName{name} {
     mScrollTopWidget = new LeftHandMenuTopLightWidget(this);
     mScrollTopWidget->setVisible(false);
     connect(mScrollTopWidget,
@@ -89,28 +93,29 @@ StandardLightsMenu::StandardLightsMenu(QWidget* parent, CommLayer* comm, GroupDa
 }
 
 void StandardLightsMenu::highlightLight(QString lightID) {
-    updateLights({lightID});
+    selectLights({lightID});
 }
 
-void StandardLightsMenu::updateLights(const std::vector<QString>& lightIDs) {
-    mSelectedLights = lightIDs;
-    mLightContainer->updateLightWidgets(mComm->allLights());
-    mLightContainer->highlightLights(mSelectedLights);
-
-    // get all rooms
-    auto parentGroups = mGroups->parents();
-    std::vector<cor::Group> groupData = mGroups->groupsFromIDs(parentGroups);
-    if (!mGroups->orphanLights().empty()) {
-        groupData.push_back(mGroups->orphanGroup());
+void StandardLightsMenu::updateMenu() {
+    // handle edge case where lights are not shown in noGroupsa
+    if (mState == EState::noGroups) {
+        mLightContainer->addLights(mComm->allLights());
     }
+    mLightContainer->updateLights(mComm->allLights());
 
-    overrideState(groupData);
+    auto parentGroups = mGroups->parentGroups();
+    overrideState(parentGroups);
 
     // update ui groups
     const auto& uiGroups = mParentGroupContainer->parentGroups();
-    for (const auto& group : groupData) {
+    for (const auto& group : parentGroups) {
         mParentGroupContainer->updateDataGroupInUI(group, uiGroups);
     }
+}
+
+void StandardLightsMenu::selectLights(const std::vector<QString>& lightIDs) {
+    mSelectedLights = lightIDs;
+    mLightContainer->highlightLights(mSelectedLights);
 
     // update highlighted lights
     if (!mSingleLightMode) {
@@ -126,7 +131,7 @@ void StandardLightsMenu::reset() {
     mSubgroupContainer->clear();
     mLightContainer->clear();
     changeStateToParentGroups();
-    updateLights(mSelectedLights);
+    selectLights(mSelectedLights);
 }
 
 void StandardLightsMenu::overrideState(const std::vector<cor::Group>& groupData) {
@@ -154,6 +159,7 @@ void StandardLightsMenu::overrideState(const std::vector<cor::Group>& groupData)
 
 void StandardLightsMenu::resize(const QRect& inputRect, int buttonHeight) {
     mButtonHeight = buttonHeight;
+    mLightContainer->changeRowHeight(buttonHeight);
     mPositionY = inputRect.y();
     setGeometry(inputRect);
     int offsetY = 0u;
@@ -279,7 +285,8 @@ void StandardLightsMenu::changeStateToSubgroups() {
 
 void StandardLightsMenu::changeStateToNoGroups() {
     changeState(EState::noGroups);
-    mLightContainer->showLights(mComm->allLights(), mButtonHeight);
+    mLightContainer->clear();
+    mLightContainer->addLights(mComm->allLights());
     mLightContainer->highlightLights(mSelectedLights);
     resize(this->geometry(), mButtonHeight);
     if (!mSingleLightMode) {
@@ -308,10 +315,9 @@ void StandardLightsMenu::shouldShowButtons(std::uint64_t key, bool show) {
             changeState(EState::lights);
             auto result = mGroups->groupDict().item(QString::number(key).toStdString());
             if (result.second) {
-                mLightContainer->showLights(
-                    mComm->lightsByIDs(
-                        generateLightsWithIgnoreList(mIgnoredLights, result.first.lights())),
-                    mButtonHeight);
+                mLightContainer->clear();
+                mLightContainer->addLights(mComm->lightsByIDs(
+                    generateLightsWithIgnoreList(mIgnoredLights, result.first.lights())));
                 mLightContainer->highlightLights(mSelectedLights);
             } else {
                 qDebug() << " got a group we don't recongize here.... " << group.name();
@@ -350,16 +356,17 @@ void StandardLightsMenu::parentGroupClicked(std::uint64_t ID) {
         // if its a miscellaneous group, show orphans
         changeState(EState::lights);
         auto group = mGroups->orphanGroup();
-        mLightContainer->showLights(
-            mComm->lightsByIDs(generateLightsWithIgnoreList(mIgnoredLights, group.lights())),
-            mButtonHeight);
+        mLightContainer->clear();
+        mLightContainer->addLights(
+            mComm->lightsByIDs(generateLightsWithIgnoreList(mIgnoredLights, group.lights())));
         mLightContainer->highlightLights(mSelectedLights);
     } else if (subgroups.empty()) {
         // if its a group with no subgroups, show the lights for the group
         changeState(EState::lights);
         auto result = mGroups->groupDict().item(QString::number(ID).toStdString());
         if (result.second) {
-            mLightContainer->showLights(mComm->lightsByIDs(result.first.lights()), mButtonHeight);
+            mLightContainer->clear();
+            mLightContainer->addLights(mComm->lightsByIDs(result.first.lights()));
             mLightContainer->highlightLights(mSelectedLights);
         } else {
             qDebug() << " got a group we don't recongize here.... " << name;
@@ -390,9 +397,9 @@ void StandardLightsMenu::showSubgroupLights(std::uint64_t ID) {
     mScrollTopWidget->showSubgroup(renamedGroup, ID);
     auto result = mGroups->groupDict().item(QString::number(ID).toStdString());
     if (result.second) {
-        mLightContainer->showLights(
-            mComm->lightsByIDs(generateLightsWithIgnoreList(mIgnoredLights, result.first.lights())),
-            mButtonHeight);
+        mLightContainer->clear();
+        mLightContainer->addLights(mComm->lightsByIDs(
+            generateLightsWithIgnoreList(mIgnoredLights, result.first.lights())));
         mLightContainer->highlightLights(mSelectedLights);
     } else {
         qDebug() << " got a group we don't recongize here.... " << renamedGroup;

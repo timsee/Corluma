@@ -90,6 +90,7 @@ bool CommLayer::discoveryErrorsExist(EProtocolType type) {
 
 void CommLayer::lightFound(ECommType type, QString uniqueID) {
     emit newLightFound(type, uniqueID);
+    emit lightsAdded({uniqueID});
 }
 
 void CommLayer::deletedLight(ECommType type, QString uniqueID) {

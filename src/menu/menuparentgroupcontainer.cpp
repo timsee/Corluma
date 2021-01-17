@@ -12,6 +12,7 @@ const QString kMiscKey = "zzzzMiscellaneous";
 
 MenuParentGroupContainer::MenuParentGroupContainer(QWidget* parent, GroupData* groups)
     : QWidget(parent),
+      mButtonHeight{10},
       mGroups{groups} {}
 
 

@@ -21,13 +21,18 @@ class MenuLightContainer : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit MenuLightContainer(QWidget* parent, bool allowInteraction)
+    explicit MenuLightContainer(QWidget* parent, bool allowInteraction, const QString& name)
         : QWidget(parent),
           mLightLayout(cor::EListType::linear),
           mAllowInteraction{allowInteraction},
-          mDisplayState{true} {
+          mDisplayState{true},
+          mRowHeight{10},
+          mName{name} {
         QScroller::grabGesture(this, QScroller::LeftMouseButtonGesture);
     }
+
+    /// change the height of each light widget.
+    void changeRowHeight(int rowHeight) { mRowHeight = rowHeight; }
 
     /// set whether the state should be displayed by the container or not.
     void displayState(bool displayState) { mDisplayState = displayState; }
@@ -37,11 +42,14 @@ public:
         mAllowUnreachableLights = allowUnreachable;
     }
 
-    /// updates the state of the light widgets
-    void updateLightWidgets(const std::vector<cor::Light>& lights);
+    /// add lights to the widget, updating if the the lights already exist, and adding if they don't
+    void addLights(const std::vector<cor::Light>& lights);
 
-    /// shows the lights provided, with the height of one light widget provided
-    void showLights(const std::vector<cor::Light>& lights, int height);
+    /// remove a light from the container.
+    void removeLight(QString lightID);
+
+    /// updates the state of the light widgets, but will not add new lights if they don't exist
+    void updateLights(const std::vector<cor::Light>& lights);
 
     /// highlights the lights based off of the currently selected lights
     void highlightLights(const std::vector<QString>& selectedLights);
@@ -82,6 +90,12 @@ private:
 
     /// true to display state of the lights, false to just display the metadata
     bool mDisplayState;
+
+    /// the height of a button.
+    int mRowHeight;
+
+    /// the name of the widget.
+    QString mName;
 };
 
 #endif // LIGHTMENUCONTAINER_H

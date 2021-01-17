@@ -17,8 +17,13 @@ DiscoveryArduCorWidget::DiscoveryArduCorWidget(QWidget* parent,
                                                cor::LightList* selectedLights,
                                                ControllerWidget* controllerPage)
     : DiscoveryTypeWidget(parent, comm, controllerPage),
-      mSelectedLights{selectedLights} {
-    mListWidget = new cor::ListWidget(this, cor::EListType::linear);
+      mSelectedLights{selectedLights},
+      mListWidget{new cor::ListWidget(this, cor::EListType::linear)},
+      mPlaceholderWidget{
+          new ListPlaceholderWidget(this,
+                                    "No ArduCor lights have been discovered. Press the plus button "
+                                    "and enter an IP address to connect to a new light.")},
+      mHasLights{false} {
     mListWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     QScroller::grabGesture(mListWidget->viewport(), QScroller::LeftMouseButtonGesture);
 
@@ -48,6 +53,7 @@ void DiscoveryArduCorWidget::handleDiscovery(bool) {
     for (const auto& controller : undiscoveredControllers) {
         handleController(controller, cor::EArduCorStatus::searching);
     }
+    mHasLights = (!foundControllers.empty() || !undiscoveredControllers.empty());
 
     // handle button updates
     if (mComm->discoveryErrorsExist(EProtocolType::arduCor)) {
@@ -58,6 +64,14 @@ void DiscoveryArduCorWidget::handleDiscovery(bool) {
         emit connectionStatusChanged(EProtocolType::arduCor, EConnectionState::discovering);
     } else {
         emit connectionStatusChanged(EProtocolType::arduCor, EConnectionState::off);
+    }
+
+    if (mHasLights) {
+        mListWidget->setVisible(true);
+        mPlaceholderWidget->setVisible(false);
+    } else {
+        mListWidget->setVisible(false);
+        mPlaceholderWidget->setVisible(true);
     }
 }
 
@@ -122,7 +136,9 @@ void DiscoveryArduCorWidget::resize() {
     auto yPos = 0u;
     mTopLabel->setGeometry(0, 0, int(width() * 0.7), int(height() * 0.1));
     yPos += mTopLabel->height();
-    mListWidget->setGeometry(int(width() * 0.025), yPos, int(width() * 0.95), int(height() * 0.9));
+    auto lightRect = QRect(int(width() * 0.025), yPos, int(width() * 0.95), int(height() * 0.9));
+    mListWidget->setGeometry(lightRect);
+    mPlaceholderWidget->setGeometry(lightRect);
     mGreyout->resize();
 
     // call resize function of each widget

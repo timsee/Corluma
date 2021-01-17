@@ -47,7 +47,7 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     mSpacer->setStyleSheet("border: none; background-color:rgb(33,32,32);");
 
 #ifndef DISABLE_LIGHTS_MENU
-    mLightMenu = new StandardLightsMenu(this, mComm, mGroups);
+    mLightMenu = new StandardLightsMenu(this, mComm, mGroups, "LeftHandMenu");
     connect(mLightMenu, SIGNAL(clickedLight(QString)), this, SLOT(lightClicked(QString)));
     connect(mLightMenu,
             SIGNAL(clickedGroupSelectAll(std::uint64_t, bool)),
@@ -214,7 +214,8 @@ void LeftHandMenu::lightCountChanged() {
 void LeftHandMenu::updateLights() {
     mLastRenderTime = QTime::currentTime();
 #ifndef DISABLE_LIGHTS_MENU
-    mLightMenu->updateLights(cor::lightVectorToIDs(mData->lights()));
+    mLightMenu->updateMenu();
+    mLightMenu->selectLights(cor::lightVectorToIDs(mData->lights()));
 #endif
     auto filledDataLights = mComm->commLightsFromVector(mData->lights());
     if (filledDataLights != mLastDataLights) {

@@ -35,7 +35,7 @@ public:
     void removeLights(const std::vector<QString>&);
 
     /// shows a group of lights.
-    void showLights(const std::vector<cor::Light>&);
+    void addLights(const std::vector<cor::Light>&);
 
     /// highlight the lights listed, removing highlights from all others.
     void highlightLights(const std::vector<QString>& lights) {

@@ -25,6 +25,12 @@ DiscoveryHueWidget::DiscoveryHueWidget(QWidget* parent,
       mSelectedLights{selectedLights},
       mBridgeButtons{std::vector<hue::BridgeButton*>(3, nullptr)},
       mBridgeWidgets{std::vector<hue::DisplayPreviewBridgeWidget*>(3, nullptr)},
+      mPlaceholderWidget{new ListPlaceholderWidget(
+          this,
+          "No Hue Bridges lights have been discovered. Give the Bridges up to a minute to discover "
+          "automatically. If that doesn't work, click the ? button for more debugging tips, or "
+          "click the + to add an IP address manually.")},
+      mHasLights{false},
       mBridgeIndex{0},
       mRowHeight{10u},
       mHueDiscoveryState{EHueDiscoveryState::findingIpAddress} {}
@@ -62,6 +68,15 @@ void DiscoveryHueWidget::hueDiscoveryUpdate(EHueDiscoveryState newState) {
 
 void DiscoveryHueWidget::handleDiscovery(bool) {
     mComm->hue()->discovery()->startDiscovery();
+    mHasLights = (!mComm->hue()->discovery()->notFoundBridges().empty()
+                  || !mComm->hue()->discovery()->bridges().empty());
+
+    if (mHasLights) {
+        mPlaceholderWidget->setVisible(false);
+    } else {
+        mPlaceholderWidget->setVisible(true);
+    }
+
     hueDiscoveryUpdate(mComm->hue()->discovery()->state());
 
     updateBridgeGUI();
@@ -363,6 +378,12 @@ void DiscoveryHueWidget::resize() {
     }
 
     std::uint32_t index = 0u;
+    auto height = rowHeight * 9;
+    if (buttonsShown) {
+        height = rowHeight * 8;
+    }
+    auto lightRect = QRect(int(width() * 0.025), yPos, int(width() * 0.95), height);
+    mPlaceholderWidget->setGeometry(lightRect);
     for (auto widget : mBridgeWidgets) {
         if (widget != nullptr) {
             if (index == mBridgeIndex) {
@@ -370,11 +391,7 @@ void DiscoveryHueWidget::resize() {
             } else {
                 widget->setVisible(false);
             }
-            auto height = rowHeight * 9;
-            if (buttonsShown) {
-                height = rowHeight * 8;
-            }
-            widget->setGeometry(int(width() * 0.025), yPos, int(width() * 0.95), height);
+            widget->setGeometry(lightRect);
         }
         index++;
     }

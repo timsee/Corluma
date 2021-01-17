@@ -49,8 +49,7 @@ public:
             mDescription->setVisible(true);
             mDescription->updateText(group.description());
         }
-        mLights->updateLights();
-        mLights->showGroup(group.lights());
+        mLights->addLights(group.lights());
         mMetadata->update(group, groupExistsAlready);
         resize();
     }
@@ -67,7 +66,7 @@ public:
         mGroup = {};
         mName->setText("");
         mDescription->setVisible(false);
-        mLights->showGroup({});
+        mLights->clear();
         mMetadata->reset();
         resize();
     }

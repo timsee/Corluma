@@ -155,15 +155,7 @@ inline int guardAgainstNegativeSize(int size) {
 
 /// QT6 and later uses QRegularExpression, Qt5 and earlier uses QRegExp, this function allows the
 /// app to compile for both.
-inline QStringList regexSplit(const QString& input, const QString& regex) {
-#ifdef USE_QT_6
-    QRegularExpression rx(regex);
-    return input.split(rx, Qt::SkipEmptyParts);
-#else
-    QRegExp rx(regex);
-    return input.split(rx, QString::SkipEmptyParts);
-#endif
-}
+QStringList regexSplit(const QString& input, const QString& regex);
 
 /*!
  * \brief applicationSize this returns the size of the MainWindow, in a pretty ugly but effective

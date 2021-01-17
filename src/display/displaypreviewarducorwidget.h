@@ -186,16 +186,26 @@ private:
         // allocate the widgets when we know how many lights there are
         if (mLightVector == nullptr) {
             auto numOfLights = std::min(std::uint32_t(mController.names().size()), 5u);
-            mLightVector = new cor::LightVectorWidget(numOfLights, 1, true, this);
-            mLightVector->enableButtonInteraction(false);
-            mLightVector->setStyleSheet(kTransparentStyleSheet);
-            if (lights.size() == 1) {
-                mLightVector->setButtonIconPercent(0.8f);
-            } else {
-                mLightVector->setButtonIconPercent(1.0f);
+            initLightVector(numOfLights);
+        } else if (mLightVector != nullptr) {
+            auto numOfLights = std::min(std::uint32_t(mController.names().size()), 5u);
+            if (numOfLights != mLightVector->lightCount()) {
+                delete mLightVector;
+                initLightVector(numOfLights);
             }
         }
         mLightVector->updateLights(lights);
+    }
+
+    void initLightVector(std::uint32_t lightCount) {
+        mLightVector = new cor::LightVectorWidget(lightCount, 1, true, this);
+        mLightVector->enableButtonInteraction(false);
+        mLightVector->setStyleSheet(kTransparentStyleSheet);
+        if (lightCount == 1) {
+            mLightVector->setButtonIconPercent(0.8f);
+        } else {
+            mLightVector->setButtonIconPercent(1.0f);
+        }
     }
 
     /// clear the memory of the pre-existing icons

@@ -11,6 +11,7 @@
 #include "discovery/discoverytypewidget.h"
 #include "display/displaypreviewbridgewidget.h"
 #include "greyoutoverlay.h"
+#include "listplaceholderwidget.h"
 
 /*!
  * \copyright
@@ -148,6 +149,12 @@ private:
 
     /// vector of bridge widgets, only one is displayed on the screen at a time
     std::vector<hue::DisplayPreviewBridgeWidget*> mBridgeWidgets;
+
+    /// placeholder instructions for when there are no moods available.
+    ListPlaceholderWidget* mPlaceholderWidget;
+
+    /// true if any lights have been discovered, false otherwise.
+    bool mHasLights;
 
     /// index of a bridge.
     std::uint32_t mBridgeIndex;

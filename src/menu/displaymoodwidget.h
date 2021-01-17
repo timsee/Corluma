@@ -65,8 +65,7 @@ public:
             mGroupsLabel->setVisible(true);
             mGroupDefaults->showStates(mMood.defaults());
         }
-        mLights->updateLights();
-        mLights->showLights(mMood.lights());
+        mLights->addLights(mMood.lights());
         mMetadata->update(mood, moodExistsAlready);
         resize();
     }
@@ -79,7 +78,7 @@ public:
         mMood = {};
         mName->setText("");
         mDescription->setVisible(false);
-        mLights->showLights({});
+        mLights->clear();
         mMetadata->reset();
         mGroupDefaults->clear();
         resize();

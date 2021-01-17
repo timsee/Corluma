@@ -138,12 +138,8 @@ int main(int argc, char* argv[]) {
 
         // set the value so it no longer gives a default back.
         settings.setValue(kFirstTimeOpenKey, QString::number(10));
+        settings.sync();
     }
-
-    // disable experimental features if not experimental features are not enabled
-#ifndef USE_EXPERIMENTAL_FEATURES
-    settings.setValue(cor::kUseTimeoutKey, QString::number(int(false)));
-#endif // USE_EXPERIMENTAL_FEATURES
 
     //--------------------
     // Create app window

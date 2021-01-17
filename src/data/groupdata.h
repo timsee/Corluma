@@ -78,6 +78,9 @@ public:
     /// getter for the dictionary of all groups and rooms
     const cor::Dictionary<cor::Group>& groupDict() const noexcept { return mGroupDict; }
 
+    /// returns a vector of all "parent groups" including the miscellaneous group, if it exists.
+    std::vector<cor::Group> parentGroups();
+
     /// returns a vector of names for the groups.
     std::vector<QString> groupNames();
 

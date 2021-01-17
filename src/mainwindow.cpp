@@ -65,6 +65,11 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
       mGreyOut{new GreyOutOverlay(!mLeftHandMenu->alwaysOpen(), this)} {
     mGroups->loadJSON();
 
+    // disable experimental features if not experimental features are not enabled
+#ifndef USE_EXPERIMENTAL_FEATURES
+    mAppSettings->enableTimeout(false);
+#endif // USE_EXPERIMENTAL_FEATURES
+
     // set title
     setWindowTitle("Corluma");
 
@@ -93,9 +98,6 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
                                             this);
 
     mTouchListener = new TouchListener(this, mLeftHandMenu, mTopMenu, mData);
-    if (!mLeftHandMenu->alwaysOpen()) {
-        mTopMenu->pushInTapToSelectButton();
-    }
 
     setupBackend();
     loadPages();
@@ -390,6 +392,11 @@ void MainWindow::setupStateObserver() {
             SIGNAL(lightNameChanged(QString, QString)),
             mStateObserver,
             SLOT(lightNameChange(QString, QString)));
+
+    connect(mComm,
+            SIGNAL(lightsAdded(std::vector<QString>)),
+            mStateObserver,
+            SLOT(lightsAdded(std::vector<QString>)));
 
     connect(mComm,
             SIGNAL(lightsDeleted(std::vector<QString>)),

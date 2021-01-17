@@ -125,8 +125,7 @@ public:
             mSyncWidget->setVisible(false);
             mSyncWidget->changeState(ESyncState::synced);
             // update the lights menu
-            mLights->updateLights();
-            mLights->showLights(lights);
+            mLights->addLights(lights);
             highlightLights();
         }
 
@@ -141,7 +140,7 @@ public:
     void reset() {
         mController = {};
         mName->setText("");
-        mLights->showLights({});
+        mLights->clear();
         resize();
     }
 

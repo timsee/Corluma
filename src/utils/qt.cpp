@@ -11,6 +11,16 @@
 
 namespace cor {
 
+QStringList regexSplit(const QString& input, const QString& regex) {
+#ifdef USE_QT_6
+    QRegularExpression rx(regex);
+    return input.split(rx, Qt::SkipEmptyParts);
+#else
+    QRegExp rx(regex);
+    return input.split(rx, QString::SkipEmptyParts);
+#endif
+}
+
 QSize applicationSize() {
     QSize mainWindowSize(0, 0);
     for (auto widget : QApplication::topLevelWidgets()) {

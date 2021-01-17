@@ -219,6 +219,9 @@ signals:
     /// signals when an existing light is deleted
     void lightDeleted(ECommType, QString);
 
+    /// emits when one or more lights are added from the commlayer
+    void lightsAdded(std::vector<QString>);
+
     /// emits when one or more lights delete from the commlayer
     void lightsDeleted(std::vector<QString>);
 

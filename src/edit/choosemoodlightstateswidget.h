@@ -29,7 +29,7 @@ public:
           mChooseLabel{new QLabel("Choose Lights:", this)},
           mSelectedLabel{new QLabel("Selected Lights:", this)},
           mComm{comm},
-          mLightsMenu{new StandardLightsMenu(this, comm, groups)},
+          mLightsMenu{new StandardLightsMenu(this, comm, groups, "ChooseLightsMoodMenu")},
           mMoodLights{new LightsListMenu(this, true)},
           mLeftButton{new QPushButton(this)},
           mRightButton{new QPushButton(this)},

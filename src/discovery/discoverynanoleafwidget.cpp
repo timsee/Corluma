@@ -18,8 +18,14 @@ DiscoveryNanoLeafWidget::DiscoveryNanoLeafWidget(QWidget* parent,
                                                  ControllerWidget* controllerPage)
     : DiscoveryTypeWidget(parent, comm, controllerPage),
       mSelectedLights{selectedLights},
+      mListWidget{new cor::ListWidget(this, cor::EListType::grid)},
+      mPlaceholderWidget{new ListPlaceholderWidget(
+          this,
+          "No Nanoleaf lights have been discovered. Give the lights up to a minute to discover "
+          "automatically. If that doesn't work, click the ? button for more debugging tips, or "
+          "click the + to add an IP address manually.")},
+      mHasLights{false},
       mLabel{new QLabel(this)} {
-    mListWidget = new cor::ListWidget(this, cor::EListType::grid);
     mListWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     QScroller::grabGesture(mListWidget->viewport(), QScroller::LeftMouseButtonGesture);
 }
@@ -32,6 +38,7 @@ void DiscoveryNanoLeafWidget::handleDiscovery(bool) {
     const auto& foundNanoleafs = mComm->nanoleaf()->discovery()->foundLights().items();
     const auto& notFoundNanoleafs = mComm->nanoleaf()->discovery()->notFoundLights();
     const auto& unknownLights = mComm->nanoleaf()->discovery()->unknownLights();
+    mHasLights = (!foundNanoleafs.empty() || !notFoundNanoleafs.empty() || !unknownLights.empty());
 
     // loop through all found nanoleafs
     for (const auto& nanoleaf : foundNanoleafs) {
@@ -66,6 +73,14 @@ void DiscoveryNanoLeafWidget::handleDiscovery(bool) {
         emit connectionStatusChanged(EProtocolType::nanoleaf, EConnectionState::discovered);
     } else {
         emit connectionStatusChanged(EProtocolType::nanoleaf, EConnectionState::off);
+    }
+
+    if (mHasLights) {
+        mListWidget->setVisible(true);
+        mPlaceholderWidget->setVisible(false);
+    } else {
+        mListWidget->setVisible(false);
+        mPlaceholderWidget->setVisible(true);
     }
 }
 
@@ -160,7 +175,9 @@ void DiscoveryNanoLeafWidget::resize() {
     auto yPos = 0u;
     mLabel->setGeometry(0, 0, int(width() * 0.7), int(height() * 0.1));
     yPos += mLabel->height();
-    mListWidget->setGeometry(int(width() * 0.025), yPos, int(width() * 0.95), int(height() * 0.9));
+    auto lightRect = QRect(int(width() * 0.025), yPos, int(width() * 0.95), int(height() * 0.9));
+    mListWidget->setGeometry(lightRect);
+    mPlaceholderWidget->setGeometry(lightRect);
     mGreyout->resize();
     mListWidget->mainWidget()->setFixedWidth(width());
 

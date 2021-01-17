@@ -19,22 +19,9 @@ class ConnectionButton : public QPushButton {
 public:
     explicit ConnectionButton(QWidget* parent)
         : QPushButton(parent),
-          mState{EConnectionState::MAX},
-          mWarningIcon{":/images/warning_icon.png"},
-          mNoConnectionIcon{":/images/no_wifi.png"} {
+          mState{EConnectionState::MAX} {
         setCheckable(true);
         setStyleSheet("text-align:left;");
-        setIconSize(QSize(height() * 0.5, height() * 0.5));
-
-        mWarningIcon = mWarningIcon.scaled(iconSize().width(),
-                                           iconSize().height(),
-                                           Qt::KeepAspectRatio,
-                                           Qt::SmoothTransformation);
-
-        mNoConnectionIcon = mNoConnectionIcon.scaled(iconSize().width(),
-                                                     iconSize().height(),
-                                                     Qt::KeepAspectRatio,
-                                                     Qt::SmoothTransformation);
     }
 
     /// change the state of the button, changign what icon displays
@@ -55,6 +42,25 @@ public:
                     break;
             }
         }
+    }
+
+protected:
+    /// resizes icons when the widget resizes.
+    void resizeEvent(QResizeEvent*) {
+        mWarningIcon = QPixmap(":/images/warning_icon.png");
+        mNoConnectionIcon = QPixmap(":/images/no_wifi.png");
+
+        setIconSize(QSize(height() * 0.25, height() * 0.25));
+
+        mWarningIcon = mWarningIcon.scaled(iconSize().width(),
+                                           iconSize().height(),
+                                           Qt::KeepAspectRatio,
+                                           Qt::SmoothTransformation);
+
+        mNoConnectionIcon = mNoConnectionIcon.scaled(iconSize().width(),
+                                                     iconSize().height(),
+                                                     Qt::KeepAspectRatio,
+                                                     Qt::SmoothTransformation);
     }
 
 private:
