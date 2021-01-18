@@ -1122,3 +1122,11 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed a bug where experimental features were still in use when the `USE_EXPERIMENTAL_FEATURES` features flag was not defined.
 - Added a `ListPlaceholderWidget` to provide guiding text in situations where a list is empty.
 - Fixed miscellaneous bugs.
+
+### **v0.21.72**
+### The RoutineContainer Update
+- Replaced the `RoutineButtonsWidget` with a `RoutineContainer`.
+- Changed `ColorPage` and `PalettePage` to each have their own, full-page `RoutineContainer`.
+- Fixed bugs with the `TopMenu` related to routines.
+- Fixed bugs with the `StateObserver` related to routines.
+- Fixed miscellaneous bugs.

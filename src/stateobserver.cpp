@@ -49,7 +49,7 @@ void StateObserver::globalBrightnessChanged(std::uint32_t brightness) {
         if (mData->supportsRoutines()) {
             mTopMenu->singleColorStateWidget()->updateState(
                 mData->mainColor(),
-                mMainWindow->routineWidget()->singleRoutine());
+                mColorPage->routines()->state().routine());
         } else {
             mTopMenu->singleColorStateWidget()->updateState(mData->mainColor(),
                                                             ERoutine::singleSolid);
@@ -92,10 +92,10 @@ void StateObserver::colorChanged(QColor color) {
     mData->isOn(true);
 
     // UI update
-    mMainWindow->routineWidget()->singleRoutineColorChanged(color);
+    mColorPage->routines()->changeColor(color);
 }
 
-void StateObserver::routineChanged(ERoutine) {
+void StateObserver::routineChanged(ERoutine, int, int) {
     mData->isOn(true);
 
     computeState();
@@ -186,6 +186,23 @@ void StateObserver::lightCountChanged() {
     mTopMenu->lightCountChanged();
     mMainViewport->timeoutPage()->updateLights();
     mLightsPage->highlightLights();
+
+    if (mColorPage->isOpen()) {
+        if (mData->empty() || !mData->supportsRoutines()) {
+            mColorPage->showRoutines(false);
+            mTopMenu->closeRoutinesPage();
+        } else {
+            mColorPage->routines()->changeColor(mData->mainColor());
+        }
+    }
+
+    if (mPalettePage->isOpen()) {
+        if (mData->empty() || !mData->supportsRoutines()) {
+            mPalettePage->setMode(EGroupMode::wheel);
+        } else {
+            mPalettePage->routines()->changePalette(mPalettePage->palette());
+        }
+    }
 }
 
 void StateObserver::dataInSync(bool inSync) {
@@ -209,7 +226,7 @@ void StateObserver::computeState() {
             cor::LightState state;
             state.isOn(mData->isOn());
             if (mData->supportsRoutines()) {
-                state.routine(mMainWindow->routineWidget()->singleRoutine());
+                state.routine(mColorPage->routines()->state().routine());
             } else {
                 state.routine(ERoutine::singleSolid);
             }
@@ -223,7 +240,7 @@ void StateObserver::computeState() {
                 state.color(mColorPage->color());
             }
             if (state.routine() != ERoutine::singleSolid) {
-                state.param(mMainWindow->routineWidget()->parameter());
+                state.param(mColorPage->routines()->state().param());
                 state.speed(mSpeed);
             }
             mData->updateState(state);
@@ -234,22 +251,20 @@ void StateObserver::computeState() {
             cor::LightState state;
             state.isOn(mData->isOn());
             state.speed(mSpeed);
-            state.routine(mMainWindow->routineWidget()->multiRoutine());
+            state.routine(mPalettePage->routines()->state().routine());
 
             if (mPalettePage->mode() == EGroupMode::wheel) {
-                state.param(mMainWindow->routineWidget()->parameter());
-                Palette palette(paletteToString(mPalettePage->palette()),
-                                mPalettePage->colorScheme(),
-                                100u);
+                state.param(mPalettePage->routines()->state().param());
+                auto palette = mPalettePage->palette();
                 if (mPalettePage->colorPicker()->currentScheme() != EColorSchemeType::custom) {
                     palette.brightness(mTopMenu->globalBrightness()->brightness());
                 }
                 state.palette(palette);
-            } else if (mPalettePage->mode() == EGroupMode::presets) {
-                state.param(mMainWindow->routineWidget()->parameter());
-                Palette palette(paletteToString(mPalettePage->palette()),
-                                mPalettePage->colorScheme(),
-                                mTopMenu->globalBrightness()->brightness());
+            } else if (mPalettePage->mode() == EGroupMode::presets
+                       || mPalettePage->mode() == EGroupMode::routines) {
+                state.param(mPalettePage->routines()->state().param());
+                auto palette = mPalettePage->palette();
+                palette.brightness(mTopMenu->globalBrightness()->brightness());
                 state.palette(palette);
             }
             mData->updateState(state);

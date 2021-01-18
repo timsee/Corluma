@@ -6,6 +6,7 @@
 
 #include "colorpicker/singlecolorpicker.h"
 #include "cor/objects/page.h"
+#include "routines/routinecontainer.h"
 
 /*!
  * \copyright
@@ -40,9 +41,11 @@ public:
         if (page != pageType()) {
             switch (page) {
                 case ESingleColorPickerMode::HSV:
+                    showRoutines(false);
                     mColorPicker->enable(mColorPicker->isEnabled(), EColorPickerType::color);
                     break;
                 case ESingleColorPickerMode::ambient:
+                    showRoutines(false);
                     mColorPicker->enable(mColorPicker->isEnabled(), EColorPickerType::CT);
                     break;
                 default:
@@ -65,6 +68,12 @@ public:
 
     /// getter for currently selected color
     const QColor color() const noexcept { return mColor; }
+
+    /// getter for the routines.
+    RoutineContainer* routines() { return mRoutineWidget; }
+
+    /// true to show routines, false to show the color wheel
+    void showRoutines(bool shouldShow);
 
 signals:
 
@@ -112,6 +121,9 @@ private:
 
     /// layout for widget
     QVBoxLayout* mLayout;
+
+    /// routine widget for changing how the lights use the single color
+    RoutineContainer* mRoutineWidget;
 };
 
 #endif // SINGLECOLORPAGE_H

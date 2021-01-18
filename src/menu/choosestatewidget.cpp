@@ -11,7 +11,7 @@ ChooseStateWidget::ChooseStateWidget(QWidget* parent)
     : QWidget(parent),
       mColorPicker{new SingleColorPicker(this)},
       mPaletteScrollArea{new PaletteScrollArea(this)},
-      mRoutinesWidget{new RoutineButtonsWidget(this)},
+      mRoutinesWidget{new RoutineContainer(this, ERoutineGroup::all)},
       mTopFloatingLayout{new FloatingLayout(this)} {
     mTopFloatingLayout->setVisible(false);
     mPaletteScrollArea->setVisible(false);
@@ -33,18 +33,17 @@ ChooseStateWidget::ChooseStateWidget(QWidget* parent)
             this,
             SLOT(paletteButtonClicked(EPalette)));
 
-    mRoutinesWidget->changeRoutines(EWidgetGroup::both);
     connect(mRoutinesWidget,
-            SIGNAL(newRoutineSelected(ERoutine)),
+            SIGNAL(newRoutineSelected(ERoutine, int, int)),
             this,
-            SLOT(routineChanged(ERoutine)));
+            SLOT(routineChanged(ERoutine, int, int)));
 }
 
 
 void ChooseStateWidget::colorChanged(const QColor& color) {
     mState.isOn(true);
     mState.color(color);
-    mRoutinesWidget->singleRoutineColorChanged(color);
+    mRoutinesWidget->changeColor(color);
     // change the routine to show the new color
     if (mState.routine() > cor::ERoutineSingleColorEnd) {
         if (mProtocol == EProtocolType::arduCor || mProtocol == EProtocolType::nanoleaf) {
@@ -78,8 +77,8 @@ void ChooseStateWidget::updateState(const cor::LightState& state, EProtocolType 
     handleProtocol(protocol);
     changeToHSV();
     mColorPicker->updateColorStates(state.color(), state.color().valueF() * 100.0);
-    mRoutinesWidget->singleRoutineColorChanged(mState.color());
-    mRoutinesWidget->multiRoutineColorsChanged(mState.palette().colors());
+    mRoutinesWidget->changeColor(mState.color());
+    mRoutinesWidget->changePalette(mState.palette());
     emit stateChanged(state);
     resize();
 }
@@ -124,7 +123,6 @@ void ChooseStateWidget::resize() {
 
     if (mRoutinesWidget->isVisible()) {
         mRoutinesWidget->setGeometry(0, yPos, this->width(), this->height() - yPos);
-        mRoutinesWidget->resizeStaticPage();
     }
 }
 
@@ -193,11 +191,11 @@ void ChooseStateWidget::paletteButtonClicked(EPalette paletteType) {
     auto palette = mPresetPalettes.palette(paletteType);
     mState.palette(palette);
     mState.isOn(true);
-    mRoutinesWidget->multiRoutineColorsChanged(palette.colors());
+    mRoutinesWidget->changePalette(palette);
     emit stateChanged(mState);
 }
 
-void ChooseStateWidget::routineChanged(ERoutine routine) {
+void ChooseStateWidget::routineChanged(ERoutine routine, int, int) {
     mState.routine(routine);
     mState.isOn(true);
     emit stateChanged(mState);

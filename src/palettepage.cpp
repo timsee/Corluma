@@ -13,8 +13,10 @@ PalettePage::PalettePage(QWidget* parent)
     : QWidget(parent),
       mColorScheme(6, QColor(0, 255, 0)),
       mPaletteScrollArea{new PaletteScrollArea(this)},
-      mColorPicker{new MultiColorPicker(this)} {
+      mColorPicker{new MultiColorPicker(this)},
+      mRoutineWidget{new RoutineContainer(this, ERoutineGroup::multi)} {
     grabGesture(Qt::SwipeGesture);
+    mRoutineWidget->setVisible(false);
 
     connect(mPaletteScrollArea,
             SIGNAL(paletteClicked(EPalette)),
@@ -65,14 +67,26 @@ void PalettePage::setMode(EGroupMode mode) {
             case EGroupMode::presets:
                 mPaletteScrollArea->setVisible(true);
                 mPaletteScrollArea->resize();
+                mRoutineWidget->setVisible(false);
                 break;
             case EGroupMode::wheel:
                 mPaletteEnum = EPalette::custom;
                 mColorPicker->setVisible(true);
+                // TODO: this causes a crash in some cases
+                mColorPicker->updateColorStates(mColorScheme);
+                mRoutineWidget->setVisible(false);
+                break;
+            case EGroupMode::routines:
+                mRoutineWidget->setVisible(true);
+                mRoutineWidget->changePalette(palette());
                 break;
         }
         mMode = mode;
     }
+}
+
+cor::Palette PalettePage::palette() {
+    return cor::Palette(paletteToString(paletteEnum()), colorScheme(), 100u);
 }
 
 void PalettePage::resize() {
@@ -83,6 +97,8 @@ void PalettePage::resize() {
 
     mColorPicker->setGeometry(0, yPos, width(), int(height() * 0.94));
     mColorPicker->resize();
+
+    mRoutineWidget->setGeometry(0, yPos, width(), height() * 0.94);
 }
 
 void PalettePage::lightCountChanged(std::size_t count) {

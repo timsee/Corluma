@@ -29,7 +29,6 @@
 #include "mainviewport.h"
 #include "menu/lefthandmenu.h"
 #include "nowifiwidget.h"
-#include "routinebuttonswidget.h"
 #include "settingspage.h"
 #include "touchlistener.h"
 
@@ -80,9 +79,6 @@ public:
     /// pointer to object that handles sharing on mobile devices.
     ShareUtils* shareUtils() { return mShareUtils; }
 #endif
-
-    /// getter for the routine widget
-    RoutineButtonsWidget* routineWidget() { return mRoutineWidget; }
 
     /// getter for the greyout overlay
     GreyOutOverlay* greyOut() { return mGreyOut; }
@@ -359,9 +355,6 @@ private:
 
     /// left hand menu.
     LeftHandMenu* mLeftHandMenu;
-
-    /// routine widget, for choosing the routine of lights with multiple addressable LEDs.
-    RoutineButtonsWidget* mRoutineWidget;
 
     /// edit page for editing groups and rooms
     cor::EditGroupPage* mEditGroupPage;

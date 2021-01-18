@@ -14,8 +14,10 @@ ColorPage::ColorPage(QWidget* parent)
       mColor{0, 255, 0},
       mBestType{EColorPickerType::color},
       mColorPicker{new SingleColorPicker(this)},
-      mLayout{new QVBoxLayout(this)} {
+      mLayout{new QVBoxLayout(this)},
+      mRoutineWidget{new RoutineContainer(this, ERoutineGroup::single)} {
     mLayout->addWidget(mColorPicker);
+    showRoutines(false);
 
     connect(mColorPicker, SIGNAL(colorUpdate(QColor)), this, SLOT(colorChanged(QColor)));
     connect(mColorPicker,
@@ -40,6 +42,10 @@ void ColorPage::ambientUpdateReceived(std::uint32_t newAmbientValue, std::uint32
     emit ambientUpdate(newAmbientValue, newBrightness);
 }
 
+void ColorPage::showRoutines(bool shouldShow) {
+    mRoutineWidget->setVisible(shouldShow);
+}
+
 void ColorPage::update(const QColor& color,
                        std::uint32_t brightness,
                        std::size_t lightCount,
@@ -57,4 +63,5 @@ void ColorPage::update(const QColor& color,
 
 void ColorPage::resizeEvent(QResizeEvent*) {
     mColorPicker->resize();
+    mRoutineWidget->setGeometry(0, 0, width(), height());
 }

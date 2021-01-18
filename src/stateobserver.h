@@ -64,7 +64,7 @@ public slots:
     void colorChanged(QColor);
 
     /// routine changed from routine widget
-    void routineChanged(ERoutine);
+    void routineChanged(ERoutine, int, int);
 
     /// palette changed from a palette widget
     void paletteChanged(EPalette);

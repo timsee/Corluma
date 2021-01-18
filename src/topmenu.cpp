@@ -308,9 +308,11 @@ void TopMenu::floatingLayoutButtonPressed(const QString& button) {
         mPalettePage->setMode(EGroupMode::presets);
         showRoutineWidget(false);
         handleBrightnessSliders();
+        mRoutineFloatingLayout->highlightButton("");
     } else if (button == "HSV") {
         if (mColorPage->isOpen()) {
             mLastColorButtonKey = button;
+            mColorPage->showRoutines(false);
             mColorPage->changePageType(ESingleColorPickerMode::HSV);
         }
         if (mPalettePage->isOpen()) {
@@ -318,20 +320,20 @@ void TopMenu::floatingLayoutButtonPressed(const QString& button) {
             handleBrightnessSliders();
             showRoutineWidget(false);
         }
+        mRoutineFloatingLayout->highlightButton("");
     } else if (button == "Temperature") {
         mLastColorButtonKey = button;
+        mColorPage->showRoutines(false);
+        mRoutineFloatingLayout->highlightButton("");
         mColorPage->changePageType(ESingleColorPickerMode::ambient);
     } else if (button == "Routine") {
-        if (mMainWindow->routineWidget()->isOpen()) {
-            mRoutineFloatingLayout->highlightButton("");
-            mMainWindow->routineWidget()->pushOut();
-        } else {
-            auto widgetGroup = EWidgetGroup::singleRoutines;
-            if (mPalettePage->isOpen()) {
-                widgetGroup = EWidgetGroup::multiRoutines;
-            }
-            mMainWindow->routineWidget()->changeRoutines(widgetGroup);
-            mMainWindow->routineWidget()->pushIn();
+        emit buttonPressed("Routine");
+        if (mColorPage->isOpen()) {
+            mColorPage->showRoutines(true);
+            mColorFloatingLayout->highlightButton("");
+        } else if (mPalettePage->isOpen()) {
+            mPalettePage->setMode(EGroupMode::routines);
+            mPaletteFloatingLayout->highlightButton("");
         }
     } else if (button == "Settings") {
         emit buttonPressed("Settings");
@@ -345,14 +347,24 @@ void TopMenu::floatingLayoutButtonPressed(const QString& button) {
     }
 }
 
-void TopMenu::showSingleColorStateWidget(bool show) {
-    int height = mSize.height() * 2 / 3;
+void TopMenu::closeRoutinesPage() {
+    if (mColorPage->isOpen()) {
+        floatingLayoutButtonPressed("HSV");
+    } else if (mPalettePage->isOpen()) {
+        floatingLayoutButtonPressed("HSV");
+    }
+}
+
+QPoint TopMenu::colorStateStartPoint() {
     int width = 0;
     if (mMainWindow->leftHandMenu()->alwaysOpen()) {
         width = mMainWindow->leftHandMenu()->width();
     }
+    return QPoint(width, mSize.height() * 2 / 3);
+}
 
-    QPoint startPoint(width, height);
+void TopMenu::showSingleColorStateWidget(bool show) {
+    auto startPoint = colorStateStartPoint();
     if (show) {
         mSingleColorStateWidget->setVisible(true);
         mSingleColorStateWidget->pushIn(startPoint);
@@ -363,13 +375,7 @@ void TopMenu::showSingleColorStateWidget(bool show) {
 }
 
 void TopMenu::showMultiColorStateWidget(bool show) {
-    int height = mSize.height() * 2 / 3;
-    int width = 0;
-    if (mMainWindow->leftHandMenu()->alwaysOpen()) {
-        width = mMainWindow->leftHandMenu()->width();
-    }
-
-    QPoint startPoint(width, height);
+    auto startPoint = colorStateStartPoint();
     if (show && !mData->empty()) {
         mMultiColorStateWidget->setVisible(true);
         mMultiColorStateWidget->pushIn(startPoint);
@@ -381,23 +387,29 @@ void TopMenu::showMultiColorStateWidget(bool show) {
     }
 }
 
+void TopMenu::moveColorStateWidgets() {
+    auto startPoint = colorStateStartPoint();
+    if (mSingleColorStateWidget->isIn()) {
+        mSingleColorStateWidget->move(startPoint);
+    }
+
+    if (mMultiColorStateWidget->isIn()) {
+        mMultiColorStateWidget->move(startPoint);
+    }
+}
+
+
 void TopMenu::showFloatingLayout(EPage newPage) {
     if (newPage != mCurrentPage) {
         mRoutineFloatingLayout->highlightButton("");
         // move old menu back
         switch (mCurrentPage) {
             case EPage::colorPage: {
-                if (mMainWindow->routineWidget()->isOpen()) {
-                    mMainWindow->routineWidget()->pushOut();
-                }
                 showSingleColorStateWidget(false);
             } break;
             case EPage::moodPage:
                 break;
             case EPage::palettePage: {
-                if (mMainWindow->routineWidget()->isOpen()) {
-                    mMainWindow->routineWidget()->pushOut();
-                }
                 showMultiColorStateWidget(false);
             } break;
             default:
@@ -449,15 +461,17 @@ FloatingLayout* TopMenu::currentFloatingLayout() {
     return layout;
 }
 
+
 void TopMenu::moveFloatingLayout() {
     auto parentSize = parentWidget()->size();
     QPoint topRight(parentSize.width(), mFloatingMenuStart);
     showRoutineWidget(true);
 
-    if (mCurrentPage == EPage::palettePage) {
-        showMultiColorStateWidget(true);
-    }
+    // moves the color state widgets, whether they are in or out
+    moveColorStateWidgets();
 
+    bool skipTranisition = true;
+    showRoutineWidget(skipTranisition);
 
     if (mCurrentPage == EPage::settingsPage) {
         moveHiddenLayouts();
@@ -512,10 +526,6 @@ void TopMenu::showRoutineWidget(bool skipTransition) {
         endPoint = QPoint(parentSize.width() - mRoutineFloatingLayout->width(),
                           mFloatingMenuStart + mColorFloatingLayout->height());
     } else {
-        if (mMainWindow->routineWidget()->isOpen()) {
-            mRoutineFloatingLayout->highlightButton("");
-            mMainWindow->routineWidget()->pushOut();
-        }
         endPoint = QPoint(
             parentSize.width() - mRoutineFloatingLayout->width() + mRoutineFloatingLayout->height(),
             mFloatingMenuStart + mColorFloatingLayout->height());
@@ -604,10 +614,6 @@ void TopMenu::moveHiddenLayouts() {
                                           topRight.y() + mColorFloatingLayout->height(),
                                           mColorFloatingLayout->width(),
                                           mColorFloatingLayout->height());
-        mRoutineFloatingLayout->setGeometry(topRight.x(),
-                                            topRight.y(),
-                                            mRoutineFloatingLayout->width(),
-                                            mRoutineFloatingLayout->height());
     }
 
     if (layout != mLightsFloatingLayout) {
@@ -637,10 +643,6 @@ void TopMenu::moveHiddenLayouts() {
                                             topRight.y(),
                                             mPaletteFloatingLayout->width(),
                                             mPaletteFloatingLayout->height());
-        mRoutineFloatingLayout->setGeometry(topRight.x(),
-                                            topRight.y(),
-                                            mRoutineFloatingLayout->width(),
-                                            mRoutineFloatingLayout->height());
     }
 }
 
@@ -742,9 +744,13 @@ void TopMenu::handleBrightnessSliders() {
                     if (!mSingleLightBrightness->isIn()) {
                         mSingleLightBrightness->pushIn();
                     }
-                    auto color = mData->lights().begin()->state().color();
-                    mSingleLightBrightness->updateColor(color);
-                    mSingleLightBrightness->updateBrightness(std::uint32_t(color.valueF() * 100.0));
+                    auto paletteColors = mPalettePage->palette().colors();
+                    if (!paletteColors.empty()) {
+                        auto color = paletteColors[0];
+                        mSingleLightBrightness->updateColor(color);
+                        mSingleLightBrightness->updateBrightness(
+                            std::uint32_t(color.valueF() * 100.0));
+                    }
                 } else {
                     updateGlobalBrightness = true;
                 }

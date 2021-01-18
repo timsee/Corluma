@@ -71,6 +71,7 @@ public:
         // TODO: why does this need to be called for mLightContainer to show lights?
         mLightsMenu->reset();
         mLightsMenu->ignoreLights({});
+        mLightsMenu->updateMenu();
 
         auto lights = mMoodLights->lights();
         for (const auto& light : lights) {

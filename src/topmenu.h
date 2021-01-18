@@ -124,6 +124,9 @@ public:
     /// update a lights button to a new connection state.
     void updateLightsButton(EProtocolType type, EConnectionState connectionState);
 
+    /// close the routine pages
+    void closeRoutinesPage();
+
 signals:
 
     /// sent out whenever a button is pressed. Keys are the names of the buttons, such as "settings"
@@ -206,6 +209,12 @@ private:
 
     /// pull left the lights menu.
     void pullLeftLightsMenu();
+
+    /// helper that generates where the color state menus should put their top-left point
+    QPoint colorStateStartPoint();
+
+    /// move the color state widgets.
+    void moveColorStateWidgets();
 
     /// pointer to main window, used for public function calls.
     MainWindow* mMainWindow;

@@ -7,34 +7,41 @@
 #include "syncwidget.h"
 #include <QMovie>
 
-SyncWidget::SyncWidget(QWidget* parent) : QWidget(parent), mState{ESyncState::notSynced} {
-    mLabel = new QLabel(this);
-    mLabel->setFixedSize(size());
+SyncWidget::SyncWidget(QWidget* parent)
+    : QWidget(parent),
+      mState{ESyncState::notSynced},
+      mLabel{new QLabel(this)},
+      mMovieLabel{new QLabel(this)} {
     mLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     changeState(ESyncState::notSynced);
 
     mMovie = new QMovie(":/images/syncing.gif");
-    mMovie->setScaledSize(size());
+    mMovieLabel->setMovie(mMovie);
 }
 
 void SyncWidget::changeState(ESyncState state) {
-    mState = state;
-    if (mState == ESyncState::notSynced || mState == ESyncState::synced) {
-        QString resourcePath;
-        if (mState == ESyncState::notSynced) {
-            resourcePath = ":images/closeX.png";
-        } else if (mState == ESyncState::synced) {
-            resourcePath = ":images/checkmark.png";
+    if (state != mState) {
+        mState = state;
+        if (mState == ESyncState::notSynced || mState == ESyncState::synced) {
+            QString resourcePath;
+            if (mState == ESyncState::notSynced) {
+                resourcePath = ":images/closeX.png";
+            } else if (mState == ESyncState::synced) {
+                resourcePath = ":images/checkmark.png";
+            }
+            QPixmap syncPixmap(resourcePath);
+            syncPixmap = syncPixmap.scaled(int(height() * 0.7f),
+                                           int(height() * 0.7f),
+                                           Qt::KeepAspectRatio,
+                                           Qt::SmoothTransformation);
+            mLabel->setVisible(true);
+            mMovieLabel->setVisible(false);
+            mLabel->setPixmap(syncPixmap);
+        } else if (mState == ESyncState::syncing) {
+            mLabel->setVisible(false);
+            mMovieLabel->setVisible(true);
+            mMovie->start();
         }
-        QPixmap syncPixmap(resourcePath);
-        syncPixmap = syncPixmap.scaled(int(height() * 0.7f),
-                                       int(height() * 0.7f),
-                                       Qt::KeepAspectRatio,
-                                       Qt::SmoothTransformation);
-        mLabel->setPixmap(syncPixmap);
-    } else if (mState == ESyncState::syncing) {
-        mLabel->setMovie(mMovie);
-        mMovie->start();
     }
 }
 
@@ -42,5 +49,6 @@ void SyncWidget::changeState(ESyncState state) {
 void SyncWidget::resizeEvent(QResizeEvent*) {
     auto height = this->height();
     mLabel->setFixedSize(QSize(width(), height));
+    mMovieLabel->setFixedSize(QSize(height, height));
     mMovie->setScaledSize(QSize(height, height));
 }

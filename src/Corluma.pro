@@ -14,14 +14,14 @@ linux:!android {
     TARGET = corluma
 }
 TEMPLATE = app
-VERSION = 0.21.72
+VERSION = 0.21.73
 
 #----------
 # Build flags
 #----------
 
 # flag to use experimental features that may not be part of the standard release.
-SHOULD_USE_EXPERIMENTAL_FEATURES = 0
+SHOULD_USE_EXPERIMENTAL_FEATURES = 1
 # flag to use serial ArduCor devices. Not all versions of Qt nor do all supported devices have serial.
 SHOULD_USE_SERIAL = 1
 # flag to build in support for shareutils. This allows sharing on mobile devices, but can conflict in mobile updates
@@ -277,6 +277,7 @@ SOURCES += main.cpp \
     menu/standardlightsmenu.cpp \
     menu/standardmoodsmenu.cpp \
     menu/statelesslightslistmenu.cpp \
+    routines/routinecontainer.cpp \
     mooddetailedwidget.cpp \
     moodsyncwidget.cpp \
     palettewidget.cpp \
@@ -302,7 +303,6 @@ SOURCES += main.cpp \
     icondata.cpp \
     floatinglayout.cpp \
     greyoutoverlay.cpp \
-    routinebuttonswidget.cpp \
     colorpage.cpp \
     singlelightbrightnesswidget.cpp \
     topmenu.cpp \
@@ -439,10 +439,12 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     menu/standardmoodsmenu.h \
     menu/statelesslightslistmenu.h \
     menu/timeoutbutton.h \
+    routines/routinecontainer.h \
     mooddetailedwidget.h \
     moodsyncwidget.h \
     palettewidget.h \
     parentgroupwidget.h \
+    routinesinglecolorcontainer.h \
     singlelightbrightnesswidget.h \
     stateobserver.h \
     data/subgroupdata.h \
@@ -470,7 +472,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     icondata.h \
     floatinglayout.h \
     greyoutoverlay.h \
-    routinebuttonswidget.h \
     colorpage.h \
     topmenu.h \
     settingsbutton.h \

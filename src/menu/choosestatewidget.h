@@ -12,7 +12,7 @@
 #include "cor/presetpalettes.h"
 #include "floatinglayout.h"
 #include "palettescrollarea.h"
-#include "routinebuttonswidget.h"
+#include "routines/routinecontainer.h"
 
 /*!
  * \brief The ChooseStateWidget class condenses all the widgets that can be used to change the state
@@ -59,7 +59,7 @@ private slots:
     void paletteButtonClicked(EPalette);
 
     /// handles when a routine button is clicked
-    void routineChanged(ERoutine);
+    void routineChanged(ERoutine, int, int);
 
     /// handles when the floating layout is pressed
     void floatingLayoutButtonPressed(QString);
@@ -90,7 +90,7 @@ private:
     PaletteScrollArea* mPaletteScrollArea;
 
     /// routines buttons for choosing routines
-    RoutineButtonsWidget* mRoutinesWidget;
+    RoutineContainer* mRoutinesWidget;
 
     /// floating layout at the top of the widget
     FloatingLayout* mTopFloatingLayout;

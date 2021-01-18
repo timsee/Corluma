@@ -39,6 +39,9 @@ private:
     /// label for displaying static images
     QLabel* mLabel;
 
+    /// label for displaying the syncing movie
+    QLabel* mMovieLabel;
+
     /// movie for diplaying moving images
     QMovie* mMovie;
 };

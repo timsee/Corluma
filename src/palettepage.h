@@ -5,11 +5,12 @@
 #include "colorpicker/multicolorpicker.h"
 #include "cor/objects/page.h"
 #include "cor/presetpalettes.h"
+#include "routines/routinecontainer.h"
 
 class PaletteScrollArea;
 
 /// mode of the page
-enum class EGroupMode { presets, wheel };
+enum class EGroupMode { presets, wheel, routines };
 
 /*!
  * \copyright
@@ -72,7 +73,13 @@ public:
     const std::vector<QColor>& colorScheme() const noexcept { return mColorScheme; }
 
     /// getter for palette enum
-    EPalette palette() const noexcept { return mPaletteEnum; }
+    EPalette paletteEnum() const noexcept { return mPaletteEnum; }
+
+    /// creates a palette based on the settings of its pages
+    cor::Palette palette();
+
+    /// getter for the routine
+    RoutineContainer* routines() { return mRoutineWidget; }
 
 signals:
 
@@ -81,6 +88,7 @@ signals:
 
 private slots:
 
+    /// handles when a palette button is clicked
     void paletteButtonClicked(EPalette);
 
 protected:
@@ -105,10 +113,15 @@ private:
     /// preset data for palettes from ArduCor
     PresetPalettes mPresetPalettes;
 
+    /// scroll area that displays the palettes
     PaletteScrollArea* mPaletteScrollArea;
 
     /// color picker for color schemes
     MultiColorPicker* mColorPicker;
+
+    /// widget that determines which routine displays the colors (IE, show all colors on random
+    /// lights, fade between colors, etc.)
+    RoutineContainer* mRoutineWidget;
 };
 
 #endif // PresetColorsPage_H

@@ -146,7 +146,7 @@ cor::Page* MainViewport::mainPage(EPage page) {
             widget = mLightsPage;
             break;
         case EPage::settingsPage:
-            widget = mLightsPage;
+            widget = mSettingsPage;
             break;
         default:
             THROW_EXCEPTION("Widget not recognized by mainviewport");
@@ -209,5 +209,4 @@ void MainViewport::hideMainPage(EPage page) {
     int x = widget->width() * -1;
 
     cor::moveWidget(widget, pos(), QPoint(x, widget->pos().y()));
-    mMainWindow->routineWidget()->pushOut();
 }

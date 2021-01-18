@@ -56,7 +56,6 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
           mData,
           mGroups,
           this)},
-      mRoutineWidget{new RoutineButtonsWidget(this)},
       mEditGroupPage{new cor::EditGroupPage(this, mComm, mGroups)},
       mEditMoodPage{new cor::EditMoodPage(this, mComm, mGroups, mData)},
       mChooseEditPage{new ChooseEditPage(this)},
@@ -222,11 +221,6 @@ void MainWindow::loadPages() {
     if (mLeftHandMenu->alwaysOpen()) {
         x = mLeftHandMenu->width();
     }
-    mRoutineWidget->setMaximumWidth(mMainViewport->width());
-    mRoutineWidget->setMaximumHeight(mMainViewport->height() / 3);
-    mRoutineWidget->setGeometry(x, height(), mRoutineWidget->width(), mRoutineWidget->height());
-    mRoutineWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
 
     mEditGroupPage->setVisible(false);
     mEditGroupPage->isOpen(false);
@@ -348,10 +342,14 @@ void MainWindow::setupStateObserver() {
             SLOT(protocolSettingsChanged(EProtocolType, bool)));
 
     // routine state widget
-    connect(mRoutineWidget,
-            SIGNAL(newRoutineSelected(ERoutine)),
+    connect(mMainViewport->colorPage()->routines(),
+            SIGNAL(newRoutineSelected(ERoutine, int, int)),
             mStateObserver,
-            SLOT(routineChanged(ERoutine)));
+            SLOT(routineChanged(ERoutine, int, int)));
+    connect(mMainViewport->palettePage()->routines(),
+            SIGNAL(newRoutineSelected(ERoutine, int, int)),
+            mStateObserver,
+            SLOT(routineChanged(ERoutine, int, int)));
 
     // left hand menu changes
     connect(mLeftHandMenu, SIGNAL(changedLightCount()), mStateObserver, SLOT(lightCountChanged()));
@@ -476,7 +474,7 @@ void MainWindow::topMenuButtonPressed(const QString& key) {
     } else if (key == "Menu") {
         pushInLeftHandMenu();
     } else {
-        //  qDebug() << "Do not recognize key" << key;
+        qDebug() << "Do not recognize key" << key;
     }
 }
 
@@ -639,9 +637,6 @@ void MainWindow::resize() {
 
     resizeFullPageWidget(mChooseGroupWidget, mChooseGroupWidget->isOpen());
     resizeFullPageWidget(mChooseMoodWidget, mChooseMoodWidget->isOpen());
-
-    mRoutineWidget->resize(mMainViewport->x(),
-                           QSize(mMainViewport->width(), mMainViewport->height()));
 
     mNoWifiWidget->setGeometry(QRect(0, 0, geometry().width(), geometry().height()));
 }
