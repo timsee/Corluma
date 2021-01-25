@@ -172,8 +172,14 @@ void LightsPage::selectLight(QString lightKey) {
 void LightsPage::selectAllControllerLights(QString controller, EProtocolType protocol) {
     auto lightResult = getLightsFromController(controller, protocol);
     if (lightResult.second) {
-        mSelectedLights->addLights(lightResult.first);
-        emit selectLights(cor::lightVectorToIDs(lightResult.first));
+        std::vector<cor::Light> reachableLights;
+        for (auto light : lightResult.first) {
+            if (light.isReachable()) {
+                reachableLights.push_back(light);
+            }
+        }
+        mSelectedLights->addLights(reachableLights);
+        emit selectLights(cor::lightVectorToIDs(reachableLights));
     }
 }
 

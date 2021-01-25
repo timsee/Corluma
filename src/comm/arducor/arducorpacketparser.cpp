@@ -91,18 +91,6 @@ QString ArduCorPacketParser::routinePacket(int index, const QJsonObject& routine
             case ERoutine::multiBars:
                 optionalParameter = 4;
                 break;
-            case ERoutine::singleGlimmer:
-            case ERoutine::multiGlimmer:
-                optionalParameter = 15;
-                break;
-            case ERoutine::singleFade:
-            case ERoutine::singleSawtoothFade:
-            case ERoutine::multiRandomSolid:
-            case ERoutine::singleWave:
-            case ERoutine::multiFade:
-            case ERoutine::multiRandomIndividual:
-            case ERoutine::singleSolid:
-            case ERoutine::singleBlink:
             default:
                 break;
         }
@@ -128,18 +116,17 @@ QString ArduCorPacketParser::routinePacket(int index, const QJsonObject& routine
             }
 
             if (routine != ERoutine::singleSolid) {
-                // TODO: fix edge case
-                if (speed == INT_MIN) {
-                    speed = 100;
-                }
                 packet += ",";
                 packet += QString::number(speed);
             }
 
-            if (optionalParameter != INT_MIN) {
+            if (routine == ERoutine::singleFade || routine == ERoutine::singleSawtoothFade
+                || routine == ERoutine::singleGlimmer || routine == ERoutine::multiGlimmer
+                || routine == ERoutine::multiBars) {
                 packet += ",";
                 packet += QString::number(optionalParameter);
             }
+
             packet += "&";
         }
     }

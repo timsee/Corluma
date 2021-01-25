@@ -172,6 +172,12 @@ private:
     /// speed for routines.
     std::uint32_t mSpeed;
 
+    /// parameter for routines. This has a different impact per routine and is not required for all
+    /// routines. For instance, for glimmer routines its value between 1 and 100 denoting how
+    /// frequently lights should be dimmed to produce a "glimmer". For multiBars, it is the size of
+    /// the bars.
+    std::uint32_t mRoutineParameter;
+
     /// observes the last time a state is changed
     TimeObserver* mTimeObserver;
 };

@@ -60,6 +60,11 @@ public:
         mSingleLightIcon->setVisible(false);
         mSingleLightIcon->setAlignment(Qt::AlignHCenter);
 
+        connect(mCheckBox,
+                SIGNAL(clicked(ECheckboxState)),
+                this,
+                SLOT(checkBoxClicked(ECheckboxState)));
+
         connect(mDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteButtonPressed(bool)));
         mDeleteButton->setStyleSheet("background-color:rgb(110,30,30);");
 
@@ -166,8 +171,6 @@ public:
             headerX += mStateButton->width() + xSpacer / 2;
         }
         mCheckBox->setGeometry(headerX, yPosColumn1, buttonHeight, buttonHeight);
-        mCheckBox->resize();
-
 
         yPosColumn1 += mName->height();
         yPosColumn2 += mName->height();
@@ -232,22 +235,6 @@ protected:
         painter.fillRect(rect(), QBrush(QColor(32, 31, 31, 255)));
     }
 
-    /// handle when a mouse release event occurs.
-    void mouseReleaseEvent(QMouseEvent* event) {
-        if (cor::isMouseEventTouchUpInside(event, mCheckBox, false)) {
-            if (mCheckBox->checkboxState() == cor::ECheckboxState::clearAll) {
-                mCheckBox->checkboxState(cor::ECheckboxState::selectAll);
-                emit deselectControllerLights(mController.name(), EProtocolType::arduCor);
-                mLights->highlightLights({});
-            } else {
-                mCheckBox->checkboxState(cor::ECheckboxState::clearAll);
-                emit selectControllerLights(mController.name(), EProtocolType::arduCor);
-                mLights->highlightLights(mController.names());
-            }
-        }
-        event->ignore();
-    }
-
 
 private slots:
     /// light clicked
@@ -256,6 +243,19 @@ private slots:
             emit deselectLight(light.uniqueID());
         } else {
             emit selectLight(light.uniqueID());
+        }
+    }
+
+    /// handle when the checkbox is clicked
+    void checkBoxClicked(ECheckboxState state) {
+        if (state == ECheckboxState::checked) {
+            mCheckBox->checkboxState(ECheckboxState::unchecked);
+            emit deselectControllerLights(mController.name(), EProtocolType::arduCor);
+            mLights->highlightLights({});
+        } else {
+            mCheckBox->checkboxState(ECheckboxState::checked);
+            emit selectControllerLights(mController.name(), EProtocolType::arduCor);
+            mLights->highlightLights(mController.names());
         }
     }
 
@@ -315,9 +315,9 @@ private:
             }
         }
         if (anyLightSelected) {
-            mCheckBox->checkboxState(cor::ECheckboxState::clearAll);
+            mCheckBox->checkboxState(ECheckboxState::checked);
         } else {
-            mCheckBox->checkboxState(cor::ECheckboxState::selectAll);
+            mCheckBox->checkboxState(ECheckboxState::unchecked);
         }
     }
 

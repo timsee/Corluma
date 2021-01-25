@@ -107,6 +107,11 @@ public:
         connect(mGroupsButton, SIGNAL(clicked(bool)), this, SLOT(groupsButtonPressed(bool)));
         connect(mScheduleButton, SIGNAL(clicked(bool)), this, SLOT(scheduleButtonPressed(bool)));
 
+        connect(mCheckBox,
+                SIGNAL(clicked(ECheckboxState)),
+                this,
+                SLOT(checkBoxClicked(ECheckboxState)));
+
         mLightInfoWidget->isOpen(false);
         mLightInfoWidget->setVisible(false);
         connect(mLightInfoWidget,
@@ -150,7 +155,6 @@ public:
         mBridge.lights();
         auto lights = mComm->hue()->lightsFromMetadata(bridge.lights().items());
         mLights->addLights(lights);
-        highlightLights();
         handleCheckboxState();
         updateMetadata(mBridge);
         resize();
@@ -187,7 +191,6 @@ public:
                            buttonHeight);
         headerX += mName->width() + mName->geometry().x();
         mCheckBox->setGeometry(headerX, yPosColumn1, buttonHeight, buttonHeight);
-        mCheckBox->resize();
 
         mGreyout->resize();
         mHueLightDiscovery->resize();
@@ -263,9 +266,6 @@ public:
         yPosColumn2 += mDeleteButton->height();
     }
 
-    ///  highlight lights in the widget
-    void highlightLights() { qDebug() << "TODO: highlight hue bridge widget"; }
-
     /// remove lights by their keys from the list.
     void removeLights(const std::vector<QString>& keys) { mLights->removeLights(keys); }
 
@@ -328,22 +328,27 @@ protected:
         painter.fillRect(rect(), QBrush(QColor(32, 31, 31, 255)));
     }
 
-    /// handles when the mouse is released
-    void mouseReleaseEvent(QMouseEvent* event) {
-        if (cor::isMouseEventTouchUpInside(event, mCheckBox, false)) {
-            if (mCheckBox->checkboxState() == cor::ECheckboxState::clearAll) {
-                mCheckBox->checkboxState(cor::ECheckboxState::selectAll);
-                emit deselectControllerLights(mBridge.id(), EProtocolType::hue);
-                mLights->highlightLights({});
-            } else {
-                mCheckBox->checkboxState(cor::ECheckboxState::clearAll);
-                emit selectControllerLights(mBridge.id(), EProtocolType::hue);
-                mLights->highlightLights(mBridge.lightIDs());
-            }
-        }
-        event->ignore();
-    }
 private slots:
+
+    /// handle when the checkbox is clicked
+    void checkBoxClicked(ECheckboxState state) {
+        if (state == ECheckboxState::checked) {
+            mCheckBox->checkboxState(ECheckboxState::unchecked);
+            emit deselectControllerLights(mBridge.id(), EProtocolType::hue);
+            mLights->highlightLights({});
+        } else {
+            mCheckBox->checkboxState(ECheckboxState::checked);
+            emit selectControllerLights(mBridge.id(), EProtocolType::hue);
+            // filter out IDs that are not reachables
+            std::vector<QString> reachableIDs;
+            for (auto lightID : mBridge.lightIDs()) {
+                if (mComm->lightByID(lightID).isReachable()) {
+                    reachableIDs.push_back(lightID);
+                }
+            }
+            mLights->highlightLights(reachableIDs);
+        }
+    }
 
     /// handle when a light is clicked
     void lightClicked(cor::Light light) {
@@ -531,9 +536,9 @@ private:
             }
         }
         if (anyLightSelected) {
-            mCheckBox->checkboxState(cor::ECheckboxState::clearAll);
+            mCheckBox->checkboxState(ECheckboxState::checked);
         } else {
-            mCheckBox->checkboxState(cor::ECheckboxState::selectAll);
+            mCheckBox->checkboxState(ECheckboxState::unchecked);
         }
     }
 

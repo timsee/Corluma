@@ -217,11 +217,6 @@ void MainWindow::loadPages() {
 
     mMainViewport->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    auto x = 0;
-    if (mLeftHandMenu->alwaysOpen()) {
-        x = mLeftHandMenu->width();
-    }
-
     mEditGroupPage->setVisible(false);
     mEditGroupPage->isOpen(false);
     connect(mEditGroupPage, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
@@ -253,7 +248,6 @@ void MainWindow::loadPages() {
             SIGNAL(editGroup(std::uint64_t)),
             this,
             SLOT(editGroupSelected(std::uint64_t)));
-
 
     mChooseMoodWidget->setVisible(false);
     mChooseMoodWidget->isOpen(false);

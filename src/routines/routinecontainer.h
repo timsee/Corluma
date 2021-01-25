@@ -5,6 +5,10 @@
 #include <QWidget>
 #include "cor/objects/lightstate.h"
 #include "cor/widgets/button.h"
+#include "routines/singlefaderoutinewidget.h"
+#include "routines/singleglimmerroutinewidget.h"
+#include "routines/singlesolidroutinewidget.h"
+#include "routines/singlewaveroutinewidget.h"
 
 /// different types of routinebuttonswidgets
 enum class ERoutineGroup { single, multi, all };
@@ -51,6 +55,9 @@ protected:
      */
     void resizeEvent(QResizeEvent*) { resize(); }
 
+    /// handles hwen the widget is painted
+    void paintEvent(QPaintEvent*);
+
 private slots:
 
     /*!
@@ -58,6 +65,9 @@ private slots:
      * to tell the LEDs to update.
      */
     void routineChanged(const cor::LightState&);
+
+    /// handles when the time slder changes.
+    void speedSliderChanged(int sliderValue);
 
 private:
     /// init the buttons used by the widget
@@ -67,7 +77,19 @@ private:
     void resize();
 
     /// find the label for a button given its state
-    QString labelFromState(const cor::LightState& state);
+    QString labelFromRoutine(ERoutine routine, int param);
+
+    /// widget for displaying all lights as one solid color
+    SingleSolidRoutineWidget* mSingleSolidRoutineWidget;
+
+    /// widget for applying a glimmer to the lights (at random, certain lights are slightly dimmed)
+    SingleGlimmerRoutineWidget* mSingleGlimmerRoutineWidget;
+
+    /// widget for applying a fade to all lights (fade may be linear, sine, square, or sawtooth)
+    SingleFadeRoutineWidget* mSingleFadeRoutineWidget;
+
+    /// widget for dimming and turning on lights
+    SingleWaveRoutineWidget* mSingleWaveRoutineWidget;
 
     /// vector of routines
     std::vector<std::pair<QString, cor::LightState>> mRoutines;
@@ -76,6 +98,9 @@ private:
      * \brief mSingleRoutineButtons pointers to all the main buttons
      */
     std::vector<cor::Button*> mRoutineButtons;
+
+    /// slider to change the speed.
+    cor::Slider* mSpeedSlider;
 
     /// vector of labels
     std::vector<QLabel*> mLabels;

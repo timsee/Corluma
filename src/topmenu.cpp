@@ -327,7 +327,6 @@ void TopMenu::floatingLayoutButtonPressed(const QString& button) {
         mRoutineFloatingLayout->highlightButton("");
         mColorPage->changePageType(ESingleColorPickerMode::ambient);
     } else if (button == "Routine") {
-        emit buttonPressed("Routine");
         if (mColorPage->isOpen()) {
             mColorPage->showRoutines(true);
             mColorFloatingLayout->highlightButton("");

@@ -1,5 +1,5 @@
 [Desktop Entry]
-Version=0.21-69
+Version=~~VERSION_STRING~~
 Name=Corluma
 Comment=App for controlling lights
 Exec=/usr/bin/corluma

@@ -14,7 +14,7 @@ linux:!android {
     TARGET = corluma
 }
 TEMPLATE = app
-VERSION = 0.21.73
+VERSION = 0.21.74
 
 #----------
 # Build flags
@@ -444,6 +444,11 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     moodsyncwidget.h \
     palettewidget.h \
     parentgroupwidget.h \
+    routines/routinewidget.h \
+    routines/singlefaderoutinewidget.h \
+    routines/singleglimmerroutinewidget.h \
+    routines/singlesolidroutinewidget.h \
+    routines/singlewaveroutinewidget.h \
     routinesinglecolorcontainer.h \
     singlelightbrightnesswidget.h \
     stateobserver.h \

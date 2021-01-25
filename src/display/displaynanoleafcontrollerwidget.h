@@ -76,6 +76,11 @@ public:
         mSchedulesLabel->setVisible(false);
         mSchedulesWidget->setVisible(false);
 
+        connect(mCheckBox,
+                SIGNAL(clicked(ECheckboxState)),
+                this,
+                SLOT(checkBoxClicked(ECheckboxState)));
+
         this->setStyleSheet("background-color:rgb(33,32,32);");
 
         connect(mRotateLightWidget, SIGNAL(cancelClicked()), this, SLOT(rotateWidgetClosed()));
@@ -98,9 +103,9 @@ public:
         mDiscoveryState = discoveryState;
 
         if (isSelected) {
-            mCheckBox->checkboxState(cor::ECheckboxState::clearAll);
+            mCheckBox->checkboxState(ECheckboxState::checked);
         } else {
-            mCheckBox->checkboxState(cor::ECheckboxState::selectAll);
+            mCheckBox->checkboxState(ECheckboxState::unchecked);
         }
 
 
@@ -169,7 +174,6 @@ public:
         mStateButton->setGeometry(headerX, yPosColumn1, buttonHeight, buttonHeight);
         headerX += mStateButton->width() + xSpacer / 2;
         mCheckBox->setGeometry(headerX, yPosColumn1, buttonHeight, buttonHeight);
-        mCheckBox->resize();
         headerX += mCheckBox->width();
 
         yPosColumn1 += mName->height();
@@ -250,21 +254,20 @@ protected:
         painter.fillRect(rect(), QBrush(QColor(32, 31, 31, 255)));
     }
 
-    /// handle mouse release events
-    void mouseReleaseEvent(QMouseEvent* event) {
-        if (cor::isMouseEventTouchUpInside(event, mCheckBox, false)) {
-            if (mCheckBox->checkboxState() == cor::ECheckboxState::clearAll) {
-                mCheckBox->checkboxState(cor::ECheckboxState::selectAll);
-                emit deselectLight(mLeaf.serialNumber());
-            } else {
-                mCheckBox->checkboxState(cor::ECheckboxState::clearAll);
-                emit selectLight(mLeaf.serialNumber());
-            }
+private slots:
+
+    /// handle when the checkbox is clicked
+    void checkBoxClicked(ECheckboxState state) {
+        if (state == ECheckboxState::checked) {
+            mCheckBox->checkboxState(ECheckboxState::unchecked);
+            emit deselectLight(mLeaf.serialNumber());
+        } else {
+            mCheckBox->checkboxState(ECheckboxState::checked);
+            emit selectLight(mLeaf.serialNumber());
         }
-        event->ignore();
     }
 
-private slots:
+
     /// handle when the name change is pressed
     void handleChangeNamePressed() {
         mGreyout->greyOut(true);
@@ -280,7 +283,7 @@ private slots:
             mLeaf.name(name);
             updateLeafMetadata(mLeaf,
                                mDiscoveryState,
-                               mCheckBox->checkboxState() == cor::ECheckboxState::clearAll);
+                               mCheckBox->checkboxState() == ECheckboxState::checked);
             mGreyout->greyOut(false);
             mChangeNameInput->pushOut();
             mChangeNameInput->raise();

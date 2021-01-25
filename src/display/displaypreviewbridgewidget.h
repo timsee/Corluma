@@ -105,10 +105,11 @@ protected:
      */
     void paintEvent(QPaintEvent*);
 
-    /// handles when clicks happen over the checkbox.
-    void mouseReleaseEvent(QMouseEvent* event);
-
 private slots:
+
+    /// handle when the checkbox is clicked
+    void checkBoxClicked(ECheckboxState state);
+
     /// handle when a light is clicked
     void clickedLight(cor::Light light);
 
@@ -136,9 +137,9 @@ private:
             }
         }
         if (anyLightSelected) {
-            mCheckBox->checkboxState(cor::ECheckboxState::clearAll);
+            mCheckBox->checkboxState(ECheckboxState::checked);
         } else {
-            mCheckBox->checkboxState(cor::ECheckboxState::selectAll);
+            mCheckBox->checkboxState(ECheckboxState::unchecked);
         }
     }
 

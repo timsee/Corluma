@@ -37,6 +37,11 @@ DisplayPreviewBridgeWidget::DisplayPreviewBridgeWidget(const hue::Bridge& bridge
     mNameWidget = new QLabel("<b>Name:</b> " + bridge.customName(), this);
     mNameWidget->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
+    connect(mCheckBox,
+            SIGNAL(clicked(ECheckboxState)),
+            this,
+            SLOT(checkBoxClicked(ECheckboxState)));
+
     mMetadata->setWordWrap(true);
 
     connect(mLights, SIGNAL(clickedLight(cor::Light)), this, SLOT(clickedLight(cor::Light)));
@@ -160,7 +165,6 @@ void DisplayPreviewBridgeWidget::resize() {
 
     mNameWidget->setGeometry(xSpacer, yPosFirstColumn, columnWidth * 2, rowHeight);
     mCheckBox->setGeometry(width() - rowHeight, yPosFirstColumn, rowHeight, rowHeight);
-    mCheckBox->resize();
     yPosSecondColumn += mNameWidget->height();
     yPosFirstColumn += mNameWidget->height();
 
@@ -191,20 +195,23 @@ void DisplayPreviewBridgeWidget::resizeEvent(QResizeEvent*) {
     resize();
 }
 
-/// handle when a mouse release event occurs.
-void DisplayPreviewBridgeWidget::mouseReleaseEvent(QMouseEvent* event) {
-    if (cor::isMouseEventTouchUpInside(event, mCheckBox, false)) {
-        if (mCheckBox->checkboxState() == cor::ECheckboxState::clearAll) {
-            mCheckBox->checkboxState(cor::ECheckboxState::selectAll);
-            emit deselectAllClicked(mBridge.id(), EProtocolType::hue);
-            mLights->highlightLights({});
-        } else {
-            mCheckBox->checkboxState(cor::ECheckboxState::clearAll);
-            emit selectAllClicked(mBridge.id(), EProtocolType::hue);
-            mLights->highlightLights(mBridge.lightIDs());
+void DisplayPreviewBridgeWidget::checkBoxClicked(ECheckboxState state) {
+    if (state == ECheckboxState::checked) {
+        mCheckBox->checkboxState(ECheckboxState::unchecked);
+        emit deselectAllClicked(mBridge.id(), EProtocolType::hue);
+        mLights->highlightLights({});
+    } else {
+        mCheckBox->checkboxState(ECheckboxState::checked);
+        emit selectAllClicked(mBridge.id(), EProtocolType::hue);
+        // filter out IDs that are not reachables
+        std::vector<QString> reachableIDs;
+        for (auto lightID : mBridge.lightIDs()) {
+            if (mComm->lightByID(lightID).isReachable()) {
+                reachableIDs.push_back(lightID);
+            }
         }
+        mLights->highlightLights(reachableIDs);
     }
-    event->ignore();
 }
 
 void DisplayPreviewBridgeWidget::updateMetadata(const hue::Bridge& bridge) {

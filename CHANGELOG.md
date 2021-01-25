@@ -1123,10 +1123,19 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Added a `ListPlaceholderWidget` to provide guiding text in situations where a list is empty.
 - Fixed miscellaneous bugs.
 
-### **v0.21.72**
+### **v0.21.73**
 ### The RoutineContainer Update
 - Replaced the `RoutineButtonsWidget` with a `RoutineContainer`.
 - Changed `ColorPage` and `PalettePage` to each have their own, full-page `RoutineContainer`.
 - Fixed bugs with the `TopMenu` related to routines.
 - Fixed bugs with the `StateObserver` related to routines.
+- Fixed miscellaneous bugs.
+
+### **v0.21.74**
+### The Single Routine Widgets Update
+- Added `SingleSolidRoutineWidget`, `SingleFadeRoutineWidget`, `SingleWaveRoutineWidget`, and `SingleGlimmerRoutineWidget`
+- Added a `RoutineWidget` parent class for all routine widgets.
+- Fixed bugs related to ArduCor routines.
+- Added an option to deploy docs from the deployment script.
+- Simplified `cor::Checkbox`.
 - Fixed miscellaneous bugs.

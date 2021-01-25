@@ -75,10 +75,7 @@ protected:
     /// resize the widget
     virtual void resizeEvent(QResizeEvent*);
 
-    /*!
-     * \brief mouseReleaseEvent called when a mouse press is released Events not
-     *        directly on top of the color wheel are ignored.
-     */
+    /// emits the group name if its not above the checkbox
     virtual void mouseReleaseEvent(QMouseEvent*);
 
     /// renders the widget
@@ -86,8 +83,8 @@ protected:
 
 private slots:
 
-    /// picks up when the select all button is pressed
-    void buttonPressed(bool);
+    /// handle when the checkbox is clicked
+    void checkBoxClicked(ECheckboxState state);
 
 private:
     /// preferred size of icon

@@ -174,10 +174,6 @@ void ControllerWidget::highlightLights() {
     if (mArduCorWidget->isVisible()) {
         mArduCorWidget->highlightLights();
     }
-
-    if (mHueBridgeWidget->isVisible()) {
-        mHueBridgeWidget->highlightLights();
-    }
 }
 
 void ControllerWidget::handleDeletedLights(const std::vector<QString>& keys) {

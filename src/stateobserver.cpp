@@ -91,12 +91,19 @@ void StateObserver::colorChanged(QColor color) {
     updateTime();
     mData->isOn(true);
 
+    // grab the values from the routine container
+    mSpeed = mColorPage->routines()->state().speed();
+    mRoutineParameter = mColorPage->routines()->state().param();
+
     // UI update
     mColorPage->routines()->changeColor(color);
 }
 
-void StateObserver::routineChanged(ERoutine, int, int) {
+void StateObserver::routineChanged(ERoutine, int speed, int param) {
     mData->isOn(true);
+
+    mSpeed = speed;
+    mRoutineParameter = param;
 
     computeState();
     updateTime();
@@ -240,7 +247,7 @@ void StateObserver::computeState() {
                 state.color(mColorPage->color());
             }
             if (state.routine() != ERoutine::singleSolid) {
-                state.param(mColorPage->routines()->state().param());
+                state.param(mRoutineParameter);
                 state.speed(mSpeed);
             }
             mData->updateState(state);
