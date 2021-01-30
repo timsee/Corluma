@@ -164,6 +164,21 @@ int LightList::speed() {
     return speed;
 }
 
+std::pair<ERoutine, int> LightList::routineAndParam() {
+    if (mLights.empty()) {
+        return std::make_pair(ERoutine::singleSolid, 0);
+    } else {
+        std::vector<std::uint32_t> params;
+        std::vector<std::uint32_t> routines;
+        for (const auto& light : mLights) {
+            routines.push_back(std::uint32_t(light.state().routine()));
+            params.push_back(light.state().param());
+        }
+        return std::make_pair(ERoutine(cor::mode(routines)), cor::mode(params));
+    }
+}
+
+
 bool LightList::isOn() {
     // if any is on, return true
     for (const auto& light : mLights) {
@@ -220,24 +235,15 @@ std::vector<QColor> LightList::colorScheme() {
     // first check if theres just six unique colors from standard colors
     for (const auto& light : mLights) {
         auto state = light.state();
-        if (count >= max) {
-            break;
-        }
-        if (state.routine() <= ERoutineSingleColorEnd) {
+        if (light.protocol() == EProtocolType::hue) {
             colorScheme.push_back(state.color());
             count++;
-        }
-    }
-
-    // do second loop if 6 colors aren't found, and add any additional colors from routines
-    // with multiple color options
-    if (count < max) {
-        for (const auto& light : mLights) {
-            auto state = light.state();
-            if (count >= max) {
-                break;
-            }
-            if (state.routine() > ERoutineSingleColorEnd) {
+        } else if (light.protocol() == EProtocolType::arduCor
+                   || light.protocol() == EProtocolType::nanoleaf) {
+            if (state.routine() <= ERoutineSingleColorEnd) {
+                colorScheme.push_back(state.color());
+                count++;
+            } else {
                 for (const auto& color : state.palette().colors()) {
                     colorScheme.push_back(color);
                     count++;
@@ -247,10 +253,47 @@ std::vector<QColor> LightList::colorScheme() {
                 }
             }
         }
+        if (count >= max) {
+            break;
+        }
     }
     return colorScheme;
 }
 
+
+std::vector<QColor> LightList::multiColorScheme() {
+    std::vector<QColor> colorScheme;
+    int count = 0;
+    int max = 6;
+    // first pass only adds multi color schemes
+    for (const auto& light : mLights) {
+        auto state = light.state();
+        if (light.protocol() == EProtocolType::arduCor
+            || light.protocol() == EProtocolType::nanoleaf) {
+            for (const auto& color : state.palette().colors()) {
+                colorScheme.push_back(color);
+                count++;
+                if (count >= max) {
+                    break;
+                }
+            }
+        }
+    }
+
+    // second pass adds both single color schemes to fill in the space
+    for (const auto& light : mLights) {
+        auto state = light.state();
+        if (light.protocol() == EProtocolType::hue) {
+            colorScheme.push_back(state.color());
+            count++;
+        }
+        if (count >= max) {
+            break;
+        }
+    }
+
+    return colorScheme;
+}
 
 bool LightList::clearLights() {
     if (!mLights.empty()) {

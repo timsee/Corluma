@@ -119,9 +119,6 @@ private:
     /// main feature of widget, this allows the user to select colors for the LEDs
     SingleColorPicker* mColorPicker;
 
-    /// layout for widget
-    QVBoxLayout* mLayout;
-
     /// routine widget for changing how the lights use the single color
     RoutineContainer* mRoutineWidget;
 };

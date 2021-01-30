@@ -10,9 +10,9 @@
 namespace cor {
 
 /// mode for slider
-enum class ESliderType { vanilla, colorLeftBlackRight, image, fullBarGradient };
+enum class ESliderType { vanilla, colorLeftLeftColorRight, image, fullBarGradient };
 
-/// standard background color of groove of slider
+/// standard background color of groove slider
 static QColor kSliderBackgroundColor(32, 31, 31);
 
 /*!
@@ -51,6 +51,9 @@ public:
      * to achieve this effect. \param color the color that will be put into a custom style sheet
      */
     void setColor(const QColor& color);
+
+    /// set the background color of the slider, overriding its default.
+    void setBackgroundColor(const QColor& color);
 
     /*!
      * \brief setImage Adds a background image to the slider instead of using a color with a
@@ -190,6 +193,9 @@ private:
      * \brief mSliderColor the current slider color
      */
     QColor mSliderColor;
+
+    /// background color for slider.
+    QColor mBackgroundColor;
 
     /// second color for the grident option
     QColor mColorGradient;

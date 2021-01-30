@@ -283,6 +283,8 @@ void SingleColorPicker::resizeEvent(QResizeEvent*) {
 }
 
 void SingleColorPicker::resize() {
+    resizeWheel();
+
     if (showSliders()) {
         if (mCurrentMode == ESingleColorPickerMode::HSV) {
             mHSVSliders->setVisible(true);
@@ -302,5 +304,4 @@ void SingleColorPicker::resize() {
                                   0,
                                   geometry().width(),
                                   geometry().height() - mPlaceholder->geometry().height());
-    resizeWheel();
 }

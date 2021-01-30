@@ -78,7 +78,7 @@ void ChooseStateWidget::updateState(const cor::LightState& state, EProtocolType 
     changeToHSV();
     mColorPicker->updateColorStates(state.color(), state.color().valueF() * 100.0);
     mRoutinesWidget->changeColor(mState.color());
-    mRoutinesWidget->changePalette(mState.palette());
+    mRoutinesWidget->changeColorScheme(mState.palette().colors());
     emit stateChanged(state);
     resize();
 }
@@ -191,7 +191,7 @@ void ChooseStateWidget::paletteButtonClicked(EPalette paletteType) {
     auto palette = mPresetPalettes.palette(paletteType);
     mState.palette(palette);
     mState.isOn(true);
-    mRoutinesWidget->changePalette(palette);
+    mRoutinesWidget->changeColorScheme(palette.colors());
     emit stateChanged(mState);
 }
 

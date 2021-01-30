@@ -33,6 +33,7 @@ Slider::Slider(QWidget* parent) : QSlider(Qt::Horizontal, parent) {
     mShouldSnap = false;
     mUseMinimumPossible = false;
     mMinimumPossible = 0;
+    mBackgroundColor = QColor(32, 31, 31);
 
     setAutoFillBackground(true);
     setSnapToNearestTick(false);
@@ -48,7 +49,7 @@ Slider::Slider(QWidget* parent) : QSlider(Qt::Horizontal, parent) {
 void Slider::resize() {
     mHandleSize = handleSize(width(), height());
     switch (mType) {
-        case ESliderType::colorLeftBlackRight:
+        case ESliderType::colorLeftLeftColorRight:
             setColor(mSliderColor);
             break;
         case ESliderType::fullBarGradient:
@@ -63,9 +64,17 @@ void Slider::resize() {
     update();
 }
 
+void Slider::setBackgroundColor(const QColor& color) {
+    mBackgroundColor = color;
+    mType = ESliderType::colorLeftLeftColorRight;
+
+    // generate a stylesheet based off of the color with a gradient
+    adjustStylesheet();
+}
+
 void Slider::setColor(const QColor& color) {
     mSliderColor = color;
-    mType = ESliderType::colorLeftBlackRight;
+    mType = ESliderType::colorLeftLeftColorRight;
 
     // generate a stylesheet based off of the color with a gradient
     adjustStylesheet();
@@ -99,12 +108,12 @@ void Slider::adjustStylesheet() {
                              .arg(QString::number(mHandleSize.width()),
                                   QString::number(mHandleSize.height()));
             break;
-        case ESliderType::colorLeftBlackRight: {
+        case ESliderType::colorLeftLeftColorRight: {
             QColor darkColor = QColor(int(mSliderColor.red() / 4),
                                       int(mSliderColor.green() / 4),
                                       int(mSliderColor.blue() / 4));
             stylesheet = QString("QSlider::groove:horizontal{ "
-                                 " background: rgb(32, 31, 31);"
+                                 " background: rgb(%10, %11, %12);"
                                  "margin-top: %9px;"
                                  "margin-bottom: %9px;"
                                  "margin-left: 0px;"
@@ -132,7 +141,10 @@ void Slider::adjustStylesheet() {
                                   QString::number(mSliderColor.blue()),
                                   QString::number(mHandleSize.width()),
                                   QString::number(handleMargin),
-                                  QString::number(margin));
+                                  QString::number(margin),
+                                  QString::number(mBackgroundColor.red()),
+                                  QString::number(mBackgroundColor.green()),
+                                  QString::number(mBackgroundColor.blue()));
             break;
         }
         case ESliderType::fullBarGradient: {

@@ -1139,3 +1139,11 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Added an option to deploy docs from the deployment script.
 - Simplified `cor::Checkbox`.
 - Fixed miscellaneous bugs.
+
+### **v0.21.75**
+### The Multi Routine Widgets Update
+- Added `MultiBarsRoutineWidget`, `MultiFadeRoutineWidget`, `MultiGlimmerRoutineWidget`, and `MultiRandomRoutineWidget`
+- Fixed bugs related to ArduCor routines.
+- Added an option to deploy android from the deployment script.
+- Simplified `cor::Checkbox`.
+- Fixed miscellaneous bugs.

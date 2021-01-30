@@ -82,5 +82,7 @@
         <file>images/schedule-icon.png</file>
         <file>images/timer.png</file>
         <file>images/warning_icon.png</file>
+        <file>images/sawtooth_in.png</file>
+        <file>images/sawtooth_out.png</file>
     </qresource>
 </RCC>

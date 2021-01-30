@@ -8,99 +8,76 @@ RoutineContainer::RoutineContainer(QWidget* parent, ERoutineGroup routineGroup)
       mSingleGlimmerRoutineWidget{new SingleGlimmerRoutineWidget(this)},
       mSingleFadeRoutineWidget{new SingleFadeRoutineWidget(this)},
       mSingleWaveRoutineWidget{new SingleWaveRoutineWidget(this)},
-      mSpeedSlider{new cor::Slider(this)},
+      mMultiBarsRoutineWidget{new MultiBarsRoutineWidget(this)},
+      mMultiFadeRoutineWidget{new MultiFadeRoutineWidget(this)},
+      mMultiRandomRoutineWidget{new MultiRandomRoutineWidget(this)},
+      mMultiGlimmerRoutineWidget{new MultiGlimmerRoutineWidget(this)},
+      mSpeedSlider{new SpeedSlider(this)},
       mRoutineGroup{routineGroup} {
-    initButtons();
+    mSingleRoutineWidgets = {mSingleSolidRoutineWidget,
+                             mSingleGlimmerRoutineWidget,
+                             mSingleFadeRoutineWidget,
+                             mSingleWaveRoutineWidget};
+    mMultiRoutineWidgets = {mMultiBarsRoutineWidget,
+                            mMultiFadeRoutineWidget,
+                            mMultiRandomRoutineWidget,
+                            mMultiGlimmerRoutineWidget};
+    if (routineGroup == ERoutineGroup::single) {
+        // hide multi routine widgets
+        for (auto routineWidget : mMultiRoutineWidgets) {
+            routineWidget->setVisible(false);
+        }
+        // now clear this vector
+        mMultiRoutineWidgets.clear();
+    }
+    if (routineGroup == ERoutineGroup::multi) {
+        // hide single routine widgets
+        for (auto routineWidget : mSingleRoutineWidgets) {
+            routineWidget->setVisible(false);
+        }
+        // now clear this vector
+        mSingleRoutineWidgets.clear();
+    }
 
-    mSpeedSlider->setColor(QColor(255, 0, 0));
-    mSpeedSlider->setRange(2, 200);
-    mSpeedSlider->setValue(100);
     connect(mSpeedSlider, SIGNAL(valueChanged(int)), this, SLOT(speedSliderChanged(int)));
 
-    connect(mSingleSolidRoutineWidget,
-            SIGNAL(clicked(cor::LightState)),
-            this,
-            SLOT(routineChanged(cor::LightState)));
-    connect(mSingleFadeRoutineWidget,
-            SIGNAL(clicked(cor::LightState)),
-            this,
-            SLOT(routineChanged(cor::LightState)));
-    connect(mSingleGlimmerRoutineWidget,
-            SIGNAL(clicked(cor::LightState)),
-            this,
-            SLOT(routineChanged(cor::LightState)));
-    connect(mSingleWaveRoutineWidget,
-            SIGNAL(clicked(cor::LightState)),
-            this,
-            SLOT(routineChanged(cor::LightState)));
+    mAllRoutineWidgets.insert(mAllRoutineWidgets.end(),
+                              mSingleRoutineWidgets.begin(),
+                              mSingleRoutineWidgets.end());
+    mAllRoutineWidgets.insert(mAllRoutineWidgets.end(),
+                              mMultiRoutineWidgets.begin(),
+                              mMultiRoutineWidgets.end());
+    initButtons();
+
+    for (auto routineWidget : mAllRoutineWidgets) {
+        connect(routineWidget,
+                SIGNAL(clicked(cor::LightState)),
+                this,
+                SLOT(routineChanged(cor::LightState)));
+    }
 }
 
 void RoutineContainer::initButtons() {
     auto colors = cor::defaultCustomColors();
     cor::LightState state;
     state.isOn(true);
-    state.color(QColor(0, 0, 0));
     state.speed(100);
-    state.palette(cor::Palette(paletteToString(EPalette::custom), colors, 51));
-    auto routinePair = std::make_pair("EMPTY", state);
 
     if (mRoutineGroup == ERoutineGroup::single || mRoutineGroup == ERoutineGroup::all) {
+        state.color(QColor(0, 0, 0));
         state.routine(ERoutine::singleGlimmer);
         state.param(15);
         // make the default state the glimmer routine
         mState = state;
     }
 
-    if (mRoutineGroup == ERoutineGroup::multi || mRoutineGroup == ERoutineGroup::all) {
-        routinePair.first = "Glimmer";
+    // in the case where it it is not both types of buttons, use a different default
+    if (mRoutineGroup == ERoutineGroup::multi) {
+        state.palette(cor::Palette(paletteToString(EPalette::custom), colors, 51));
         state.routine(ERoutine::multiGlimmer);
         state.param(15);
-        routinePair.second = state;
-        mRoutines.push_back(routinePair);
-        // in the case where it it is not both types of buttons, use a different default
-        if (mRoutineGroup == ERoutineGroup::multi) {
-            // make the default state the glimmer routine
-            mState = state;
-        }
-
-        routinePair.first = "Fade";
-        state.routine(ERoutine::multiFade);
-        routinePair.second = state;
-        mRoutines.push_back(routinePair);
-
-        routinePair.first = "Random Solid";
-        state.routine(ERoutine::multiRandomSolid);
-        routinePair.second = state;
-        mRoutines.push_back(routinePair);
-
-        routinePair.first = "Random Individual";
-        state.routine(ERoutine::multiRandomIndividual);
-        routinePair.second = state;
-        mRoutines.push_back(routinePair);
-
-        routinePair.first = "Bars";
-        state.routine(ERoutine::multiBars);
-        state.param(4);
-        routinePair.second = state;
-        mRoutines.push_back(routinePair);
-    }
-
-    mRoutineButtons = std::vector<cor::Button*>(mRoutines.size(), nullptr);
-    mLabels = std::vector<QLabel*>(mRoutines.size(), nullptr);
-
-    for (std::size_t i = 0u; i < mRoutines.size(); ++i) {
-        mRoutineButtons[i] = new cor::Button(this, mRoutines[i].second);
-
-        mRoutineButtons[i]->setStyleSheet("background-color:rgb(33,32,32);");
-
-        mLabels[i] = new QLabel(this);
-        mLabels[i]->setText(mRoutines[i].first);
-        mLabels[i]->setAlignment(Qt::AlignCenter);
-
-        connect(mRoutineButtons[i],
-                SIGNAL(buttonClicked(cor::LightState)),
-                this,
-                SLOT(routineChanged(cor::LightState)));
+        // make the default state the glimmer routine
+        mState = state;
     }
 }
 
@@ -112,62 +89,33 @@ void RoutineContainer::changeColor(const QColor& color) {
         mSingleGlimmerRoutineWidget->updateColor(color);
         mSingleWaveRoutineWidget->updateColor(color);
     }
-
-    for (std::size_t i = 0u; i < mRoutineButtons.size(); ++i) {
-        auto state = mRoutines[i].second;
-        state.color(color);
-        mRoutineButtons[i]->updateRoutine(state);
-    }
 }
 
-
-void RoutineContainer::changePalette(const cor::Palette& palette) {
-    for (std::size_t i = 0u; i < mRoutineButtons.size(); i++) {
-        auto state = mRoutines[i].second;
-        state.palette(palette);
-        mRoutineButtons[i]->updateRoutine(state);
+void RoutineContainer::changeColorScheme(const std::vector<QColor>& colors) {
+    if (mRoutineGroup == ERoutineGroup::multi || mRoutineGroup == ERoutineGroup::all) {
+        mMultiGlimmerRoutineWidget->updatePaletteColors(colors, 50u);
+        mMultiBarsRoutineWidget->updatePaletteColors(colors, 50u);
+        mMultiRandomRoutineWidget->updatePaletteColors(colors, 50u);
+        mMultiFadeRoutineWidget->updatePaletteColors(colors, 50u);
     }
 }
 
 void RoutineContainer::routineChanged(const cor::LightState& state) {
-    // reverse search the label from the routine
-    auto label = labelFromRoutine(state.routine(), state.param());
-    highlightRoutineButton(label);
-    if (mRoutineGroup == ERoutineGroup::single || mRoutineGroup == ERoutineGroup::all) {
-        mSingleSolidRoutineWidget->selectRoutine(state.routine());
-        mSingleFadeRoutineWidget->selectRoutine(state.routine());
-        mSingleGlimmerRoutineWidget->selectRoutine(state.routine());
-        mSingleWaveRoutineWidget->selectRoutine(state.routine());
-    }
-
+    highlightRoutine(state.routine(), state.param());
     mState = state;
+    mSpeedSlider->enable(state.routine(), state.param());
     emit newRoutineSelected(state.routine(), mSpeedSlider->value(), state.param());
 }
 
-QString RoutineContainer::labelFromRoutine(ERoutine routineEnum, int param) {
-    for (const auto& routine : mRoutines) {
-        if (routine.second.routine() == routineEnum) {
-            // fades use parameters, so these are needed to differentiate
-            if (routineEnum == ERoutine::singleFade
-                || routineEnum == ERoutine::singleSawtoothFade) {
-                if (routine.second.param() == param) {
-                    return routine.first;
-                }
-            }
-        }
+void RoutineContainer::highlightRoutine(ERoutine routine, int param) {
+    for (auto routineWidget : mAllRoutineWidgets) {
+        routineWidget->selectRoutine(routine, param);
     }
-    return "NO_LABEL_FOUND";
 }
 
-
-void RoutineContainer::highlightRoutineButton(const QString& label) {
-    for (std::size_t i = 0u; i < mRoutineButtons.size(); i++) {
-        if (mLabels[i]->text() == label) {
-            mRoutineButtons[i]->setChecked(true);
-        } else {
-            mRoutineButtons[i]->setChecked(false);
-        }
-    }
+void RoutineContainer::changeSpeed(int speed) {
+    mSpeedSlider->updateSpeed(speed);
+    // qDebug() << " update speed from " << mSpeedSlider->value() << " to " << speed;
 }
 
 void RoutineContainer::speedSliderChanged(int sliderValue) {
@@ -185,17 +133,11 @@ void RoutineContainer::paintEvent(QPaintEvent*) {
 }
 
 void RoutineContainer::resize() {
-    auto sliderXSpacing = width() / 10;
     auto sliderYSpacing = height() / 20;
-    mSpeedSlider->setGeometry(sliderXSpacing,
-                              sliderYSpacing,
-                              width() - sliderXSpacing * 2,
-                              height() / 15);
+    auto sliderHeight = mSpeedSlider->height();
 
-    int rowCount = 0;
-    auto maxColumn = 2u;
     // height of a button's grid
-    int gridHeight = (height() - (mSpeedSlider->height() + sliderYSpacing * 2));
+    int gridHeight = (height() - (sliderHeight + sliderYSpacing * 2));
     switch (mRoutineGroup) {
         case ERoutineGroup::single:
             gridHeight = gridHeight / 3;
@@ -212,19 +154,14 @@ void RoutineContainer::resize() {
             break;
     }
     auto gridWidth = width() / 2;
-    auto labelHeight = gridHeight / 4;
     auto buttonHeight = gridHeight * 3 / 4;
 
-    if (mRoutineGroup == ERoutineGroup::single || mRoutineGroup == ERoutineGroup::all) {
-        QSize leftWidgetSize(gridWidth / 2, buttonHeight);
-        mSingleSolidRoutineWidget->changeLeftWidgetSize(leftWidgetSize);
-        mSingleFadeRoutineWidget->changeLeftWidgetSize(leftWidgetSize);
-        mSingleGlimmerRoutineWidget->changeLeftWidgetSize(leftWidgetSize);
-        mSingleWaveRoutineWidget->changeLeftWidgetSize(leftWidgetSize);
+    QSize leftWidgetSize(gridWidth / 2, buttonHeight);
+    for (auto routineWidget : mAllRoutineWidgets) {
+        routineWidget->changeLeftWidgetSize(leftWidgetSize);
     }
 
-
-    auto yOffset = mSpeedSlider->height() + sliderYSpacing * 2;
+    auto yOffset = 0u;
     if (mRoutineGroup == ERoutineGroup::single || mRoutineGroup == ERoutineGroup::all) {
         mSingleSolidRoutineWidget->setGeometry(0, yOffset, width() / 2, buttonHeight);
         mSingleWaveRoutineWidget->setGeometry(gridWidth, yOffset, width() / 2, buttonHeight);
@@ -235,17 +172,17 @@ void RoutineContainer::resize() {
         yOffset += mSingleFadeRoutineWidget->height();
     }
 
-    for (std::size_t i = 0u; i < mRoutines.size(); ++i) {
-        if ((i % maxColumn) == 0 && i != 0) {
-            rowCount++;
-        }
-        mRoutineButtons[i]->setGeometry(int(i % maxColumn) * gridWidth,
-                                        rowCount * gridHeight + yOffset,
-                                        gridWidth,
-                                        buttonHeight);
-        mLabels[i]->setGeometry(int(i % maxColumn) * gridWidth,
-                                rowCount * gridHeight + mRoutineButtons[i]->height() + yOffset,
-                                gridWidth,
-                                labelHeight);
+    if (mRoutineGroup == ERoutineGroup::multi || mRoutineGroup == ERoutineGroup::all) {
+        mMultiBarsRoutineWidget->setGeometry(0, yOffset, width(), buttonHeight);
+        yOffset += mMultiBarsRoutineWidget->height();
+        mMultiGlimmerRoutineWidget->setGeometry(0, yOffset, width(), buttonHeight);
+        yOffset += mMultiGlimmerRoutineWidget->height();
+        mMultiFadeRoutineWidget->setGeometry(0, yOffset, width(), buttonHeight);
+        yOffset += mMultiFadeRoutineWidget->height();
+        mMultiRandomRoutineWidget->setGeometry(0, yOffset, width(), buttonHeight);
+        yOffset += mMultiRandomRoutineWidget->height();
     }
+
+    yOffset += sliderYSpacing;
+    mSpeedSlider->setGeometry(0, yOffset, width(), sliderHeight);
 }

@@ -5,10 +5,15 @@
 #include <QWidget>
 #include "cor/objects/lightstate.h"
 #include "cor/widgets/button.h"
+#include "routines/multibarsroutinewidget.h"
+#include "routines/multifaderoutinewidget.h"
+#include "routines/multiglimmerroutinewidget.h"
+#include "routines/multirandomroutinewidget.h"
 #include "routines/singlefaderoutinewidget.h"
 #include "routines/singleglimmerroutinewidget.h"
 #include "routines/singlesolidroutinewidget.h"
 #include "routines/singlewaveroutinewidget.h"
+#include "routines/speedslider.h"
 
 /// different types of routinebuttonswidgets
 enum class ERoutineGroup { single, multi, all };
@@ -27,20 +32,17 @@ class RoutineContainer : public QWidget {
 public:
     explicit RoutineContainer(QWidget* parent, ERoutineGroup routineGroup);
 
-    /*!
-     * \brief highlightRoutineButton highlights the button that implements
-     *        the routine parameter. If it can't find a button that
-     *        implements the lighting routine, then all buttons are unhighlighted
-     *
-     * \param label the name of the button
-     */
-    void highlightRoutineButton(const QString& label);
+    /// highlight a specific routine button in the container based off of the enum and parameter
+    void highlightRoutine(ERoutine routine, int param);
 
     /// update the color displayed by the widgets
     void changeColor(const QColor& color);
 
     /// change the palette displayed
-    void changePalette(const cor::Palette& palette);
+    void changeColorScheme(const std::vector<QColor>& colors);
+
+    /// change the speed displayed by the speed slider
+    void changeSpeed(int speed);
 
     /// getter for state for the widget
     const cor::LightState& state() { return mState; }
@@ -76,9 +78,6 @@ private:
     /// resize programmatically
     void resize();
 
-    /// find the label for a button given its state
-    QString labelFromRoutine(ERoutine routine, int param);
-
     /// widget for displaying all lights as one solid color
     SingleSolidRoutineWidget* mSingleSolidRoutineWidget;
 
@@ -91,19 +90,29 @@ private:
     /// widget for dimming and turning on lights
     SingleWaveRoutineWidget* mSingleWaveRoutineWidget;
 
-    /// vector of routines
-    std::vector<std::pair<QString, cor::LightState>> mRoutines;
+    /// widget for bars that scroll across the light
+    MultiBarsRoutineWidget* mMultiBarsRoutineWidget;
 
-    /*!
-     * \brief mSingleRoutineButtons pointers to all the main buttons
-     */
-    std::vector<cor::Button*> mRoutineButtons;
+    /// widget for fading between colors
+    MultiFadeRoutineWidget* mMultiFadeRoutineWidget;
 
-    /// slider to change the speed.
-    cor::Slider* mSpeedSlider;
+    /// widget for randomly showing colors
+    MultiRandomRoutineWidget* mMultiRandomRoutineWidget;
 
-    /// vector of labels
-    std::vector<QLabel*> mLabels;
+    /// widget for using one color as a base and showing other colors within it
+    MultiGlimmerRoutineWidget* mMultiGlimmerRoutineWidget;
+
+    /// vector of all single routine widgets
+    std::vector<RoutineWidget*> mSingleRoutineWidgets;
+
+    /// vector of all multi routine widgets
+    std::vector<RoutineWidget*> mMultiRoutineWidgets;
+
+    /// vector of all widgets displayed by the container
+    std::vector<RoutineWidget*> mAllRoutineWidgets;
+
+    /// slider for controlling the speed.
+    SpeedSlider* mSpeedSlider;
 
     /// stored state for the single routine
     cor::LightState mState;

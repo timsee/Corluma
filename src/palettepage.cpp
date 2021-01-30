@@ -54,7 +54,9 @@ void PalettePage::update(std::size_t count, const std::vector<QColor>& colorSche
             mColorPicker->updateBrightness(100);
         }
     }
-    mColorScheme = colorScheme;
+    if (!colorScheme.empty()) {
+        mColorScheme = colorScheme;
+    }
     lightCountChanged(count);
     mColorPicker->updateColorStates(mColorScheme);
 }
@@ -78,7 +80,7 @@ void PalettePage::setMode(EGroupMode mode) {
                 break;
             case EGroupMode::routines:
                 mRoutineWidget->setVisible(true);
-                mRoutineWidget->changePalette(palette());
+                mRoutineWidget->changeColorScheme(mColorScheme);
                 break;
         }
         mMode = mode;

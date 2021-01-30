@@ -22,12 +22,20 @@ public:
           mLinearButton{new QPushButton("Linear", this)},
           mSineButton{new QPushButton("Sine", this)},
           mBlinkButton{new QPushButton("Blink", this)},
-          mSawtoothInButton{new QPushButton("Saw In", this)},
-          mSawtoothOutButton{new QPushButton("Saw Out", this)} {
+          mSawtoothInButton{new QPushButton(this)},
+          mSawtoothOutButton{new QPushButton(this)} {
         connect(mCheckBox,
                 SIGNAL(clicked(ECheckboxState)),
                 this,
                 SLOT(checkBoxClicked(ECheckboxState)));
+
+        mLinearButton->setCheckable(true);
+        mSineButton->setCheckable(true);
+        mBlinkButton->setCheckable(true);
+        mSawtoothInButton->setCheckable(true);
+        mSawtoothOutButton->setCheckable(true);
+
+        highlightButton(ERoutine::singleFade, 0);
 
         connect(mLinearButton, SIGNAL(clicked(bool)), this, SLOT(linearPressed(bool)));
         connect(mSineButton, SIGNAL(clicked(bool)), this, SLOT(sinePressed(bool)));
@@ -42,16 +50,21 @@ public:
         updateState(mState);
     }
 
-    void selectRoutine(ERoutine routine) override {
-        mHighlight = (routine == ERoutine::singleBlink) || (routine == ERoutine::singleFade)
-                     || (routine == ERoutine::singleSawtoothFade);
-        if (mHighlight) {
+    /// overrides the select routine to handle the multiple routines and parameters handled in this
+    /// widget.
+    void selectRoutine(ERoutine routine, int param) override {
+        auto shouldCheck = (routine == ERoutine::singleBlink) || (routine == ERoutine::singleFade)
+                           || (routine == ERoutine::singleSawtoothFade);
+        if (shouldCheck) {
+            highlightButton(routine, param);
+            // change the highlight based off of the param
             mCheckBox->checkboxState(ECheckboxState::checked);
         } else {
             mCheckBox->checkboxState(ECheckboxState::unchecked);
         }
         update();
     }
+
 signals:
 
     /// emits when the checkbox is clicked
@@ -62,7 +75,6 @@ private slots:
     void checkBoxClicked(ECheckboxState state) {
         if (state == ECheckboxState::unchecked) {
             mCheckBox->checkboxState(ECheckboxState::checked);
-            mHighlight = true;
             emit clicked(mState);
             update();
         }
@@ -74,6 +86,7 @@ private slots:
         mState.param(0);
         mName->setText("Linear Fade");
         handleButtonPressed();
+        highlightButton(ERoutine::singleFade, 0);
     }
 
     /// handle the sine button
@@ -82,6 +95,7 @@ private slots:
         mState.param(1);
         mName->setText("Sine Fade");
         handleButtonPressed();
+        highlightButton(ERoutine::singleFade, 1);
     }
 
     /// handle the blink button
@@ -89,6 +103,7 @@ private slots:
         mState.routine(ERoutine::singleBlink);
         mName->setText("Blink");
         handleButtonPressed();
+        highlightButton(ERoutine::singleBlink, 0);
     }
 
     /// handle the sawtooth in button
@@ -97,6 +112,7 @@ private slots:
         mState.param(1);
         mName->setText("Saw In");
         handleButtonPressed();
+        highlightButton(ERoutine::singleSawtoothFade, 1);
     }
 
     /// handle the sawtooth out button
@@ -105,6 +121,7 @@ private slots:
         mState.param(0);
         mName->setText("Saw Out");
         handleButtonPressed();
+        highlightButton(ERoutine::singleSawtoothFade, 0);
     }
 
 private:
@@ -116,6 +133,10 @@ private:
         auto xPos = buttonSpacer;
         auto yPos = mLeftWidgetSize.height();
         auto buttonSide = int((buttonsWidth / 5) - buttonSpacer);
+        auto usableHeight = height() - mLeftWidgetSize.height();
+        if (buttonSide > usableHeight) {
+            buttonSide = usableHeight;
+        }
 
         mBlinkButton->setGeometry(xPos, yPos, buttonSide, buttonSide);
         xPos += mBlinkButton->width() + buttonSpacer;
@@ -127,17 +148,48 @@ private:
         xPos += mSawtoothInButton->width() + buttonSpacer;
         mSawtoothOutButton->setGeometry(xPos, yPos, buttonSide, buttonSide);
         xPos += mSawtoothOutButton->width() + buttonSpacer;
+
+        addIconToButton(mSawtoothInButton, ":/images/sawtooth_in.png", buttonSide);
+        addIconToButton(mSawtoothOutButton, ":/images/sawtooth_out.png", buttonSide);
     }
 
     /// handle when a button is pressed
     void handleButtonPressed() {
         if (mCheckBox->checkboxState() != ECheckboxState::checked) {
             mCheckBox->checkboxState(ECheckboxState::checked);
-            mHighlight = true;
             update();
         }
         updateStateIcon();
         emit clicked(mState);
+    }
+
+    /// adds icon to button
+    void addIconToButton(QPushButton* button, const QString& path, int buttonSide) {
+        auto pixmap = QPixmap(path);
+        button->setIconSize(QSize(buttonSide, buttonSide));
+        button->setIcon(QIcon(
+            pixmap.scaled(buttonSide, buttonSide, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
+    }
+
+    /// highlights a button based on the routine and parameter provided.
+    void highlightButton(ERoutine routine, int param) {
+        mLinearButton->setChecked(false);
+        mSineButton->setChecked(false);
+        mBlinkButton->setChecked(false);
+        mSawtoothInButton->setChecked(false);
+        mSawtoothOutButton->setChecked(false);
+
+        if (routine == ERoutine::singleBlink) {
+            mBlinkButton->setChecked(true);
+        } else if (routine == ERoutine::singleFade && param == 0) {
+            mLinearButton->setChecked(true);
+        } else if (routine == ERoutine::singleFade && param == 1) {
+            mSineButton->setChecked(true);
+        } else if (routine == ERoutine::singleSawtoothFade && param == 1) {
+            mSawtoothInButton->setChecked(true);
+        } else if (routine == ERoutine::singleSawtoothFade && param == 0) {
+            mSawtoothOutButton->setChecked(true);
+        }
     }
 
     /// linear button

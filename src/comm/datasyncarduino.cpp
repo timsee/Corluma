@@ -243,7 +243,10 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
         bool paramsInSync = (commState.param() == dataState.param());
         if (dataState.routine() == ERoutine::singleSolid
             || dataState.routine() == ERoutine::singleBlink
-            || dataState.routine() == ERoutine::singleWave) {
+            || dataState.routine() == ERoutine::singleWave
+            || dataState.routine() == ERoutine::multiFade
+            || dataState.routine() == ERoutine::multiRandomIndividual
+            || dataState.routine() == ERoutine::multiRandomSolid) {
             paramsInSync = true;
         } else {
             //  qDebug() << " params comm: " << commState.param() << " data: " << dataState.param();
@@ -281,9 +284,11 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
             routineObject["routine"] = routineToString(dataState.routine());
 
             if (dataState.routine() <= cor::ERoutineSingleColorEnd) {
-                qDebug() << "ArduCor single color not in sync" << commState.color() << "vs"
-                         << dataState.color()
-                         << cor::colorDifference(dataState.color(), commState.color());
+                //                qDebug() << "ArduCor single color not in sync" <<
+                //                commState.color() << "vs"
+                //                         << dataState.color()
+                //                         << cor::colorDifference(dataState.color(),
+                //                         commState.color());
                 routineObject["hue"] = dataState.color().hueF();
                 routineObject["sat"] = dataState.color().saturationF();
                 routineObject["bri"] = dataState.color().valueF();
@@ -321,7 +326,9 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
     //-------------------
     if (dataState.palette().paletteEnum() == EPalette::custom) {
         if (commState.customCount() != dataState.palette().colors().size()) {
-            // qDebug() << "Custom color count not in sync";
+            //            qDebug() << "Custom color count not in sync" << commState.customCount() <<
+            //            " vs "
+            //                     << dataState.palette().colors().size();
             QString message =
                 mParser->changeCustomArraySizePacket(metadata.index(),
                                                      int(commState.palette().colors().size()));
@@ -336,11 +343,9 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
             if (cor::colorDifference(dataState.palette().colors()[i],
                                      commState.customPalette().colors()[i])
                 > 0.02f) {
-                //                        qDebug() << "Custom color" << i << "not in sync"
-                //                                 << " comm: " <<
-                //                                 commDevice.palette.colors()[i]
-                //                                 << "data: " <<
-                //                                 dataDevice.palette.colors()[i];
+                //                qDebug() << "Custom color" << i << "not in sync"
+                //                         << " comm: " << commState.palette().colors()[i]
+                //                         << "data: " << dataState.palette().colors()[i];
                 QString message = mParser->arrayColorChangePacket(metadata.index(),
                                                                   int(i),
                                                                   dataState.palette().colors()[i]);

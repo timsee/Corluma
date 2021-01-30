@@ -87,13 +87,6 @@ QString ArduCorPacketParser::routinePacket(int index, const QJsonObject& routine
         if (routineObject["param"].isDouble()) {
             optionalParameter = int(routineObject["param"].toDouble());
         }
-        switch (routine) {
-            case ERoutine::multiBars:
-                optionalParameter = 4;
-                break;
-            default:
-                break;
-        }
 
 
         if (isValidJSON) {

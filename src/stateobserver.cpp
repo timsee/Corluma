@@ -198,16 +198,25 @@ void StateObserver::lightCountChanged() {
         if (mData->empty() || !mData->supportsRoutines()) {
             mColorPage->showRoutines(false);
             mTopMenu->closeRoutinesPage();
+            mTopMenu->highlightButton("HSV");
         } else {
+            auto routineAndParam = mData->routineAndParam();
+            mColorPage->routines()->highlightRoutine(routineAndParam.first, routineAndParam.second);
             mColorPage->routines()->changeColor(mData->mainColor());
+            /// main color used on palette page for speed slider
+            mPalettePage->routines()->changeColor(mData->mainColor());
         }
     }
 
     if (mPalettePage->isOpen()) {
         if (mData->empty() || !mData->supportsRoutines()) {
             mPalettePage->setMode(EGroupMode::wheel);
+            mTopMenu->highlightButton("HSV");
         } else {
-            mPalettePage->routines()->changePalette(mPalettePage->palette());
+            auto routineAndParam = mData->routineAndParam();
+            mPalettePage->routines()->highlightRoutine(routineAndParam.first,
+                                                       routineAndParam.second);
+            mPalettePage->routines()->changeColorScheme(mData->multiColorScheme());
         }
     }
 }
@@ -250,6 +259,7 @@ void StateObserver::computeState() {
                 state.param(mRoutineParameter);
                 state.speed(mSpeed);
             }
+            mColorPage->routines()->highlightRoutine(state.routine(), state.param());
             mData->updateState(state);
             mTopMenu->updateState(state);
             break;
@@ -274,6 +284,9 @@ void StateObserver::computeState() {
                 palette.brightness(mTopMenu->globalBrightness()->brightness());
                 state.palette(palette);
             }
+            mPalettePage->routines()->highlightRoutine(state.routine(), state.param());
+            /// main color used on palette page for speed slider
+            mPalettePage->routines()->changeColor(state.palette().averageColor());
             mData->updateState(state);
             mTopMenu->updateState(state);
             break;

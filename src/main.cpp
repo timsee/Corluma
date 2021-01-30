@@ -154,6 +154,9 @@ int main(int argc, char* argv[]) {
     QSize size(700, 600);
 #endif
 
+#ifdef Q_OS_ANDROID
+    qputenv("QT_QPA_NO_TEXT_HANDLES", "1");
+#endif
     MainWindow window(nullptr, size, size);
     // set the icon
     window.setWindowIcon(icon);

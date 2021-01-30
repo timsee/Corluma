@@ -15,9 +15,10 @@ def cli_to_args():
     """
     cli = argparse.ArgumentParser(description="")
     cli.add_argument('-env', type=str, required=True,
-                     choices=["linux", "docs"],
+                     choices=["android", "linux", "docs"],
                      help='Environment to build.')
-    cli.add_argument('-qt_build_dir', type=str, required=False, default=argparse.SUPPRESS,
+    cli.add_argument('-qt_build_dir',
+                     type=str, required=False, default=argparse.SUPPRESS,
                      help='Qt build dir where the built application will be.')
     return cli.parse_args()
 
@@ -39,6 +40,13 @@ def get_app_version():
             line = line.replace(version_variable, '')
             return line
     return "ERROR"
+
+
+def deploy_android(qt_build_dir, version_str):
+    aab_path = f"{qt_build_dir}/android-build/build/outputs/bundle/release/android-build-release.aab"
+    print(f"aab_path: {aab_path}")
+    Path(f"./output/").mkdir(parents=True, exist_ok=True)
+    os.system(f"cp {aab_path} output/Corluma-{version_str}.aab")
 
 
 def deploy_linux(qt_buid_dir, version_str):
@@ -125,6 +133,11 @@ def main():
             print(f"Please provide a qt_build_dir.")
             return
         deploy_linux(args.qt_build_dir, version_string)
+    elif args.env == 'android':
+        if "qt_build_dir" not in args:
+            print(f"Please provide a qt_build_dir.")
+            return
+        deploy_android(args.qt_build_dir, version_string)
     elif args.env == 'docs':
     	deploy_docs(version_string)
     #print(f"building env: {args.env} with output dir: {args.qt_build_dir}")

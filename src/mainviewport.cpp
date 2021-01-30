@@ -186,7 +186,7 @@ void MainViewport::showMainPage(EPage page, bool skipTransition) {
         mMoodPage->setVisible(true);
     } else if (page == EPage::palettePage) {
         mPalettePage->resize();
-        mPalettePage->update(mData->lightCount(), mData->colorScheme());
+        mPalettePage->update(mData->lightCount(), mData->multiColorScheme());
         mPalettePage->setVisible(true);
     } else if (page == EPage::timeoutPage) {
         mTimeoutPage->update(mAppSettings->timeoutEnabled(), mAppSettings->timeout());

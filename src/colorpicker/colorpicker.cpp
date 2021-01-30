@@ -51,19 +51,19 @@ void ColorPicker::showSliders(bool shouldShowSliders) {
 // ----------------------------
 
 void ColorPicker::resizeWheel() {
-    //    int wheelSize = int(size().height() * 0.5f);
-    //    if (wheelSize > size().width() * 0.85f) {
-    //        wheelSize = int(size().width() * 0.85f);
-    //    }
-
     int yPos = 0;
+    auto xSpacer = width() * 0.025;
+    auto ySpacer = height() * 0.05;
     if (showSliders()) {
-        mColorWheel->setGeometry(0, yPos, width(), height() * 14 / 20);
+        mColorWheel->setGeometry(xSpacer,
+                                 yPos,
+                                 width() - xSpacer * 2,
+                                 height() * 14 / 20 - ySpacer);
 
         yPos += mColorWheel->height();
-        mPlaceholder->setGeometry(0, yPos, width(), height() * 6 / 20);
+        mPlaceholder->setGeometry(xSpacer, yPos, width() - xSpacer * 2, height() * 6 / 20);
     } else {
-        mColorWheel->setGeometry(0, yPos, width(), height());
+        mColorWheel->setGeometry(xSpacer, yPos, width() - xSpacer * 2, height() - ySpacer);
     }
     mColorWheel->resize();
 }

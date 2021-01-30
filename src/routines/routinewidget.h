@@ -23,8 +23,8 @@ class RoutineWidget : public QWidget {
 public:
     RoutineWidget(QWidget* parent, const QString& name, ERoutine routine)
         : QWidget(parent),
+          mTransparentStylesheet{"background-color:rgba(0,0,0,0);"},
           mLeftWidgetSize{30, 10},
-          mHighlight{false},
           mCheckBox{new cor::CheckBox(this)},
           mName{new QLabel(name, this)},
           mIcon{new QLabel(this)} {
@@ -34,8 +34,7 @@ public:
 
         mCheckBox->checkboxState(ECheckboxState::unchecked);
 
-        const auto transparentStyleSheet = "background-color:rgba(0,0,0,0);";
-        setStyleSheet(transparentStyleSheet);
+        mName->setStyleSheet(mTransparentStylesheet);
     }
 
     virtual ~RoutineWidget() = default;
@@ -53,9 +52,9 @@ public:
     ERoutine routine() { return mState.routine(); }
 
     /// handles whether the widget is selected or not based off of its routine.
-    virtual void selectRoutine(ERoutine routine) {
-        mHighlight = (mState.routine() == routine);
-        if (mHighlight) {
+    virtual void selectRoutine(ERoutine routine, int) {
+        // mHighlight = (mState.routine() == routine);
+        if ((mState.routine() == routine)) {
             mCheckBox->checkboxState(ECheckboxState::checked);
         } else {
             mCheckBox->checkboxState(ECheckboxState::unchecked);
@@ -79,7 +78,7 @@ protected:
         auto rect = QRect(0, 0, width(), height());
 
         painter.setRenderHint(QPainter::Antialiasing);
-        painter.fillRect(rect, cor::computeHighlightColor(mHighlight, 1));
+        painter.fillRect(rect, cor::computeHighlightColor(0, 1));
 
         QPainterPath path;
         path.addRect(rect);
@@ -127,11 +126,11 @@ protected:
         mName->setGeometry(xSpacer, yPos, mLeftWidgetSize.width(), widgetRowHeight);
     }
 
+    /// style sheet for transparency
+    QString mTransparentStylesheet;
+
     /// the size allocated for the widgets on the top left
     QSize mLeftWidgetSize;
-
-    /// true to highlight, false to not
-    bool mHighlight;
 
     /// the state shown in the top left of the widget
     cor::LightState mState;

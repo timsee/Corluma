@@ -467,7 +467,7 @@ void MainWindow::topMenuButtonPressed(const QString& key) {
         mMainViewport->pageChanged(EPage::settingsPage);
     } else if (key == "Menu") {
         pushInLeftHandMenu();
-    } else {
+    } else if (!key.contains("Discovery_")) {
         qDebug() << "Do not recognize key" << key;
     }
 }

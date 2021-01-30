@@ -129,6 +129,19 @@ public:
     /// getter for the vector of colors
     const std::vector<QColor>& colors() const noexcept { return mColors; }
 
+    /// averages all colors together for a palette to give a single color representation.
+    QColor averageColor() const noexcept {
+        auto r = 0u;
+        auto g = 0u;
+        auto b = 0u;
+        for (const auto& color : mColors) {
+            r += color.red();
+            g += color.green();
+            b += color.blue();
+        }
+        return QColor(r / mColors.size(), g / mColors.size(), b / mColors.size());
+    }
+
     /// getter for the enum of the palette
     EPalette paletteEnum() const noexcept { return mEnum; }
 

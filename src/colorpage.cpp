@@ -14,9 +14,7 @@ ColorPage::ColorPage(QWidget* parent)
       mColor{0, 255, 0},
       mBestType{EColorPickerType::color},
       mColorPicker{new SingleColorPicker(this)},
-      mLayout{new QVBoxLayout(this)},
       mRoutineWidget{new RoutineContainer(this, ERoutineGroup::single)} {
-    mLayout->addWidget(mColorPicker);
     showRoutines(false);
 
     connect(mColorPicker, SIGNAL(colorUpdate(QColor)), this, SLOT(colorChanged(QColor)));
@@ -53,6 +51,7 @@ void ColorPage::update(const QColor& color,
     mColor = color;
     mBestType = bestType;
     mColorPicker->updateBrightness(brightness);
+    mRoutineWidget->changeColor(color);
     if (lightCount == 0) {
         mColorPicker->enable(false, mBestType);
     } else {
@@ -62,6 +61,10 @@ void ColorPage::update(const QColor& color,
 }
 
 void ColorPage::resizeEvent(QResizeEvent*) {
-    mColorPicker->resize();
-    mRoutineWidget->setGeometry(0, 0, width(), height());
+    auto xSpacer = width() * 0.025;
+    auto ySpacer = height() * 0.05;
+
+    auto rect = QRect(xSpacer, ySpacer, width() - xSpacer * 2, height() - ySpacer * 2);
+    mColorPicker->setGeometry(rect);
+    mRoutineWidget->setGeometry(rect);
 }

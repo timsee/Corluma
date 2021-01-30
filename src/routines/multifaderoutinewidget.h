@@ -1,5 +1,5 @@
-#ifndef SINGLESOLIDROUTINEWIDGET_H
-#define SINGLESOLIDROUTINEWIDGET_H
+#ifndef MULTIFADEROUTINEWIDGET_H
+#define MULTIFADEROUTINEWIDGET_H
 
 #include <QWidget>
 #include "routines/routinewidget.h"
@@ -10,15 +10,15 @@
  * Copyright (C) 2015 - 2021.
  * Released under the GNU General Public License.
  *
- * \brief The SingleSolidRoutineWidget class is a routine widget that displays the single solid
+ * \brief The MultiFadeRoutineWidget class is a routine widget that displays the multi fade
  * routine. This routine has no additional options.
  *
  */
-class SingleSolidRoutineWidget : public RoutineWidget {
+class MultiFadeRoutineWidget : public RoutineWidget {
     Q_OBJECT
 public:
-    explicit SingleSolidRoutineWidget(QWidget* parent)
-        : RoutineWidget(parent, "Solid", ERoutine::singleSolid) {
+    explicit MultiFadeRoutineWidget(QWidget* parent)
+        : RoutineWidget(parent, "Fade", ERoutine::multiFade) {
         connect(mCheckBox,
                 SIGNAL(clicked(ECheckboxState)),
                 this,
@@ -26,8 +26,9 @@ public:
     }
 
     /// update the color displayed by the widget
-    void updateColor(const QColor& color) {
-        mState.color(color);
+    void updatePaletteColors(const std::vector<QColor>& colors, std::uint32_t brightness) {
+        auto palette = cor::Palette(paletteToString(EPalette::custom), colors, brightness);
+        mState.palette(palette);
         updateState(mState);
     }
 
@@ -51,4 +52,4 @@ private:
     void resize() override { resizeTopLeftMenu(); }
 };
 
-#endif // SINGLESOLIDROUTINEWIDGET_H
+#endif // MULTIFADEROUTINEWIDGET_H

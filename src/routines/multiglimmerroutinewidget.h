@@ -1,24 +1,25 @@
-#ifndef SINGLEGLIMMERROUTINEWIDGET_H
-#define SINGLEGLIMMERROUTINEWIDGET_H
+#ifndef MULTIGLIMMERROUTINEWIDGET_H
+#define MULTIGLIMMERROUTINEWIDGET_H
 
 #include <QWidget>
 #include "cor/widgets/slider.h"
 #include "routines/routinewidget.h"
+
 
 /*!
  * \copyright
  * Copyright (C) 2015 - 2021.
  * Released under the GNU General Public License.
  *
- * \brief The SingleGlimmerRoutineWidget class is a routine widget that displays the single glimmer
+ * \brief The MultiGlimmerRoutineWidget class is a routine widget that displays the multi glimmer
  * routine. This has a slider that determines the frequency of the glimmer.
  *
  */
-class SingleGlimmerRoutineWidget : public RoutineWidget {
+class MultiGlimmerRoutineWidget : public RoutineWidget {
     Q_OBJECT
 public:
-    explicit SingleGlimmerRoutineWidget(QWidget* parent)
-        : RoutineWidget(parent, "Glimmer", ERoutine::singleGlimmer),
+    explicit MultiGlimmerRoutineWidget(QWidget* parent)
+        : RoutineWidget(parent, "Glimmer", ERoutine::multiGlimmer),
           mPercentLabel{new QLabel(this)},
           mPercentSlider{new cor::Slider(this)} {
         auto defaultValue = 15;
@@ -42,9 +43,10 @@ public:
     }
 
     /// update the color displayed by the widget
-    void updateColor(const QColor& color) {
-        mState.color(color);
-        mPercentSlider->setColor(color);
+    void updatePaletteColors(const std::vector<QColor>& colors, std::uint32_t brightness) {
+        auto palette = cor::Palette(paletteToString(EPalette::custom), colors, brightness);
+        mState.palette(palette);
+        mPercentSlider->setColor(palette.averageColor());
         updateState(mState);
     }
 
@@ -98,4 +100,4 @@ private:
     cor::Slider* mPercentSlider;
 };
 
-#endif // SINGLEGLIMMERROUTINEWIDGET_H
+#endif // MULTIGLIMMERROUTINEWIDGET_H

@@ -228,7 +228,7 @@ void TopMenu::lightCountChanged() {
         showRoutineWidget(false);
         showMultiColorStateWidget(!mData->empty());
         mMultiColorStateWidget->updateState(mData->colorScheme());
-        mPalettePage->update(mData->lightCount(), mData->colorScheme());
+        mPalettePage->update(mData->lightCount(), mData->multiColorScheme());
     }
 }
 
@@ -237,6 +237,7 @@ void TopMenu::highlightButton(const QString& key) {
     mMoodsFloatingLayout->highlightButton(key);
     mColorFloatingLayout->highlightButton(key);
     mTimeoutFloatingLayout->highlightButton(key);
+    mRoutineFloatingLayout->highlightButton(key);
 }
 
 void TopMenu::showMenu() {
@@ -514,9 +515,8 @@ void TopMenu::showRoutineWidget(bool skipTransition) {
             shouldMoveIn = true;
         }
     } else if (mCurrentPage == EPage::palettePage) {
-        // only push in if light count shows more than one light, has lights capable of multiple
-        // colors, and the palette page is showing the HSV picker
-        if (hasMulti && mData->lightCount() > 1) {
+        // only push in if has lights capable of multiple colors
+        if (hasMulti && !mData->empty()) {
             shouldMoveIn = true;
         }
     }

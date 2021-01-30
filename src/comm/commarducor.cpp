@@ -14,6 +14,8 @@
 #include "comm/commserial.h"
 #endif
 
+//#define DEBUG_INVALID_PACKET
+
 CommArduCor::CommArduCor(QObject* parent) : QObject(parent) {
     mUDP = std::make_shared<CommUDP>();
     connect(mUDP.get(),
@@ -368,8 +370,8 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                     }
                                 }
                             } else {
-                                qDebug()
-                                    << "WARNING: Invalid packet for light index" << intVector[x];
+                                qDebug() << "WARNING: Invalid packet for light index"
+                                         << intVector[x] << " : " << packet;
                             }
                         } else if (packetHeader == EPacketHeader::customArrayUpdateRequest) {
                             if (verifyCustomColorUpdatePacket(intVector)) {
@@ -588,39 +590,75 @@ bool CommArduCor::verifyStateUpdatePacketValidity(const std::vector<int>& packet
                                                   uint32_t x) {
     while (x < packetIntVector.size()) {
         if (!(packetIntVector[x] > 0 && packetIntVector[x] < 15)) {
+#ifdef DEBUG_INVALID_PACKET
+            qDebug() << " invalid packet header " << packetIntVector[x];
+#endif
             return false;
         }
         if (!(packetIntVector[x + 1] == 1 || packetIntVector[x + 1] == 0)) {
+#ifdef DEBUG_INVALID_PACKET
+            qDebug() << " invalid isOn " << packetIntVector[x + 1];
+#endif
             return false;
         }
         if (!(packetIntVector[x + 2] == 1 || packetIntVector[x + 2] == 0)) {
+#ifdef DEBUG_INVALID_PACKET
+            qDebug() << " invalid isReachable " << packetIntVector[x + 2];
+#endif
             return false;
         }
         if (!(packetIntVector[x + 3] >= 0 && packetIntVector[x + 3] <= 255)) {
+#ifdef DEBUG_INVALID_PACKET
+            qDebug() << " invalid red " << packetIntVector[x + 3];
+#endif
             return false;
         }
         if (!(packetIntVector[x + 4] >= 0 && packetIntVector[x + 4] <= 255)) {
+#ifdef DEBUG_INVALID_PACKET
+            qDebug() << " invalid green " << packetIntVector[x + 4];
+#endif
             return false;
         }
         if (!(packetIntVector[x + 5] >= 0 && packetIntVector[x + 5] <= 255)) {
+#ifdef DEBUG_INVALID_PACKET
+            qDebug() << " invalid blue " << packetIntVector[x + 5];
+#endif
             return false;
         }
         if (!(packetIntVector[x + 6] >= 0 && packetIntVector[x + 6] < int(ERoutine::MAX))) {
+#ifdef DEBUG_INVALID_PACKET
+            qDebug() << " invalid routine " << packetIntVector[x + 6];
+#endif
             return false;
         }
         if (!(packetIntVector[x + 7] >= 0 && packetIntVector[x + 7] < int(EPalette::unknown))) {
+#ifdef DEBUG_INVALID_PACKET
+            qDebug() << " invalid palette " << packetIntVector[x + 7];
+#endif
             return false;
         }
         if (!(packetIntVector[x + 8] >= 0 && packetIntVector[x + 8] <= 100)) {
+#ifdef DEBUG_INVALID_PACKET
+            qDebug() << " invalid brightness " << packetIntVector[x + 8];
+#endif
             return false;
         }
         if (!(packetIntVector[x + 9] >= 0 && packetIntVector[x + 9] <= 2000)) {
+#ifdef DEBUG_INVALID_PACKET
+            qDebug() << " invalid speed " << packetIntVector[x + 9];
+#endif
             return false;
         }
         if (!(packetIntVector[x + 10] >= 0 && packetIntVector[x + 10] <= 1000)) {
+#ifdef DEBUG_INVALID_PACKET
+            qDebug() << " invalid idle timeout " << packetIntVector[x + 10];
+#endif
             return false;
         }
         if (!(packetIntVector[x + 11] >= 0 && packetIntVector[x + 11] <= 1000)) {
+#ifdef DEBUG_INVALID_PACKET
+            qDebug() << " invalid idle minutes until idle " << packetIntVector[x + 11];
+#endif
             return false;
         }
         x += 12;

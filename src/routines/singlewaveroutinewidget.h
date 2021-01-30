@@ -41,7 +41,6 @@ private slots:
     void checkBoxClicked(ECheckboxState state) {
         if (state == ECheckboxState::unchecked) {
             mCheckBox->checkboxState(ECheckboxState::checked);
-            mHighlight = true;
             emit clicked(mState);
             update();
         }

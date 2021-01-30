@@ -158,8 +158,12 @@ public:
      */
     const std::vector<cor::Light>& lights() const noexcept { return mLights; }
 
-    /// getter for the color scheme colors
+    /// getter for the color scheme colors, combining both single and multi color schemes
     std::vector<QColor> colorScheme();
+
+    /// getter for the color scheme colors, preferring multi color schemes and filling in with
+    /// single colors, if needed
+    std::vector<QColor> multiColorScheme();
 
     /// true if any of the lights have the given protocol type.
     bool hasLightWithProtocol(EProtocolType) const noexcept;
@@ -169,6 +173,9 @@ public:
 
     /// true if the lights could support routines, false if they cannot.
     bool supportsRoutines();
+
+    /// returns the most frequently used routines and params.
+    std::pair<ERoutine, int> routineAndParam();
 
     /// compute the best candidate for a collection based on the current lights.
     cor::Group findCurrentGroup(const std::vector<cor::Group>& collections);
