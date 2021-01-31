@@ -1,0 +1,17 @@
+{
+	"android_deploy": {
+		"clean_build": "TODO",
+		"run_qmake": "TODO",
+		"run_make": "TODO",
+		"install_android" : "TODO",
+		"deploy_android_aab": "TODO",
+		"qt_build_dir": "TODO"
+	},
+	"linux_deploy": {
+		"clean_build": "TODO",
+		"run_qmake": "TODO",
+		"run_make": "TODO",
+		"qt_build_dir": "TODO"
+	},
+	"docs_deploy": true
+}

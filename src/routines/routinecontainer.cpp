@@ -134,7 +134,7 @@ void RoutineContainer::paintEvent(QPaintEvent*) {
 
 void RoutineContainer::resize() {
     auto sliderYSpacing = height() / 20;
-    auto sliderHeight = mSpeedSlider->height();
+    auto sliderHeight = height() / 10;
 
     // height of a button's grid
     int gridHeight = (height() - (sliderHeight + sliderYSpacing * 2));

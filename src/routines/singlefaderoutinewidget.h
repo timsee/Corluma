@@ -133,7 +133,7 @@ private:
         auto xPos = buttonSpacer;
         auto yPos = mLeftWidgetSize.height();
         auto buttonSide = int((buttonsWidth / 5) - buttonSpacer);
-        auto usableHeight = height() - mLeftWidgetSize.height();
+        auto usableHeight = height() - mLeftWidgetSize.height() - height() * 0.03;
         if (buttonSide > usableHeight) {
             buttonSide = usableHeight;
         }

@@ -1,11 +1,6 @@
 # C++ objects and libs
 
-*.slo
-*.lo
-*.o
 *.a
-*.la
-*.lai
 *.so
 *.dll
 *.dylib
@@ -18,10 +13,6 @@
 *.pro.user.*
 *.qbs.user
 *.qbs.user.*
-*.moc
-moc_*.cpp
-qrc_*.cpp
-ui_*.h
 Makefile*
 *build-*
 
@@ -37,3 +28,6 @@ Makefile*
 CMakeLists.txt.user
 
 src/resources/Corluma.json
+deploy/output/
+deploy/__pycache__/
+deploy/personal_deploy_settings.json

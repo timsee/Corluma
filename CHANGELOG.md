@@ -1147,3 +1147,9 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Added an option to deploy android from the deployment script.
 - Simplified `cor::Checkbox`.
 - Fixed miscellaneous bugs.
+
+
+### **v0.21.76**
+### The Auto Deploy Update
+- Added a script that automatically cleans, builds, and deploys for android, linux, and docs.
+- Fixed miscellaneous bugs.

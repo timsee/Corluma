@@ -57,7 +57,6 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
           mGroups,
           this)},
       mEditGroupPage{new cor::EditGroupPage(this, mComm, mGroups)},
-      mEditMoodPage{new cor::EditMoodPage(this, mComm, mGroups, mData)},
       mChooseEditPage{new ChooseEditPage(this)},
       mChooseGroupWidget{new ChooseGroupWidget(this, mComm, mGroups)},
       mChooseMoodWidget{new ChooseMoodWidget(this, mComm, mGroups)},
@@ -77,7 +76,8 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     setMinimumSize(minimumSize);
 
-    // TODO: must be init'd after mainwindow... bad code smell.
+    // uses floating layouts so these must be initialized after the app's size is set.
+    mEditMoodPage = new cor::EditMoodPage(this, mComm, mGroups, mData);
     mTopMenu = new TopMenu(this,
                            mData,
                            mComm,

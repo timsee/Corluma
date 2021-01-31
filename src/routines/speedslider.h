@@ -28,6 +28,7 @@ public:
         mSlider->setColor(QColor(255, 0, 0));
         mSlider->setRange(2, 200);
         mSlider->setValue(100);
+        mSlider->setHeightPercentage(0.8);
         connect(mSlider, SIGNAL(valueChanged(int)), this, SLOT(speedSliderChanged(int)));
     }
 

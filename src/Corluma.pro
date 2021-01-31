@@ -14,7 +14,7 @@ linux:!android {
     TARGET = corluma
 }
 TEMPLATE = app
-VERSION = 0.21.75
+VERSION = 0.21.76
 
 #----------
 # Build flags
@@ -26,8 +26,6 @@ SHOULD_USE_EXPERIMENTAL_FEATURES = 1
 SHOULD_USE_SERIAL = 1
 # flag to build in support for shareutils. This allows sharing on mobile devices, but can conflict in mobile updates
 SHOULD_USE_SHARE_UTILS = 1
-# flag to build with static version of Qt
-BUILD_STATIC_CORLUMA = 0
 
 #----------
 # Build flag edge case handling
