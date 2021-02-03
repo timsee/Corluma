@@ -123,7 +123,7 @@ private slots:
     void handleLightNameChanged(QString key, QString name);
 
     /// handles when the commlayer finds a new light
-    void handleNewLightFound(ECommType, QString);
+    void handleNewLightsFound(std::vector<QString>);
 
     /*!
      * \brief widgetConnectionStateChanged handles whenever a connection status changes for any

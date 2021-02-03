@@ -19,21 +19,31 @@ CommType::CommType(ECommType type) : mStateUpdateInterval{1000}, mType(type) {
     mStateUpdateTimer = new QTimer;
 }
 
-void CommType::addLight(const cor::Light& light) {
-    mLightDict.insert(light.uniqueID().toStdString(), light);
-    mUpdateTime.insert(light.uniqueID().toStdString(), 0);
+void CommType::addLights(const std::vector<cor::Light>& lights) {
+    std::vector<QString> uniqueIDs;
+    for (const auto& light : lights) {
+        uniqueIDs.push_back(light.uniqueID());
+        mLightDict.insert(light.uniqueID().toStdString(), light);
+        mUpdateTime.insert(light.uniqueID().toStdString(), 0);
+    }
 
     resetStateUpdateTimeout();
     emit updateReceived(mType);
-    emit newLightFound(mType, light.uniqueID());
+    emit newLightsFound(mType, uniqueIDs);
 }
 
-bool CommType::removeLight(const QString& uniqueID) {
-    auto result = mLightDict.removeKey(uniqueID.toStdString());
-    if (result) {
-        emit lightDeleted(mType, uniqueID);
+bool CommType::removeLights(const std::vector<QString>& uniqueIDs) {
+    std::vector<QString> removedLights;
+    for (auto uniqueID : uniqueIDs) {
+        auto result = mLightDict.removeKey(uniqueID.toStdString());
+        if (result) {
+            removedLights.push_back(uniqueID);
+        }
     }
-    return result;
+    if (!removedLights.empty()) {
+        emit lightsDeleted(mType, uniqueIDs);
+    }
+    return !removedLights.empty();
 }
 
 void CommType::updateLight(const cor::Light& light) {

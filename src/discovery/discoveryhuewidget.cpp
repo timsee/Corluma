@@ -404,13 +404,15 @@ void DiscoveryHueWidget::resizeEvent(QResizeEvent*) {
     resize();
 }
 
-void DiscoveryHueWidget::newHueFound(const QString& ID) {
-    auto light = mComm->lightByID(ID);
-    auto bridge = mComm->hue()->bridgeFromLight(light);
-    for (const auto& widget : mBridgeWidgets) {
-        if (widget != nullptr) {
-            if (widget->bridge().id() == bridge.id()) {
-                widget->addLight(light);
+void DiscoveryHueWidget::newHuesFound(const std::vector<QString>& IDs) {
+    auto lights = mComm->lightsByIDs(IDs);
+    for (auto light : lights) {
+        auto bridge = mComm->hue()->bridgeFromLight(light);
+        for (const auto& widget : mBridgeWidgets) {
+            if (widget != nullptr) {
+                if (widget->bridge().id() == bridge.id()) {
+                    widget->addLight(light);
+                }
             }
         }
     }

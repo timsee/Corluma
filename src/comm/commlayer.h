@@ -108,6 +108,9 @@ public:
     /// returns true if theres any known errors for the commtype.
     bool discoveryErrorsExist(EProtocolType type);
 
+    /// true if any lights are found, false otherwise
+    bool anyLightsFound();
+
     /*!
      * \brief deviceTable dictionary of all connected devices of a certain connection type. The
      * light names are used as keys.
@@ -213,12 +216,6 @@ signals:
      */
     void updateReceived(ECommType);
 
-    /// signals when a new light is found
-    void newLightFound(ECommType, QString);
-
-    /// signals when an existing light is deleted
-    void lightDeleted(ECommType, QString);
-
     /// emits when one or more lights are added from the commlayer
     void lightsAdded(std::vector<QString>);
 
@@ -249,10 +246,10 @@ private slots:
     void handleLightNameChanged(QString, QString);
 
     /// handles when new light is found
-    void lightFound(ECommType, QString);
+    void lightsFound(ECommType, std::vector<QString>);
 
     /// handles when existing light is deleted
-    void deletedLight(ECommType, QString);
+    void deletedLights(ECommType, std::vector<QString>);
 
 private:
     /*!

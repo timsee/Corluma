@@ -151,7 +151,11 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
 
     mMainViewport->pageChanged(EPage::lightsPage, true);
     if (!mLeftHandMenu->alwaysOpen()) {
-        pushInLeftHandMenu();
+        if (mComm->anyLightsFound()) {
+            pushInLeftHandMenu();
+        } else {
+            mGreyOut->setVisible(false);
+        }
     }
     mTopMenu->showFloatingLayout(EPage::lightsPage);
 
@@ -187,14 +191,6 @@ void MainWindow::setupBackend() {
     // --------------
     // Start Discovery
     // --------------
-    connect(mComm,
-            SIGNAL(newLightFound(ECommType, QString)),
-            mGroups,
-            SLOT(addLightToGroups(ECommType, QString)));
-    connect(mComm,
-            SIGNAL(lightDeleted(ECommType, QString)),
-            mGroups,
-            SLOT(lightDeleted(ECommType, QString)));
     for (int i = 0; i < int(EProtocolType::MAX); ++i) {
         auto type = EProtocolType(i);
         if (mAppSettings->enabled(type)) {

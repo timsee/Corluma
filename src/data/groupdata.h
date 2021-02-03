@@ -203,10 +203,8 @@ public:
     /// loads json data into app data
     bool loadJSON() override;
 
-public slots:
-
     /// adds a light to group metadata
-    void addLightToGroups(ECommType, const QString& uniqueID);
+    void addLightsToGroups(const std::vector<QString>& uniqueIDs);
 
     /*!
      * \brief lightDeleted removes a light from all moods and collections based off of its unique
@@ -214,7 +212,7 @@ public slots:
      *
      * \param uniqueID the unique ID of a light
      */
-    void lightDeleted(ECommType, const QString& uniqueID);
+    void lightsDeleted(const std::vector<QString>& uniqueIDs);
 signals:
 
     /*!

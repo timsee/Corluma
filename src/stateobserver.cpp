@@ -316,6 +316,7 @@ void StateObserver::lightNameChange(const QString& uniqueID, const QString&) {
 
 void StateObserver::lightsAdded(std::vector<QString> keys) {
     qDebug() << "INFO: lights added " << keys;
+    mGroups->addLightsToGroups(keys);
     mMainWindow->leftHandMenu()->updateLights();
     if (!mMainWindow->anyDiscovered()) {
         mMainWindow->anyDiscovered(true);
@@ -326,6 +327,7 @@ void StateObserver::lightsDeleted(std::vector<QString> keys) {
     qDebug() << "INFO: lights deleted " << keys;
 
     mData->removeByIDs(keys);
+    mGroups->lightsDeleted(keys);
     mLightsPage->handleDeletedLights(keys);
     mMainWindow->leftHandMenu()->clearWidgets();
     mMainWindow->leftHandMenu()->updateLights();

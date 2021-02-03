@@ -72,9 +72,11 @@ CommNanoleaf::CommNanoleaf() : CommType(ECommType::nanoleaf), mUPnP{nullptr} {
     mDiscovery = new nano::LeafDiscovery(this, 4000);
     mDiscovery->loadJSON();
     // make list of not found devices
+    std::vector<cor::Light> lights;
     for (const auto& nanoleaf : mDiscovery->notFoundLights()) {
-        addLight(nano::LeafLight(nanoleaf));
+        lights.push_back(nano::LeafLight(nanoleaf));
     }
+    addLights(lights);
 
     mNetworkManager = new QNetworkAccessManager(this);
     connect(mNetworkManager,
@@ -395,7 +397,7 @@ void CommNanoleaf::handleInitialDiscovery(const nano::LeafMetadata& light, const
         QJsonDocument jsonResponse = QJsonDocument::fromJson(payload.toUtf8());
         nano::LeafLight light(result.first);
         light.isReachable(false);
-        addLight(light);
+        addLights({light});
         parseStateUpdatePacket(result.first, jsonResponse.object());
         getSchedules();
     }
@@ -1109,7 +1111,7 @@ bool CommNanoleaf::deleteNanoleaf(const QString& serialNumber, const QString& IP
     auto leafMetadata = leafMetadataResult.first;
 
     // remove from comm data
-    removeLight(serialNumber);
+    removeLights({serialNumber});
 
     // remove from saved data
     return mDiscovery->removeNanoleaf(leafMetadata);

@@ -1148,8 +1148,13 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Simplified `cor::Checkbox`.
 - Fixed miscellaneous bugs.
 
-
 ### **v0.21.76**
 ### The Auto Deploy Update
 - Added a script that automatically cleans, builds, and deploys for android, linux, and docs.
+- Fixed miscellaneous bugs.
+
+### **v0.21.77**
+### The Batching Update
+- Lights are now added to `CommType` as a batch.
+- Lights are now removed from `CommType` as a batch.
 - Fixed miscellaneous bugs.

@@ -464,7 +464,10 @@ private:
      * \param i index of Hue Light.
      * \return true if successful, false if failed.
      */
-    bool updateHueLightState(const hue::Bridge& bridge, QJsonObject object, int i);
+    std::pair<cor::Light, HueMetadata> updateHueLightState(const hue::Bridge& bridge,
+                                                           QJsonObject object,
+                                                           int i,
+                                                           bool skipAddOrUpdate);
 
     /*!
      * \brief updateNewHueLight a new hue light was discovered from scanning, add the meta data to

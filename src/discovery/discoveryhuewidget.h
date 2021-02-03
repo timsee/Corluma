@@ -61,7 +61,7 @@ public:
     void handleDeletedLights(const std::vector<QString>&);
 
     /// a new light (not a bridge) is found, update the bridge that contains it
-    void newHueFound(const QString& ID);
+    void newHuesFound(const std::vector<QString>& IDs);
 
     /// See DiscoveryWidget.h
     void handleDiscovery(bool isActive) override;

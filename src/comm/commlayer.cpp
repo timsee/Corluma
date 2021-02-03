@@ -32,13 +32,13 @@ CommLayer::CommLayer(QObject* parent, GroupData* parser) : QObject(parent), mGro
             this,
             SLOT(receivedUpdate(ECommType)));
     connect(mArduCor.get(),
-            SIGNAL(newLightFound(ECommType, QString)),
+            SIGNAL(newLightsFound(ECommType, std::vector<QString>)),
             this,
-            SLOT(lightFound(ECommType, QString)));
+            SLOT(lightsFound(ECommType, std::vector<QString>)));
     connect(mArduCor.get(),
-            SIGNAL(lightDeleted(ECommType, QString)),
+            SIGNAL(lightsDeleted(ECommType, std::vector<QString>)),
             this,
-            SLOT(deletedLight(ECommType, QString)));
+            SLOT(deletedLights(ECommType, std::vector<QString>)));
 
     mNanoleaf = std::make_shared<CommNanoleaf>();
     connect(mNanoleaf.get(),
@@ -46,26 +46,26 @@ CommLayer::CommLayer(QObject* parent, GroupData* parser) : QObject(parent), mGro
             this,
             SLOT(receivedUpdate(ECommType)));
     connect(mNanoleaf.get(),
-            SIGNAL(newLightFound(ECommType, QString)),
+            SIGNAL(newLightsFound(ECommType, std::vector<QString>)),
             this,
-            SLOT(lightFound(ECommType, QString)));
+            SLOT(lightsFound(ECommType, std::vector<QString>)));
     connect(mNanoleaf.get(),
-            SIGNAL(lightDeleted(ECommType, QString)),
+            SIGNAL(lightsDeleted(ECommType, std::vector<QString>)),
             this,
-            SLOT(deletedLight(ECommType, QString)));
+            SLOT(deletedLights(ECommType, std::vector<QString>)));
 
     mNanoleaf->discovery()->connectUPnP(mUPnP);
 
     mHue = std::make_shared<CommHue>(mUPnP, parser);
     connect(mHue.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
     connect(mHue.get(),
-            SIGNAL(newLightFound(ECommType, QString)),
+            SIGNAL(newLightsFound(ECommType, std::vector<QString>)),
             this,
-            SLOT(lightFound(ECommType, QString)));
+            SLOT(lightsFound(ECommType, std::vector<QString>)));
     connect(mHue.get(),
-            SIGNAL(lightDeleted(ECommType, QString)),
+            SIGNAL(lightsDeleted(ECommType, std::vector<QString>)),
             this,
-            SLOT(deletedLight(ECommType, QString)));
+            SLOT(deletedLights(ECommType, std::vector<QString>)));
 
     connect(mHue.get(),
             SIGNAL(lightNameChanged(QString, QString)),
@@ -88,14 +88,12 @@ bool CommLayer::discoveryErrorsExist(EProtocolType type) {
     return true;
 }
 
-void CommLayer::lightFound(ECommType type, QString uniqueID) {
-    emit newLightFound(type, uniqueID);
-    emit lightsAdded({uniqueID});
+void CommLayer::lightsFound(ECommType, std::vector<QString> uniqueIDs) {
+    emit lightsAdded(uniqueIDs);
 }
 
-void CommLayer::deletedLight(ECommType type, QString uniqueID) {
-    emit lightDeleted(type, uniqueID);
-    emit lightsDeleted({uniqueID});
+void CommLayer::deletedLights(ECommType, std::vector<QString> uniqueIDs) {
+    emit lightsDeleted(uniqueIDs);
 }
 
 void CommLayer::handleLightNameChanged(QString uniqueID, QString newName) {
@@ -172,12 +170,16 @@ cor::Light CommLayer::addLightMetaData(cor::Light light) {
 cor::Mood CommLayer::addMetadataToMood(const cor::Mood& originalMood) {
     auto mood = originalMood;
     auto lights = mood.lights();
-    for (auto&& light : lights) {
+    std::vector<cor::Light> adjustedLights;
+    for (auto light : lights) {
         light = addLightMetaData(light);
         // since we are displaying a mood, mark the light as reachable even when it isn't.
         light.isReachable(true);
+        if (light.isValid() && !light.name().isEmpty()) {
+            adjustedLights.push_back(light);
+        }
     }
-    mood.lights(lights);
+    mood.lights(adjustedLights);
 
     auto groupStates = mood.defaults();
     for (auto&& group : groupStates) {
@@ -485,4 +487,14 @@ void CommLayer::stopDiscovery(EProtocolType type) {
     } else if (type == EProtocolType::nanoleaf) {
         mNanoleaf->discovery()->stopDiscovery();
     }
+}
+
+bool CommLayer::anyLightsFound() {
+    bool anyArduCor = !mArduCor->discovery()->undiscoveredControllers().empty()
+                      || !mArduCor->discovery()->controllers().empty();
+    bool anyHues =
+        !mHue->discovery()->notFoundBridges().empty() || !mHue->discovery()->bridges().empty();
+    bool anyNanoleafs = !mNanoleaf->discovery()->notFoundLights().empty()
+                        || !mNanoleaf->discovery()->foundLights().empty();
+    return anyArduCor || anyHues || anyNanoleafs;
 }

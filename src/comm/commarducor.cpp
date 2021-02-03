@@ -24,13 +24,13 @@ CommArduCor::CommArduCor(QObject* parent) : QObject(parent) {
             SLOT(parsePacket(QString, QString, ECommType)));
     connect(mUDP.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
     connect(mUDP.get(),
-            SIGNAL(newLightFound(ECommType, QString)),
+            SIGNAL(newLightsFound(ECommType, std::vector<QString>)),
             this,
-            SLOT(lightFound(ECommType, QString)));
+            SLOT(lightsFound(ECommType, std::vector<QString>)));
     connect(mUDP.get(),
-            SIGNAL(lightDeleted(ECommType, QString)),
+            SIGNAL(lightsDeleted(ECommType, std::vector<QString>)),
             this,
-            SLOT(deletedLight(ECommType, QString)));
+            SLOT(deletedLights(ECommType, std::vector<QString>)));
 
     mHTTP = std::make_shared<CommHTTP>();
     connect(mHTTP.get(),
@@ -39,13 +39,13 @@ CommArduCor::CommArduCor(QObject* parent) : QObject(parent) {
             SLOT(parsePacket(QString, QString, ECommType)));
     connect(mHTTP.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
     connect(mHTTP.get(),
-            SIGNAL(newLightFound(ECommType, QString)),
+            SIGNAL(newLightsFound(ECommType, std::vector<QString>)),
             this,
-            SLOT(lightFound(ECommType, QString)));
+            SLOT(lightsFound(ECommType, std::vector<QString>)));
     connect(mHTTP.get(),
-            SIGNAL(lightDeleted(ECommType, QString)),
+            SIGNAL(lightsDeleted(ECommType, std::vector<QString>)),
             this,
-            SLOT(deletedLight(ECommType, QString)));
+            SLOT(deletedLights(ECommType, std::vector<QString>)));
 
 #ifdef USE_SERIAL
     mSerial = std::make_shared<CommSerial>();
@@ -58,13 +58,13 @@ CommArduCor::CommArduCor(QObject* parent) : QObject(parent) {
             this,
             SLOT(receivedUpdate(ECommType)));
     connect(mSerial.get(),
-            SIGNAL(newLightFound(ECommType, QString)),
+            SIGNAL(newLightsFound(ECommType, std::vector<QString>)),
             this,
-            SLOT(lightFound(ECommType, QString)));
+            SLOT(lightsFound(ECommType, std::vector<QString>)));
     connect(mSerial.get(),
-            SIGNAL(lightDeleted(ECommType, QString)),
+            SIGNAL(lightsDeleted(ECommType, std::vector<QString>)),
             this,
-            SLOT(deletedLight(ECommType, QString)));
+            SLOT(deletedLights(ECommType, std::vector<QString>)));
 #endif // MOBILE_BUILD
 
     mDiscovery = new ArduCorDiscovery(this,
@@ -80,13 +80,14 @@ CommArduCor::CommArduCor(QObject* parent) : QObject(parent) {
     // make list of not found devices
     for (const auto& controller : mDiscovery->undiscoveredControllers()) {
         int i = 1;
+        std::vector<cor::Light> lights;
         for (const auto& name : controller.names()) {
             ArduCorMetadata metadata(name, controller, i, controller.hardwareTypes()[i - 1]);
-            ArduCorLight light(metadata);
+            lights.push_back(ArduCorLight(metadata));
             ++i;
-            if (controller.type() != ECommType::MAX) {
-                commByType(controller.type())->addLight(light);
-            }
+        }
+        if (controller.type() != ECommType::MAX) {
+            commByType(controller.type())->addLights(lights);
         }
     }
 
@@ -208,10 +209,7 @@ bool CommArduCor::deleteController(const QString& controller) {
     auto result = mDiscovery->findControllerByControllerName(controller);
     if (result.second) {
         auto controller = result.first;
-        for (const auto& light : controller.names()) {
-            // remove from comm data
-            commByType(controller.type())->removeLight(light);
-        }
+        commByType(controller.type())->removeLights(controller.names());
         // remove from JSON data
         return mDiscovery->removeController(controller.name());
     }

@@ -78,15 +78,16 @@ public:
     // Controller and Device Management
     // ----------------------------
 
-    bool removeLight(const QString& uniqueID);
+    /// remove lights by their IDs
+    bool removeLights(const std::vector<QString>& uniqueIDs);
 
     /*!
-     * \brief addLight adds lights with specific unique IDs that have been previously discovered.
+     * \brief addLights adds lights with specific unique IDs that have been previously discovered.
      * This allows us to show previously learned lights as "Not Reachable" when they cannot be
      * erached.
      * \param lights lights to add to the device table
      */
-    void addLight(const cor::Light& light);
+    void addLights(const std::vector<cor::Light>& light);
 
     /*!
      * \brief updateLight update all the data in the light device that matches the same controller
@@ -119,10 +120,10 @@ signals:
     void updateReceived(ECommType);
 
     /// signals when a new light is added
-    void newLightFound(ECommType, QString);
+    void newLightsFound(ECommType, std::vector<QString>);
 
     /// signals when an existing light is deleted
-    void lightDeleted(ECommType, QString);
+    void lightsDeleted(ECommType, std::vector<QString>);
 
 protected:
     /*!

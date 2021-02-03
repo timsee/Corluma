@@ -289,27 +289,27 @@ void ArduCorDiscovery::handleDiscoveredController(const cor::Controller& discove
     // update json data, if needed
     updateJSON(discoveredController);
 
+    std::vector<cor::Light> lights;
     int i = 1;
     for (const auto& name : discoveredController.names()) {
         ArduCorMetadata metadata(name,
                                  discoveredController,
                                  i,
                                  discoveredController.hardwareTypes()[i - 1]);
-        ArduCorLight light(metadata);
+        lights.push_back(ArduCorLight(metadata));
         ++i;
-
-        // start state updates, etc.
-        if (discoveredController.type() == ECommType::HTTP) {
-            mHTTP->addLight(light);
-        }
+    }
+    // start state updates, etc.
+    if (discoveredController.type() == ECommType::HTTP) {
+        mHTTP->addLights(lights);
+    }
 #ifdef USE_SERIAL
-        else if (discoveredController.type() == ECommType::serial) {
-            mSerial->addLight(light);
-        }
+    else if (discoveredController.type() == ECommType::serial) {
+        mSerial->addLights(lights);
+    }
 #endif
-        else if (discoveredController.type() == ECommType::UDP) {
-            mUDP->addLight(light);
-        }
+    else if (discoveredController.type() == ECommType::UDP) {
+        mUDP->addLights(lights);
     }
 }
 

@@ -270,22 +270,24 @@ public:
     void removeLights(const std::vector<QString>& keys) { mLights->removeLights(keys); }
 
     /// handles when the hue discovery finds a light.
-    void newHueFound(QString uniqueID) {
-        auto light = mComm->lightByID(uniqueID);
-        if (light.isValid()) {
-            if (light.protocol() == EProtocolType::hue) {
-                auto metadata = mComm->hue()->metadataFromLight(light);
-                mLightInfoWidget->addLight(metadata);
-                mLightInfoWidget->changeRowHeight(mRowHeight);
-                mLights->addLight(light);
-                // update the bridge of this hue
-                auto bridge = mComm->hue()->discovery()->bridgeFromLight(metadata);
-                updateBridge(bridge);
-                handleState();
-                qDebug() << " added this light: " << light;
+    void newHuesFound(const std::vector<QString>& uniqueIDs) {
+        auto lights = mComm->lightsByIDs(uniqueIDs);
+        for (auto light : lights) {
+            if (light.isValid()) {
+                if (light.protocol() == EProtocolType::hue) {
+                    auto metadata = mComm->hue()->metadataFromLight(light);
+                    mLightInfoWidget->addLight(metadata);
+                    mLightInfoWidget->changeRowHeight(mRowHeight);
+                    mLights->addLight(light);
+                    // update the bridge of this hue
+                    auto bridge = mComm->hue()->discovery()->bridgeFromLight(metadata);
+                    updateBridge(bridge);
+                    handleState();
+                }
+            } else {
+                qDebug() << " INFO: invalid light found from discovery... this shouldn't happen..."
+                         << light;
             }
-        } else {
-            qDebug() << " INFO: invalid light found from discovery... this shouldn't happen...";
         }
     }
 

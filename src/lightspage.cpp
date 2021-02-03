@@ -115,9 +115,9 @@ LightsPage::LightsPage(QWidget* parent,
 
     // connect the comm layer when it finds new lights
     connect(mComm,
-            SIGNAL(newLightFound(ECommType, QString)),
+            SIGNAL(lightsAdded(std::vector<QString>)),
             this,
-            SLOT(handleNewLightFound(ECommType, QString)));
+            SLOT(handleNewLightsFound(std::vector<QString>)));
 }
 
 void LightsPage::setupTopMenu(TopMenu* topMenu) {
@@ -144,10 +144,17 @@ void LightsPage::resize() {
     }
 }
 
-void LightsPage::handleNewLightFound(ECommType commType, QString uniqueID) {
-    if (commType == ECommType::hue) {
-        mControllerWidget->hueWidget()->newHueFound(uniqueID);
-        mDiscoveryWidget->hueWidget()->newHueFound(uniqueID);
+void LightsPage::handleNewLightsFound(std::vector<QString> uniqueIDs) {
+    auto lights = mComm->lightsByIDs(uniqueIDs);
+    std::vector<QString> hueLights;
+    for (auto light : lights) {
+        if (light.protocol() == EProtocolType::hue) {
+            hueLights.push_back(light.uniqueID());
+        }
+    }
+    if (!hueLights.empty()) {
+        mControllerWidget->hueWidget()->newHuesFound(hueLights);
+        mDiscoveryWidget->hueWidget()->newHuesFound(hueLights);
     }
 }
 

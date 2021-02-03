@@ -104,10 +104,10 @@ signals:
     void updateReceived(ECommType);
 
     /// signals when a new light is found
-    void newLightFound(ECommType, QString);
+    void newLightsFound(ECommType, std::vector<QString>);
 
     /// signals when an existing light is deleted
-    void lightDeleted(ECommType, QString);
+    void lightsDeleted(ECommType, std::vector<QString>);
 
 public slots:
 
@@ -123,10 +123,14 @@ private slots:
     void receivedUpdate(ECommType type) { emit updateReceived(type); }
 
     /// emits a signal when a light is found from any commtype
-    void lightFound(ECommType type, QString uniqueID) { emit newLightFound(type, uniqueID); }
+    void lightsFound(ECommType type, std::vector<QString> uniqueIDs) {
+        emit newLightsFound(type, uniqueIDs);
+    }
 
     /// emits a signal when a ligh tis deleted from any commtype
-    void deletedLight(ECommType type, QString uniqueID) { emit lightDeleted(type, uniqueID); }
+    void deletedLights(ECommType type, std::vector<QString> uniqueIDs) {
+        emit lightsDeleted(type, uniqueIDs);
+    }
 
 private:
 #ifdef USE_SERIAL

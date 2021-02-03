@@ -176,55 +176,57 @@ std::vector<cor::Group> GroupData::parentGroups() {
     return parentGroups;
 }
 
-void GroupData::lightDeleted(ECommType, const QString& uniqueID) {
-    qDebug() << "INFO: light: " << uniqueID << " deleted from group data.";
+void GroupData::lightsDeleted(const std::vector<QString>& uniqueIDs) {
+    qDebug() << "INFO: lights: " << uniqueIDs << " deleted from group data.";
     bool anyUpdates = false;
-    if (!mJsonData.isNull()) {
-        if (mJsonData.isArray()) {
-            // parse the moods, remove from dict if needed
-            for (const auto& mood : mMoodDict.items()) {
-                for (const auto& moodLight : mood.lights()) {
-                    if (mood.lights().size() == 1 && (moodLight.uniqueID() == uniqueID)) {
-                        // edge case where the mood only exists for this one light, remove it
-                        // entirely
-                        mMoodDict.removeKey(QString::number(mood.uniqueID()).toStdString());
-                        anyUpdates = true;
-                    } else if (moodLight.uniqueID() == uniqueID) {
-                        // standard case, make a new mood without the light
-                        auto newMood = mood.removeLight(moodLight.uniqueID());
-                        mMoodDict.update(QString::number(mood.uniqueID()).toStdString(), newMood);
-                        anyUpdates = true;
+    for (auto uniqueID : uniqueIDs) {
+        if (!mJsonData.isNull()) {
+            if (mJsonData.isArray()) {
+                // parse the moods, remove from dict if needed
+                for (const auto& mood : mMoodDict.items()) {
+                    for (const auto& moodLight : mood.lights()) {
+                        if (mood.lights().size() == 1 && (moodLight.uniqueID() == uniqueID)) {
+                            // edge case where the mood only exists for this one light, remove it
+                            // entirely
+                            mMoodDict.removeKey(QString::number(mood.uniqueID()).toStdString());
+                            anyUpdates = true;
+                        } else if (moodLight.uniqueID() == uniqueID) {
+                            // standard case, make a new mood without the light
+                            auto newMood = mood.removeLight(moodLight.uniqueID());
+                            mMoodDict.update(QString::number(mood.uniqueID()).toStdString(),
+                                             newMood);
+                            anyUpdates = true;
+                        }
                     }
                 }
-            }
 
-            // parse the groups, remove from dict if needed
-            for (const auto& group : mGroupDict.items()) {
-                for (const auto& groupLight : group.lights()) {
-                    if (group.lights().size() == 1 && (groupLight == uniqueID)) {
-                        // edge case where the mood only exists for this one light, remove it
-                        // entirely
-                        mGroupDict.removeKey(QString::number(group.uniqueID()).toStdString());
-                        anyUpdates = true;
-                    } else if (groupLight == uniqueID) {
-                        // standard case, make a new mood without the light
-                        auto newGroup = group.removeLight(uniqueID);
-                        mGroupDict.update(QString::number(group.uniqueID()).toStdString(),
-                                          newGroup);
-                        anyUpdates = true;
+                // parse the groups, remove from dict if needed
+                for (const auto& group : mGroupDict.items()) {
+                    for (const auto& groupLight : group.lights()) {
+                        if (group.lights().size() == 1 && (groupLight == uniqueID)) {
+                            // edge case where the mood only exists for this one light, remove it
+                            // entirely
+                            mGroupDict.removeKey(QString::number(group.uniqueID()).toStdString());
+                            anyUpdates = true;
+                        } else if (groupLight == uniqueID) {
+                            // standard case, make a new mood without the light
+                            auto newGroup = group.removeLight(uniqueID);
+                            mGroupDict.update(QString::number(group.uniqueID()).toStdString(),
+                                              newGroup);
+                            anyUpdates = true;
+                        }
                     }
                 }
-            }
 
-            // update metadata
-            mOrphans.removeLight(uniqueID);
-            updateGroupMetadata();
-
-            if (anyUpdates) {
-                mJsonData.setArray(makeGroupData());
-                saveJSON();
+                // update metadata
+                mOrphans.removeLight(uniqueID);
+                updateGroupMetadata();
             }
         }
+    }
+    if (anyUpdates) {
+        mJsonData.setArray(makeGroupData());
+        saveJSON();
     }
 }
 
@@ -392,9 +394,11 @@ bool GroupData::save(const QString& filePath) {
 }
 
 
-void GroupData::addLightToGroups(ECommType, const QString& uniqueID) {
-    // qDebug() << " add light to groups " << uniqueID;
-    mOrphans.addNewLight(uniqueID, mGroupDict.items());
+void GroupData::addLightsToGroups(const std::vector<QString>& uniqueIDs) {
+    for (auto uniqueID : uniqueIDs) {
+        // qDebug() << " add light to groups " << uniqueID;
+        mOrphans.addNewLight(uniqueID, mGroupDict.items());
+    }
     updateGroupMetadata();
 }
 
