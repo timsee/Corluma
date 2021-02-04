@@ -82,6 +82,7 @@ void MoodPage::show(std::uint64_t currentMood) {
     mMoodMenu->setVisible(true);
     mCurrentMood = currentMood;
     mMoodMenu->updateData();
+    resize();
 }
 
 void MoodPage::hide() {

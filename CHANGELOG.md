@@ -1158,3 +1158,7 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Lights are now added to `CommType` as a batch.
 - Lights are now removed from `CommType` as a batch.
 - Fixed miscellaneous bugs.
+
+### **v0.21.78**
+### Bug Fixes
+- Fixed UI bugs related to loading json data that contains lights that the app does not recognize.

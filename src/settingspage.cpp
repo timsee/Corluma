@@ -263,7 +263,7 @@ void SettingsPage::resetToDefaults() {
 
     mGroups->removeAppData();
     // load no data, deleting everything.
-    mGroups->loadExternalData("");
+    mGroups->loadExternalData("", mComm->allLightIDs());
     AppSettings::setToDefaults();
 }
 

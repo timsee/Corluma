@@ -2,6 +2,7 @@
 #define GROUPS_DATA_H
 
 #include <QObject>
+#include <unordered_set>
 
 #include "cor/dictionary.h"
 #include "cor/jsonsavedata.h"
@@ -169,7 +170,7 @@ public:
      * \param file path to JSON file
      * \return true if loaded successfully, false otherwise.
      */
-    bool loadExternalData(const QString& file);
+    bool loadExternalData(const QString& file, const std::unordered_set<QString>& allLightIDs);
 
     /*!
      * \brief mergeExternalData merges JSON data into existing app data. When the same groups exists
@@ -197,11 +198,8 @@ public:
     /// saves JSON data to the given filepath
     bool save(const QString& filePath);
 
-    /// computes the parent groups, subgroups, and orphan data
-    void updateGroupMetadata();
-
-    /// loads json data into app data
-    bool loadJSON() override;
+    /// loads json from default file location
+    void loadJsonFromFile();
 
     /// adds a light to group metadata
     void addLightsToGroups(const std::vector<QString>& uniqueIDs);
@@ -227,6 +225,15 @@ signals:
     void newMoodAdded(QString);
 
 private:
+    /// loads json data into app data
+    bool loadJSON() override;
+
+    /// computes the parent groups, subgroups, and orphan data
+    void updateGroupMetadata();
+
+    /// creates a set of all lights represented by the group data.
+    std::unordered_set<QString> allRepresentedLights();
+
     /*!
      * \brief parseMood Takes a JSON representation of a mood and converts it to a std::vector
      *        of devices and then adds it to the mMoodList.

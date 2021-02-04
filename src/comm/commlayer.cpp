@@ -489,6 +489,44 @@ void CommLayer::stopDiscovery(EProtocolType type) {
     }
 }
 
+std::unordered_set<QString> CommLayer::allDiscoveredLightIDs() {
+    std::unordered_set<QString> lightIDs;
+    auto arduCorIDs = cor::lightVectorToIDs(mArduCor->lights());
+    lightIDs.insert(arduCorIDs.begin(), arduCorIDs.end());
+
+    auto hueIDs = cor::lightVectorToIDs(mHue->lightDict().items());
+    lightIDs.insert(hueIDs.begin(), hueIDs.end());
+
+    auto nanoleafIDs = cor::lightVectorToIDs(mNanoleaf->lightDict().items());
+    lightIDs.insert(nanoleafIDs.begin(), nanoleafIDs.end());
+
+    return lightIDs;
+}
+
+std::unordered_set<QString> CommLayer::allUndiscoveredLightIDs() {
+    std::unordered_set<QString> lightIDs;
+    for (const auto& controller : mArduCor->discovery()->undiscoveredControllers()) {
+        lightIDs.insert(controller.names().begin(), controller.names().end());
+    }
+
+    for (const auto& bridge : mHue->discovery()->notFoundBridges()) {
+        lightIDs.insert(bridge.lightIDs().begin(), bridge.lightIDs().end());
+    }
+
+    for (const auto& nanoleaf : mNanoleaf->discovery()->notFoundLights()) {
+        lightIDs.insert(nanoleaf.serialNumber());
+    }
+
+    return lightIDs;
+}
+
+std::unordered_set<QString> CommLayer::allLightIDs() {
+    auto lightIDs = allDiscoveredLightIDs();
+    auto undiscoveredLightIDs = allUndiscoveredLightIDs();
+    lightIDs.insert(undiscoveredLightIDs.begin(), undiscoveredLightIDs.end());
+    return lightIDs;
+}
+
 bool CommLayer::anyLightsFound() {
     bool anyArduCor = !mArduCor->discovery()->undiscoveredControllers().empty()
                       || !mArduCor->discovery()->controllers().empty();

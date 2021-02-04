@@ -6,16 +6,18 @@
 #include <QWidget>
 #include <memory>
 
+#include <unordered_set>
+#include "colorpicker/colorpicker.h"
 #include "comm/arducor/arducordiscovery.h"
 #include "comm/commtype.h"
 #include "comm/hue/huemetadata.h"
 #include "comm/hue/hueprotocols.h"
+#include "cor/objects/group.h"
 #include "cor/objects/light.h"
+#include "cor/objects/mood.h"
 #include "cor/presetpalettes.h"
 #include "cor/protocols.h"
 #include "data/groupdata.h"
-
-#include "colorpicker/colorpicker.h"
 
 class UPnPDiscovery;
 class CommArduCor;
@@ -164,17 +166,21 @@ public:
     /// getter for arducor
     std::shared_ptr<CommArduCor> arducor() { return mArduCor; }
 
-    // --------------------------
-    // Hardware specific functions
-    // --------------------------
-
     /// pointer to the hue comm type
     std::shared_ptr<CommHue> hue() { return mHue; }
 
+    /// creates a set of all discovered light IDs
+    std::unordered_set<QString> allDiscoveredLightIDs();
+
+    /// creates a set of all undiscovered light IDs
+    std::unordered_set<QString> allUndiscoveredLightIDs();
+
+    /// creates a set of both undiscovered and discovered light IDs
+    std::unordered_set<QString> allLightIDs();
+
     /*!
-     * \brief hueLightsToDevices helper to convert a list of hue lights into a list of cor::Lights
-     * \param hues list of hue lights to convert
-     * \return a list of cor::Lights
+     * \brief hueLightsToDevices helper to convert a list of hue lights into a list of
+     * cor::Lights \param hues list of hue lights to convert \return a list of cor::Lights
      */
     std::vector<cor::Light> hueLightsToDevices(std::vector<HueMetadata> hues);
 

@@ -61,7 +61,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
       mChooseGroupWidget{new ChooseGroupWidget(this, mComm, mGroups)},
       mChooseMoodWidget{new ChooseMoodWidget(this, mComm, mGroups)},
       mGreyOut{new GreyOutOverlay(!mLeftHandMenu->alwaysOpen(), this)} {
-    mGroups->loadJSON();
+    mGroups->loadJsonFromFile();
 
     // disable experimental features if not experimental features are not enabled
 #ifndef USE_EXPERIMENTAL_FEATURES
@@ -408,9 +408,10 @@ void MainWindow::shareChecker() {
             loadJSON(mSharePath);
             // check if external save data can be loaded
             // interact with mainwindow here?
-            if (!mGroups->loadExternalData(mSharePath)) {
+            if (!mGroups->loadExternalData(mSharePath, mComm->allLightIDs())) {
                 qDebug() << "WARNING: loading external data failed at " << mSharePath;
             } else {
+                mComm->hue()->discovery()->reloadGroupData();
                 qDebug() << "New app data saved!";
             }
         }
@@ -432,10 +433,10 @@ void MainWindow::loadJSON(QString path) {
         mLeftHandMenu->clearWidgets();
         mData->clearLights();
         mGroups->removeAppData();
-        mComm->hue()->discovery()->reloadGroupData();
-        if (!mGroups->loadExternalData(path)) {
+        if (!mGroups->loadExternalData(path, mComm->allLightIDs())) {
             qDebug() << "WARNING: loading external data failed at " << path;
         } else {
+            mComm->hue()->discovery()->reloadGroupData();
             qDebug() << "New app data saved!";
             mMainViewport->loadMoodPage();
         }

@@ -296,7 +296,8 @@ bool GroupData::mergeExternalData(const QString& file, bool) {
 }
 
 
-bool GroupData::loadExternalData(const QString& file) {
+bool GroupData::loadExternalData(const QString& file,
+                                 const std::unordered_set<QString>& allLightIDs) {
     auto document = loadJsonFile(file);
     // check if contains a jsonarray
     if (!document.isNull()) {
@@ -304,7 +305,30 @@ bool GroupData::loadExternalData(const QString& file) {
             mJsonData = document;
             if (saveJSON()) {
                 if (loadJSON()) {
-                    updateGroupMetadata();
+                    // make a set of all known light IDs, both connected and unconnected
+
+                    // parse the group data and get all lights reflected in it
+                    auto representedLights = allRepresentedLights();
+
+                    // make a set of all lights NOT reflected in known lights, but in the group data
+                    std::unordered_set<QString> unknownLights;
+                    for (const auto& light : representedLights) {
+                        if (allLightIDs.find(light) == allLightIDs.end()) {
+                            unknownLights.insert(light);
+                        }
+                    }
+                    // remove all lights not found in the known lights
+                    std::vector<QString> unknownLightVector(unknownLights.begin(),
+                                                            unknownLights.end());
+
+                    if (!unknownLightVector.empty()) {
+                        qDebug() << " INFO: deleting these lights from app data: "
+                                 << unknownLightVector;
+                        lightsDeleted(unknownLightVector);
+                    } else {
+                        updateGroupMetadata();
+                    }
+                    qDebug() << " INFO: successfully loaded new app data";
                     return true;
                 } else {
                     qDebug() << " could not load JSON";
@@ -350,7 +374,6 @@ bool GroupData::loadJSON() {
                     }
                 }
             }
-            updateGroupMetadata();
             return true;
         }
     } else {
@@ -497,4 +520,24 @@ std::uint64_t GroupData::groupNameToID(const QString name) {
     }
 
     return std::numeric_limits<std::uint64_t>::max();
+}
+
+
+std::unordered_set<QString> GroupData::allRepresentedLights() {
+    std::unordered_set<QString> lightIDs;
+    for (const auto& mood : mMoodDict.items()) {
+        auto moodIDs = cor::lightVectorToIDs(mood.lights());
+        lightIDs.insert(moodIDs.begin(), moodIDs.end());
+    }
+
+    for (const auto& group : mGroupDict.items()) {
+        lightIDs.insert(group.lights().begin(), group.lights().end());
+    }
+
+    return lightIDs;
+}
+
+void GroupData::loadJsonFromFile() {
+    loadJSON();
+    updateGroupMetadata();
 }

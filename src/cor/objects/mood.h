@@ -120,7 +120,7 @@ public:
         }
         // if a light is removable, remove it.
         if (lightToRemove.isValid()) {
-            auto findLight = std::find(lights.begin(), lights.end(), lightID);
+            auto findLight = std::find(lights.begin(), lights.end(), lightToRemove);
             if (findLight != lights.end()) {
                 lights.erase(findLight);
             }
