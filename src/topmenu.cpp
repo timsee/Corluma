@@ -227,7 +227,7 @@ void TopMenu::lightCountChanged() {
     } else if (mCurrentPage == EPage::palettePage) {
         showRoutineWidget(false);
         showMultiColorStateWidget(!mData->empty());
-        mMultiColorStateWidget->updateState(mData->colorScheme());
+        mMultiColorStateWidget->updateState(mData->multiColorScheme());
         mPalettePage->update(mData->lightCount(), mData->multiColorScheme());
     }
 }
@@ -424,7 +424,7 @@ void TopMenu::showFloatingLayout(EPage newPage) {
                 break;
             case EPage::palettePage:
                 showMultiColorStateWidget(true);
-                mMultiColorStateWidget->updateState(mData->colorScheme());
+                mMultiColorStateWidget->updateState(mData->multiColorScheme());
                 break;
             default:
                 break;
@@ -696,7 +696,7 @@ void TopMenu::updateState(const cor::LightState& state) {
         if (!mMultiColorStateWidget->isIn()) {
             showMultiColorStateWidget(true);
         }
-        mMultiColorStateWidget->updateState(mData->colorScheme());
+        mMultiColorStateWidget->updateState(mData->multiColorScheme());
     }
 
     if (mGlobalBrightness->isIn()) {

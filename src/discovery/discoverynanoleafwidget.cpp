@@ -216,8 +216,9 @@ QString DiscoveryNanoLeafWidget::discoveryHelpHTML() {
     std::stringstream sstream;
     sstream << "<b>General Tips</b>";
     sstream << "<ul>";
-    sstream << "<li> Original Nanoleafs must be using firmware vTODO or later to connect. Nanoleaf "
-               "shapes and panels are supported on all firmwares. </li>";
+    sstream
+        << "<li> Original Nanoleafs must be using firmware v2.1.0 or later to connect "
+           "(released in 2017). Nanoleaf Shapes and Panels are supported on all firmwares. </li>";
     sstream << "<li> Corluma assumes that the Nanoleaf has already completed first time setup and "
                "can connect to your local Wifi. If this has not happened yet, use the official "
                "Nanoleaf app to discover the lights once first. </li>";

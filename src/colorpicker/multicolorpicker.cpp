@@ -93,23 +93,16 @@ void MultiColorPicker::updateBottomMenuState(bool enable) {
 
 void MultiColorPicker::updateColorStates(const std::vector<QColor>& colorSchemes) {
     if (!colorSchemes.empty()) {
-        std::vector<QColor> newScheme(mMaxCount);
-        // in cases where an light is currently showing one color but can show more, set all the
-        // additional colors it can show as the one color
-        if (colorSchemes.size() < mMaxCount) {
-            for (std::size_t i = 0u; i < colorSchemes.size(); ++i) {
-                newScheme[i] = colorSchemes[i];
-            }
-            for (auto i = colorSchemes.size(); i < mMaxCount; ++i) {
-                newScheme[i] = colorSchemes[0];
-            }
-        } else {
+        if (colorSchemes.size() >= mMaxCount) {
+            std::vector<QColor> newScheme(mMaxCount);
             for (std::size_t i = 0u; i < mMaxCount; ++i) {
                 newScheme[i] = colorSchemes[i];
             }
+            mScheme = newScheme;
+        } else {
+            mScheme = colorSchemes;
         }
-        mScheme = newScheme;
-        mColorSchemeCircles->updateColorScheme(newScheme, true);
+        mColorSchemeCircles->updateColorScheme(mScheme, true);
     }
 }
 

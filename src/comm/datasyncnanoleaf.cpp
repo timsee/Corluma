@@ -196,9 +196,12 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
         //-------------------
         // these are required by all packets
         bool routineInSync = (commState.routine() == dataState.routine());
-        bool speedInSync = true;
-        // TODO: for now, assume speed is synced
-        //(commState.speed() == dataState.speed());
+        bool speedInSync = (commState.speed() == dataState.speed());
+        bool paramsInSync = true;
+        if (commState.routine() == ERoutine::singleGlimmer) {
+            // qDebug() << " param comm " << commState.param() << " vs " << dataState.param();
+            paramsInSync = (commState.param() == dataState.param());
+        }
         // qDebug() << " speed comm " << commState.speed() << " vs " << dataState.speed();
         // speed is not used only in single solid routines
         //        if (dataState.routine() == ERoutine::singleSolid) {
@@ -206,7 +209,8 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
         //        }
 
         // these are optional parameters depending on the routine
-        bool paramsInSync = true;
+
+        bool colorInSync = true;
         if (dataState.routine() > cor::ERoutineSingleColorEnd) {
             bool paletteInSync = compareTwoPalettes(commState.palette(), dataState.palette());
             if (!checkIfOffByOne(commState.palette().brightness(),
@@ -215,11 +219,14 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
                 object["brightness"] = double(dataState.palette().brightness());
             }
             if (!paletteInSync) {
-                paramsInSync = false;
+                colorInSync = false;
             }
         } else {
             if (cor::colorDifference(dataState.color(), commState.color()) > 0.02f) {
-                paramsInSync = false;
+                //                qDebug() << " color difference is "
+                //                         << cor::colorDifference(dataState.color(),
+                //                         commState.color());
+                colorInSync = false;
             }
         }
 
@@ -234,9 +241,10 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
             }
         }
 
-        if (!routineInSync || !speedInSync || !paramsInSync) {
+        if (!routineInSync || !speedInSync || !colorInSync || !paramsInSync) {
             QJsonObject routineObject;
             routineObject["routine"] = routineToString(dataState.routine());
+            routineObject["param"] = dataState.param();
 
             if (dataState.routine() <= cor::ERoutineSingleColorEnd) {
                 routineObject["hue"] = dataState.color().hueF();
@@ -244,9 +252,6 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
                 routineObject["bri"] = dataState.color().valueF();
             } else {
                 routineObject["palette"] = dataState.palette().JSON();
-                if (dataState.palette().paletteEnum() == EPalette::custom) {
-                    mComm->nanoleaf()->setCustomColors(dataState.palette().colors());
-                }
             }
 
             if (dataState.routine() != ERoutine::singleSolid) {
@@ -256,7 +261,7 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
 
             //            qDebug() << " routine in sync: " << routineInSync << " speed in sync" <<
             //            speedInSync
-            //                     << " params in sycn" << paramsInSync;
+            //                     << " color in sync" << colorInSync;
 
             object["routine"] = routineObject;
 

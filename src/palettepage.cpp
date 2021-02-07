@@ -104,7 +104,7 @@ void PalettePage::resize() {
 }
 
 void PalettePage::lightCountChanged(std::size_t count) {
-    mColorPicker->updateColorCount(count);
+    mColorPicker->updateColorCount(mColorScheme.size());
     if (count == 0) {
         mPaletteScrollArea->setEnabled(false);
         mColorPicker->enable(false, EColorPickerType::color);

@@ -16,57 +16,12 @@
 #include "cor/objects/palette.h"
 #include "utils/color.h"
 
+
 //#define DEBUG_LEAF_SCHEDULES
 //#define DEBUG_LEAF_TOUCHY
 
-namespace {
 
-std::pair<int, cor::Range<std::uint32_t>> valueAndRangeFromJSON(const QJsonObject& object) {
-    if (object["value"].isDouble() && object["min"].isDouble() && object["max"].isDouble()) {
-        int value = int(object["value"].toDouble());
-        return std::make_pair(value,
-                              cor::Range<std::uint32_t>(std::uint32_t(object["min"].toDouble()),
-                                                        std::uint32_t(object["max"].toDouble())));
-    }
-    return std::make_pair(-1, cor::Range<std::uint32_t>(45, 47));
-}
-
-QJsonObject colorToJson(const QColor& color, int probability = std::numeric_limits<int>::max()) {
-    QJsonObject colorObject;
-    auto hue = int(color.hueF() * 359);
-    if (hue < 0) {
-        hue = hue * -1;
-    }
-    colorObject["hue"] = hue;
-    colorObject["saturation"] = int(color.saturationF() * 100.0);
-    colorObject["brightness"] = int(color.valueF() * 100.0);
-    if (probability != std::numeric_limits<int>::max()) {
-        colorObject["probability"] = probability;
-    }
-    return colorObject;
-}
-
-std::vector<QColor> nanoleafPaletteToVector(const QJsonArray& palette) {
-    std::vector<QColor> colorVector;
-    for (const auto& object : palette) {
-        const auto& colorObject = object.toObject();
-        double hue = colorObject["hue"].toDouble() / 359.0;
-        if (hue < 0) {
-            hue = hue * -1.0;
-        }
-
-        double saturation = colorObject["saturation"].toDouble() / 100.0;
-        double brightness = colorObject["brightness"].toDouble() / 100.0;
-        QColor color;
-        color.setHsvF(hue, saturation, brightness);
-        colorVector.push_back(color);
-    }
-    return colorVector;
-}
-
-} // namespace
-
-CommNanoleaf::CommNanoleaf() : CommType(ECommType::nanoleaf), mUPnP{nullptr} {
+CommNanoleaf::CommNanoleaf() : CommType(ECommType::nanoleaf), mUPnP{nullptr}, mPacketParser{} {
     mStateUpdateInterval = 1000;
 
     mDiscovery = new nano::LeafDiscovery(this, 4000);
@@ -478,146 +433,6 @@ void CommNanoleaf::renameLight(nano::LeafMetadata light, const QString& name) {
 
 namespace {
 
-bool isMultiPalette(const QJsonObject& object) {
-    auto receivedPalette = object["palette"].toArray();
-    std::uint32_t hueValue = std::numeric_limits<std::uint32_t>::max();
-    for (auto ref : receivedPalette) {
-        if (ref.isObject()) {
-            auto option = ref.toObject();
-            if (option["hue"].isDouble() && option["brightness"].isDouble()) {
-                auto tempHueValue = std::uint32_t(option["hue"].toDouble());
-                auto brightValue = std::uint32_t(option["brightness"].toDouble());
-                // skip when one of the colors is off.
-                if (brightValue > 0) {
-                    if (hueValue == std::numeric_limits<std::uint32_t>::max()) {
-                        hueValue = tempHueValue;
-                    } else if (tempHueValue != hueValue) {
-                        return true;
-                    }
-                }
-            }
-        }
-    }
-    return false;
-}
-
-
-int intValueFromPluginOptionsByName(const QString& name, const QJsonObject& object) {
-    auto pluginOptions = object["pluginOptions"].toArray();
-    for (auto ref : pluginOptions) {
-        if (ref.isObject()) {
-            auto option = ref.toObject();
-            if (option["name"].isString()) {
-                auto optionName = option["name"].toString();
-                if (optionName == name) {
-                    return option["value"].toInt();
-                }
-            }
-        }
-    }
-    return std::numeric_limits<int>::max();
-}
-
-ERoutine commandUpdatePacketToRoutine(const QJsonObject& requestPacket) {
-    ERoutine routine = ERoutine::MAX;
-    QString animationType = requestPacket["animType"].toString();
-#ifdef DEBUG_LEAF_TOUCHY
-    qDebug() << "animation type " << animationType;
-#endif
-    if (animationType == "highlight") {
-        QJsonObject transPacket = requestPacket["transTime"].toObject();
-        int transTime = int(transPacket["minValue"].toDouble());
-        if (transTime == 3) {
-            routine = ERoutine::multiGlimmer;
-        } else if (transTime == 2) {
-            routine = ERoutine::singleGlimmer;
-        }
-    } else if (animationType == "fade") {
-        QJsonObject transPacket = requestPacket["transTime"].toObject();
-        int transTime = int(transPacket["minValue"].toDouble());
-        if (isMultiPalette(requestPacket)) {
-            if (transTime == 4) {
-                routine = ERoutine::multiRandomSolid;
-            } else {
-                routine = ERoutine::multiFade;
-            }
-        } else {
-            if (transTime == 3) {
-                routine = ERoutine::singleFade;
-            } else if (transTime == 2) {
-                routine = ERoutine::singleSawtoothFade;
-            } else if (transTime == 4) {
-                routine = ERoutine::singleBlink;
-            }
-        }
-    } else if (animationType == "wheel") {
-        if (isMultiPalette(requestPacket)) {
-            routine = ERoutine::multiBars;
-        } else {
-            routine = ERoutine::singleWave;
-        }
-    } else if (animationType == "random") {
-        routine = ERoutine::multiRandomIndividual;
-    } else if (animationType == "flow") {
-        QJsonObject transPacket = requestPacket["transTime"].toObject();
-        int transTime = int(transPacket["minValue"].toDouble());
-        if (transTime == 20) {
-            routine = ERoutine::multiRandomSolid;
-        }
-    } else if (animationType == "plugin") {
-        auto pluginUUID = requestPacket["pluginUuid"].toString();
-#ifdef DEBUG_LEAF_TOUCHY
-        qDebug() << "plugin packet " << pluginUUID;
-#endif
-        if (pluginUUID == "6970681a-20b5-4c5e-8813-bdaebc4ee4fa") {
-            // wheel
-            if (isMultiPalette(requestPacket)) {
-                routine = ERoutine::multiBars;
-            } else {
-                routine = ERoutine::singleWave;
-            }
-        } else if (pluginUUID == "027842e4-e1d6-4a4c-a731-be74a1ebd4cf") {
-            // flow
-            // NOTE that the flow doesnt show flowFactor in the plugion options... because
-            // nanoleaf.
-            auto transTime = intValueFromPluginOptionsByName("transTime", requestPacket);
-            if (transTime == 20) {
-                routine = ERoutine::multiRandomSolid;
-            }
-        } else if (pluginUUID == "b3fd723a-aae8-4c99-bf2b-087159e0ef53") {
-            auto transTime = intValueFromPluginOptionsByName("transTime", requestPacket);
-            if (isMultiPalette(requestPacket)) {
-                if (transTime == 4) {
-                    routine = ERoutine::multiRandomSolid;
-                } else {
-                    routine = ERoutine::multiFade;
-                }
-            } else {
-                if (transTime == 3) {
-                    routine = ERoutine::singleFade;
-                } else if (transTime == 2) {
-                    routine = ERoutine::singleSawtoothFade;
-                } else if (transTime == 4) {
-                    routine = ERoutine::singleBlink;
-                }
-            }
-            // could also be single sawtooth fade in or out
-        } else if (pluginUUID == "ba632d3e-9c2b-4413-a965-510c839b3f71") {
-            // random
-            routine = ERoutine::multiRandomIndividual;
-        } else if (pluginUUID == "70b7c636-6bf8-491f-89c1-f4103508d642") {
-            // highlight
-            auto transTime = intValueFromPluginOptionsByName("transTime", requestPacket);
-            if (transTime == 3) {
-                routine = ERoutine::multiGlimmer;
-            } else if (transTime == 2) {
-                routine = ERoutine::singleGlimmer;
-            }
-        }
-    }
-    return routine;
-}
-
 std::pair<QColor, std::uint32_t> brightnessAndMainColorFromVector(
     const std::vector<QColor>& colors) {
     QColor maxColor(0, 0, 0);
@@ -630,38 +445,12 @@ std::pair<QColor, std::uint32_t> brightnessAndMainColorFromVector(
     return std::make_pair(maxColor, std::uint32_t(maxColor.valueF() * 100.0));
 }
 
-int speedFromStateUpdate(const QJsonObject& requestPacket) {
-    // check old API
-    if (requestPacket["delayTime"].isObject()) {
-        QJsonObject delayTimeObject = requestPacket["delayTime"].toObject();
-        if (delayTimeObject["maxValue"].isDouble()) {
-            return int(delayTimeObject["maxValue"].toDouble());
-        }
-    }
-    if (requestPacket["transTime"].isObject()) {
-        QJsonObject transTimeObject = requestPacket["transTime"].toObject();
-        if (transTimeObject["maxValue"].isDouble()) {
-            return int(transTimeObject["maxValue"].toDouble());
-        }
-    }
-    auto delayTime = intValueFromPluginOptionsByName("delayTime", requestPacket);
-    if (delayTime != std::numeric_limits<int>::max()) {
-        return delayTime;
-    }
-    auto transTime = intValueFromPluginOptionsByName("transTime", requestPacket);
-    if (transTime != std::numeric_limits<int>::max()) {
-        return transTime;
-    }
-    // check new API
-    return std::numeric_limits<int>::max();
-}
-
 } // namespace
 void CommNanoleaf::parseCommandRequestUpdatePacket(const nano::LeafMetadata& leafLight,
                                                    const QJsonObject& requestPacket) {
     if (requestPacket["animType"].isString() && requestPacket["colorType"].isString()
         && requestPacket["palette"].isArray()) {
-        auto colors = nanoleafPaletteToVector(requestPacket["palette"].toArray());
+        auto colors = mPacketParser.jsonArrayToColorVector(requestPacket["palette"].toArray());
 
         auto light = nano::LeafLight(leafLight);
         fillLight(light);
@@ -672,7 +461,7 @@ void CommNanoleaf::parseCommandRequestUpdatePacket(const nano::LeafMetadata& lea
         auto state = light.state();
 
         // add routine
-        state.routine(commandUpdatePacketToRoutine(requestPacket));
+        state.routine(mPacketParser.jsonToRoutine(requestPacket));
 #ifdef DEBUG_LEAF_TOUCHY
         if (state.routine() == ERoutine::MAX) {
             qDebug() << requestPacket;
@@ -696,7 +485,7 @@ void CommNanoleaf::parseCommandRequestUpdatePacket(const nano::LeafMetadata& lea
         }
 
         // set the speed
-        state.speed(speedFromStateUpdate(requestPacket));
+        state.speed(mPacketParser.speedFromStateUpdate(requestPacket));
 #ifdef DEBUG_LEAF_TOUCHY
         if (state.speed() == std::numeric_limits<int>::max()) {
             qDebug() << requestPacket;
@@ -736,52 +525,12 @@ void CommNanoleaf::parseStateUpdatePacket(const nano::LeafMetadata& nanoLight,
         mDiscovery->updateFoundLight(leafLight);
 
         QJsonObject stateObject = stateUpdate["state"].toObject();
-        if (stateObject["on"].isObject() && stateObject["brightness"].isObject()
-            && stateObject["hue"].isObject() && stateObject["sat"].isObject()
-            && stateObject["ct"].isObject() && stateObject["colorMode"].isString()) {
+        if (mPacketParser.hasValidState(stateObject)) {
             auto light = nano::LeafLight(leafLight);
             fillLight(light);
             // a valid packet has been received, mark the light as reachable.
             light.isReachable(true);
-
-            auto state = light.state();
-
-            QJsonObject onObject = stateObject["on"].toObject();
-            if (onObject["value"].isBool()) {
-                state.isOn(onObject["value"].toBool());
-            }
-
-            const auto& brightnessResult =
-                valueAndRangeFromJSON(stateObject["brightness"].toObject());
-            int brightness = brightnessResult.first;
-
-            const auto& hueResult = valueAndRangeFromJSON(stateObject["hue"].toObject());
-            int hue = hueResult.first;
-
-            const auto& satResult = valueAndRangeFromJSON(stateObject["sat"].toObject());
-            int sat = satResult.first;
-
-            const auto& ctResult = valueAndRangeFromJSON(stateObject["ct"].toObject());
-            int colorTemp = ctResult.first;
-            leafLight.updateRanges(brightnessResult.second,
-                                   hueResult.second,
-                                   satResult.second,
-                                   ctResult.second);
-
-            auto colorMode = stateObject["colorMode"].toString();
-            if (colorMode == "hsv" || colorMode == "hs") {
-                auto color = light.state().color();
-                color.setHsvF(hue / 359.0, sat / 100.0, brightness / 100.0);
-                state.color(color);
-                state.routine(ERoutine::singleSolid);
-                //  state.paletteBrightness(std::uint32_t(brightness));
-            } else if (colorMode == "effect") {
-                // parse if brightness packet;
-                state.paletteBrightness(brightness);
-            } else if (colorMode == "ct") {
-                state.color(cor::colorTemperatureToRGB(colorTemp));
-            }
-
+            auto state = mPacketParser.jsonToLighState(leafLight, light.state(), stateObject);
             light.state(state);
             updateLight(light);
         } else {
@@ -827,237 +576,6 @@ void CommNanoleaf::singleSolidColorChange(const nano::LeafMetadata& light, const
 }
 
 
-QJsonObject CommNanoleaf::createRoutinePacket(ERoutine routine, int brightness, int speed) {
-    QJsonObject effectObject;
-    effectObject["loop"] = true;
-    effectObject["command"] = QString("display");
-    effectObject["colorType"] = QString("HSB");
-
-    QJsonObject brightnessObject;
-    brightnessObject["minValue"] = brightness;
-    brightnessObject["maxValue"] = brightness;
-    effectObject["brightnessRange"] = brightnessObject;
-
-    switch (routine) {
-        case ERoutine::singleSolid: {
-            QJsonObject delayTimeObject;
-            delayTimeObject["minValue"] = speed / 2;
-            delayTimeObject["maxValue"] = speed;
-            effectObject["delayTime"] = delayTimeObject;
-            QJsonObject transTimeObject;
-            transTimeObject["minValue"] = 2;
-            transTimeObject["maxValue"] = 2;
-            effectObject["transTime"] = transTimeObject;
-            break;
-        }
-        case ERoutine::singleBlink: {
-            effectObject["animType"] = QString("fade");
-            QJsonObject delayTimeObject;
-            delayTimeObject["minValue"] = speed / 20;
-            delayTimeObject["maxValue"] = speed / 10;
-            effectObject["delayTime"] = delayTimeObject;
-            QJsonObject transTimeObject;
-            transTimeObject["minValue"] = 4;
-            transTimeObject["maxValue"] = 4;
-            effectObject["transTime"] = transTimeObject;
-            break;
-        }
-        case ERoutine::singleWave: {
-            effectObject["animType"] = QString("wheel");
-            effectObject["linDirection"] = "left";
-            effectObject["loop"] = true;
-            QJsonObject transTimeObject;
-            transTimeObject["minValue"] = 20;
-            transTimeObject["maxValue"] = 20;
-            effectObject["transTime"] = transTimeObject;
-            break;
-        }
-        case ERoutine::singleGlimmer: {
-            effectObject["animType"] = QString("highlight");
-            QJsonObject delayTimeObject;
-            delayTimeObject["minValue"] = speed / 2;
-            delayTimeObject["maxValue"] = speed;
-            effectObject["delayTime"] = delayTimeObject;
-            QJsonObject transTimeObject;
-            transTimeObject["minValue"] = 2;
-            transTimeObject["maxValue"] = 2;
-            effectObject["transTime"] = transTimeObject;
-            break;
-        }
-        case ERoutine::singleFade: {
-            effectObject["animType"] = QString("fade");
-            QJsonObject delayTimeObject;
-            delayTimeObject["minValue"] = speed / 20;
-            delayTimeObject["maxValue"] = speed / 10;
-            effectObject["delayTime"] = delayTimeObject;
-            QJsonObject transTimeObject;
-            transTimeObject["minValue"] = 3;
-            transTimeObject["maxValue"] = 3;
-            effectObject["transTime"] = transTimeObject;
-            break;
-        }
-
-        case ERoutine::singleSawtoothFade: {
-            effectObject["animType"] = QString("fade");
-            QJsonObject delayTimeObject;
-            delayTimeObject["minValue"] = speed / 20;
-            delayTimeObject["maxValue"] = speed / 10;
-            effectObject["delayTime"] = delayTimeObject;
-            QJsonObject transTimeObject;
-            transTimeObject["minValue"] = 2;
-            transTimeObject["maxValue"] = 2;
-            effectObject["transTime"] = transTimeObject;
-            break;
-        }
-
-        case ERoutine::multiBars: {
-            effectObject["animType"] = QString("wheel");
-            effectObject["linDirection"] = "left";
-            effectObject["loop"] = true;
-            QJsonObject transTimeObject;
-            transTimeObject["minValue"] = 20;
-            transTimeObject["maxValue"] = 20;
-            effectObject["transTime"] = transTimeObject;
-            break;
-        }
-        case ERoutine::multiRandomSolid: {
-            effectObject["animType"] = QString("fade");
-            QJsonObject delayTimeObject;
-            delayTimeObject["minValue"] = speed / 20;
-            delayTimeObject["maxValue"] = speed / 10;
-            effectObject["delayTime"] = delayTimeObject;
-            QJsonObject transTimeObject;
-            transTimeObject["minValue"] = 4;
-            transTimeObject["maxValue"] = 4;
-            effectObject["transTime"] = transTimeObject;
-            break;
-        }
-        case ERoutine::multiRandomIndividual: {
-            effectObject["animType"] = QString("random");
-            QJsonObject delayTimeObject;
-            delayTimeObject["minValue"] = speed / 2;
-            delayTimeObject["maxValue"] = speed;
-            effectObject["delayTime"] = delayTimeObject;
-            QJsonObject transTimeObject;
-            transTimeObject["minValue"] = 2;
-            transTimeObject["maxValue"] = 2;
-            effectObject["transTime"] = transTimeObject;
-            break;
-        }
-        case ERoutine::multiGlimmer: {
-            effectObject["animType"] = QString("highlight");
-            QJsonObject transTimeObject;
-            transTimeObject["minValue"] = 3;
-            transTimeObject["maxValue"] = 3;
-            effectObject["transTime"] = transTimeObject;
-            break;
-        }
-        case ERoutine::multiFade: {
-            effectObject["animType"] = QString("fade");
-            QJsonObject delayTimeObject;
-            delayTimeObject["minValue"] = speed / 2;
-            delayTimeObject["maxValue"] = speed;
-            effectObject["delayTime"] = delayTimeObject;
-            QJsonObject transTimeObject;
-            transTimeObject["minValue"] = 2;
-            transTimeObject["maxValue"] = 3;
-            effectObject["transTime"] = transTimeObject;
-            break;
-        }
-        default:
-            break;
-    }
-
-    return effectObject;
-}
-
-QJsonArray CommNanoleaf::createPalette(ERoutine routine,
-                                       EPalette paletteEnum,
-                                       const QColor& mainColor) {
-    // Build Color Palette
-    QJsonArray paletteArray;
-    switch (routine) {
-        case ERoutine::singleSolid: {
-            paletteArray.push_back(colorToJson(mainColor));
-            break;
-        }
-        case ERoutine::singleGlimmer: {
-            auto valueCount = 4.0;
-            for (auto i = 0; i < valueCount; ++i) {
-                auto color = mainColor;
-                color.setHsvF(color.hueF(),
-                              color.saturationF(),
-                              color.valueF() * ((valueCount - i) / valueCount));
-                if (i == 0) {
-                    paletteArray.push_back(colorToJson(color, 80));
-                } else {
-                    paletteArray.push_back(colorToJson(color, 4));
-                }
-            }
-            break;
-        }
-        case ERoutine::singleBlink: {
-            paletteArray.push_back(colorToJson(mainColor));
-            paletteArray.push_back(colorToJson(QColor(0, 0, 0)));
-            break;
-        }
-        case ERoutine::singleFade:
-        case ERoutine::singleSawtoothFade:
-        case ERoutine::singleWave: {
-            std::vector<QColor> shades(6, mainColor);
-            double valueCount = shades.size();
-            for (std::uint32_t i = 0; i < shades.size(); ++i) {
-                shades[i].setHsvF(shades[i].hueF(),
-                                  shades[i].saturationF(),
-                                  shades[i].valueF() * ((valueCount - i) / valueCount));
-                paletteArray.push_back(colorToJson(shades[i]));
-            }
-            break;
-        }
-        case ERoutine::multiGlimmer: {
-            std::vector<QColor> colors;
-            if (paletteEnum == EPalette::custom) {
-                colors = mCustomColors;
-            } else if (paletteEnum != EPalette::unknown) {
-                colors = mPresetPalettes.paletteVector(paletteEnum);
-            }
-
-            // convert color vector into json array
-            bool isFirst = true;
-            for (const auto& color : colors) {
-                if (isFirst) {
-                    paletteArray.push_back(colorToJson(color, 80));
-                } else {
-                    paletteArray.push_back(colorToJson(color, 4));
-                }
-                isFirst = false;
-            }
-            break;
-        }
-        case ERoutine::multiBars:
-        case ERoutine::multiFade:
-        case ERoutine::multiRandomSolid:
-        case ERoutine::multiRandomIndividual: {
-            // get color vector
-            std::vector<QColor> colors;
-            if (paletteEnum == EPalette::custom) {
-                colors = mCustomColors;
-            } else if (paletteEnum != EPalette::unknown) {
-                colors = mPresetPalettes.paletteVector(paletteEnum);
-            }
-
-            // convert color vector into json array
-            for (const auto& color : colors) {
-                paletteArray.push_back(colorToJson(color));
-            }
-            break;
-        }
-        default:
-            break;
-    }
-    return paletteArray;
-}
-
 void CommNanoleaf::routineChange(const nano::LeafMetadata& leafLight, QJsonObject routineObject) {
     // get values from JSON
     ERoutine routine = stringToRoutine(routineObject["routine"].toString());
@@ -1071,27 +589,30 @@ void CommNanoleaf::routineChange(const nano::LeafMetadata& leafLight, QJsonObjec
     if (routine == ERoutine::singleSolid) {
         singleSolidColorChange(leafLight, color);
     } else {
-        int speed = int(routineObject["speed"].toDouble());
-
-        int brightness = int(color.valueF() * 100.0);
+        auto speed = int(routineObject["speed"].toDouble());
+        auto param = int(routineObject["param"].toDouble());
+        auto brightness = int(color.valueF() * 100.0);
+        // TODO: correct
         if (routine > cor::ERoutineSingleColorEnd) {
-            brightness = 21;
+            brightness = 50;
         }
+        // create the metadata for the  effect object, without the colors
+        auto effectObject = mPacketParser.routineToJson(routine, brightness, speed, param);
 
-        EPalette paletteEnum;
+        // create the colors for the effect
         if (routine <= cor::ERoutineSingleColorEnd) {
-            paletteEnum = EPalette::unknown;
+            effectObject["palette"] =
+                mPacketParser.createSingleRoutinePalette(routine, color, param);
         } else {
             cor::Palette palette = cor::Palette(routineObject["palette"].toObject());
-            paletteEnum = palette.paletteEnum();
+            effectObject["palette"] =
+                mPacketParser.createMultiRoutinePalette(routine, palette.colors(), param);
         }
 
-        QJsonObject effectObject = createRoutinePacket(routine, brightness, speed);
-        effectObject["palette"] = createPalette(routine, paletteEnum, color);
-
-
+        // create a network request for effects
         QNetworkRequest request = networkRequest(leafLight, "effects");
         QJsonObject writeObject;
+
         writeObject["write"] = effectObject;
         putJSON(request, writeObject);
     }

@@ -14,7 +14,7 @@ linux:!android {
     TARGET = corluma
 }
 TEMPLATE = app
-VERSION = 0.21.78
+VERSION = 0.21.79
 
 #----------
 # Build flags
@@ -351,6 +351,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     comm/hue/huemetadata.h \
     comm/hue/schedule.h \
     comm/nanoleaf/leafmetadata.h \
+    comm/nanoleaf/leafpacketparser.h \
     comm/nanoleaf/leafpanelimage.h \
     comm/nanoleaf/leafschedulewidget.h \
     comm/upnpdiscovery.h \

@@ -8,11 +8,11 @@
 
 #include "comm/nanoleaf/leafdiscovery.h"
 #include "comm/nanoleaf/leafmetadata.h"
+#include "comm/nanoleaf/leafpacketparser.h"
 #include "comm/nanoleaf/leafschedule.h"
 #include "comm/upnpdiscovery.h"
 #include "commtype.h"
 #include "cor/presetpalettes.h"
-
 
 /*!
  * \copyright
@@ -74,12 +74,6 @@ public:
 
     /// renames a nanoleaf leaf. This data is stored in appdata.
     void renameLight(nano::LeafMetadata light, const QString& name);
-
-    /// sets the custom colors used for custom color routines
-    void setCustomColors(std::vector<QColor> colors) { mCustomColors = colors; }
-
-    /// getter for custom colors
-    const std::vector<QColor> customColors() { return mCustomColors; }
 
     /// getter for list of nanoleaf lights
     const cor::Dictionary<nano::LeafMetadata>& lights() { return mDiscovery->foundLights(); }
@@ -146,9 +140,6 @@ private slots:
     void getSchedules();
 
 private:
-    /// vector that holds the custom colors used in custom color routines
-    std::vector<QColor> mCustomColors;
-
     /*!
      * \brief resetBackgroundTimers reset the background timers that sync things such as groups
      *        and schedules.
@@ -211,17 +202,6 @@ private:
     void parseCommandRequestUpdatePacket(const nano::LeafMetadata& light,
                                          const QJsonObject& requestPacket);
 
-    /*!
-     * \brief createRoutinePacket helper that takes a lighting routine and creates
-     *        a lighting routine packet based off of it.
-     * \param routine the routine to use for the QJsonObject
-     * \return the object that contains the routine data
-     */
-    QJsonObject createRoutinePacket(ERoutine routine, int brightness, int speed);
-
-    /// creates a palette based off of the provided options.
-    QJsonArray createPalette(ERoutine routine, EPalette paletteEnum, const QColor& mainColor);
-
     /// changes the main color of a nanoleaf
     void singleSolidColorChange(const nano::LeafMetadata& light, const QColor& color);
 
@@ -235,6 +215,9 @@ private:
 
     /// preset data for palettes from ArduCor
     PresetPalettes mPresetPalettes;
+
+    /// handles converting packets from Json from nanolefs to Corluma data types and vice versa
+    nano::LeafPacketParser mPacketParser;
 
     /// object that holds and manages nanoleaf light connections.
     nano::LeafDiscovery* mDiscovery;

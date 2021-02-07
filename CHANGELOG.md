@@ -1162,3 +1162,11 @@ _This is the first of a series of updates to address design issues in the `ListR
 ### **v0.21.78**
 ### Bug Fixes
 - Fixed UI bugs related to loading json data that contains lights that the app does not recognize.
+- Fixed miscellaneous bugs.
+
+### **v0.21.79**
+### Bug Fixes
+- Fixed bugs with displaying light counts on the `PalettePage`.
+- Fixed bugs with setting the speed of Nanoleaf routines.
+- Simplified Nanoleaf message parsing.
+- Fixed miscellaneous bugs.

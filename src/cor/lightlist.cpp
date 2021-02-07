@@ -262,17 +262,54 @@ std::vector<QColor> LightList::colorScheme() {
 
 
 std::vector<QColor> LightList::multiColorScheme() {
+    bool hasMultiRoutine = false;
+    for (const auto& light : mLights) {
+        if (light.state().routine() > cor::ERoutineSingleColorEnd) {
+            hasMultiRoutine = true;
+            break;
+        }
+    }
+
     std::vector<QColor> colorScheme;
     int count = 0;
     int max = 6;
-    // first pass only adds multi color schemes
-    for (const auto& light : mLights) {
-        auto state = light.state();
-        if (light.protocol() == EProtocolType::arduCor
-            || light.protocol() == EProtocolType::nanoleaf) {
-            for (const auto& color : state.palette().colors()) {
-                colorScheme.push_back(color);
-                count++;
+
+    if (!hasMultiRoutine) {
+        for (const auto& light : mLights) {
+            auto state = light.state();
+            colorScheme.push_back(state.color());
+            count++;
+            if (count >= max) {
+                break;
+            }
+        }
+    } else {
+        // first pass only adds multi color schemes
+        for (const auto& light : mLights) {
+            auto state = light.state();
+            if ((light.protocol() == EProtocolType::arduCor
+                 || light.protocol() == EProtocolType::nanoleaf)
+                && count < max) {
+                if (light.state().routine() > cor::ERoutineSingleColorEnd) {
+                    for (const auto& color : state.palette().colors()) {
+                        colorScheme.push_back(color);
+                        count++;
+                        if (count >= max) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (count < max) {
+            // second pass adds single color schemes to fill in the space
+            for (const auto& light : mLights) {
+                auto state = light.state();
+                if (light.state().routine() <= cor::ERoutineSingleColorEnd) {
+                    colorScheme.push_back(state.color());
+                    count++;
+                }
                 if (count >= max) {
                     break;
                 }
@@ -280,17 +317,6 @@ std::vector<QColor> LightList::multiColorScheme() {
         }
     }
 
-    // second pass adds both single color schemes to fill in the space
-    for (const auto& light : mLights) {
-        auto state = light.state();
-        if (light.protocol() == EProtocolType::hue) {
-            colorScheme.push_back(state.color());
-            count++;
-        }
-        if (count >= max) {
-            break;
-        }
-    }
 
     return colorScheme;
 }

@@ -56,14 +56,14 @@ void StateObserver::globalBrightnessChanged(std::uint32_t brightness) {
         }
     } else if (mMainViewport->currentPage() == EPage::palettePage) {
         mPalettePage->updateBrightness(brightness);
-        mTopMenu->multiColorStateWidget()->updateState(mData->colorScheme());
+        mTopMenu->multiColorStateWidget()->updateState(mData->multiColorScheme());
     }
 }
 
 void StateObserver::singleLightBrightnessChanged(std::uint32_t brightness) {
     if (mPalettePage->mode() == EGroupMode::wheel) {
         // update the color scheme color in mData
-        auto scheme = mData->colorScheme();
+        auto scheme = mData->multiColorScheme();
         auto color = scheme[mPalettePage->colorPicker()->selectedLight()];
         color.setHsvF(color.hueF(), color.saturationF(), brightness / 100.0);
         scheme[mPalettePage->colorPicker()->selectedLight()] = color;
