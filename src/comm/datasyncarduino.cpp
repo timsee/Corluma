@@ -275,33 +275,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
 
         if (!colorInSync || !routineInSync || !speedInSync || !paramsInSync || !brightnessInSync) {
             countOutOfSync++;
-            //            qDebug() << "color in sync: " << colorInSync << " routine in sync: " <<
-            //            routineInSync
-            //                     << " speed in sync: " << speedInSync << " params in sync: " <<
-            //                     paramsInSync
-            //                     << " brightness in sync: " << brightnessInSync;
-            QJsonObject routineObject;
-            routineObject["routine"] = routineToString(dataState.routine());
-
-            if (dataState.routine() <= cor::ERoutineSingleColorEnd) {
-                //                qDebug() << "ArduCor single color not in sync" <<
-                //                commState.color() << "vs"
-                //                         << dataState.color()
-                //                         << cor::colorDifference(dataState.color(),
-                //                         commState.color());
-                routineObject["hue"] = dataState.color().hueF();
-                routineObject["sat"] = dataState.color().saturationF();
-                routineObject["bri"] = dataState.color().valueF();
-            } else {
-                routineObject["palette"] = dataState.palette().JSON();
-                //                qDebug() << " comm state is " <<
-                //                paletteToString(commState.palette().paletteEnum())
-                //                         << " vs " <<
-                //                         paletteToString(dataState.palette().paletteEnum());
-            }
-            routineObject["speed"] = dataState.speed();
-            routineObject["param"] = dataState.param();
-
+            auto routineObject = dataState.toJson();
             // TODO: find more elegant solution that allows doesn't make brightness and on/off
             // special case
             if (!brightnessInSync) {

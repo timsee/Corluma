@@ -20,7 +20,7 @@
 class HueMetadata {
 public:
     /// default constructor
-    HueMetadata() {}
+    HueMetadata() : mIndex{-1} {}
 
     /// constructor
     HueMetadata(const QJsonObject& object, const QString& controller, int lightIndex)
@@ -89,6 +89,9 @@ public:
 
     /// getter for software version
     const QString& softwareVersion() const noexcept { return mSoftwareVersion; }
+
+    /// true if valid metadata, false otherwise.
+    bool isValid() { return mIndex != -1; }
 
     /// SHueLight equal operator
     bool operator==(const HueMetadata& rhs) const {

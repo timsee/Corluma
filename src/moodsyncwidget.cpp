@@ -41,7 +41,7 @@ void MoodSyncWidget::resizeEvent(QResizeEvent*) {
 }
 
 void MoodSyncWidget::updateUI() {
-    if (this->isVisible() && mLastRenderTime < mComm->lastUpdateTime()) {
+    if (this->isVisible() && mLastRenderTime < mComm->lastReceiveTime()) {
         updateLights();
     }
 }

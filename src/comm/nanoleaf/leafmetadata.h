@@ -33,11 +33,13 @@ public:
         : mIP{},
           mAuthToken{},
           mPort{-1},
-          mRotation{-1},
           mHardwareName{hardware},
           mSerialNumber{serial},
           mName{hardware},
           mIPVerified{false} {}
+
+    /// true if valid metadata, false otherwise.
+    bool isValid() const noexcept { return !mSerialNumber.isEmpty(); }
 
     /// getter for serial number, unique for each light
     const QString& serialNumber() const noexcept { return mSerialNumber; }
@@ -66,12 +68,6 @@ public:
 
     /// setter for name
     void name(const QString& name) { mName = name; }
-
-    /// getter for rotation
-    int rotation() const noexcept { return mRotation; }
-
-    /// setter for rotation
-    void rotation(int rotation) { mRotation = rotation; }
 
     //-----------
     // Connection
@@ -109,6 +105,10 @@ public:
 
     /// getter for the state and orientation of panels
     const Panels& panels() const noexcept { return mPanelLayout; }
+
+    /// change the orientation of the lights. This corresponds to how they are mounted in physical
+    /// space.
+    void changeOrientation(int orientation) { mPanelLayout.orientationValue(orientation); }
 
     /// getter for rhythnm controller attached to the light
     const RhythmController& rhythmController() const noexcept { return mRhythm; }
@@ -221,10 +221,6 @@ private:
 
     /// port of nanoleaf, -1 if no nanoleaf found
     int mPort;
-
-    /// between 0 and 360, this is the rotation of the lights when mounted on a wall. This is used
-    /// to properly display the lights in the app. -1 means the rotation is undefined.
-    int mRotation;
 
     /// possible range for brightness values
     cor::Range<std::uint32_t> mBrightRange = cor::Range<std::uint32_t>(0, 100);

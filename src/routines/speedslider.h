@@ -28,6 +28,7 @@ public:
         mSlider->setColor(QColor(255, 0, 0));
         mSlider->setRange(2, 200);
         mSlider->setValue(100);
+        mStoredValue = 100;
         mSlider->setHeightPercentage(0.8);
         connect(mSlider, SIGNAL(valueChanged(int)), this, SLOT(speedSliderChanged(int)));
     }
@@ -37,14 +38,13 @@ public:
 
     /// enable or disable the speed slider based off of the state of the RoutineContainer
     void enable(ERoutine routine, int /*param*/) {
+        bool blocked = mSlider->blockSignals(true);
         if (routine == ERoutine::singleSolid) {
-            mStoredValue = mSlider->value();
-            mSlider->setValue(0);
-            mSlider->setEnabled(false);
+            setVisible(false);
         } else {
-            mSlider->setValue(mStoredValue);
-            mSlider->setEnabled(true);
+            setVisible(true);
         }
+        mSlider->blockSignals(blocked);
     }
 
     /// update the speed slider
@@ -84,7 +84,10 @@ protected:
 private slots:
 
     /// handles when the time slder changes.
-    void speedSliderChanged(int sliderValue) { emit valueChanged(sliderValue); }
+    void speedSliderChanged(int sliderValue) {
+        mStoredValue = sliderValue;
+        emit valueChanged(sliderValue);
+    }
 
 private:
     /// handle when it resizes

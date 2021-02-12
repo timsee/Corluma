@@ -104,18 +104,32 @@ bool CommArduCor::isActive() {
     return mUDP->isActive() && mHTTP->isActive();
 }
 
-QTime CommArduCor::lastUpdateTime() {
-    auto time = mUDP->lastUpdateTime();
+QTime CommArduCor::lastSendTime() {
+    auto time = mUDP->lastSendTime();
 #ifdef USE_SERIAL
-    if (time < mSerial->lastUpdateTime()) {
-        time = mSerial->lastUpdateTime();
+    if (time < mSerial->lastSendTime()) {
+        time = mSerial->lastSendTime();
     }
 #endif
-    if (time < mHTTP->lastUpdateTime()) {
-        time = mHTTP->lastUpdateTime();
+    if (time < mHTTP->lastSendTime()) {
+        time = mHTTP->lastSendTime();
     }
     return time;
 }
+
+QTime CommArduCor::lastReceiveTime() {
+    auto time = mUDP->lastReceiveTime();
+#ifdef USE_SERIAL
+    if (time < mSerial->lastReceiveTime()) {
+        time = mSerial->lastReceiveTime();
+    }
+#endif
+    if (time < mHTTP->lastReceiveTime()) {
+        time = mHTTP->lastReceiveTime();
+    }
+    return time;
+}
+
 
 bool CommArduCor::preparePacketForTransmission(const cor::Controller& controller, QString& packet) {
     bool shouldReset = false;

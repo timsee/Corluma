@@ -49,7 +49,7 @@ public:
      *        relevant information about the packet
      * \param object json representation of the packet to send
      */
-    void sendPacket(const QJsonObject& object);
+    void sendPacket(const nano::LeafMetadata& metadata, const QJsonObject& object);
 
     /// search for a nanoleaf light based off of serial number
     std::pair<nano::LeafMetadata, bool> findNanoLeafLight(const QString& serialNumber);
@@ -98,6 +98,25 @@ public:
     /// exists, 0u is returned
     std::uint32_t timeoutFromLight(const QString& light);
 
+    /*!
+     * \brief brightnessChange connected to CommPacketParser, this changes the brightness of a
+     * device.
+     * \param deviceIndex 0 for all indices, a specific index for a specific light.
+     *        Will do nothing if index doesn't exist.
+     * \param brightness a value between 0 and 100, 0 is off, 100 is full brightness
+     */
+    void brightnessChange(const nano::LeafMetadata& light, int brightness);
+
+    /*!
+     * \brief onOffChange turn a light on or off
+     * \param lightIndex index of the light
+     * \param turnOn true to turn on, false to turn off
+     */
+    void onOffChange(const nano::LeafMetadata& light, bool turnOn);
+
+    /// change the global orientation of the nanoleaf
+    void globalOrientationChange(const nano::LeafMetadata& light, int orientation);
+
     /// returns the timeout schedule, if one exists. The second flag is true if it does exist and
     /// false if it does not.
     std::pair<nano::LeafSchedule, bool> timeoutSchedule(const QString& uniqueID);
@@ -108,22 +127,6 @@ private slots:
      *        sent from other methods.
      */
     void replyFinished(QNetworkReply*);
-
-    /*!
-     * \brief onOffChange turn a light on or off
-     * \param lightIndex index of the light
-     * \param turnOn true to turn on, false to turn off
-     */
-    void onOffChange(const nano::LeafMetadata& light, bool turnOn);
-
-    /*!
-     * \brief brightnessChange connected to CommPacketParser, this changes the brightness of a
-     * device.
-     * \param deviceIndex 0 for all indices, a specific index for a specific light.
-     *        Will do nothing if index doesn't exist.
-     * \param brightness a value between 0 and 100, 0 is off, 100 is full brightness
-     */
-    void brightnessChange(const nano::LeafMetadata& light, int brightness);
 
     /*!
      * \brief routineChange change the light state of the nanoleaf. This JSON object will contain a

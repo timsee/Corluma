@@ -401,16 +401,28 @@ std::vector<std::uint32_t> CommLayer::secondsUntilTimeout(const std::vector<QStr
     return timeoutLeft;
 }
 
-QTime CommLayer::lastUpdateTime() {
-    QTime time = mArduCor->lastUpdateTime();
-    if (time < mHue->lastUpdateTime()) {
-        time = mHue->lastUpdateTime();
+QTime CommLayer::lastReceiveTime() {
+    QTime time = mArduCor->lastReceiveTime();
+    if (time < mHue->lastReceiveTime()) {
+        time = mHue->lastReceiveTime();
     }
-    if (time < mNanoleaf->lastUpdateTime()) {
-        time = mNanoleaf->lastUpdateTime();
+    if (time < mNanoleaf->lastReceiveTime()) {
+        time = mNanoleaf->lastReceiveTime();
     }
     return time;
 }
+
+QTime CommLayer::lastSendTime() {
+    QTime time = mArduCor->lastSendTime();
+    if (time < mHue->lastSendTime()) {
+        time = mHue->lastSendTime();
+    }
+    if (time < mNanoleaf->lastSendTime()) {
+        time = mNanoleaf->lastSendTime();
+    }
+    return time;
+}
+
 
 void CommLayer::resetStateUpdates(EProtocolType type) {
     if (type == EProtocolType::arduCor) {

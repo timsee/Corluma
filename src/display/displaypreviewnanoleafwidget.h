@@ -90,7 +90,7 @@ public:
                     mName->setText(mLeafMetadata.IP());
                 }
             }
-            if (mLeafMetadata.rotation() != mRotation) {
+            if (mLeafMetadata.panels().orientationValue() != mRotation) {
                 drawPanels();
             }
         }
@@ -187,9 +187,9 @@ private:
     }
 
     void drawPanels() {
-        mRotation = mLeafMetadata.rotation();
+        mRotation = mLeafMetadata.panels().orientationValue();
         // render the image for the panel
-        mPanelImage->drawPanels(mLeafMetadata.panels(), mLeafMetadata.rotation());
+        mPanelImage->drawPanels(mLeafMetadata.panels(), mRotation);
         // draw the image to the panel label
         mPanelPixmap.convertFromImage(mPanelImage->image());
         if (!mPanelPixmap.isNull()) {

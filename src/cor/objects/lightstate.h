@@ -190,24 +190,25 @@ public:
     /// represents the lighstate as a valid json
     QJsonObject toJson() const noexcept {
         QJsonObject object;
-        object["routine"] = routineToString(routine());
         object["isOn"] = isOn();
+        if (isOn()) {
+            object["routine"] = routineToString(routine());
+            if (routine() <= cor::ERoutineSingleColorEnd) {
+                object["hue"] = color().hueF();
+                object["sat"] = color().saturationF();
+                object["bri"] = color().valueF();
+            } else {
+                object["palette"] = palette().JSON();
+            }
 
-        if (routine() <= cor::ERoutineSingleColorEnd) {
-            object["hue"] = color().hueF();
-            object["sat"] = color().saturationF();
-            object["bri"] = color().valueF();
+            if (routine() != ERoutine::singleSolid) {
+                object["speed"] = speed();
+            }
+
+            if (param() != std::numeric_limits<int>::min()) {
+                object["param"] = param();
+            }
         }
-
-        if (routine() != ERoutine::singleSolid) {
-            object["speed"] = speed();
-        }
-
-        if (param() != std::numeric_limits<int>::min()) {
-            object["param"] = param();
-        }
-
-        object["palette"] = palette().JSON();
         return object;
     }
 

@@ -72,7 +72,10 @@ public:
     bool isActive();
 
     /// stores the last time a message was sent to the CommType
-    const QTime& lastUpdateTime() const noexcept { return mLastSendTime; }
+    const QTime& lastSendTime() const noexcept { return mLastSendTime; }
+
+    /// stores the last time a message was received from the CommType
+    const QTime& lastReceiveTime() const noexcept { return mLastReceiveTime; }
 
     // ----------------------------
     // Controller and Device Management
@@ -139,6 +142,13 @@ protected:
      * state update packets.
      */
     QTime mLastSendTime;
+
+    /*!
+     * \brief mLastReceiveTime the last time any message was received from the commtype. This can be
+     * used for update timers and rendering the UI.
+     */
+    QTime mLastReceiveTime;
+
 
     /// checks how long the app has been alive for reachability tests
     QElapsedTimer mElapsedTimer;

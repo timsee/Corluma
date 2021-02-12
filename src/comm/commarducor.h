@@ -85,8 +85,11 @@ public:
     /// converts a cor::Light into a arducor light
     ArduCorMetadata metadataFromLight(const cor::Light& light);
 
+    /// returns the last time any CommType owned by CommArduCor sent a packet.
+    QTime lastSendTime();
+
     /// returns the last time any CommType owned by CommArduCor received an update.
-    QTime lastUpdateTime();
+    QTime lastReceiveTime();
 
     /// convert a list of names of lights into their full cor::Light representation.
     std::vector<cor::Light> lightsFromNames(const std::vector<QString>&);

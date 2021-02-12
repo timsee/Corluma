@@ -355,7 +355,7 @@ void LeftHandMenu::selectAllToggled(std::uint64_t ID, bool shouldSelect) {
 }
 
 void LeftHandMenu::renderUI() {
-    if (mIsIn && (mLastRenderTime < mComm->lastUpdateTime())) {
+    if (mIsIn && (mLastRenderTime < mComm->lastReceiveTime())) {
         updateLights();
     }
 }

@@ -326,7 +326,8 @@ private slots:
         setVisible(true);
         mRotateLightWidget->raise();
         mRotateLightWidget->pushIn();
-        mRotateLightWidget->setNanoleaf(mLeaf, mLeaf.rotation());
+
+        mRotateLightWidget->setNanoleaf(mLeaf, mLeaf.panels().orientationValue());
     }
 
     /// rotate widget closed
@@ -337,8 +338,8 @@ private slots:
 
     /// rotation changed angle
     void rotateWidgetChangedAngle(int angle) {
-        mLeaf.rotation(angle);
-        mComm->nanoleaf()->discovery()->changeRotation(mLeaf, angle);
+        mLeaf.changeOrientation(angle);
+        mComm->nanoleaf()->globalOrientationChange(mLeaf, angle);
         drawPanels();
         mGreyout->greyOut(false);
         mRotateLightWidget->pushOut();
@@ -391,7 +392,7 @@ private:
     /// draws the nanoleafs actual layout and rotation.
     void drawPanels() {
         // render the image for the panel
-        mPanelImage->drawPanels(mLeaf.panels(), mLeaf.rotation());
+        mPanelImage->drawPanels(mLeaf.panels(), mLeaf.panels().orientationValue());
         // draw the image to the panel label
         mPanelPixmap.convertFromImage(mPanelImage->image());
         if (!mPanelPixmap.isNull()) {

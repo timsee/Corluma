@@ -1170,3 +1170,11 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed bugs with setting the speed of Nanoleaf routines.
 - Simplified Nanoleaf message parsing.
 - Fixed miscellaneous bugs.
+
+### **v0.21.79**
+### The Nanoleaf Bug Fixes
+- Added to `CommType` unique times for last message received, and last message sent.
+- Worked around Nanoleaf API bugs where specific routines such as "fade" work on certain product lines but not others.
+- Started using the `globalOrientation` field of the Nanoleafs.
+- Simplified `DataSyncNanoleaf` so that it no longer relies on json.
+- Fixed miscellaneous bugs.

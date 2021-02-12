@@ -191,8 +191,11 @@ public:
     /// currently selected lights
     EColorPickerType bestColorPickerType(const std::vector<cor::Light>& lights);
 
+    /// gives the last time any specific CommType last sent an update
+    QTime lastSendTime();
+
     /// gives the last time any specific CommType last received an update
-    QTime lastUpdateTime();
+    QTime lastReceiveTime();
 
     /// adds meta data to a light, used when creating moods.
     cor::Light addLightMetaData(cor::Light light);

@@ -51,6 +51,7 @@ void CommType::updateLight(const cor::Light& light) {
     if (dictResult.second) {
         mUpdateTime.update(light.uniqueID().toStdString(), mElapsedTimer.elapsed());
         mLightDict.update(light.uniqueID().toStdString(), light);
+        mLastReceiveTime = QTime::currentTime();
         emit updateReceived(mType);
     }
 }

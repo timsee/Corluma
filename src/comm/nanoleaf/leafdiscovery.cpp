@@ -41,7 +41,6 @@ void LeafDiscovery::foundNewAuthToken(const nano::LeafMetadata& newController,
         if (unknownController.IP() == newController.IP()) {
             unknownController.authToken(authToken);
             unknownController.name(newController.hardwareName());
-            unknownController.rotation(newController.rotation());
             break;
         }
     }
@@ -71,7 +70,6 @@ void LeafDiscovery::foundNewLight(nano::LeafMetadata newLight) {
     for (const auto& notFoundController : mNotFoundLights) {
         if (notFoundController.authToken() == newLight.authToken()) {
             newLight.name(notFoundController.name());
-            newLight.rotation(notFoundController.rotation());
             auto it = std::find(mNotFoundLights.begin(), mNotFoundLights.end(), notFoundController);
             mNotFoundLights.erase(it);
             break;
@@ -313,7 +311,6 @@ std::pair<nano::LeafMetadata, bool> LeafDiscovery::handleUndiscoveredLight(
         // get connection unique keys used as connection info for the light
         QString serialNumber;
         QString name;
-        int rotation = -1;
         if (object["serialNo"].isString() && object["name"].isString()) {
             serialNumber = object["serialNo"].toString();
             name = object["name"].toString();
@@ -332,11 +329,9 @@ std::pair<nano::LeafMetadata, bool> LeafDiscovery::handleUndiscoveredLight(
         for (const auto& notFoundLight : mNotFoundLights) {
             if (notFoundLight.hardwareName() == completeLight.hardwareName()) {
                 name = notFoundLight.hardwareName();
-                rotation = notFoundLight.rotation();
             }
         }
         completeLight.name(name);
-        completeLight.rotation(rotation);
 
         // add complete light to discovery buffers
         foundNewLight(completeLight);
@@ -387,7 +382,7 @@ bool LeafDiscovery::doesIPExist(const QString& IP) {
 nano::LeafMetadata LeafDiscovery::findLightByIP(const QString& IP) {
     QStringList pieces = IP.split("/");
     // 7 pieces are expected for status packets
-    if (pieces.size() == 7) {
+    if (pieces.size() >= 7) {
         QStringList mainIP = pieces[2].split(":");
         QString IP = "http://" + mainIP[0];
         int port = mainIP[1].toInt();
@@ -463,12 +458,6 @@ void LeafDiscovery::updateFoundLight(const nano::LeafMetadata& controller) {
         mFoundLights.update(controller.serialNumber().toStdString(), controller);
         updateJSON(controller);
     }
-}
-
-void LeafDiscovery::changeRotation(const nano::LeafMetadata& light, int rotation) {
-    auto lightCopy = light;
-    lightCopy.rotation(rotation);
-    updateFoundLight(lightCopy);
 }
 
 std::pair<QString, bool> LeafDiscovery::nameFromSerial(const QString& serialNumber) {

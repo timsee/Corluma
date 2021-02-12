@@ -172,6 +172,13 @@ class Panels {
 public:
     /// constructor
     Panels(const QJsonObject& object) : Panels() {
+        if (object["globalOrientation"].isObject()) {
+            auto orientationObject = object["globalOrientation"].toObject();
+            auto min = orientationObject["min"].toDouble();
+            auto max = orientationObject["max"].toDouble();
+            mOrientationRange = cor::Range<int>(min, max);
+            mOrientationValue = orientationObject["value"].toDouble();
+        }
         if (object["layout"].isObject()) {
             QJsonObject layoutObject = object["layout"].toObject();
             if (layoutObject["numPanels"].isDouble() && layoutObject["sideLength"].isDouble()
@@ -200,6 +207,10 @@ public:
 
     /// current value for the orientation of the panels
     int orientationValue() const noexcept { return mOrientationValue; }
+
+    /// set the orienation value for the panels. This corresponds to the angle they are mounted in
+    /// physical space.
+    void orientationValue(int orientation) { mOrientationValue = orientation; }
 
     /// a vector of data about each of the individual panels
     const std::vector<Panel>& positionLayout() const noexcept { return mPositionLayout; }

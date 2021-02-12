@@ -102,9 +102,11 @@ void RoutineContainer::changeColorScheme(const std::vector<QColor>& colors) {
 
 void RoutineContainer::routineChanged(const cor::LightState& state) {
     highlightRoutine(state.routine(), state.param());
+
     mState = state;
     mSpeedSlider->enable(state.routine(), state.param());
-    emit newRoutineSelected(state.routine(), mSpeedSlider->value(), state.param());
+    mState.speed(mSpeedSlider->value());
+    emit newRoutineSelected(state.routine(), mState.speed(), state.param());
 }
 
 void RoutineContainer::highlightRoutine(ERoutine routine, int param) {
@@ -120,6 +122,7 @@ void RoutineContainer::changeSpeed(int speed) {
 
 void RoutineContainer::speedSliderChanged(int sliderValue) {
     mState.speed(sliderValue);
+
     emit newRoutineSelected(mState.routine(), sliderValue, mState.param());
 }
 

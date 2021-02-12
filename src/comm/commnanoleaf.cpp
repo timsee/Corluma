@@ -306,30 +306,19 @@ void CommNanoleaf::stateUpdate() {
     }
 }
 
-void CommNanoleaf::sendPacket(const QJsonObject& object) {
-    if (object["uniqueID"].isString() && !lightDict().empty()) {
-        // get the light
-        auto result = mDiscovery->findDiscoveredLightBySerial(object["uniqueID"].toString());
-        auto light = result.first;
-        if (result.second) {
-            if (object["isOn"].isBool()) {
-                onOffChange(light, object["isOn"].toBool());
-            }
-
-            // send routine change
-            if (object["temperature"].isDouble()) {
-                // TODO: fill out if needed
-            } else if (object["routine"].isObject()) {
-                routineChange(light, object["routine"].toObject());
-            }
-
-            if (object["brightness"].isDouble()) {
-                brightnessChange(light, int(object["brightness"].toDouble()));
-            }
-
+void CommNanoleaf::sendPacket(const nano::LeafMetadata& metadata, const QJsonObject& object) {
+    if (metadata.isValid() && !lightDict().empty()) {
+        auto lightResult = lightFromMetadata(metadata);
+        if (lightResult.second) {
+            auto light = lightResult.first;
+            routineChange(metadata, object);
             resetBackgroundTimers();
             resetStateUpdateTimeout();
+        } else {
+            qDebug() << " did not find light:" << metadata.serialNumber();
         }
+    } else {
+        qDebug() << " not sending packet! " << metadata;
     }
 }
 
@@ -381,7 +370,7 @@ void CommNanoleaf::handleNetworkPacket(const nano::LeafMetadata& light, const QS
     }
 }
 void CommNanoleaf::replyFinished(QNetworkReply* reply) {
-    // qDebug() << reply->error();
+    // qDebug() << reply->error() << " from " << reply->url();
     if (reply->error() == QNetworkReply::NoError) {
         QString payload = reply->readAll().trimmed();
         QString IP = reply->url().toString();
@@ -391,7 +380,11 @@ void CommNanoleaf::replyFinished(QNetworkReply* reply) {
         if (!isConnected) {
             handleInitialDiscovery(light, payload);
         } else {
-            handleNetworkPacket(light, payload);
+            if (IP.contains("panelLayout/globalOrientation")) {
+                // TODO: why is this empty?
+            } else {
+                handleNetworkPacket(light, payload);
+            }
         }
     } else if (reply->error() == QNetworkReply::ConnectionRefusedError) {
 #ifdef DEBUG_LEAF_TOUCHY
@@ -468,6 +461,8 @@ void CommNanoleaf::parseCommandRequestUpdatePacket(const nano::LeafMetadata& lea
             THROW_EXCEPTION("invalid routine");
         }
 #endif
+
+        state.param(mPacketParser.jsonToParam(state.routine(), requestPacket));
         // compute brightness and main color
         auto colorOpsResult = brightnessAndMainColorFromVector(colors);
         auto mainColor = colorOpsResult.first;
@@ -557,6 +552,18 @@ void CommNanoleaf::onOffChange(const nano::LeafMetadata& light, bool shouldTurnO
 }
 
 
+void CommNanoleaf::globalOrientationChange(const nano::LeafMetadata& light, int orientation) {
+    QNetworkRequest request = networkRequest(light, "panelLayout/globalOrientation");
+
+    QJsonObject json;
+    QJsonObject object;
+    object["value"] = orientation;
+    json["globalOrientation"] = object;
+
+    putJSON(request, json);
+}
+
+
 void CommNanoleaf::singleSolidColorChange(const nano::LeafMetadata& light, const QColor& color) {
     QNetworkRequest request = networkRequest(light, "state");
 
@@ -591,13 +598,8 @@ void CommNanoleaf::routineChange(const nano::LeafMetadata& leafLight, QJsonObjec
     } else {
         auto speed = int(routineObject["speed"].toDouble());
         auto param = int(routineObject["param"].toDouble());
-        auto brightness = int(color.valueF() * 100.0);
-        // TODO: correct
-        if (routine > cor::ERoutineSingleColorEnd) {
-            brightness = 50;
-        }
         // create the metadata for the  effect object, without the colors
-        auto effectObject = mPacketParser.routineToJson(routine, brightness, speed, param);
+        auto effectObject = mPacketParser.routineToJson(routine, speed, param);
 
         // create the colors for the effect
         if (routine <= cor::ERoutineSingleColorEnd) {
