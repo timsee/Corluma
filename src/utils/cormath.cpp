@@ -20,6 +20,11 @@ double roundToNDigits(double x, int n) {
     return round(x * factor) / factor;
 }
 
+bool isAboutEqual(double a, double b) {
+    // this is not the best approach, but its usable for our purposes currently.
+    return std::abs(a - b) < 0.0001;
+}
+
 struct mode_comp {
     bool operator()(std::pair<int, int> const& lhs, std::pair<int, int> const& rhs) {
         return lhs.second < rhs.second;

@@ -76,6 +76,8 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     setMinimumSize(minimumSize);
 
+    mTimeToLights.start();
+
     // uses floating layouts so these must be initialized after the app's size is set.
     mEditMoodPage = new cor::EditMoodPage(this, mComm, mGroups, mData);
     mTopMenu = new TopMenu(this,
@@ -469,6 +471,14 @@ void MainWindow::topMenuButtonPressed(const QString& key) {
     }
 }
 
+void MainWindow::overrideStartingPageToColorPage() {
+    mMainViewport->pageChanged(EPage::colorPage, true);
+    mLeftHandMenu->buttonPressed(EPage::colorPage);
+    if (!mLeftHandMenu->alwaysOpen()) {
+        pushInLeftHandMenu();
+    }
+    mTopMenu->showFloatingLayout(EPage::colorPage);
+}
 
 // ----------------------------
 // Protected
@@ -488,17 +498,11 @@ void MainWindow::changeEvent(QEvent* event) {
         // want to modify the colors of the lights instead.
         if (mIsFirstActivation) {
             mIsFirstActivation = false;
-            if (mAnyDiscovered) {
-                mMainViewport->pageChanged(EPage::colorPage, true);
-                mLeftHandMenu->buttonPressed(EPage::colorPage);
-                if (!mLeftHandMenu->alwaysOpen()) {
-                    pushInLeftHandMenu();
-                }
-                mTopMenu->showFloatingLayout(EPage::colorPage);
+            if (mAnyDiscovered && mMainViewport->currentPage() != EPage::colorPage) {
+                overrideStartingPageToColorPage();
             }
         }
         resetStateUpdates();
-
 #ifdef USE_SHARE_UTILS
 #ifdef MOBILE_BUILD
         mShareUtils->checkPendingIntents();
@@ -927,6 +931,11 @@ void MainWindow::debugModeClicked() {
 void MainWindow::anyDiscovered(bool discovered) {
     if (!mAnyDiscovered && discovered) {
         mAnyDiscovered = discovered;
+        if (mIsFirstActivation && mTimeToLights.elapsed() < 5000) {
+            if (mMainViewport->currentPage() != EPage::colorPage) {
+                overrideStartingPageToColorPage();
+            }
+        }
         mMainViewport->settingsPage()->enableButtons(true);
         mLeftHandMenu->enableButtons(true);
     }

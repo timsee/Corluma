@@ -142,8 +142,10 @@ private:
         xPos += mBlinkButton->width() + buttonSpacer;
         mLinearButton->setGeometry(xPos, yPos, buttonSide, buttonSide);
         xPos += mLinearButton->width() + buttonSpacer;
-        mSineButton->setGeometry(xPos, yPos, buttonSide, buttonSide);
-        xPos += mSineButton->width() + buttonSpacer;
+        if (mProtocol == EProtocolType::arduCor) {
+            mSineButton->setGeometry(xPos, yPos, buttonSide, buttonSide);
+            xPos += mSineButton->width() + buttonSpacer;
+        }
         mSawtoothInButton->setGeometry(xPos, yPos, buttonSide, buttonSide);
         xPos += mSawtoothInButton->width() + buttonSpacer;
         mSawtoothOutButton->setGeometry(xPos, yPos, buttonSide, buttonSide);
@@ -151,6 +153,18 @@ private:
 
         addIconToButton(mSawtoothInButton, ":/images/sawtooth_in.png", buttonSide);
         addIconToButton(mSawtoothOutButton, ":/images/sawtooth_out.png", buttonSide);
+    }
+
+    /// sine fade isnt as clear on nanoleafs, remove the option.
+    void updateProtocol() override {
+        // hide sawtooth and sine for nanoleaf, as it only supports linear fades. remap those
+        // buttons to linear in nanoleaf case.
+        if (mProtocol == EProtocolType::nanoleaf) {
+            mSineButton->setVisible(false);
+        } else {
+            mSineButton->setVisible(true);
+        }
+        resize();
     }
 
     /// handle when a button is pressed

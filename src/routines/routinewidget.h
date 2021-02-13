@@ -25,6 +25,7 @@ public:
         : QWidget(parent),
           mTransparentStylesheet{"background-color:rgba(0,0,0,0);"},
           mLeftWidgetSize{30, 10},
+          mProtocol{EProtocolType::arduCor},
           mCheckBox{new cor::CheckBox(this)},
           mName{new QLabel(name, this)},
           mIcon{new QLabel(this)} {
@@ -62,6 +63,13 @@ public:
         update();
     }
 
+    /// set the most featured protocol for a routinewidget, which may change the features displayed
+    /// to the user.
+    void setProtocol(EProtocolType protocol) {
+        mProtocol = protocol;
+        updateProtocol();
+    }
+
 protected:
     /// paints the widget
     void paintEvent(QPaintEvent*) override {
@@ -92,6 +100,13 @@ protected:
 
     /// implements the resizing of the widget
     virtual void resize() = 0;
+
+    /// update the widget based on the protocol
+    virtual void updateProtocol() {
+        // in many cases, this function will do nothing, but in some cases, such as multiBars, we
+        // cannot expect all lights to support these routines, so this allows us to change up the
+        // routine widgets
+    }
 
     /// updates and resizes the state icon
     void updateStateIcon() {
@@ -134,6 +149,9 @@ protected:
 
     /// the state shown in the top left of the widget
     cor::LightState mState;
+
+    /// protocol for the widgets.
+    EProtocolType mProtocol;
 
     /// used to generate the state icon
     IconData mIconData;

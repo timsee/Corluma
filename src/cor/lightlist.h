@@ -171,6 +171,10 @@ public:
     /// true if all lights match a given protocol type.
     bool onlyLightsWithProtocol(EProtocolType) const noexcept;
 
+    /// returns the most featured protocol type, used for edge cases to determine what options to
+    /// display
+    EProtocolType mostFeaturedProtocolType() const noexcept;
+
     /// true if the lights could support routines, false if they cannot.
     bool supportsRoutines();
 

@@ -214,7 +214,6 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
             speedInSync = true;
         }
 
-        bool paramsInSync = true;
         if (dataState.routine() > cor::ERoutineSingleColorEnd) {
             brightnessInSync = checkIfInSyncByOne(commState.palette().brightness(),
                                                   dataState.palette().brightness());
@@ -229,10 +228,15 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
             //                     << brightnessInSync;
             brightness = dataState.color().valueF() * 100.0;
         }
+        bool paramsInSync = true;
         if (dataState.routine() == ERoutine::singleGlimmer
-            || dataState.routine() == ERoutine::multiGlimmer) {
+            || dataState.routine() == ERoutine::multiGlimmer
+            || dataState.routine() == ERoutine::singleFade
+            || dataState.routine() == ERoutine::singleSawtoothFade) {
             paramsInSync = (commState.param() == dataState.param());
-            // qDebug() << " param comm " << commState.param() << " vs " << dataState.param();
+#ifdef DEBUG_DATA_SYNC_NANOLEAF
+            qDebug() << " param comm " << commState.param() << " vs " << dataState.param();
+#endif
         }
 
         // these are optional parameters depending on the routine

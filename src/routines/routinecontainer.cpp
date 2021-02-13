@@ -189,3 +189,10 @@ void RoutineContainer::resize() {
     yOffset += sliderYSpacing;
     mSpeedSlider->setGeometry(0, yOffset, width(), sliderHeight);
 }
+
+
+void RoutineContainer::changeProtocol(EProtocolType protocol) {
+    for (auto routineWidget : mAllRoutineWidgets) {
+        routineWidget->setProtocol(protocol);
+    }
+}

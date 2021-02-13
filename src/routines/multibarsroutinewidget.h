@@ -91,6 +91,19 @@ private:
         yPos += mLightCountLabel->height();
         mDropdownLightCount->setGeometry(xPos, yPos, workableWidth, labelHeight * 2);
     }
+
+    /// nanoleafs do not support multiBars, use the next closest thing, a "wheel".
+    void updateProtocol() override {
+        if (mProtocol == EProtocolType::nanoleaf) {
+            mLightCountLabel->setVisible(false);
+            mDropdownLightCount->setVisible(false);
+            mName->setText("Wheel");
+        } else {
+            mLightCountLabel->setVisible(true);
+            mDropdownLightCount->setVisible(true);
+            mName->setText("Scrolling");
+        }
+    }
 };
 
 #endif // MULTIBARSROUTINEWIDGET_H

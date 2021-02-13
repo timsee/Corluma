@@ -24,6 +24,10 @@ inline float map(float x, float in_min, float in_max, float out_min, float out_m
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
+/// a quick check that two doubles are equal. Note that this is not the most specific check, but it
+/// works for numbers close to 0.0
+bool isAboutEqual(double a, double b);
+
 /// rounds doubles to N significant digits, for readability.
 double roundToNDigits(double x, int n);
 

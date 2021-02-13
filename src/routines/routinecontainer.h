@@ -47,6 +47,10 @@ public:
     /// getter for state for the widget
     const cor::LightState& state() { return mState; }
 
+    /// change the protocol used by the container. In most cases, this doesnt change much, but in
+    /// some cases, some features are not supported by certain protocols.
+    void changeProtocol(EProtocolType);
+
 signals:
     /// emits when a routine is selected, sends just the routine itself
     void newRoutineSelected(ERoutine, int, int);

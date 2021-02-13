@@ -31,7 +31,7 @@ public:
           mCustomPalette(paletteToString(EPalette::custom), cor::defaultCustomColors(), 50),
           mCustomCount{5},
           mSpeed{100},
-          mParam{std::numeric_limits<int>::min()},
+          mParam{0},
           mTemperature{-1} {}
 
 
@@ -204,10 +204,7 @@ public:
             if (routine() != ERoutine::singleSolid) {
                 object["speed"] = speed();
             }
-
-            if (param() != std::numeric_limits<int>::min()) {
-                object["param"] = param();
-            }
+            object["param"] = param();
         }
         return object;
     }

@@ -140,7 +140,7 @@ public:
      * \param routine the routine to use for the QJsonObject
      * \return the object that contains the routine data
      */
-    QJsonObject routineToJson(ERoutine routine, int speed, int) {
+    QJsonObject routineToJson(ERoutine routine, int speed, int param) {
         QJsonObject effectObject;
         effectObject["loop"] = true;
         effectObject["command"] = QString("display");
@@ -178,7 +178,13 @@ public:
                 effectObject["animType"] = QString("explode");
                 effectObject["loop"] = true;
                 effectObject["delayTime"] = rangeToJson(speed, speed);
-                effectObject["transTime"] = rangeToJson(kSingleFadeTransTime, kSingleFadeTransTime);
+                if (param == 0) {
+                    effectObject["transTime"] =
+                        rangeToJson(kSingleFadeTransTime, kSingleFadeTransTime);
+                } else {
+                    effectObject["transTime"] =
+                        rangeToJson(kSingleFadeSineTransTime, kSingleFadeSineTransTime);
+                }
                 break;
             }
 
@@ -252,6 +258,8 @@ public:
             } else {
                 if (value == kSingleFadeTransTime) {
                     routine = ERoutine::singleFade;
+                } else if (value == kSingleFadeSineTransTime) {
+                    routine = ERoutine::singleFade;
                 } else if (value == kSingleSawtoothFade) {
                     routine = ERoutine::singleSawtoothFade;
                 } else if (value == kSingleBlinkTransTime) {
@@ -282,6 +290,29 @@ public:
             auto param = getSettingFromDefaultPlugin("mainColorProb", object);
             if (param != std::numeric_limits<int>::max()) {
                 return 100 - param;
+            }
+        } else if (routine == ERoutine::singleFade) {
+            auto param = getSettingFromDefaultPlugin("transTime", object);
+            if (param == kSingleFadeSineTransTime) {
+                return 1;
+            } else {
+                return 0;
+            }
+        } else if (routine == ERoutine::singleSawtoothFade) {
+            if (object["palette"].isArray()) {
+                auto paletteArray = object["palette"].toArray();
+                if (!paletteArray.isEmpty()) {
+                    if (paletteArray.at(0).isObject()) {
+                        auto colorObject = paletteArray.at(0).toObject();
+                        if (colorObject["brightness"].isDouble()) {
+                            if (cor::isAboutEqual(0.0, colorObject["brightness"].toDouble())) {
+                                return 1;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    }
+                }
             }
         }
         return 0;
@@ -318,15 +349,42 @@ public:
                 paletteArray.push_back(colorToJson(QColor(0, 0, 0)));
                 break;
             }
-            case ERoutine::singleFade:
-            case ERoutine::singleSawtoothFade:
             case ERoutine::singleWave: {
                 std::vector<QColor> shades(6, mainColor);
+                std::vector<double> ratios = {1.0, 0.8, 0.6, 0.4, 0.6, 0.8};
                 double valueCount = shades.size();
+                for (std::uint32_t i = 0; i < valueCount; ++i) {
+                    shades[i].setHsvF(shades[i].hueF(),
+                                      shades[i].saturationF(),
+                                      shades[i].valueF() * ratios[i]);
+                    paletteArray.push_back(colorToJson(shades[i]));
+                }
+                break;
+            }
+            case ERoutine::singleFade: {
+                std::vector<QColor> shades(10, mainColor);
+                std::vector<double> ratios = {1.0, 0.8, 0.6, 0.4, 0.2, 0.0, 0.2, 0.4, 0.6, 0.8};
+                double valueCount = shades.size();
+                for (std::uint32_t i = 0; i < valueCount; ++i) {
+                    shades[i].setHsvF(shades[i].hueF(),
+                                      shades[i].saturationF(),
+                                      shades[i].valueF() * ratios[i]);
+                    paletteArray.push_back(colorToJson(shades[i]));
+                }
+                break;
+            }
+            case ERoutine::singleSawtoothFade: {
+                std::vector<QColor> shades(6, mainColor);
+                std::vector<double> ratios;
+                if (param == 0) {
+                    ratios = {1.0, 0.8, 0.6, 0.4, 0.2, 0};
+                } else {
+                    ratios = {0, 0.2, 0.4, 0.6, 0.8, 1.0};
+                }
                 for (std::uint32_t i = 0; i < shades.size(); ++i) {
                     shades[i].setHsvF(shades[i].hueF(),
                                       shades[i].saturationF(),
-                                      shades[i].valueF() * ((valueCount - i) / valueCount));
+                                      shades[i].valueF() * ratios[i]);
                     paletteArray.push_back(colorToJson(shades[i]));
                 }
                 break;
@@ -465,6 +523,7 @@ private:
     const int kSingleGlimmerTransTime = 6;
     // const int kSingleWaveTransTime = 20;
     const int kSingleFadeTransTime = 5;
+    const int kSingleFadeSineTransTime = 4;
     const int kSingleSawtoothFade = 2;
     // const int kMultiBarsTransTime = 20;
     const int kMultiGlimmerTransTime = 5;

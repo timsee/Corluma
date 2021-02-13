@@ -231,6 +231,9 @@ private:
     /// be pushed in.
     void pushInTapToSelectLights();
 
+    /// overrides the starting page to display color page if lights are found fast enough.
+    void overrideStartingPageToColorPage();
+
     /// resize
     void resize();
 
@@ -252,6 +255,9 @@ private:
 
     /// timer for checking whether or not wifi is enabled.
     QTimer* mWifiChecker;
+
+    /// check the time it took lights to be discovered
+    QElapsedTimer mTimeToLights;
 
     /// timer used to access the main thread from shares
     QTimer* mShareChecker;

@@ -441,6 +441,16 @@ bool LightList::hasLightWithProtocol(EProtocolType protocol) const noexcept {
     return false;
 }
 
+EProtocolType LightList::mostFeaturedProtocolType() const noexcept {
+    if (hasLightWithProtocol(EProtocolType::arduCor)) {
+        return EProtocolType::arduCor;
+    }
+    if (hasLightWithProtocol(EProtocolType::nanoleaf)) {
+        return EProtocolType::nanoleaf;
+    }
+    return EProtocolType::hue;
+}
+
 bool LightList::onlyLightsWithProtocol(EProtocolType protocol) const noexcept {
     for (const auto& light : mLights) {
         if (light.protocol() != protocol) {

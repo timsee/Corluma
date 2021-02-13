@@ -193,6 +193,7 @@ void StateObserver::lightCountChanged() {
     mTopMenu->lightCountChanged();
     mMainViewport->timeoutPage()->updateLights();
     mLightsPage->highlightLights();
+    auto protocolType = mData->mostFeaturedProtocolType();
 
     if (mColorPage->isOpen()) {
         if (mData->empty() || !mData->supportsRoutines()) {
@@ -203,8 +204,10 @@ void StateObserver::lightCountChanged() {
             auto routineAndParam = mData->routineAndParam();
             mColorPage->routines()->highlightRoutine(routineAndParam.first, routineAndParam.second);
             mColorPage->routines()->changeColor(mData->mainColor());
+            mColorPage->routines()->changeProtocol(protocolType);
             /// main color used on palette page for speed slider
             mPalettePage->routines()->changeColor(mData->mainColor());
+            mPalettePage->routines()->changeProtocol(protocolType);
         }
     }
 
@@ -217,6 +220,7 @@ void StateObserver::lightCountChanged() {
             mPalettePage->routines()->highlightRoutine(routineAndParam.first,
                                                        routineAndParam.second);
             mPalettePage->routines()->changeColorScheme(mData->multiColorScheme());
+            mPalettePage->routines()->changeProtocol(protocolType);
         }
     }
 }
