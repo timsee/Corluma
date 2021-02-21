@@ -14,7 +14,8 @@ class CorDeployTool:
 
     def __init__(self):
         self.version_str = self.get_app_version()
-
+        self.output_dir = f"./output/{self.version_str}"
+        Path(f"./output/{self.version_str}").mkdir(parents=True, exist_ok=True)
 
     def get_app_version(self):
         app_path = "../src/Corluma.pro"
@@ -35,14 +36,12 @@ class CorDeployTool:
             for line in file:
                 print(line.replace(string_to_replace, new_string), end='')
 
-
     def run_android(self, qt_build_dir):
         aab_path = f"{qt_build_dir}/android-build/build/outputs/bundle/release/android-build-release.aab"
-        output_aab_path = f"output/Corluma-{self.version_str}.aab"
+        output_aab_path = f"{self.output_dir}/Corluma-{self.version_str}.aab"
         apk_path = f"{qt_build_dir}/android-build/build/outputs/apk/debug/android-build-debug.apk"
-        output_apk_path = f"output/Corluma-{self.version_str}.apk"
+        output_apk_path = f"{self.output_dir}/Corluma-{self.version_str}.apk"
         print(f"aab_path: {aab_path}")
-        Path(f"./output/").mkdir(parents=True, exist_ok=True)
         os.system(f"cp {aab_path} {output_aab_path}")
         os.system(f"cp {apk_path} {output_apk_path}")
 
@@ -87,10 +86,8 @@ class CorDeployTool:
         # run dpkg-build
         os.system(f"dpkg-deb --build {deploy_dir}")
 
-        # make output directory if it doesn't exist
-        Path(f"./output").mkdir(parents=True, exist_ok=True)
         # copy .deb to output directory
-        os.system(f"cp -p {deb_file} output/{deb_file}")
+        os.system(f"cp -p {deb_file} {self.output_dir}/{deb_file}")
 
         # remove working dir
         rmtree(deploy_dir)
@@ -98,6 +95,27 @@ class CorDeployTool:
         # remove original .deb
         os.remove(deb_file)
 
+
+    def run_mac(self, qt_build_dir):
+        # define the path to the app in build and where it'll go
+        app_path = f"{qt_build_dir}/Corluma.app"
+        output_app_path = f"macOS/Corluma.app"
+        final_dmg_path = f"{self.output_dir}/Corluma_{self.version_str}.dmg"
+        print(f"app_path: {app_path} output_path: {output_app_path}")
+        # copy the app to the working directory
+        os.system(f"cp -r {app_path} {output_app_path}")
+        # remove the existing dmg, if one already exists
+        os.system(f"rm -r {final_dmg_path}")
+        # run a script to generate the dmg
+        os.system(f"appdmg ./macOS/spec.json {final_dmg_path}")
+        # remove the working paths
+        os.system(f"rm -r {output_app_path}")
+
+
+    def run_ios(self, qt_build_dir):
+        xcode_proj_path = f"{qt_build_dir}/Corluma.xcodeproj"
+        output_file = f"{self.output_dir}/Corluma_{self.version_str}.xcarchive"
+        os.system(f"xcodebuild -project {xcode_proj_path} -scheme Corluma -archivePath {output_file} archive")
 
     def run_docs(self):
         docs_workspace_path = "./workspace_docs"
@@ -111,7 +129,7 @@ class CorDeployTool:
         os.system(f"rm -rf {docs_output_path}")
         os.system(f"mkdir {docs_output_path}")
         # make output directory if it doesn't exist
-        Path(f"./output/docs").mkdir(parents=True, exist_ok=True)
+        Path(f"{self.output_dir}/docs").mkdir(parents=True, exist_ok=True)
         # run doxygen
         os.system(f"doxygen {doxyfile_path}")
         # cleanup doxygen workspace

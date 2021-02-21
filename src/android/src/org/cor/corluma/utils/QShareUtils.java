@@ -34,7 +34,7 @@
 // https://stackoverflow.com/questions/5734678/custom-filtering-of-intent-chooser-based-on-installed-android-package-name
 // see also /COPYRIGHT and /LICENSE
 
-package org.corluma.utils;
+package org.cor.corluma.utils;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -66,7 +66,7 @@ import java.util.List;
 
 public class QShareUtils {
     // reference Authority as defined in AndroidManifest.xml
-    private static String AUTHORITY = "org.corluma.shareutils.fileprovider";
+    private static String AUTHORITY = "org.cor.corluma.shareutils.fileprovider";
     private static String TAG = "QShareUtils";
 
     protected QShareUtils() {

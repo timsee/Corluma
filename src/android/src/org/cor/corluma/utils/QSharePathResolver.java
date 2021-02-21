@@ -30,7 +30,7 @@
 // src slightly modified to be used into Qt Projects: (c) 2017
 // ekke@ekkes-corner.org
 
-package org.corluma.utils;
+package org.cor.corluma.utils;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;

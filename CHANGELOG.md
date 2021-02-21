@@ -1183,3 +1183,11 @@ _This is the first of a series of updates to address design issues in the `ListR
 ### Bug Fixes
 - Fixed edge cases in Nanoleaf Routines
 - Fixed an edge case when loading the app for the first time.
+
+### **v0.21.82**
+### The Deployment Update
+- Added `macOS` and `iOS` options to the deployment script.
+- Fixed the `build.gradle` to allow deployment to Google Play Console.
+- Fixed the version string of `iOS` applications.
+- Enabled `ArduCor` by default in new builds of the application.
+- Fixed miscellaneous bugs.

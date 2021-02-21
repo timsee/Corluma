@@ -14,7 +14,7 @@ linux:!android {
     TARGET = corluma
 }
 TEMPLATE = app
-VERSION = 0.21.81
+VERSION = 0.21.82
 
 #----------
 # Build flags
@@ -134,14 +134,15 @@ equals(SHOULD_USE_SERIAL, 1) {
 #       quickest method of discovery.
 
 win32:win64 {
+    message("DEBUG: Using OpenSSL installed on windows.")
     # uses default path for openSSL in 32 and 64 bit
     contains(QT_ARCH, i386) {
-        # message("Using windows 32 bit libraries")
-        LIBS += -LC:/OpenSSL-Win32/lib -lubsec
+        message("Using windows 32 bit libraries")
+        LIBS += -LC:/Program\ Files\ (x86)/OpenSSL-Win32/lib -lubsec
         INCLUDEPATH += C:/OpenSSL-Win32/include
     } else {
-        # message("Using windows 64 bit libraries")
-        LIBS += -LC:/OpenSSL-Win64/lib -lubsec
+        message("Using windows 64 bit libraries")
+        LIBS += -LC:/Program\ Files/OpenSSL-Win64/lib -lubsec
         INCLUDEPATH += C:/OpenSSL-Win64/include
     }
 }
@@ -152,35 +153,39 @@ win32:win64 {
 #----------
 
 android {
-   ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
-   # adds prebuilt libcrypto and libssl from https://github.com/KDAB/android_openssl
-   # you can also build your own, see here: https://doc.qt.io/qt-5/android-openssl-support.html
-   OPENSSL_PATH = $$PWD/../../../Libraries/android_openssl/openssl.pri
-   include($$OPENSSL_PATH)
-   message("DEBUG: looking Android openssl at: $$OPENSSL_PATH")
-
-   # Android Play Store requires different version numbers for armv7 and arm64
-   # https://www.qt.io/blog/2019/06/28/comply-upcoming-requirements-google-play
-   defineReplace(droidVersionCode) {
-       segments = $$split(1, ".")
-       for (segment, segments): vCode = "$$first(vCode)$$format_number($$segment, width=3 zeropad)"
-           contains(ANDROID_TARGET_ARCH, arm64-v8a): \
-              suffix = 1
-           else:contains(ANDROID_TARGET_ARCH, armeabi-v7a): \
-              suffix = 0
-           return($$first(vCode)$$first(suffix))
+    ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+    OPEN_SSL = $$OPENSSL_PATH
+    !isEmpty(OPEN_SSL) {
+      message("DEBUG: looking Android openssl at: $$OPENSSL_PATH")
+      include($$OPEN_SSL)
+    }
+    isEmpty(OPEN_SSL) {
+      message("INFO: Not using OPENSSL_PATH for openssl libraries, make sure that openSSL is included from the environment")
     }
 
-    ANDROID_VERSION_NAME = $$VERSION
-    ANDROID_VERSION_CODE = $$droidVersionCode($$ANDROID_VERSION_NAME)
+    # Android Play Store requires different version numbers for armv7 and arm64
+    # https://www.qt.io/blog/2019/06/28/comply-upcoming-requirements-google-play
+    defineReplace(droidVersionCode) {
+        segments = $$split(1, ".")
+        for (segment, segments): vCode = "$$first(vCode)$$format_number($$segment, width=3 zeropad)"
+            contains(ANDROID_TARGET_ARCH, arm64-v8a): \
+               suffix = 1
+            else:contains(ANDROID_TARGET_ARCH, armeabi-v7a): \
+               suffix = 0
+            return($$first(vCode)$$first(suffix))
+     }
 
-    ANDROID_ABIS = armeabi-v7a arm64-v8a
+     ANDROID_VERSION_NAME = $$VERSION
+     ANDROID_VERSION_CODE = $$droidVersionCode($$ANDROID_VERSION_NAME)
+
+     ANDROID_ABIS = armeabi-v7a arm64-v8a
 }
 
 ios {
    # Info.plist is the top level global configuration file for iOS
    # for things like app name, icons, screen orientations, etc.
    QMAKE_INFO_PLIST = ios/Info.plist
+   QMAKE_TARGET_BUNDLE_PREFIX = com.cor.corluma
    # adds the icon files to the iOS application
    ios_icon.files = $$files($$PWD/ios/icon/AppIcon*.png)
    QMAKE_BUNDLE_DATA += ios_icon
@@ -569,8 +574,9 @@ equals(SHOULD_USE_SHARE_UTILS, 1) {
 
         # this contains the java code for and parsing and sending android intents, and
         # the android activity required to read incoming intents.
-        OTHER_FILES += android/src/org/corluma/utils/QShareUtils.java \
-            android/src/org/corluma/utils/QSharePathResolver.java \
-            android/src/org/corluma/activity/QShareActivity.java
+        OTHER_FILES += android/src/org/cor/corluma/utils/QShareUtils.java \
+            android/src/org/cor/corluma/utils/QSharePathResolver.java \
+            android/src/org/cor/corluma/activity/QShareActivity.java
     }
 }
+android: include(/home/umbreon/Android/Sdk/android_openssl/openssl.pri)

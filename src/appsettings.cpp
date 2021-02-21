@@ -26,12 +26,14 @@ AppSettings::AppSettings() {
     }
     mSettings->sync();
 
-    // error handling, if nothings enabled, enable hue and nanoleaf
+    // error handling, if nothings enabled, enable hue, nanoleaf, arduCor
     if (numberEnabled() == 0) {
         mProtocolsInUse[std::size_t(EProtocolType::hue)] = true;
         mProtocolsInUse[std::size_t(EProtocolType::nanoleaf)] = true;
+        mProtocolsInUse[std::size_t(EProtocolType::arduCor)] = true;
         mSettings->setValue(keys[std::size_t(EProtocolType::hue)], QString::number(int(true)));
         mSettings->setValue(keys[std::size_t(EProtocolType::nanoleaf)], QString::number(int(true)));
+        mSettings->setValue(keys[std::size_t(EProtocolType::arduCor)], QString::number(int(true)));
         mSettings->sync();
     }
 }

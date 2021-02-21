@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Copyright 2021 by Tim Seemann
 # Released under the GNU General Public License.
 
@@ -23,7 +25,6 @@ def cli_to_args():
 def seconds_to_time_str(secs):
     delta = datetime.timedelta(seconds=secs)
     return str(delta)
-
 
 def run_build_from_json(json):
     """
@@ -71,24 +72,54 @@ def main():
     """
     Run android
     """
-    should_deploy_android = (len(deploy_json['android_deploy']) != 0)
+    should_deploy_android = ('android_deploy' in deploy_json)
     deploy_android_time = time.time()
     if should_deploy_android:
         android_json = deploy_json['android_deploy']
         run_build_android(android_json)
         deploy_tool.run_android(android_json['qt_build_dir'])
         deploy_android_time = time.time() - deploy_android_time
+    else:
+        deploy_android_time = 0
 
     """
     Run linux
     """
-    should_deploy_linux = (len(deploy_json['linux_deploy']) != 0)
+    should_deploy_linux = ('linux_deploy' in deploy_json)
     deploy_linux_time = time.time()
     if should_deploy_android:
         linux_json = deploy_json['linux_deploy']
         run_build_from_json(linux_json)
         deploy_tool.run_linux(linux_json['qt_build_dir'])
         deploy_linux_time = time.time() - deploy_linux_time
+    else:
+        deploy_linux_time = 0
+
+    """
+    Run macOS
+    """
+    should_deploy_mac = ('mac_deploy' in deploy_json)
+    deploy_mac_time = time.time()
+    if should_deploy_mac:
+        mac_json = deploy_json['mac_deploy']
+        run_build_from_json(mac_json)
+        deploy_tool.run_mac(mac_json['qt_build_dir'])
+        deploy_mac_time = time.time() - deploy_mac_time
+    else:
+        deploy_mac_time = 0
+
+    """
+    Run ios
+    """
+    should_deploy_ios = ('ios_deploy' in deploy_json)
+    deploy_ios_time = time.time()
+    if should_deploy_ios:
+        ios_json = deploy_json['ios_deploy']
+        run_build_from_json(ios_json)
+        deploy_tool.run_ios(ios_json['qt_build_dir'])
+        deploy_ios_time = time.time() - deploy_ios_time
+    else:
+        deploy_ios_time = 0
 
     """
     Run Docs
@@ -98,6 +129,8 @@ def main():
     if should_deploy_docs:
         deploy_tool.run_docs()
         deploy_docs_time = time.time() - deploy_docs_time
+    else:
+        deploy_linux_time = 0
 
     """
     Print Results
@@ -107,6 +140,10 @@ def main():
         print(f"Deploying android took {seconds_to_time_str(deploy_android_time)}.")
     if should_deploy_linux:
         print(f"Deploying linux took {seconds_to_time_str(deploy_linux_time)}.")
+    if should_deploy_mac:
+        print(f"Deploying mac took {seconds_to_time_str(deploy_mac_time)}.")
+    if should_deploy_ios:
+        print(f"Deploying ios took {seconds_to_time_str(deploy_ios_time)}.")
     if should_deploy_docs:
         print(f"Deploying docs took {seconds_to_time_str(deploy_docs_time)}.")
 

@@ -63,6 +63,10 @@ public:
         bool statusChanged = (status != mStatus);
         mStatus = status;
         handleStatusPrompt();
+        if (statusChanged) {
+            // resize when status changes
+            resize();
+        }
         if (mStatus == nano::ELeafDiscoveryState::searchingIP
             || mStatus == nano::ELeafDiscoveryState::searchingAuth
             || mStatus == nano::ELeafDiscoveryState::reverifying) {
@@ -71,10 +75,6 @@ public:
             mStatusPrompt->setVisible(true);
             mSyncWidget->changeState(ESyncState::syncing);
         } else {
-            if (statusChanged) {
-                // resize when status changes
-                resize();
-            }
             mSyncWidget->setVisible(false);
             mStatusPrompt->setVisible(true);
 
@@ -104,11 +104,11 @@ public:
         if (mStatus == nano::ELeafDiscoveryState::searchingIP
             || mStatus == nano::ELeafDiscoveryState::searchingAuth
             || mStatus == nano::ELeafDiscoveryState::reverifying) {
-            mSyncWidget->setGeometry(0, yPos, this->width(), rowHeight * 2);
+            mSyncWidget->setGeometry(0, yPos, this->width(), rowHeight);
             yPos += mSyncWidget->height();
             mName->setGeometry(0, yPos, this->width(), rowHeight);
             yPos += mName->height();
-            mStatusPrompt->setGeometry(0, yPos, this->width(), rowHeight);
+            mStatusPrompt->setGeometry(0, yPos, this->width(), rowHeight * 2);
             yPos += mStatusPrompt->height();
         } else if (mStatus == nano::ELeafDiscoveryState::connected) {
             mPanelLabel->setGeometry(0, yPos, this->width(), rowHeight * 3);

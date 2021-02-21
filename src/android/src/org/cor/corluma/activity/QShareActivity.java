@@ -37,7 +37,7 @@
 //
 // see also /COPYRIGHT and /LICENSE
 
-package org.corluma.activity;
+package org.cor.corluma.activity;
 
 import android.app.*;
 import android.content.*;
@@ -48,7 +48,7 @@ import android.os.*;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
-import org.corluma.utils.*;
+import org.cor.corluma.utils.*;
 import org.qtproject.qt5.android.QtNative;
 import org.qtproject.qt5.android.bindings.QtActivity;
 

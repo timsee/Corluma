@@ -31,3 +31,4 @@ src/resources/Corluma.json
 deploy/output/
 deploy/__pycache__/
 deploy/personal_deploy_settings.json
+deploy/mac_deploy_settings.json

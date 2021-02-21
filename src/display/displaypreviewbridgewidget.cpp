@@ -64,7 +64,13 @@ void DisplayPreviewBridgeWidget::updateBridge(const hue::Bridge& bridge) {
     if (!cor::compareTwoLightVectors(updatedLights, mLights->lights())) {
         mLights->addLights(updatedLights);
     }
+    auto prevState = mState;
     handleBridgeState(bridge.state());
+    // handle an edge case where the resize needs to be explicitly called
+    if (prevState != EBridgeDiscoveryState::connected
+        && mState == EBridgeDiscoveryState::connected) {
+        resize();
+    }
     handleButtonState();
     updateMetadata(bridge);
     highlightLights();
