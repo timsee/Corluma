@@ -644,7 +644,9 @@ enum class ELightHardwareType {
     lightStrip,
     ring,
     bloom,
-    nanoleaf,
+    nanoleafOriginal,
+    nanoleafShapes,
+    nanoleafCanvas,
     connectedGroup,
     MAX
 };
@@ -695,8 +697,12 @@ inline QString hardwareTypeToString(ELightHardwareType hardwareType) {
             return "Ring";
         case ELightHardwareType::bloom:
             return "Bloom";
-        case ELightHardwareType::nanoleaf:
+        case ELightHardwareType::nanoleafOriginal:
             return "Nanoleaf";
+        case ELightHardwareType::nanoleafShapes:
+            return "Nanoleaf Shapes";
+        case ELightHardwareType::nanoleafCanvas:
+            return "Nanoleaf Canvas";
         case ELightHardwareType::connectedGroup:
             return "Connected Group";
         default:
@@ -744,7 +750,11 @@ inline ELightHardwareType stringToHardwareType(QString hardwareType) {
     } else if (hardwareType == "Bloom") {
         return ELightHardwareType::bloom;
     } else if (hardwareType == "Nanoleaf") {
-        return ELightHardwareType::nanoleaf;
+        return ELightHardwareType::nanoleafOriginal;
+    } else if (hardwareType == "Nanoleaf Shapes") {
+        return ELightHardwareType::nanoleafShapes;
+    } else if (hardwareType == "Nanoleaf Canvas") {
+        return ELightHardwareType::nanoleafCanvas;
     } else if (hardwareType == "Connected Group") {
         return ELightHardwareType::connectedGroup;
     } else {
@@ -807,8 +817,12 @@ inline QPixmap lightHardwareTypeToPixmap(ELightHardwareType type) {
         case ELightHardwareType::bloom:
             typeResource = QString(":/images/hue_bloom.png");
             break;
-        case ELightHardwareType::nanoleaf:
+        case ELightHardwareType::nanoleafOriginal:
+        case ELightHardwareType::nanoleafShapes:
             typeResource = QString(":/images/nanoleaf_icon.png");
+            break;
+        case ELightHardwareType::nanoleafCanvas:
+            typeResource = QString(":/images/nanoleaf_squares.png");
             break;
         case ELightHardwareType::connectedGroup:
             typeResource = QString(":/images/groupsIcon.png");

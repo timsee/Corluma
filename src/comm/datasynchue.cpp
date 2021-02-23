@@ -207,7 +207,7 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
     // On/Off Sync
     //-------------------
     if (dataState.isOn() != commState.isOn()) {
-        // qDebug() << "hue ON/OFF not in sync" << dataDevice.isOn();
+        // qDebug() << "hue ON/OFF not in sync" << dataState.isOn();
         object["isOn"] = dataState.isOn();
         countOutOfSync++;
     }

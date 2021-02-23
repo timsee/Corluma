@@ -195,6 +195,7 @@ void LightList::isOn(bool on) {
         state.isOn(on);
         light.state(state);
     }
+    emit dataUpdate();
 }
 
 void LightList::updateColorScheme(std::vector<QColor> colors) {

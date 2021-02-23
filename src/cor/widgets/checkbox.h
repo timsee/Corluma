@@ -66,19 +66,19 @@ private:
     void resize() {
         mButton->setGeometry(0, 0, this->width(), this->height());
         const auto& size = iconSize();
-        mClearAllPixmap = QPixmap(":/images/selectAllIcon.png");
+        mClearAllPixmap = QPixmap(":/images/checkbox_checked.png");
         mClearAllPixmap = mClearAllPixmap.scaled(size.width(),
                                                  size.height(),
                                                  Qt::IgnoreAspectRatio,
                                                  Qt::SmoothTransformation);
 
-        mSelectAllPixmap = QPixmap(":/images/uncheckedBox.png");
+        mSelectAllPixmap = QPixmap(":/images/checkbox_unchecked.png");
         mSelectAllPixmap = mSelectAllPixmap.scaled(size.width(),
                                                    size.height(),
                                                    Qt::IgnoreAspectRatio,
                                                    Qt::SmoothTransformation);
 
-        mDisabledPixmap = QPixmap(":/images/disabledX.png");
+        mDisabledPixmap = QPixmap(":/images/checkbox_disabled.png");
         mDisabledPixmap = mDisabledPixmap.scaled(size.width(),
                                                  size.height(),
                                                  Qt::IgnoreAspectRatio,

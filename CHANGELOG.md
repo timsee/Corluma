@@ -1191,3 +1191,10 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed the version string of `iOS` applications.
 - Enabled `ArduCor` by default in new builds of the application.
 - Fixed miscellaneous bugs.
+
+### **v0.21.83**
+### The Icons Update
+- Added new icon assets.
+- Fixed bugs with Nanoleaf state updates.
+- Fixed bugs with sharing json on android.
+- Fixed miscellaneous bugs.

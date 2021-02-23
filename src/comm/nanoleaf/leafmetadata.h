@@ -63,6 +63,17 @@ public:
     /// getter for model number of light
     const QString& model() const noexcept { return mModel; }
 
+    /// convert the model type to a hardware type.
+    ELightHardwareType hardwareType() const noexcept {
+        if (model() == "NL42") {
+            return ELightHardwareType::nanoleafShapes;
+        } else if (model() == "NL29") {
+            return ELightHardwareType::nanoleafCanvas;
+        } else {
+            return ELightHardwareType::nanoleafOriginal;
+        }
+    }
+
     /// getter for assigned name
     const QString& name() const noexcept { return mName; }
 
@@ -273,7 +284,8 @@ public:
     LeafLight(const LeafMetadata& metadata)
         : cor::Light(metadata.serialNumber(), ECommType::nanoleaf) {
         mName = metadata.name();
-        mHardwareType = ELightHardwareType::nanoleaf;
+        // convert the model type to hardware type
+        mHardwareType = metadata.hardwareType();
     }
 };
 

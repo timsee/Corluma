@@ -65,6 +65,9 @@ public:
     /// getter for hardware type
     ELightHardwareType hardwareType() const noexcept { return mHardwareType; }
 
+    /// setter for hardware type
+    void hardwareType(ELightHardwareType type) { mHardwareType = type; }
+
     /*!
      * \brief copyMetadata takes the data that is used in displaying lights, and copies it from one
      * light to another.

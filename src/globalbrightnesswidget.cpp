@@ -44,7 +44,7 @@ GlobalBrightnessWidget::GlobalBrightnessWidget(const QSize& size,
     mOnOffSwitch->setSwitchState(ESwitchState::disabled);
 
 
-    mOnOffCheckTimer = new QTimer;
+    mOnOffCheckTimer = new QTimer(this);
     connect(mOnOffCheckTimer, SIGNAL(timeout()), this, SLOT(checkifOn()));
     mOnOffCheckTimer->start(500);
 

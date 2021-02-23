@@ -276,23 +276,25 @@ void CommNanoleaf::testAuth(const nano::LeafMetadata& light) {
 void CommNanoleaf::stateUpdate() {
     if (shouldContinueStateUpdate()) {
         for (const auto& light : mDiscovery->foundLights().items()) {
+            /// first, request the general state of the light
             QNetworkRequest request = networkRequest(light, "");
             mNetworkManager->get(request);
 
-            /// if its using a dynamic effect, request metainfo on that effect
-            if (light.effect() == "*Dynamic*") {
-                QNetworkRequest request = networkRequest(light, "effects");
+            // TODO: query effects when necessary, used cache lookup when possible.
+            /// next request information related to its current effect (displays the color and
+            /// routine of the light)
+            QNetworkRequest stateRequest = networkRequest(light, "effects");
 
-                QJsonObject effectObject;
-                effectObject["command"] = "request";
-                effectObject["animName"] = "*Dynamic*";
+            QJsonObject effectObject;
+            effectObject["command"] = "request";
+            effectObject["animName"] = light.effect();
 
-                QJsonObject writeObject;
-                writeObject["write"] = effectObject;
+            QJsonObject writeObject;
+            writeObject["write"] = effectObject;
 
-                putJSON(request, writeObject);
-            }
+            putJSON(stateRequest, writeObject);
 
+            /// TODO: move to own routine
             if (mDiscovery->foundLights().size() < lightDict().size()) {
                 mDiscovery->startDiscovery();
             } else {
@@ -510,8 +512,10 @@ void CommNanoleaf::parseScheduleUpdatePacket(const nano::LeafMetadata& light,
 void CommNanoleaf::parseStateUpdatePacket(const nano::LeafMetadata& nanoLight,
                                           const QJsonObject& stateUpdate) {
     if (nano::LeafMetadata::isValidJson(stateUpdate)) {
+        // qDebug() << " state update " << stateUpdate;
         auto leafLight = nanoLight;
         leafLight.updateMetadata(stateUpdate);
+
         // move metadata for name to light, in case network packets dont contain it
         auto result = mDiscovery->nameFromSerial(leafLight.serialNumber());
         if (result.second) {
@@ -523,6 +527,8 @@ void CommNanoleaf::parseStateUpdatePacket(const nano::LeafMetadata& nanoLight,
         if (mPacketParser.hasValidState(stateObject)) {
             auto light = nano::LeafLight(leafLight);
             fillLight(light);
+
+            light.hardwareType(leafLight.hardwareType());
             // a valid packet has been received, mark the light as reachable.
             light.isReachable(true);
             auto state = mPacketParser.jsonToLighState(leafLight, light.state(), stateObject);

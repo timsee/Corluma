@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/settingsgear.png</file>
         <file>images/icon.ico</file>
         <file>images/icon.icns</file>
         <file>images/connectionIcon.png</file>
@@ -14,7 +13,6 @@
         <file>images/discoveryIcon.png</file>
         <file>images/editIcon.png</file>
         <file>images/openedArrow.png</file>
-        <file>images/selectAllIcon.png</file>
         <file>images/backArrow.png</file>
         <file>images/huerangeFade.png</file>
         <file>images/pressHueBridgeImage.png</file>
@@ -43,7 +41,6 @@
         <file>images/onSwitch.png</file>
         <file>images/cube_icon.png</file>
         <file>images/ring_icon.png</file>
-        <file>images/array_icon.jpg</file>
         <file>images/light_strip.png</file>
         <file>images/hue_bloom.png</file>
         <file>images/hue_bulb.png</file>
@@ -62,7 +59,6 @@
         <file>images/loading_icon.gif</file>
         <file>images/no_wifi.png</file>
         <file>images/disabledX.png</file>
-        <file>images/uncheckedBox.png</file>
         <file>images/hamburger_icon.png</file>
         <file>images/wheels/color_wheel_hs.png</file>
         <file>images/wheels/color_wheel_ct.png</file>
@@ -80,9 +76,17 @@
         <file>images/arrowRight.png</file>
         <file>images/hue_play.png</file>
         <file>images/schedule-icon.png</file>
-        <file>images/timer.png</file>
         <file>images/warning_icon.png</file>
         <file>images/sawtooth_in.png</file>
         <file>images/sawtooth_out.png</file>
+        <file>images/checkbox_checked.png</file>
+        <file>images/checkbox_disabled.png</file>
+        <file>images/checkbox_unchecked.png</file>
+        <file>images/fast_icon.png</file>
+        <file>images/lights_icon.png</file>
+        <file>images/nanoleaf_squares.png</file>
+        <file>images/settingsgear.png</file>
+        <file>images/slow_icon.png</file>
+        <file>images/timeout_icon.png</file>
     </qresource>
 </RCC>

@@ -244,10 +244,10 @@ public:
         ERoutine routine = ERoutine::MAX;
         if (isDefaultPlugin(requestPacket, "highlight", "70b7c636-6bf8-491f-89c1-f4103508d642")) {
             auto value = getSettingFromDefaultPlugin("transTime", requestPacket);
-            if (value == kMultiGlimmerTransTime) {
-                routine = ERoutine::multiGlimmer;
-            } else if (value == kSingleGlimmerTransTime) {
+            if (value == kSingleGlimmerTransTime) {
                 routine = ERoutine::singleGlimmer;
+            } else {
+                routine = ERoutine::multiGlimmer;
             }
         } else if (isDefaultPlugin(requestPacket,
                                    "explode",
@@ -280,6 +280,9 @@ public:
             routine = ERoutine::multiRandomIndividual;
         } else if (isDefaultPlugin(requestPacket, "flow", "027842e4-e1d6-4a4c-a731-be74a1ebd4cf")) {
             routine = ERoutine::multiRandomSolid;
+        } else {
+            routine = ERoutine::multiFade;
+            qDebug() << " do not recognize routine" << requestPacket;
         }
         return routine;
     }

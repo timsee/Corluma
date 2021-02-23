@@ -71,7 +71,7 @@ AndroidShareUtils* AndroidShareUtils::getInstance() {
 bool AndroidShareUtils::checkMimeTypeView(const QString& mimeType) {
     QAndroidJniObject jsMime = QAndroidJniObject::fromString(mimeType);
     jboolean verified =
-        QAndroidJniObject::callStaticMethod<jboolean>("org/corluma/utils/QShareUtils",
+        QAndroidJniObject::callStaticMethod<jboolean>("org/cor/corluma/utils/QShareUtils",
                                                       "checkMimeTypeView",
                                                       "(Ljava/lang/String;)Z",
                                                       jsMime.object<jstring>());
@@ -114,7 +114,7 @@ void AndroidShareUtils::sendFile(const QString& filePath,
     QAndroidJniObject jsTitle = QAndroidJniObject::fromString(title);
     QAndroidJniObject jsMimeType = QAndroidJniObject::fromString(mimeType);
     jboolean ok = QAndroidJniObject::callStaticMethod<jboolean>(
-        "org/corluma/utils/QShareUtils",
+        "org/cor/corluma/utils/QShareUtils",
         "sendFile",
         "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)Z",
         jsPath.object<jstring>(),
@@ -139,7 +139,7 @@ void AndroidShareUtils::viewFile(const QString& filePath,
     QAndroidJniObject jsTitle = QAndroidJniObject::fromString(title);
     QAndroidJniObject jsMimeType = QAndroidJniObject::fromString(mimeType);
     jboolean ok = QAndroidJniObject::callStaticMethod<jboolean>(
-        "org/corluma/utils/QShareUtils",
+        "org/cor/corluma/utils/QShareUtils",
         "viewFile",
         "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)Z",
         jsPath.object<jstring>(),
@@ -261,18 +261,17 @@ bool AndroidShareUtils::checkFileExits(const QString& url) {
 extern "C" {
 #endif
 
-JNIEXPORT void JNICALL Java_org_corluma_activity_QShareActivity_setFileUrlReceived(JNIEnv* env,
-                                                                                   jobject,
-                                                                                   jstring url) {
+JNIEXPORT void JNICALL
+Java_org_cor_corluma_activity_QShareActivity_setFileUrlReceived(JNIEnv* env, jobject, jstring url) {
     const char* urlStr = env->GetStringUTFChars(url, nullptr);
     AndroidShareUtils::getInstance()->setFileUrlReceived(urlStr);
     env->ReleaseStringUTFChars(url, urlStr);
     return;
 }
 
-JNIEXPORT bool JNICALL Java_org_corluma_activity_QShareActivity_checkFileExits(JNIEnv* env,
-                                                                               jobject,
-                                                                               jstring url) {
+JNIEXPORT bool JNICALL Java_org_cor_corluma_activity_QShareActivity_checkFileExits(JNIEnv* env,
+                                                                                   jobject,
+                                                                                   jstring url) {
     const char* urlStr = env->GetStringUTFChars(url, nullptr);
     bool exists = AndroidShareUtils::getInstance()->checkFileExits(urlStr);
     env->ReleaseStringUTFChars(url, urlStr);
@@ -280,10 +279,10 @@ JNIEXPORT bool JNICALL Java_org_corluma_activity_QShareActivity_checkFileExits(J
 }
 
 JNIEXPORT void JNICALL
-Java_org_corluma_activity_QShareActivity_fireActivityResult(JNIEnv*,
-                                                            jobject,
-                                                            jint requestCode,
-                                                            jint resultCode) {
+Java_org_cor_corluma_activity_QShareActivity_fireActivityResult(JNIEnv*,
+                                                                jobject,
+                                                                jint requestCode,
+                                                                jint resultCode) {
     AndroidShareUtils::getInstance()->onActivityResult(requestCode, resultCode);
     return;
 }

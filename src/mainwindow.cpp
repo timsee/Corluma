@@ -509,8 +509,8 @@ void MainWindow::changeEvent(QEvent* event) {
 #endif // MOBILE_BUILD
 #endif
     } else if (event->type() == QEvent::ActivationChange && !isActiveWindow()) {
-        for (int commInt = 0; commInt != int(EProtocolType::MAX); ++commInt) {
-            auto type = static_cast<EProtocolType>(commInt);
+        for (int protocolInt = 0; protocolInt != int(EProtocolType::MAX); ++protocolInt) {
+            auto type = static_cast<EProtocolType>(protocolInt);
             if (mAppSettings->enabled(type)) {
                 mComm->stopStateUpdates(type);
             }

@@ -66,7 +66,7 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     //---------------
 
     mLightsButton =
-        new LeftHandButton("Lights", EPage::lightsPage, ":/images/connectionIcon.png", this);
+        new LeftHandButton("Lights", EPage::lightsPage, ":/images/lights_icon.png", this);
     mLightsButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mLightsButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
     mLightsButton->shouldHightlght(true);
@@ -84,8 +84,12 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     connect(mSettingsButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
 #ifdef USE_EXPERIMENTAL_FEATURES
-    mTimeoutButton =
-        new TimeoutButton("Timeouts", EPage::timeoutPage, ":/images/timer.png", mComm, mData, this);
+    mTimeoutButton = new TimeoutButton("Timeouts",
+                                       EPage::timeoutPage,
+                                       ":/images/timeout_icon.png",
+                                       mComm,
+                                       mData,
+                                       this);
     mTimeoutButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mTimeoutButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 #endif

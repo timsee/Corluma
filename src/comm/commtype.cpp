@@ -16,7 +16,7 @@ CommType::CommType(ECommType type) : mStateUpdateInterval{1000}, mType(type) {
 
     mElapsedTimer.start();
 
-    mStateUpdateTimer = new QTimer;
+    mStateUpdateTimer = new QTimer(this);
 }
 
 void CommType::addLights(const std::vector<cor::Light>& lights) {
@@ -34,7 +34,7 @@ void CommType::addLights(const std::vector<cor::Light>& lights) {
 
 bool CommType::removeLights(const std::vector<QString>& uniqueIDs) {
     std::vector<QString> removedLights;
-    for (auto uniqueID : uniqueIDs) {
+    for (const auto& uniqueID : uniqueIDs) {
         auto result = mLightDict.removeKey(uniqueID.toStdString());
         if (result) {
             removedLights.push_back(uniqueID);
