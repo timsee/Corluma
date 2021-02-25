@@ -116,11 +116,29 @@ int main(int argc, char* argv[]) {
     // Create splash screen
     //--------------------
 
+#ifdef MOBILE_BUILD
+    QScreen* screen = QApplication::screens().at(0);
+    QSize size = screen->size();
+#elif FORCE_PORTRAIT
+    QSize size(400, 600);
+#else
+    QSize size(700, 600);
+#endif
+
+
 #ifndef DISABLE_SPLASH_SCREEN
 #ifdef MOBILE_BUILD
-    QSplashScreen splash(QPixmap(":images/mobileLaunchScreen.png"), Qt::WindowStaysOnTopHint);
+    QPixmap splashScreen(":images/splash_screen.png");
+    splashScreen = splashScreen.scaled(size.width(),
+                                       size.height(),
+                                       Qt::KeepAspectRatio,
+                                       Qt::SmoothTransformation);
+    QSplashScreen splash(splashScreen, Qt::WindowStaysOnTopHint);
 #else
-    QSplashScreen splash(QPixmap(":images/splash_screen.png"), Qt::WindowStaysOnTopHint);
+    QPixmap splashScreen(":images/desktop_splash_screen.png");
+    auto side = std::min(size.width(), size.height()) / 2;
+    splashScreen = splashScreen.scaled(side, side, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    QSplashScreen splash(splashScreen, Qt::WindowStaysOnTopHint);
 #endif
 #endif
 
@@ -144,15 +162,6 @@ int main(int argc, char* argv[]) {
     //--------------------
     // Create app window
     //--------------------
-
-#ifdef MOBILE_BUILD
-    QScreen* screen = QApplication::screens().at(0);
-    QSize size = screen->size();
-#elif FORCE_PORTRAIT
-    QSize size(400, 600);
-#else
-    QSize size(700, 600);
-#endif
 
 #ifdef Q_OS_ANDROID
     qputenv("QT_QPA_NO_TEXT_HANDLES", "1");

@@ -432,7 +432,7 @@ void CommLayer::resetStateUpdates(EProtocolType type) {
     } else if (type == EProtocolType::nanoleaf) {
         commByType(ECommType::nanoleaf)->resetStateUpdateTimeout();
     }
-    // qDebug() << "INFO: reset state updates" << cor::EProtocolTypeToString(type);
+    // qDebug() << "INFO: reset state updates" << protocolToString(type);
 }
 
 

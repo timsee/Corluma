@@ -9,7 +9,6 @@
 #include "comm/commtype.h"
 #include "cor/objects/groupstate.h"
 #include "cor/widgets/listitemwidget.h"
-#include "cor/widgets/statusicon.h"
 #include "icondata.h"
 
 /*!
@@ -97,7 +96,7 @@ private:
 
     /*!
      * \brief mIconData creates a QPixmap that represents the current light states
-     * which gets displayed on the mStatusIcon.
+     * which gets displayed on the widget.
      */
     IconData mIconData;
 

@@ -67,14 +67,14 @@ bool CommType::fillLight(cor::Light& light) {
 }
 
 void CommType::resetStateUpdateTimeout() {
-    if (!mStateUpdateTimer->isActive()) {
-        mStateUpdateTimer->start(mStateUpdateInterval);
-        for (const auto& light : mLightDict.items()) {
-            mUpdateTime.insert(light.uniqueID().toStdString(), 0);
-            mLightDict.update(light.uniqueID().toStdString(), light);
-        }
-        mElapsedTimer.restart();
+    // if (!mStateUpdateTimer->isActive()) {
+    mStateUpdateTimer->start(mStateUpdateInterval);
+    for (const auto& light : mLightDict.items()) {
+        mUpdateTime.insert(light.uniqueID().toStdString(), 0);
+        mLightDict.update(light.uniqueID().toStdString(), light);
     }
+    mElapsedTimer.restart();
+    // }
     mLastSendTime = QTime::currentTime();
 }
 

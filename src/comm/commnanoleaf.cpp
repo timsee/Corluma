@@ -315,7 +315,6 @@ void CommNanoleaf::sendPacket(const nano::LeafMetadata& metadata, const QJsonObj
             auto light = lightResult.first;
             routineChange(metadata, object);
             resetBackgroundTimers();
-            resetStateUpdateTimeout();
         } else {
             qDebug() << " did not find light:" << metadata.serialNumber();
         }

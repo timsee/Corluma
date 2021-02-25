@@ -1198,3 +1198,10 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed bugs with Nanoleaf state updates.
 - Fixed bugs with sharing json on android.
 - Fixed miscellaneous bugs.
+
+### **v0.21.84**
+### The App Icon Update
+- Added new app icon.
+- Added new splash screen.
+- Removed unused assets and classes.
+- Relaxed state update timers for Hue and Nanoleaf.

@@ -14,7 +14,7 @@ linux:!android {
     TARGET = corluma
 }
 TEMPLATE = app
-VERSION = 0.21.83
+VERSION = 0.21.84
 
 #----------
 # Build flags
@@ -245,7 +245,6 @@ SOURCES += main.cpp \
     discovery/discoveryhuewidget.cpp \
     discovery/discoverynanoleafwidget.cpp \
     discovery/discoverytypewidget.cpp \
-    discovery/hardwareconnectionwidget.cpp \
     discovery/discoveryarducorwidget.cpp \
     discoverywidget.cpp \
     display/displaypreviewbridgewidget.cpp \
@@ -382,7 +381,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     discovery/discoveryhuewidget.h \
     discovery/discoverynanoleafwidget.h \
     discovery/discoverytypewidget.h \
-    discovery/hardwareconnectionwidget.h \
     discovery/discoveryarducorwidget.h \
     cor/protocols.h \
     cor/range.h \
@@ -527,7 +525,6 @@ HEADERS  += cor/objects/light.h \
     cor/widgets/button.h \
     cor/widgets/checkbox.h \
     cor/widgets/switch.h \
-    cor/widgets/statusicon.h \
     cor/widgets/webview.h \
     cor/widgets/listwidget.h \
     cor/widgets/topwidget.h \

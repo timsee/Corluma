@@ -76,7 +76,6 @@ void CommHue::sendPacket(const QJsonObject& object) {
         bool bridgeFound = bridgeResult.second;
 
         if (bridgeFound) {
-            resetStateUpdateTimeout();
             int index = int(object["index"].toDouble());
             if (object["isOn"].isBool()) {
                 turnOnOff(bridge, index, object["isOn"].toBool());

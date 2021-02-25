@@ -3,11 +3,6 @@
         <file>images/icon.ico</file>
         <file>images/icon.icns</file>
         <file>images/connectionIcon.png</file>
-        <file>images/redButton.png</file>
-        <file>images/yellowButton.png</file>
-        <file>images/blackButton.png</file>
-        <file>images/blueButton.png</file>
-        <file>images/greenButton.png</file>
         <file>images/clearAllIcon.png</file>
         <file>images/closedArrow.png</file>
         <file>images/discoveryIcon.png</file>
@@ -23,20 +18,14 @@
         <file>images/splash_screen.png</file>
         <file>images/loader.gif</file>
         <file>images/arduino-logo.png</file>
-        <file>images/whiteButton.png</file>
         <file>resources/Copyright.html</file>
         <file>resources/FAQ.html</file>
         <file>images/closeX.png</file>
         <file>images/ColorSchemePicker_icon.png</file>
         <file>images/Hue-Bridge.png</file>
-        <file>images/incomingBrokenArrow.png</file>
-        <file>images/incomingCompleteArrow.png</file>
-        <file>images/outgoingBrokenArrow.png</file>
-        <file>images/outgoingCompleteArrow.png</file>
         <file>images/plusIcon.png</file>
         <file>images/groupsIcon.png</file>
         <file>images/roomIcon.png</file>
-        <file>images/mobileLaunchScreen.png</file>
         <file>images/offSwitch.png</file>
         <file>images/onSwitch.png</file>
         <file>images/cube_icon.png</file>
@@ -88,5 +77,6 @@
         <file>images/settingsgear.png</file>
         <file>images/slow_icon.png</file>
         <file>images/timeout_icon.png</file>
+        <file>images/desktop_splash_screen.png</file>
     </qresource>
 </RCC>
