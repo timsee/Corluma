@@ -298,6 +298,7 @@ void CommHue::replyFinished(QNetworkReply* reply) {
             qDebug() << "Invalid JSON...";
         }
     }
+    reply->deleteLater();
 }
 
 std::uint64_t CommHue::generateUniqueID(const std::vector<cor::Group>& groupList,

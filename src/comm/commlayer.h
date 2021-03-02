@@ -4,7 +4,6 @@
 
 #include <QColor>
 #include <QWidget>
-#include <memory>
 
 #include <unordered_set>
 #include "colorpicker/colorpicker.h"
@@ -161,13 +160,13 @@ public:
     const std::vector<cor::Controller> allArduinoControllers();
 
     /// getter for nanoleaf
-    std::shared_ptr<CommNanoleaf> nanoleaf() { return mNanoleaf; }
+    CommNanoleaf* nanoleaf() { return mNanoleaf; }
 
     /// getter for arducor
-    std::shared_ptr<CommArduCor> arducor() { return mArduCor; }
+    CommArduCor* arducor() { return mArduCor; }
 
     /// pointer to the hue comm type
-    std::shared_ptr<CommHue> hue() { return mHue; }
+    CommHue* hue() { return mHue; }
 
     /// creates a set of all discovered light IDs
     std::unordered_set<QString> allDiscoveredLightIDs();
@@ -264,17 +263,17 @@ private:
     /*!
      * \brief mArduCor ArudCor connection object
      */
-    std::shared_ptr<CommArduCor> mArduCor;
+    CommArduCor* mArduCor;
 
     /*!
      * \brief mHue Philips Hue connection object
      */
-    std::shared_ptr<CommHue> mHue;
+    CommHue* mHue;
 
     /*!
      * \brief mNanoleaf Nanoleaf Aurora connection object
      */
-    std::shared_ptr<CommNanoleaf> mNanoleaf;
+    CommNanoleaf* mNanoleaf;
 
     /// Handles discovery of devices over UPnP
     UPnPDiscovery* mUPnP;

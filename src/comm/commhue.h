@@ -288,6 +288,18 @@ public:
                           const QJsonObject& groupObject,
                           const QJsonObject& schedulesObject);
 
+
+    /// hack for certain environments where the network access manager goes stale (noticed in
+    /// android after the phone has been locked for a while)
+    void resetNetworkManager() {
+        delete mNetworkManager;
+        mNetworkManager = new QNetworkAccessManager(this);
+        connect(mNetworkManager,
+                SIGNAL(finished(QNetworkReply*)),
+                this,
+                SLOT(replyFinished(QNetworkReply*)));
+    }
+
 signals:
     /*!
      * \brief packetReceived emitted whenever a packet that is not a discovery packet is received.

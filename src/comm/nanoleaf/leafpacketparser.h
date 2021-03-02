@@ -50,7 +50,7 @@ public:
     /// converts a JsonArray from Nanoleaf to a vector of Qcolor
     std::vector<QColor> jsonArrayToColorVector(const QJsonArray& palette) {
         std::vector<QColor> colorVector;
-        for (const auto& object : palette) {
+        for (auto object : palette) {
             const auto& colorObject = object.toObject();
             double hue = colorObject["hue"].toDouble() / 359.0;
             if (hue < 0) {
@@ -242,7 +242,12 @@ public:
     /// converts Json to a routine.
     ERoutine jsonToRoutine(const QJsonObject& requestPacket) {
         ERoutine routine = ERoutine::MAX;
-        if (isDefaultPlugin(requestPacket, "highlight", "70b7c636-6bf8-491f-89c1-f4103508d642")) {
+        if (requestPacket["animType"].isString()
+            && requestPacket["animType"].toString() == "static") {
+            routine = ERoutine::singleSolid;
+        } else if (isDefaultPlugin(requestPacket,
+                                   "highlight",
+                                   "70b7c636-6bf8-491f-89c1-f4103508d642")) {
             auto value = getSettingFromDefaultPlugin("transTime", requestPacket);
             if (value == kSingleGlimmerTransTime) {
                 routine = ERoutine::singleGlimmer;

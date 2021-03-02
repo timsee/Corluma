@@ -9,7 +9,7 @@
 #include "cor/widgets/button.h"
 
 /// size of buttons in widget
-enum class EButtonSize { small, medium, rectangle };
+enum class EButtonSize { small, medium };
 
 /*!
  * \copyright
@@ -54,15 +54,6 @@ public:
      * \param routineObject the json representatino of the routine
      */
     void updateRoutine(const cor::LightState& state);
-
-    /*!
-     * \brief updateDiscoveryButton update the icon of a discovery button. Shows the discovery state
-     * of the connection.
-     *
-     * \param type comm type of discovery button
-     * \param connectionState state of connection
-     */
-    void updateDiscoveryButton(EProtocolType type, EConnectionState connectionState);
 
     /*!
      * \brief addMultiRoutineIcon add a multi routine icon
@@ -167,9 +158,6 @@ private:
 
     /// original size of the application during initial load.
     QSize mOriginalSize;
-
-    /// chooses a font size so that rectangle buttons are not cut off.
-    void handleRectangleFontSize();
 };
 
 #endif // FLOATINGLAYOUT_H

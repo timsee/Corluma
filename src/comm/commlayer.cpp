@@ -26,48 +26,42 @@
 CommLayer::CommLayer(QObject* parent, GroupData* parser) : QObject(parent), mGroups(parser) {
     mUPnP = new UPnPDiscovery(this);
 
-    mArduCor = std::make_shared<CommArduCor>(this);
-    connect(mArduCor.get(),
-            SIGNAL(updateReceived(ECommType)),
-            this,
-            SLOT(receivedUpdate(ECommType)));
-    connect(mArduCor.get(),
+    mArduCor = new CommArduCor(this);
+    connect(mArduCor, SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
+    connect(mArduCor,
             SIGNAL(newLightsFound(ECommType, std::vector<QString>)),
             this,
             SLOT(lightsFound(ECommType, std::vector<QString>)));
-    connect(mArduCor.get(),
+    connect(mArduCor,
             SIGNAL(lightsDeleted(ECommType, std::vector<QString>)),
             this,
             SLOT(deletedLights(ECommType, std::vector<QString>)));
 
-    mNanoleaf = std::make_shared<CommNanoleaf>();
-    connect(mNanoleaf.get(),
-            SIGNAL(updateReceived(ECommType)),
-            this,
-            SLOT(receivedUpdate(ECommType)));
-    connect(mNanoleaf.get(),
+    mNanoleaf = new CommNanoleaf();
+    connect(mNanoleaf, SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
+    connect(mNanoleaf,
             SIGNAL(newLightsFound(ECommType, std::vector<QString>)),
             this,
             SLOT(lightsFound(ECommType, std::vector<QString>)));
-    connect(mNanoleaf.get(),
+    connect(mNanoleaf,
             SIGNAL(lightsDeleted(ECommType, std::vector<QString>)),
             this,
             SLOT(deletedLights(ECommType, std::vector<QString>)));
 
     mNanoleaf->discovery()->connectUPnP(mUPnP);
 
-    mHue = std::make_shared<CommHue>(mUPnP, parser);
-    connect(mHue.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
-    connect(mHue.get(),
+    mHue = new CommHue(mUPnP, parser);
+    connect(mHue, SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
+    connect(mHue,
             SIGNAL(newLightsFound(ECommType, std::vector<QString>)),
             this,
             SLOT(lightsFound(ECommType, std::vector<QString>)));
-    connect(mHue.get(),
+    connect(mHue,
             SIGNAL(lightsDeleted(ECommType, std::vector<QString>)),
             this,
             SLOT(deletedLights(ECommType, std::vector<QString>)));
 
-    connect(mHue.get(),
+    connect(mHue,
             SIGNAL(lightNameChanged(QString, QString)),
             this,
             SLOT(handleLightNameChanged(QString, QString)));
@@ -111,10 +105,10 @@ CommType* CommLayer::commByType(ECommType type) const {
             ptr = mArduCor->commByType(type);
             break;
         case ECommType::hue:
-            ptr = static_cast<CommType*>(mHue.get());
+            ptr = static_cast<CommType*>(mHue);
             break;
         case ECommType::nanoleaf:
-            ptr = static_cast<CommType*>(mNanoleaf.get());
+            ptr = static_cast<CommType*>(mNanoleaf);
             break;
         default:
             THROW_EXCEPTION("no type for this commtype");
@@ -429,10 +423,12 @@ void CommLayer::resetStateUpdates(EProtocolType type) {
         mArduCor->resetStateUpdates();
     } else if (type == EProtocolType::hue) {
         commByType(ECommType::hue)->resetStateUpdateTimeout();
+        mHue->resetNetworkManager();
     } else if (type == EProtocolType::nanoleaf) {
         commByType(ECommType::nanoleaf)->resetStateUpdateTimeout();
+        mNanoleaf->resetNetworkManager();
     }
-    // qDebug() << "INFO: reset state updates" << protocolToString(type);
+    qDebug() << "INFO: reset state updates" << protocolToString(type);
 }
 
 

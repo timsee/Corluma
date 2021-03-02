@@ -100,4 +100,5 @@ void CommHTTP::replyFinished(QNetworkReply* reply) {
             mDiscovery->handleIncomingPacket(mType, IP, payload);
         }
     }
+    reply->deleteLater();
 }

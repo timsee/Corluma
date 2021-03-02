@@ -466,6 +466,7 @@ void BridgeDiscovery::replyFinished(QNetworkReply* reply) {
             handleStandardReply(IP, jsonResponse);
         }
     }
+    //  mNetworkManager->deleteLater();
 }
 
 hue::Bridge BridgeDiscovery::parseInitialUpdate(hue::Bridge bridge, const QJsonObject& object) {
@@ -636,13 +637,12 @@ EHueDiscoveryState BridgeDiscovery::state() {
 }
 
 bool BridgeDiscovery::doesIPExistInSearchingLists(const QString& IP) {
-    bool foundIP = false;
     for (const auto& notFoundBridge : mNotFoundBridges) {
         if (notFoundBridge.IP() == IP) {
-            foundIP = true;
+            return true;
         }
     }
-    return foundIP;
+    return false;
 }
 
 std::pair<hue::Bridge, bool> BridgeDiscovery::bridgeFromDiscoveryID(const QString& uniqueID) {

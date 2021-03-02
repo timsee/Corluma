@@ -378,7 +378,7 @@ void ArduCorDiscovery::updateJSON(const cor::Controller& controller) {
     } else {
         int i = 0;
         bool foundLight = false;
-        for (const auto& value : qAsConst(array)) {
+        for (auto value : qAsConst(array)) {
             bool detectChanges = false;
             QJsonObject object = value.toObject();
             cor::Controller jsonController = cor::jsonToController(object);
@@ -457,7 +457,7 @@ bool ArduCorDiscovery::loadJSON() {
     if (!mJsonData.isNull()) {
         if (mJsonData.isArray()) {
             QJsonArray array = mJsonData.array();
-            foreach (const QJsonValue& value, array) {
+            for (auto value : array) {
                 QJsonObject object = value.toObject();
                 if (object["path"].isString() && object["commType"].isString()) {
                     mNotFoundControllers.push_back(cor::jsonToController(object));

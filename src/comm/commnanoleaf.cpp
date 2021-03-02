@@ -358,8 +358,7 @@ void CommNanoleaf::handleNetworkPacket(const nano::LeafMetadata& light, const QS
                 mDiscovery->foundNewAuthToken(light, authToken);
             } else if (object["serialNo"].isString() && object["name"].isString()) {
                 parseStateUpdatePacket(light, object);
-            } else if (object["animType"].isString() && object["colorType"].isString()
-                       && object["palette"].isArray()) {
+            } else if (object["animType"].isString() && object["palette"].isArray()) {
                 parseCommandRequestUpdatePacket(light, object);
                 mDiscovery->updateFoundLight(light);
             } else if (object["schedules"].isArray()) {
@@ -405,6 +404,7 @@ void CommNanoleaf::replyFinished(QNetworkReply* reply) {
         qDebug() << " unknown error from " << reply->url().toString() << reply->errorString();
 #endif
     }
+    reply->deleteLater();
 }
 
 
@@ -442,8 +442,7 @@ std::pair<QColor, std::uint32_t> brightnessAndMainColorFromVector(
 } // namespace
 void CommNanoleaf::parseCommandRequestUpdatePacket(const nano::LeafMetadata& leafLight,
                                                    const QJsonObject& requestPacket) {
-    if (requestPacket["animType"].isString() && requestPacket["colorType"].isString()
-        && requestPacket["palette"].isArray()) {
+    if (requestPacket["animType"].isString() && requestPacket["palette"].isArray()) {
         auto colors = mPacketParser.jsonArrayToColorVector(requestPacket["palette"].toArray());
 
         auto light = nano::LeafLight(leafLight);

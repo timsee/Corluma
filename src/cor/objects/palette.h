@@ -36,7 +36,7 @@ public:
         bool containsRGB = false;
         mColors = std::vector<QColor>(count, QColor(0, 0, 0));
         auto array = object["colors"].toArray();
-        for (const auto& color : qAsConst(array)) {
+        for (auto color : qAsConst(array)) {
             QJsonObject object = color.toObject();
             uint32_t index = std::uint32_t(object["index"].toDouble());
 

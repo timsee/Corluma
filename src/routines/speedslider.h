@@ -22,7 +22,7 @@ public:
         : QWidget(parent),
           mLeftImage{new QLabel(this)},
           mRightImage{new QLabel(this)},
-          mSpeedLabel{new QLabel("Speed:", this)},
+          mSpeedLabel{new QLabel("", this)},
           mSlider{new cor::Slider(this)} {
         mSpeedLabel->setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
         mSlider->setColor(QColor(255, 0, 0));
@@ -97,18 +97,32 @@ private:
 
         auto sliderImageSize = width() / 9;
         auto sliderWidth = width() - sliderImageSize * 2 - sliderXSpacing * 3;
-        auto xPos = sliderXSpacing;
+        auto xPos = (width() - sliderWidth) / 2;
+        auto side = std::min(sliderImageSize, height());
 
-        //    mSpeedLabel->setGeometry(sliderXSpacing,
-        //                             0,
-        //                             width() - sliderXSpacing * 2,
-        //                             mSpeedLabel->height());
-        mLeftImage->setGeometry(xPos, sliderYSpacing, sliderImageSize, height());
-        xPos += mLeftImage->width() + sliderXSpacing;
+        // first put the slider in the middle
         mSlider->setGeometry(xPos, sliderYSpacing, sliderWidth, height());
-        xPos += mSlider->width() + sliderXSpacing;
-        mRightImage->setGeometry(xPos, sliderYSpacing, sliderImageSize, height());
+
+        // now put the left image directly left
+        mLeftImage->setGeometry(xPos - side, sliderYSpacing, side, side);
+
+        // now put the right image directly right
+        mRightImage->setGeometry(xPos + mSlider->width(),
+                                 sliderYSpacing,
+                                 sliderImageSize,
+                                 height());
+
+        addIconTolabel(mLeftImage, ":/images/slow_icon.png", side);
+        addIconTolabel(mRightImage, ":/images/fast_icon.png", side);
     }
+
+    /// adds icon to label
+    void addIconTolabel(QLabel* label, const QString& path, int side) {
+        auto pixmap = QPixmap(path);
+        pixmap = pixmap.scaled(side, side, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        label->setPixmap(pixmap);
+    }
+
 
     /// image to the left of the slider
     QLabel* mLeftImage;

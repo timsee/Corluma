@@ -51,28 +51,11 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
         size = QSize(int(size.width() * 0.08f), int(size.height() * 0.08f));
     } else if (buttonSize == EButtonSize::medium) {
         size = QSize(int(size.width() * 0.1f), int(size.height() * 0.1f));
-    } else if (buttonSize == EButtonSize::rectangle) {
-        // extremely thin aspect ratios will likely make the rectangle still pretty thin, so account
-        // for that
-        auto ratio = float(size.height()) / size.width();
-        auto width = size.width() * 0.15f;
-        auto height = size.height() * 0.07f;
-        if (ratio > 1.3f) {
-            width = size.width() * 0.2f;
-            height = size.height() * 0.1f;
-        }
-        size = QSize(int(width), int(height));
     }
 
-    int fixedWidth;
-    int fixedHeight;
-    if (buttonSize == EButtonSize::rectangle) {
-        fixedWidth = size.width() * int(buttons.size());
-        fixedHeight = size.height();
-    } else {
-        fixedWidth = size.height() * int(buttons.size());
-        fixedHeight = size.height();
-    }
+    int fixedWidth = size.height() * int(buttons.size());
+    int fixedHeight = size.height();
+
     setFixedSize(QSize(fixedWidth, fixedHeight));
 
     // setup the horizontal buttons
@@ -127,18 +110,6 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             auto lightsButton = new cor::Button(this, state);
             mButtons[i] = static_cast<QPushButton*>(lightsButton);
             Q_ASSERT(mButtons[i]);
-        } else if (mNames[i] == "Discovery_ArduCor") {
-            foundMatch = true;
-            mButtons[i] = new ConnectionButton(this);
-            mButtons[i]->setText("ArduCor");
-        } else if (mNames[i] == "Discovery_Hue") {
-            foundMatch = true;
-            mButtons[i] = new ConnectionButton(this);
-            mButtons[i]->setText("Hue");
-        } else if (mNames[i] == "Discovery_NanoLeaf") {
-            foundMatch = true;
-            mButtons[i] = new ConnectionButton(this);
-            mButtons[i]->setText("NanoLeaf");
         }
 
         if (foundMatch) {
@@ -186,10 +157,6 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             }
         }
     }
-
-    if (buttonSize == EButtonSize::rectangle) {
-        handleRectangleFontSize();
-    }
 }
 
 
@@ -220,30 +187,6 @@ void FloatingLayout::updateCollectionButton(const QString& resource) {
     for (std::size_t i = 0u; i < mButtons.size(); ++i) {
         if (mNames[i] == "New_Group") {
             cor::resizeIcon(mButtons[i], resource);
-        }
-    }
-}
-
-void FloatingLayout::updateDiscoveryButton(EProtocolType type, EConnectionState connectionState) {
-    QString label;
-    switch (type) {
-        case EProtocolType::hue:
-            label = "Discovery_Hue";
-            break;
-        case EProtocolType::arduCor:
-            label = "Discovery_ArduCor";
-            break;
-        case EProtocolType::nanoleaf:
-            label = "Discovery_NanoLeaf";
-            break;
-        default:
-            break;
-    }
-    for (std::size_t i = 0u; i < mButtons.size(); ++i) {
-        if (mNames[i] == label) {
-            auto connectionButton = dynamic_cast<ConnectionButton*>(mButtons[i]);
-            Q_ASSERT(connectionButton);
-            connectionButton->changeState(connectionState);
         }
     }
 }
@@ -320,43 +263,4 @@ bool FloatingLayout::isALightsButton(std::uint32_t index) {
 
 QSize FloatingLayout::buttonSize() {
     return {width() / int(mButtons.size()), height()};
-}
-
-void FloatingLayout::handleRectangleFontSize() {
-    QPushButton* widget = nullptr;
-    for (auto button : mButtons) {
-        if (button->text() == "NanoLeaf") {
-            widget = button;
-        }
-    }
-    // no nanoleaf, no need to resize text
-    if (widget == nullptr) {
-        return;
-    }
-
-#if defined(Q_OS_IOS)
-    const auto& text = QString("NanoLeaf");
-    // calcuate the text's size
-    auto systemFontWidth = widget->fontMetrics().boundingRect(text).width();
-    // calculate the button's size
-    auto buttonWidth = (widget->width() - widget->iconSize().width()) * 0.95;
-    // check if font needs to be resized
-    if (systemFontWidth > buttonWidth) {
-        auto fontPtSize = widget->font().pointSize();
-        QFont font(widget->font());
-        for (auto i = fontPtSize - 1; i > 0; --i) {
-            font.setPointSize(i);
-            widget->setFont(font);
-            auto newFontWidth = widget->fontMetrics().boundingRect(text).width();
-            if (newFontWidth < buttonWidth) {
-                // font is small enough to fit
-                break;
-            }
-        }
-
-        for (auto button : mButtons) {
-            button->setFont(font);
-        }
-    }
-#endif // Q_OS_IOS
 }

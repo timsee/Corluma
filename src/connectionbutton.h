@@ -24,6 +24,10 @@ public:
         setStyleSheet("text-align:left;");
     }
 
+    explicit ConnectionButton(const QString& text, QWidget* parent) : ConnectionButton(parent) {
+        setText(text);
+    }
+
     /// change the state of the button, changign what icon displays
     void changeState(EConnectionState state) {
         if (mState != state) {

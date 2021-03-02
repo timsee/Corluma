@@ -14,7 +14,7 @@ linux:!android {
     TARGET = corluma
 }
 TEMPLATE = app
-VERSION = 0.21.84
+VERSION = 0.21.85
 
 #----------
 # Build flags
@@ -189,6 +189,10 @@ ios {
    # adds the icon files to the iOS application
    ios_icon.files = $$files($$PWD/ios/icon/AppIcon*.png)
    QMAKE_BUNDLE_DATA += ios_icon
+
+   # add the launch images
+   app_launch_images.files = $$PWD/ios/Launch.xib $$files($$PWD/ios/launch_image/LaunchImage*.png)
+   QMAKE_BUNDLE_DATA += app_launch_images
 }
 
 
@@ -380,6 +384,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     debugconnectionspoofer.h \
     discovery/discoveryhuewidget.h \
     discovery/discoverynanoleafwidget.h \
+    discovery/discoverytopmenu.h \
     discovery/discoverytypewidget.h \
     discovery/discoveryarducorwidget.h \
     cor/protocols.h \
@@ -576,4 +581,3 @@ equals(SHOULD_USE_SHARE_UTILS, 1) {
             android/src/org/cor/corluma/activity/QShareActivity.java
     }
 }
-android: include(/home/umbreon/Android/Sdk/android_openssl/openssl.pri)

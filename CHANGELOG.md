@@ -1205,3 +1205,11 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Added new splash screen.
 - Removed unused assets and classes.
 - Relaxed state update timers for Hue and Nanoleaf.
+
+### **v0.21.85**
+### Bug Fixes
+- Added a `generate_icons.py` script to generate a `.icns`, a `.ico`, and an iOS compatible folder of icons from a single square icon file.
+- Added iOS launch screens.
+- Fixed a bug with selecting a proper color scheme circle.
+- Added a hack to try to debug why android loses connection after a long time with `QNetworkAccessManager`.
+- Fixed miscellaneous bugs.

@@ -198,6 +198,7 @@ void CommArduCor::stopStateUpdates() {
 
 void CommArduCor::resetStateUpdates() {
     mHTTP->resetStateUpdateTimeout();
+    mHTTP->resetNetworkManager();
     mUDP->resetStateUpdateTimeout();
 #ifdef USE_SERIAL
     mSerial->resetStateUpdateTimeout();

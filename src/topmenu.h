@@ -10,6 +10,7 @@
 #include "cor/objects/page.h"
 #include "cor/widgets/button.h"
 #include "data/groupdata.h"
+#include "discovery/discoverytopmenu.h"
 #include "floatinglayout.h"
 #include "globalbrightnesswidget.h"
 #include "lightspage.h"
@@ -115,9 +116,6 @@ public:
     /// getter for single light brightness
     SingleLightBrightnessWidget* singleLightBrightness() { return mSingleLightBrightness; }
 
-    /// getter for the lights floating layout
-    FloatingLayout* lightsFloatingLayout() { return mLightsFloatingLayout; }
-
     /// update the lights menus
     void updateLightsMenu();
 
@@ -126,6 +124,9 @@ public:
 
     /// close the routine pages
     void closeRoutinesPage();
+
+    /// menu for Lights page
+    DiscoveryTopMenu* discoveryMenu();
 
 signals:
 
@@ -285,9 +286,6 @@ private:
     /// routine widget for ColorPage and PalettePage
     FloatingLayout* mRoutineFloatingLayout;
 
-    /// floating layout for lights menu
-    FloatingLayout* mLightsFloatingLayout;
-
     /// floating layout to add new lights
     FloatingLayout* mAddLightsFloatingLayout;
 
@@ -299,6 +297,9 @@ private:
 
     /// select lights button for portait display ratios when no lights are selected
     SelectLightsButton* mSelectLightsButton;
+
+    /// menu for lights page.
+    DiscoveryTopMenu* mDiscoveryTopMenu;
 };
 
 #endif // TOPMENU_H
