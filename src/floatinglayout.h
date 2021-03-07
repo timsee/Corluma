@@ -101,6 +101,9 @@ public:
     /// true if key is highlighted in layout, false otherwise
     bool isKeyHighlighted(const QString& key);
 
+    /// use a darker theme for the buttons than a standard FloatingLayout
+    void useDarkTheme();
+
 signals:
     /*!
      * \brief buttonPressed emitted whenever a button is pressed with a QString representing the

@@ -172,9 +172,6 @@ private:
     TimeoutButton* mTimeoutButton;
 #endif // USE_EXPERIMENTAL_FEATURES
 
-    /// update the single color button based off of what is selected
-    void updateSingleColorButton();
-
     /// stored values for last devices to prevent unnecessary renders
     std::vector<cor::Light> mLastDataLights;
 

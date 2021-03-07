@@ -44,16 +44,18 @@ const static QString kFirstTimeOpenKey = QString("Corluma_FirstTimeOpen");
 
 
 int main(int argc, char* argv[]) {
-    QApplication a(argc, argv);
-    QSettings settings;
-
-    //--------------------
-    // set app name
-    //--------------------
-
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QCoreApplication::setOrganizationName("Corluma");
     QCoreApplication::setApplicationName("Corluma");
 
+#if defined(Q_OS_IOS)
+    // band-aid hack to fix font scaling on iOS devices.
+    qputenv("QT_FONT_DPI", "48");
+#endif
+    
+    QApplication a(argc, argv);
+    QSettings settings;
     //--------------------
     // create app icon
     //--------------------

@@ -53,6 +53,7 @@ public:
         auto font = mName->font();
         font.setPointSize(20);
         mName->setFont(font);
+        mName->setWordWrap(true);
 
         mStateButton->setVisible(false);
         mStateButton->setIconPercent(0.85);

@@ -82,8 +82,7 @@ void ListWidget::resizeWidgets() {
         }
     } else if (mListLayout.type() == cor::EListType::grid) {
         for (auto widget : mListLayout.widgets()) {
-            int maxWidth = parentWidget()->width() / 2;
-            // TODO: should this be using its parents width for height?
+            int maxWidth = width() / 2;
             QPoint position = mListLayout.widgetPosition(widget);
             widget->setGeometry(position.x() * maxWidth,
                                 position.y() * widgetHeight,

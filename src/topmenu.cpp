@@ -153,6 +153,7 @@ TopMenu::TopMenu(QWidget* parent,
             SLOT(floatingLayoutButtonPressed(QString)));
     std::vector<QString> verticalButtons = {QString("Plus"), QString("Help")};
     mAddLightsFloatingLayout->setupButtons(verticalButtons, EButtonSize::small);
+    mAddLightsFloatingLayout->useDarkTheme();
 
     connect(mDiscoveryTopMenu,
             SIGNAL(buttonPressed(QString)),

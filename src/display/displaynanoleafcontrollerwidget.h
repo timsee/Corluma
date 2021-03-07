@@ -57,6 +57,7 @@ public:
         auto font = mName->font();
         font.setPointSize(20);
         mName->setFont(font);
+        mName->setWordWrap(true);
         connect(mChangeNameInput, SIGNAL(textAdded(QString)), this, SLOT(nameChanged(QString)));
         connect(mChangeNameInput, SIGNAL(cancelClicked()), this, SLOT(closeNameWidget()));
         mChangeNameInput->setVisible(false);

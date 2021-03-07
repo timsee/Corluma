@@ -6,11 +6,9 @@
         <file>images/clearAllIcon.png</file>
         <file>images/closedArrow.png</file>
         <file>images/discoveryIcon.png</file>
-        <file>images/editIcon.png</file>
         <file>images/openedArrow.png</file>
         <file>images/backArrow.png</file>
         <file>images/huerangeFade.png</file>
-        <file>images/pressHueBridgeImage.png</file>
         <file>images/checkmark.png</file>
         <file>images/wifi.png</file>
         <file>images/hueRange_icon.png</file>
@@ -21,10 +19,7 @@
         <file>resources/Copyright.html</file>
         <file>resources/FAQ.html</file>
         <file>images/closeX.png</file>
-        <file>images/ColorSchemePicker_icon.png</file>
-        <file>images/Hue-Bridge.png</file>
         <file>images/plusIcon.png</file>
-        <file>images/groupsIcon.png</file>
         <file>images/roomIcon.png</file>
         <file>images/offSwitch.png</file>
         <file>images/onSwitch.png</file>
@@ -60,14 +55,10 @@
         <file>images/hue_range.png</file>
         <file>images/ct_range.png</file>
         <file>images/syncing.gif</file>
-        <file>images/questionMark.png</file>
         <file>images/arrowLeft.png</file>
         <file>images/arrowRight.png</file>
         <file>images/hue_play.png</file>
-        <file>images/schedule-icon.png</file>
         <file>images/warning_icon.png</file>
-        <file>images/sawtooth_in.png</file>
-        <file>images/sawtooth_out.png</file>
         <file>images/checkbox_checked.png</file>
         <file>images/checkbox_disabled.png</file>
         <file>images/checkbox_unchecked.png</file>
@@ -78,5 +69,19 @@
         <file>images/slow_icon.png</file>
         <file>images/timeout_icon.png</file>
         <file>images/desktop_splash_screen.png</file>
+        <file>images/hue_bridge_press.png</file>
+        <file>images/hue_bridge.png</file>
+        <file>images/mood_icon.png</file>
+        <file>images/multi_color_icon.png</file>
+        <file>images/single_color_icon.png</file>
+        <file>images/edit_icon.png</file>
+        <file>images/room_icon.png</file>
+        <file>images/groups_icon.png</file>
+        <file>images/fade/fade_sawtooth_out_icon.png</file>
+        <file>images/fade/fade_sine_icon.png</file>
+        <file>images/fade/fade_blink_icon.png</file>
+        <file>images/fade/fade_sawtooth_in_icon.png</file>
+        <file>images/fade/fade_linear_icon.png</file>
+        <file>images/question_mark.png</file>
     </qresource>
 </RCC>

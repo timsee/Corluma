@@ -53,8 +53,8 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
         size = QSize(int(size.width() * 0.1f), int(size.height() * 0.1f));
     }
 
-    int fixedWidth = size.height() * int(buttons.size());
-    int fixedHeight = size.height();
+    auto fixedWidth = size.height() * int(buttons.size());
+    auto fixedHeight = size.height();
 
     setFixedSize(QSize(fixedWidth, fixedHeight));
 
@@ -110,6 +110,18 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             auto lightsButton = new cor::Button(this, state);
             mButtons[i] = static_cast<QPushButton*>(lightsButton);
             Q_ASSERT(mButtons[i]);
+        } else if (mNames[i] == "Discovery_ArduCor") {
+            foundMatch = true;
+            mButtons[i] = new ConnectionButton(this);
+            mButtons[i]->setText("ArduCor");
+        } else if (mNames[i] == "Discovery_Hue") {
+            foundMatch = true;
+            mButtons[i] = new ConnectionButton(this);
+            mButtons[i]->setText("Hue");
+        } else if (mNames[i] == "Discovery_NanoLeaf") {
+            foundMatch = true;
+            mButtons[i] = new ConnectionButton(this);
+            mButtons[i]->setText("NanoLeaf");
         }
 
         if (foundMatch) {
@@ -142,7 +154,7 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
                 } else if (mNames[i] == "Plus") {
                     cor::resizeIcon(mButtons[i], ":/images/plusIcon.png");
                 } else if (mNames[i] == "Help") {
-                    cor::resizeIcon(mButtons[i], ":/images/questionMark.png");
+                    cor::resizeIcon(mButtons[i], ":/images/question_mark.png");
                 } else if (mNames[i] == "Close") {
                     cor::resizeIcon(mButtons[i], ":/images/disabledX.png");
                 } else if (mNames[i] == "HueLightSearch") {
@@ -152,7 +164,7 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
                 } else if (mNames[i] == "Group_Details") {
                     cor::resizeIcon(mButtons[i], ":/images/wheels/color_wheel_hsv.png");
                 } else if (mNames[i] == "Group_Edit") {
-                    cor::resizeIcon(mButtons[i], ":/images/editIcon.png");
+                    cor::resizeIcon(mButtons[i], ":/images/edit_icon.png");
                 }
             }
         }
@@ -251,6 +263,15 @@ void FloatingLayout::handleButtonPressed(int buttonIndex) {
         emit buttonPressed(label);
     }
 }
+
+void FloatingLayout::useDarkTheme() {
+    const QString stylesheet = "QPushButton { background-color:rgb(33,32,32); } "
+                               "QPushButton:checked { background-color:#4A4949; }";
+    for (auto button : mButtons) {
+        button->setStyleSheet(stylesheet);
+    }
+}
+
 
 //--------------------------------
 // Helpers

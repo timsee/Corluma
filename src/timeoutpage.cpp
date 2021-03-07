@@ -62,6 +62,9 @@ void TimeoutPage::update(bool timeoutEnabled, int timeoutValue) {
     } else {
         mTimeChooserWidget->setValue(timeoutValue);
     }
+
+    updateLights();
+
     if ((mTimeChooserWidget->isEnabled() != timeoutEnabled)
         || (timeoutValue != mTimeChooserWidget->value())) {
         emit timeoutUpdated(timeoutEnabled, timeoutValue);
@@ -69,11 +72,12 @@ void TimeoutPage::update(bool timeoutEnabled, int timeoutValue) {
 }
 
 void TimeoutPage::updateLights() {
+    mLights->clear();
+    mLights->addLights(mData->lights());
     renderUI();
 }
 
 void TimeoutPage::renderUI() {
-    mLights->addLights(mData->lights());
     mLights->updateTimeouts();
 
     // determine sync state

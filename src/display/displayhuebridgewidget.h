@@ -74,6 +74,7 @@ public:
         auto font = mName->font();
         font.setPointSize(20);
         mName->setFont(font);
+        mName->setWordWrap(true);
 
         mInfoButton->setCheckable(true);
         mLightsButton->setCheckable(true);

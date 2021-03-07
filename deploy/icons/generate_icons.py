@@ -35,7 +35,7 @@ def generate_icon(input, output_dir, output_name, side):
     return output_file
 
 
-def make_icons(input):
+def generate_ios(input):
     # generate all the iOS size variants
     # https://doc.qt.io/qt-5/ios-platform-notes.html
     ios_output_dir = f"./output/appIcon"
@@ -61,6 +61,8 @@ def make_icons(input):
     for file, size in ios_output_files:
         generate_icon(input, ios_output_dir, file, size)
 
+
+def generate_mac(input):
     # generate all the mac size variants
     # https://stackoverflow.com/questions/12306223/how-to-manually-create-icns-files-using-iconutil
     mac_output_dir = f"./output/icon.iconset"
@@ -89,24 +91,26 @@ def make_icons(input):
     os.system(f"rm -rf {mac_output_dir}")
 
 
+def generate_ico(input):
     # https://superuser.com/questions/227736/how-do-i-convert-a-png-into-a-ico
     # create .ico files
-    ico_output_dir = f"./output/tmp_ico"
+    ico_output_dir = f"./output/temp_ico"
     Path(ico_output_dir).mkdir(parents=True, exist_ok=True)
     ico_output_files = [
-        ("24", 24),
-        ("32", 32),
-        ("40", 40),
-        ("48", 48),
-        ("64", 64),
-        ("96", 96),
-        ("128", 128),
-        ("256", 256)
+        ("icon_24", 24),
+        ("icon_32", 32),
+        ("icon_40", 40),
+        ("icon_48", 48),
+        ("icon_64", 64),
+        ("icon_96", 96),
+        ("icon_128", 128),
+        ("icon_256", 256)
     ]
     ico_file_paths = []
-    for file, size in mac_output_files:
+    for file, size in ico_output_files:
         ico_file_paths.append(generate_icon(input, ico_output_dir, file, size))
-
+    # convert a list of ico files into an .ico format. This format is used by
+    # both linux and windows in qt.
     ico_script = f"convert {' '.join(ico_file_paths)} ./output/icon.ico"
     print(ico_script)
     os.system(ico_script)
@@ -114,6 +118,8 @@ def make_icons(input):
     # clean up
     os.system(f"rm -rf {ico_output_dir}")
 
+
+def generate_docs(input):
     # add an icon for docs
     docs_output_dir = f"./output/docs"
     Path(docs_output_dir).mkdir(parents=True, exist_ok=True)
@@ -124,7 +130,11 @@ def main():
     args = cli_to_args()
     overall_run_time = time.time()
 
-    make_icons(args.icon_file)
+    input = args.icon_file
+    generate_ios(input)
+    generate_mac(input)
+    generate_ico(input)
+    generate_docs(input)
 
     overall_run_time =  time.time() - overall_run_time
     print(f"Overall runtime: {seconds_to_time_str(overall_run_time)}.")

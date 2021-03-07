@@ -19,7 +19,8 @@ DiscoveryTypeWidget::DiscoveryTypeWidget(QWidget* parent,
       mHelpView{
           new cor::WebView("Discovery Help", "", parentWidget()->parentWidget()->parentWidget())},
       mHelpViewIsOpen{false},
-      mGreyout{new GreyOutOverlay(true, parentWidget()->parentWidget()->parentWidget())} {
+      mGreyout{new GreyOutOverlay(true, parentWidget()->parentWidget()->parentWidget())},
+      mRenderTimer{new QTimer(this)} {
     connect(mIPWidget, SIGNAL(textAdded(QString)), this, SLOT(textInputAddedIP(QString)));
     connect(mIPWidget, SIGNAL(cancelClicked()), this, SLOT(closeIPWidget()));
     mIPWidget->setVisible(false);
@@ -29,6 +30,12 @@ DiscoveryTypeWidget::DiscoveryTypeWidget(QWidget* parent,
 
     connect(mGreyout, SIGNAL(clicked()), this, SLOT(greyOutClicked()));
     mGreyout->greyOut(false);
+
+    connect(mRenderTimer, SIGNAL(timeout()), this, SLOT(renderUI()));
+
+#ifdef USE_EXPERIMENTAL_FEATURES
+    mRenderTimer->start(2000);
+#endif
 }
 
 void DiscoveryTypeWidget::fillList(QListWidget* list, std::vector<cor::Controller>& connections) {
@@ -55,6 +62,11 @@ void DiscoveryTypeWidget::fillList(QListWidget* list, std::vector<QString>& conn
     }
 }
 
+void DiscoveryTypeWidget::renderUI() {
+    if (mHelpViewIsOpen) {
+        mHelpView->updateHTML(discoveryHelpHTML());
+    }
+}
 
 void DiscoveryTypeWidget::openIPWidget() {
     mGreyout->greyOut(true);

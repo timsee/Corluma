@@ -423,10 +423,8 @@ void CommLayer::resetStateUpdates(EProtocolType type) {
         mArduCor->resetStateUpdates();
     } else if (type == EProtocolType::hue) {
         commByType(ECommType::hue)->resetStateUpdateTimeout();
-        mHue->resetNetworkManager();
     } else if (type == EProtocolType::nanoleaf) {
         commByType(ECommType::nanoleaf)->resetStateUpdateTimeout();
-        mNanoleaf->resetNetworkManager();
     }
     qDebug() << "INFO: reset state updates" << protocolToString(type);
 }

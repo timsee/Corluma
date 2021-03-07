@@ -335,7 +335,7 @@ bool LightList::removeLight(const cor::Light& removingLight) {
             auto it = mLights.begin() + i;
             if (it != mLights.end()) {
                 mLights.erase(it);
-                emit dataUpdate();
+                emit lightCountChanged();
                 return true;
             }
         }
@@ -352,13 +352,13 @@ bool LightList::addLight(cor::Light light) {
             // light already exists, update it
             if (mLights[i].uniqueID() == light.uniqueID()) {
                 mLights[i] = light;
-                emit dataUpdate();
+                emit lightCountChanged();
                 return true;
             }
         }
         // device doesn't exist, add it to the device
         mLights.push_back(light);
-        emit dataUpdate();
+        emit lightCountChanged();
     } else {
         // qDebug() << " not adding because light  isn't reachable " << light.name();
     }
@@ -369,6 +369,14 @@ bool LightList::addLights(const std::vector<cor::Light>& list) {
     for (const auto& light : list) {
         addLight(light);
     }
+    return true;
+}
+
+bool LightList::addMood(const std::vector<cor::Light>& list) {
+    for (const auto& light : list) {
+        addLight(light);
+    }
+    emit dataUpdate();
     return true;
 }
 

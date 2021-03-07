@@ -151,7 +151,7 @@ void DiscoveryArduCorWidget::resize() {
         yHeight += arduCorWidget->height();
     }
     mListWidget->mainWidget()->setFixedHeight(yHeight);
-    mListWidget->mainWidget()->setFixedWidth(width());
+    mListWidget->mainWidget()->setFixedWidth(width() * 0.9);
 
     // resize the help view
     resizeHelpView();
@@ -233,6 +233,10 @@ QString DiscoveryArduCorWidget::discoveryHelpHTML() {
     } else {
         sstream << "<li> UDP port is bound, UDP lights can connect succesfully.</li>";
     }
+    sstream << "<li> Last Send Time: " << mComm->arducor()->lastSendTime().toString().toStdString()
+            << " </li>";
+    sstream << "<li> Last Receive Time: "
+            << mComm->arducor()->lastReceiveTime().toString().toStdString() << " </li>";
     sstream << "</ul>";
     return QString(sstream.str().c_str());
 }

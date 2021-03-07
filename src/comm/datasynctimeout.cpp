@@ -68,6 +68,10 @@ void DataSyncTimeout::resetSync() {
 }
 
 void DataSyncTimeout::syncData() {
+#ifndef USE_EXPERIMENTAL_FEATURES
+    // turn off any data syncing for timeouts if experimental features aren't enabled.
+    mDataIsInSync = true;
+#endif
     if (!mDataIsInSync) {
         int countOutOfSync = 0;
         for (const auto& light : mData->lights()) {

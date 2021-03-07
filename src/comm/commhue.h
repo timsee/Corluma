@@ -288,17 +288,14 @@ public:
                           const QJsonObject& groupObject,
                           const QJsonObject& schedulesObject);
 
+    /// header of last request packet
+    QString lastRequestHeader() { return mLastRequestHeader; }
 
-    /// hack for certain environments where the network access manager goes stale (noticed in
-    /// android after the phone has been locked for a while)
-    void resetNetworkManager() {
-        delete mNetworkManager;
-        mNetworkManager = new QNetworkAccessManager(this);
-        connect(mNetworkManager,
-                SIGNAL(finished(QNetworkReply*)),
-                this,
-                SLOT(replyFinished(QNetworkReply*)));
-    }
+    /// body of last request packet
+    QString lastRequest() { return mLastRequest; }
+
+    /// string representation of the last response received.
+    QString lastResponse() { return QString(mLastResponse.toJson(QJsonDocument::Compact)); }
 
 signals:
     /*!
@@ -527,6 +524,15 @@ private:
 
     /// remove a light from the new light list when its been discovered fully.
     void removeFromNewLightsList(const QString& light);
+
+    /// header of last request packet
+    QString mLastRequestHeader;
+
+    /// body of last request packet
+    QString mLastRequest;
+
+    /// string representation of the last response received.
+    QJsonDocument mLastResponse;
 };
 
 #endif // COMMHUE_H

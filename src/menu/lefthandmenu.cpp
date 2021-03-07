@@ -73,10 +73,21 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
 
     mSingleColorButton = new LeftHandButton("Single Color",
                                             EPage::colorPage,
-                                            ":/images/wheels/color_wheel_hsv.png",
+                                            ":/images/single_color_icon.png",
                                             this);
     mSingleColorButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mSingleColorButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
+
+    mMultiColorButton = new LeftHandButton("Multi Color",
+                                           EPage::palettePage,
+                                           ":/images/multi_color_icon.png",
+                                           this);
+    mMultiColorButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    connect(mMultiColorButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
+
+    mMoodButton = new LeftHandButton("Moods", EPage::moodPage, ":/images/mood_icon.png", this);
+    mMoodButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    connect(mMoodButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
     mSettingsButton =
         new LeftHandButton("Settings", EPage::settingsPage, ":/images/settingsgear.png", this);
@@ -93,23 +104,6 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     mTimeoutButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mTimeoutButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 #endif
-
-    PresetPalettes palettes;
-    cor::LightState state;
-    state.routine(ERoutine::multiBars);
-    state.palette(palettes.palette(EPalette::water));
-    state.isOn(true);
-    mMultiColorButton = new LeftHandButton("Multi Color", EPage::palettePage, state, this);
-    mMultiColorButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(mMultiColorButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
-
-    cor::LightState moodState;
-    moodState.routine(ERoutine::multiFade);
-    moodState.palette(palettes.palette(EPalette::fire));
-    moodState.isOn(true);
-    mMoodButton = new LeftHandButton("Moods", EPage::moodPage, moodState, this);
-    mMoodButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(mMoodButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
     // by default, initialize with certain buttons disabled until a connection to any light is made
     enableButtons(false);
@@ -202,15 +196,6 @@ void LeftHandMenu::pushOut() {
 void LeftHandMenu::lightCountChanged() {
     const auto& lights = mComm->commLightsFromVector(mSelectedLights->lights());
     mMainPalette->updateLights(lights);
-    // loop for multi color lights
-    std::uint32_t multiColorLightCount = 0u;
-    for (const auto& light : lights) {
-        if (light.commType() != ECommType::hue) {
-            multiColorLightCount++;
-            break;
-        }
-    }
-    updateSingleColorButton();
 }
 
 
@@ -291,30 +276,6 @@ void LeftHandMenu::buttonPressed(EPage page) {
     }
 
     emit pressedButton(page);
-}
-
-void LeftHandMenu::updateSingleColorButton() {
-    bool hasHue = mSelectedLights->hasLightWithProtocol(EProtocolType::hue);
-    bool hasArduino = mSelectedLights->hasLightWithProtocol(EProtocolType::arduCor);
-    if (hasHue && !hasArduino) {
-        auto devices = mSelectedLights->lights();
-        std::vector<HueMetadata> hues;
-        for (auto& device : devices) {
-            if (device.protocol() == EProtocolType::hue) {
-                hues.push_back(mComm->hue()->metadataFromLight(device));
-            }
-        }
-
-        EHueType bestHueType = checkForHueWithMostFeatures(hues);
-        // get a vector of all the possible hue types for a check.
-        if (bestHueType == EHueType::ambient) {
-            mSingleColorButton->updateIcon(":images/wheels/color_wheel_ct.png");
-        } else {
-            mSingleColorButton->updateIcon(":images/wheels/color_wheel_hsv.png");
-        }
-    } else {
-        mSingleColorButton->updateIcon(":images/wheels/color_wheel_hsv.png");
-    }
 }
 
 

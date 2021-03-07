@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "cor/widgets/slider.h"
 #include "routines/routinewidget.h"
+#include "routines/fadebutton.h"
 
 /*!
  * \copyright
@@ -19,29 +20,23 @@ class SingleFadeRoutineWidget : public RoutineWidget {
 public:
     explicit SingleFadeRoutineWidget(QWidget* parent)
         : RoutineWidget(parent, "Linear Fade", ERoutine::singleFade),
-          mLinearButton{new QPushButton("Linear", this)},
-          mSineButton{new QPushButton("Sine", this)},
-          mBlinkButton{new QPushButton("Blink", this)},
-          mSawtoothInButton{new QPushButton(this)},
-          mSawtoothOutButton{new QPushButton(this)} {
+          mLinearButton{new cor::FadeButton(this, "Linear", ":/images/fade/fade_linear_icon.png")},
+          mSineButton{new cor::FadeButton(this, "Sine", ":/images/fade/fade_sine_icon.png")},
+          mBlinkButton{new cor::FadeButton(this, "Blink", ":/images/fade/fade_blink_icon.png")},
+          mSawtoothInButton{new cor::FadeButton(this, "Saw In", ":/images/fade/fade_sawtooth_in_icon.png")},
+          mSawtoothOutButton{new cor::FadeButton(this, "Saw Out", ":/images/fade/fade_sawtooth_out_icon.png")} {
         connect(mCheckBox,
                 SIGNAL(clicked(ECheckboxState)),
                 this,
                 SLOT(checkBoxClicked(ECheckboxState)));
 
-        mLinearButton->setCheckable(true);
-        mSineButton->setCheckable(true);
-        mBlinkButton->setCheckable(true);
-        mSawtoothInButton->setCheckable(true);
-        mSawtoothOutButton->setCheckable(true);
-
         highlightButton(ERoutine::singleFade, 0);
 
-        connect(mLinearButton, SIGNAL(clicked(bool)), this, SLOT(linearPressed(bool)));
-        connect(mSineButton, SIGNAL(clicked(bool)), this, SLOT(sinePressed(bool)));
-        connect(mBlinkButton, SIGNAL(clicked(bool)), this, SLOT(blinkPressed(bool)));
-        connect(mSawtoothInButton, SIGNAL(clicked(bool)), this, SLOT(sawtoothInPressed(bool)));
-        connect(mSawtoothOutButton, SIGNAL(clicked(bool)), this, SLOT(sawtoothOutPressed(bool)));
+        connect(mLinearButton, SIGNAL(pressed(QString)), this, SLOT(buttonPressed(QString)));
+        connect(mSineButton, SIGNAL(pressed(QString)), this, SLOT(buttonPressed(QString)));
+        connect(mBlinkButton, SIGNAL(pressed(QString)), this, SLOT(buttonPressed(QString)));
+        connect(mSawtoothInButton, SIGNAL(pressed(QString)), this, SLOT(buttonPressed(QString)));
+        connect(mSawtoothOutButton, SIGNAL(pressed(QString)), this, SLOT(buttonPressed(QString)));
     }
 
     /// update the color displayed by the widget
@@ -71,6 +66,33 @@ signals:
     void clicked(cor::LightState);
 
 private slots:
+
+    void buttonPressed(QString key) {
+        if (key == "Linear") {
+            mState.routine(ERoutine::singleFade);
+            mState.param(0);
+            highlightButton(ERoutine::singleFade, 0);
+        } else if (key == "Sine") {
+            mState.routine(ERoutine::singleFade);
+            mState.param(1);
+            highlightButton(ERoutine::singleFade, 1);
+        } else if (key == "Blink") {
+            mState.routine(ERoutine::singleBlink);
+            highlightButton(ERoutine::singleBlink, 0);
+        } else if (key == "Saw In") {
+            mState.routine(ERoutine::singleSawtoothFade);
+            mState.param(1);
+            highlightButton(ERoutine::singleSawtoothFade, 1);
+        } else if (key == "Saw Out") {
+            mState.routine(ERoutine::singleSawtoothFade);
+            mState.param(0);
+            highlightButton(ERoutine::singleSawtoothFade, 0);
+        }
+
+        mName->setText(key);
+        handleButtonPressed();
+    }
+
     /// handle when the checkbox is clicked
     void checkBoxClicked(ECheckboxState state) {
         if (state == ECheckboxState::unchecked) {
@@ -78,50 +100,6 @@ private slots:
             emit clicked(mState);
             update();
         }
-    }
-
-    /// handle the linear button
-    void linearPressed(bool) {
-        mState.routine(ERoutine::singleFade);
-        mState.param(0);
-        mName->setText("Linear Fade");
-        handleButtonPressed();
-        highlightButton(ERoutine::singleFade, 0);
-    }
-
-    /// handle the sine button
-    void sinePressed(bool) {
-        mState.routine(ERoutine::singleFade);
-        mState.param(1);
-        mName->setText("Sine Fade");
-        handleButtonPressed();
-        highlightButton(ERoutine::singleFade, 1);
-    }
-
-    /// handle the blink button
-    void blinkPressed(bool) {
-        mState.routine(ERoutine::singleBlink);
-        mName->setText("Blink");
-        handleButtonPressed();
-        highlightButton(ERoutine::singleBlink, 0);
-    }
-
-    /// handle the sawtooth in button
-    void sawtoothInPressed(bool) {
-        mState.routine(ERoutine::singleSawtoothFade);
-        mState.param(1);
-        mName->setText("Saw In");
-        handleButtonPressed();
-        highlightButton(ERoutine::singleSawtoothFade, 1);
-    }
-
-    /// handle the sawtooth out button
-    void sawtoothOutPressed(bool) {
-        mState.routine(ERoutine::singleSawtoothFade);
-        mState.param(0);
-        mName->setText("Saw Out");
-        handleButtonPressed();
-        highlightButton(ERoutine::singleSawtoothFade, 0);
     }
 
 private:
@@ -150,9 +128,6 @@ private:
         xPos += mSawtoothInButton->width() + buttonSpacer;
         mSawtoothOutButton->setGeometry(xPos, yPos, buttonSide, buttonSide);
         xPos += mSawtoothOutButton->width() + buttonSpacer;
-
-        addIconToButton(mSawtoothInButton, ":/images/sawtooth_in.png", buttonSide);
-        addIconToButton(mSawtoothOutButton, ":/images/sawtooth_out.png", buttonSide);
     }
 
     /// sine fade isnt as clear on nanoleafs, remove the option.
@@ -177,14 +152,6 @@ private:
         emit clicked(mState);
     }
 
-    /// adds icon to button
-    void addIconToButton(QPushButton* button, const QString& path, int buttonSide) {
-        auto pixmap = QPixmap(path);
-        button->setIconSize(QSize(buttonSide, buttonSide));
-        button->setIcon(QIcon(
-            pixmap.scaled(buttonSide, buttonSide, Qt::KeepAspectRatio, Qt::SmoothTransformation)));
-    }
-
     /// highlights a button based on the routine and parameter provided.
     void highlightButton(ERoutine routine, int param) {
         mLinearButton->setChecked(false);
@@ -207,19 +174,19 @@ private:
     }
 
     /// linear button
-    QPushButton* mLinearButton;
+    cor::FadeButton* mLinearButton;
 
     /// sine button
-    QPushButton* mSineButton;
+    cor::FadeButton* mSineButton;
 
     /// blink button
-    QPushButton* mBlinkButton;
+    cor::FadeButton* mBlinkButton;
 
     /// sawtooth in button
-    QPushButton* mSawtoothInButton;
+    cor::FadeButton* mSawtoothInButton;
 
     /// sawtooth out button
-    QPushButton* mSawtoothOutButton;
+    cor::FadeButton* mSawtoothOutButton;
 };
 
 #endif // SINGLEFADEROUTINEWIDGET_H

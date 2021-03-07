@@ -121,17 +121,6 @@ public:
     /// false if it does not.
     std::pair<nano::LeafSchedule, bool> timeoutSchedule(const QString& uniqueID);
 
-    /// hack for certain environments where the network access manager goes stale (noticed in
-    /// android after the phone has been locked for a while)
-    void resetNetworkManager() {
-        delete mNetworkManager;
-        mNetworkManager = new QNetworkAccessManager(this);
-        connect(mNetworkManager,
-                SIGNAL(finished(QNetworkReply*)),
-                this,
-                SLOT(replyFinished(QNetworkReply*)));
-    }
-
 private slots:
     /*!
      * \brief replyFinished called by the mNetworkManager, receives HTTP replies to packets

@@ -20,7 +20,7 @@ ListLightWidget::ListLightWidget(const cor::Light& light,
                                  EListLightWidgetType type,
                                  QWidget* parent)
     : cor::ListItemWidget(light.uniqueID(), parent),
-      mNoConnectionPixmap(":/images/questionMark.png"),
+      mNoConnectionPixmap(":/images/question_mark.png"),
       mType{type},
       mHardwareType{light.hardwareType()},
       mTypePixmap{lightHardwareTypeToPixmap(mHardwareType)},
@@ -291,7 +291,7 @@ void ListLightWidget::resizeIcons() {
     auto min = mTypeIcon->height();
     mTypePixmap = mTypePixmap.scaled(min, min, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     mTypeIcon->setPixmap(mTypePixmap);
-    mNoConnectionPixmap = QPixmap(":/images/questionMark.png");
+    mNoConnectionPixmap = QPixmap(":/images/question_mark.png");
     mNoConnectionPixmap =
         mNoConnectionPixmap.scaled(min, min, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }

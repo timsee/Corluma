@@ -40,7 +40,7 @@ DropdownTopWidget::DropdownTopWidget(const QString& key,
     mEditButton->setStyleSheet("border: none; background-color: rgba(0,0,0,0);");
     mEditButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mEditButton, SIGNAL(clicked(bool)), this, SLOT(editButtonClicked(bool)));
-    mEditIcon = QPixmap(":/images/editIcon.png");
+    mEditIcon = QPixmap(":/images/edit_icon.png");
     mEditButton->setIcon(QIcon(mEditIcon));
     mEditButton->setHidden(true);
 

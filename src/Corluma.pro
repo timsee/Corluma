@@ -14,7 +14,7 @@ linux:!android {
     TARGET = corluma
 }
 TEMPLATE = app
-VERSION = 0.21.85
+VERSION = 0.21.86
 
 #----------
 # Build flags
@@ -191,7 +191,7 @@ ios {
    QMAKE_BUNDLE_DATA += ios_icon
 
    # add the launch images
-   app_launch_images.files = $$PWD/ios/Launch.xib $$files($$PWD/ios/launch_image/LaunchImage*.png)
+   app_launch_images.files = $$files($$PWD/ios/launch_image/LaunchImage*.png)
    QMAKE_BUNDLE_DATA += app_launch_images
 }
 
@@ -446,6 +446,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     menu/standardmoodsmenu.h \
     menu/statelesslightslistmenu.h \
     menu/timeoutbutton.h \
+    routines/fadebutton.h \
     routines/routinecontainer.h \
     mooddetailedwidget.h \
     moodsyncwidget.h \

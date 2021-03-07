@@ -85,7 +85,7 @@ void DisplayPreviewBridgeWidget::handleBridgeState(EBridgeDiscoveryState state) 
     }
     if (state != mState || (mBridgePixmap.size() != QSize(width, width))) {
         if (state == EBridgeDiscoveryState::connected) {
-            mBridgePixmap = QPixmap(":images/Hue-Bridge.png");
+            mBridgePixmap = QPixmap(":images/hue_bridge.png");
             mBridgePixmap = mBridgePixmap.scaled(imageSize.width(),
                                                  imageSize.height(),
                                                  Qt::KeepAspectRatio,
@@ -93,7 +93,7 @@ void DisplayPreviewBridgeWidget::handleBridgeState(EBridgeDiscoveryState state) 
             mImage->setPixmap(mBridgePixmap);
             mCheckBox->setVisible(true);
         } else if (state == EBridgeDiscoveryState::lookingForUsername) {
-            mBridgePixmap = QPixmap(":images/pressHueBridgeImage.png");
+            mBridgePixmap = QPixmap(":images/hue_bridge_press.png");
             mBridgePixmap = mBridgePixmap.scaled(imageSize.width(),
                                                  imageSize.height(),
                                                  Qt::KeepAspectRatio,

@@ -4,6 +4,7 @@
 #include <QLabel>
 #include <QLayout>
 #include <QListWidget>
+#include <QTimer>
 #include <QWidget>
 
 #include "comm/commlayer.h"
@@ -118,6 +119,11 @@ protected slots:
     /// handles when the greyout is clicked
     virtual void greyOutClicked() = 0;
 
+private slots:
+
+    /// rerenders the UI.
+    void renderUI();
+
 protected:
     /// resize the help view.
     void resizeHelpView();
@@ -139,6 +145,10 @@ protected:
 
     /// widget for greying out widgets in the background
     GreyOutOverlay* mGreyout;
+
+    /// timer that renders the page every _X_ seconds, only enabled when experimental features are
+    /// on.
+    QTimer* mRenderTimer;
 
     /*!
      * \brief fillList helper to fill a list with cor::Controllers

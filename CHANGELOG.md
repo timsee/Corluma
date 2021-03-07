@@ -1213,3 +1213,12 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed a bug with selecting a proper color scheme circle.
 - Added a hack to try to debug why android loses connection after a long time with `QNetworkAccessManager`.
 - Fixed miscellaneous bugs.
+
+### **v0.21.86**
+### The Second Icons Update
+- Added new icon assets.
+- Fixed a bug where timeouts were applied errorneously.
+- Added additional debugging readouts.
+- Fixed a UI issue with scroll areas on macOS.
+- Fixed places where text was cut off.
+- Fixed miscellaneous bugs.

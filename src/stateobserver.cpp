@@ -181,7 +181,7 @@ void StateObserver::moodChanged(std::uint64_t moodID) {
     if (result.second) {
         mData->clearLights();
         const auto& moodDict = mComm->makeMood(result.first);
-        mData->addLights(moodDict.items());
+        mData->addMood(moodDict.items());
         if (!moodDict.items().empty()) {
             mTopMenu->lightCountChanged();
             mMainWindow->leftHandMenu()->lightCountChanged();

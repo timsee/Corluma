@@ -179,7 +179,7 @@ void DiscoveryNanoLeafWidget::resize() {
     mListWidget->setGeometry(lightRect);
     mPlaceholderWidget->setGeometry(lightRect);
     mGreyout->resize();
-    mListWidget->mainWidget()->setFixedWidth(width());
+    mListWidget->mainWidget()->setFixedWidth(width() * 0.9);
 
     mListWidget->setPreferredWidgetHeight(height() / 2.7);
     mListWidget->resizeWidgets();
@@ -236,6 +236,11 @@ QString DiscoveryNanoLeafWidget::discoveryHelpHTML() {
     } else {
         sstream << "<li> ERROR: UPnP is not active. </li>";
     }
+    sstream << "<li> Last Send Time: " << mComm->nanoleaf()->lastSendTime().toString().toStdString()
+            << " </li>";
+    sstream << "<li> Last Receive Time: "
+            << mComm->nanoleaf()->lastReceiveTime().toString().toStdString() << " </li>";
+    sstream << "</ul>";
     sstream << "</ul>";
     return QString(sstream.str().c_str());
 }

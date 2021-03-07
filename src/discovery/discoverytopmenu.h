@@ -43,8 +43,6 @@ public:
 
         mOriginalSize = cor::applicationSize();
         resize();
-
-        handleRectangleFontSize();
     }
 
 
@@ -160,46 +158,6 @@ private:
                 break;
         }
         return label;
-    }
-
-    /// handle the font size of a button
-    void handleRectangleFontSize() {
-        QPushButton* widget = nullptr;
-        for (auto button : mButtons) {
-            if (button->text() == "NanoLeaf") {
-                widget = button;
-            }
-        }
-        // no nanoleaf, no need to resize text
-        if (widget == nullptr) {
-            return;
-        }
-
-#if defined(Q_OS_IOS)
-        const auto& text = QString("NanoLeaf");
-        // calcuate the text's size
-        auto systemFontWidth = widget->fontMetrics().boundingRect(text).width();
-        // calculate the button's size
-        auto buttonWidth = (widget->width() - widget->iconSize().width()) * 0.95;
-        // check if font needs to be resized
-        if (systemFontWidth > buttonWidth) {
-            auto fontPtSize = widget->font().pointSize();
-            QFont font(widget->font());
-            for (auto i = fontPtSize - 1; i > 0; --i) {
-                font.setPointSize(i);
-                widget->setFont(font);
-                auto newFontWidth = widget->fontMetrics().boundingRect(text).width();
-                if (newFontWidth < buttonWidth) {
-                    // font is small enough to fit
-                    break;
-                }
-            }
-
-            for (auto button : mButtons) {
-                button->setFont(font);
-            }
-        }
-#endif // Q_OS_IOS
     }
 
     /// resize widget programmatically

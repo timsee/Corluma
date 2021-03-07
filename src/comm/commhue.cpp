@@ -286,9 +286,10 @@ void CommHue::replyFinished(QNetworkReply* reply) {
         QString IP = hue::IPfromReplyIP(reply->url().toString());
         auto bridge = mDiscovery->bridgeFromIP(IP);
         // qDebug() << "Response:" << string;
-        QJsonDocument jsonResponse = QJsonDocument::fromJson(string.toUtf8());
+        auto jsonResponse = QJsonDocument::fromJson(string.toUtf8());
         // check validity of the document
         if (!jsonResponse.isNull()) {
+            mLastResponse = jsonResponse;
             if (jsonResponse.isObject()) {
                 parseJSONObject(bridge, jsonResponse.object());
             } else if (jsonResponse.isArray()) {
@@ -924,7 +925,7 @@ void CommHue::postJson(const hue::Bridge& bridge,
                        const QString& resource,
                        const QJsonObject& object) {
     QString urlString = urlStart(bridge) + resource;
-    // qDebug() << urlString;
+    qDebug() << urlString;
     QNetworkRequest request = QNetworkRequest(QUrl(urlString));
     request.setHeader(QNetworkRequest::ContentTypeHeader,
                       QStringLiteral("text/html; charset=utf-8"));
@@ -932,6 +933,9 @@ void CommHue::postJson(const hue::Bridge& bridge,
     QString strJson(doc.toJson(QJsonDocument::Compact));
     // qDebug() << strJson;
     mNetworkManager->post(request, strJson.toUtf8());
+    mLastSendTime = QTime::currentTime();
+    mLastRequestHeader = resource;
+    mLastRequest = strJson;
 }
 
 void CommHue::putJson(const hue::Bridge& bridge,
@@ -944,8 +948,11 @@ void CommHue::putJson(const hue::Bridge& bridge,
     QNetworkRequest request = QNetworkRequest(QUrl(urlString));
     request.setHeader(QNetworkRequest::ContentTypeHeader,
                       QStringLiteral("text/html; charset=utf-8"));
-    // qDebug() << "request: " << urlString << "json" << strJson;
+    qDebug() << "request: " << urlString << "json" << strJson;
     mNetworkManager->put(request, strJson.toUtf8());
+    mLastSendTime = QTime::currentTime();
+    mLastRequestHeader = resource;
+    mLastRequest = strJson;
 }
 
 
@@ -1044,11 +1051,15 @@ void CommHue::deleteGroup(const hue::Bridge& bridge, cor::Group group) {
 void CommHue::updateLightStates() {
     if (shouldContinueStateUpdate()) {
         for (const auto& bridge : mDiscovery->bridges().items()) {
-            QString urlString = urlStart(bridge) + "/lights/";
+            auto header = QString("/lights/");
+            QString urlString = urlStart(bridge) + header;
             QNetworkRequest request = QNetworkRequest(QUrl(urlString));
             request.setHeader(QNetworkRequest::ContentTypeHeader,
                               QStringLiteral("text/html; charset=utf-8"));
             mNetworkManager->get(request);
+            mLastSendTime = QTime::currentTime();
+            mLastRequestHeader = header;
+            mLastRequest = QString();
             mStateUpdateCounter++;
         }
         // checkReachability();
@@ -1063,8 +1074,12 @@ void CommHue::updateLightStates() {
 
 void CommHue::getGroups() {
     for (const auto& bridge : mDiscovery->bridges().items()) {
-        QString urlString = urlStart(bridge) + "/groups";
+        auto header = QString("/groups");
+        QString urlString = urlStart(bridge) + header;
         mNetworkManager->get(QNetworkRequest(QUrl(urlString)));
+        mLastSendTime = QTime::currentTime();
+        mLastRequestHeader = header;
+        mLastRequest = QString();
     }
 }
 
@@ -1074,15 +1089,23 @@ void CommHue::getGroups() {
 
 void CommHue::getSchedules() {
     for (const auto& bridge : mDiscovery->bridges().items()) {
-        QString urlString = urlStart(bridge) + "/schedules";
+        auto header = QString("/schedules");
+        QString urlString = urlStart(bridge) + header;
         mNetworkManager->get(QNetworkRequest(QUrl(urlString)));
+        mLastSendTime = QTime::currentTime();
+        mLastRequestHeader = header;
+        mLastRequest = QString();
     }
 }
 
 void CommHue::deleteSchedule(hue::Schedule schedule) {
     for (const auto& bridge : mDiscovery->bridges().items()) {
-        QString urlString = urlStart(bridge) + "/schedules/" + QString::number(schedule.index());
+        auto header = "/schedules/" + QString::number(schedule.index());
+        QString urlString = urlStart(bridge) + header;
         mNetworkManager->deleteResource(QNetworkRequest(QUrl(urlString)));
+        mLastSendTime = QTime::currentTime();
+        mLastRequestHeader = header;
+        mLastRequest = QString();
     }
 }
 
@@ -1092,11 +1115,15 @@ void CommHue::deleteSchedule(hue::Schedule schedule) {
 
 
 void CommHue::requestNewLights(const hue::Bridge& bridge) {
-    QString urlString = urlStart(bridge) + "/lights/new";
+    auto header = "/lights/new";
+    QString urlString = urlStart(bridge) + header;
     QNetworkRequest request = QNetworkRequest(QUrl(urlString));
     request.setHeader(QNetworkRequest::ContentTypeHeader,
                       QStringLiteral("text/html; charset=utf-8"));
     mNetworkManager->get(request);
+    mLastSendTime = QTime::currentTime();
+    mLastRequestHeader = header;
+    mLastRequest = QString();
 }
 
 

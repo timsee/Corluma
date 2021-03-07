@@ -126,6 +126,14 @@ public:
     bool addLights(const std::vector<cor::Light>& list);
 
     /*!
+     * \brief addLights attempts to add a list of lights as a mood. This is different than addLights
+     * since this action emits a dataUpdate, while the other emits a lightCountChanged update.
+     * \param list list of lights to add
+     * \return* true if all are added, false otherwise.
+     */
+    bool addMood(const std::vector<cor::Light>& list);
+
+    /*!
      * \brief removeLights attempts to remove a list of lights
      * \param list the list to remove
      * \return true if all lights are removed, false if any aren't found.
@@ -200,9 +208,14 @@ public:
 signals:
 
     /*!
-     * \brief dataUpdate emits whenever theres a change to any device.
+     * \brief dataUpdate emits whenever theres a change to the state of any lights.
      */
     void dataUpdate();
+
+    /*!
+     * \brief lightCountChanged emits whenever theres a change to the count of lights.
+     */
+    void lightCountChanged();
 
 private:
     /*!

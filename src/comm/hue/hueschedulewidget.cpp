@@ -77,15 +77,19 @@ void HueScheduleWidget::resize() {
     yPosColumn1 += mNameLabel->height();
     yPosColumn2 += mNameLabel->height();
 
-    mTimeLabel->setGeometry(0, yPosColumn1, columnWidth, rowHeight * 2);
-    yPosColumn1 += mTimeLabel->height();
-    mStatusLabel->setGeometry(0, yPosColumn1, columnWidth, rowHeight * 2);
-    yPosColumn1 += mStatusLabel->height();
+    if (mIsTimeout) {
+        mTimeLabel->setGeometry(0, yPosColumn1, columnWidth * 2, rowHeight * 2);
+    } else {
+        mTimeLabel->setGeometry(0, yPosColumn1, columnWidth, rowHeight * 2);
+        yPosColumn1 += mTimeLabel->height();
+        mStatusLabel->setGeometry(0, yPosColumn1, columnWidth, rowHeight * 2);
+        yPosColumn1 += mStatusLabel->height();
 
-    mIndexLabel->setGeometry(columnWidth, yPosColumn2, columnWidth, rowHeight * 2);
-    yPosColumn2 += mIndexLabel->height();
-    mAutoDeleteLabel->setGeometry(columnWidth, yPosColumn2, columnWidth, rowHeight * 2);
-    yPosColumn2 += mAutoDeleteLabel->height();
+        mIndexLabel->setGeometry(columnWidth, yPosColumn2, columnWidth, rowHeight * 2);
+        yPosColumn2 += mIndexLabel->height();
+        mAutoDeleteLabel->setGeometry(columnWidth, yPosColumn2, columnWidth, rowHeight * 2);
+        yPosColumn2 += mAutoDeleteLabel->height();
+    }
 }
 
 void HueScheduleWidget::resizeEvent(QResizeEvent*) {
