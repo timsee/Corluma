@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.21.82</span>
+   &#160;<span id="projectnumber">v0.21.86</span>
    </div>
   </td>
  </tr>
@@ -65,7 +65,7 @@ $(function() {
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        : QWidget(parent),</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;          mLeftImage{<span class="keyword">new</span> QLabel(<span class="keyword">this</span>)},</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;          mRightImage{<span class="keyword">new</span> QLabel(<span class="keyword">this</span>)},</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;          mSpeedLabel{<span class="keyword">new</span> QLabel(<span class="stringliteral">&quot;Speed:&quot;</span>, <span class="keyword">this</span>)},</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;          mSpeedLabel{<span class="keyword">new</span> QLabel(<span class="stringliteral">&quot;&quot;</span>, <span class="keyword">this</span>)},</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;          mSlider{<span class="keyword">new</span> <a class="code" href="classcor_1_1_slider.html">cor::Slider</a>(<span class="keyword">this</span>)} {</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        mSpeedLabel-&gt;setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        mSlider-&gt;<a class="code" href="classcor_1_1_slider.html#aa39e4abc35fc8d288068b40c09e2b1d3">setColor</a>(QColor(255, 0, 0));</div>
@@ -130,31 +130,44 @@ $(function() {
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160; </div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        <span class="keyword">auto</span> sliderImageSize = width() / 9;</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        <span class="keyword">auto</span> sliderWidth = width() - sliderImageSize * 2 - sliderXSpacing * 3;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="keyword">auto</span> xPos = sliderXSpacing;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        <span class="comment">//    mSpeedLabel-&gt;setGeometry(sliderXSpacing,</span></div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        <span class="comment">//                             0,</span></div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        <span class="comment">//                             width() - sliderXSpacing * 2,</span></div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        <span class="comment">//                             mSpeedLabel-&gt;height());</span></div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        mLeftImage-&gt;setGeometry(xPos, sliderYSpacing, sliderImageSize, height());</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        xPos += mLeftImage-&gt;width() + sliderXSpacing;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        mSlider-&gt;setGeometry(xPos, sliderYSpacing, sliderWidth, height());</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        xPos += mSlider-&gt;width() + sliderXSpacing;</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        mRightImage-&gt;setGeometry(xPos, sliderYSpacing, sliderImageSize, height());</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    }</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160; </div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    QLabel* mLeftImage;</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    QLabel* mRightImage;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="keyword">auto</span> xPos = (width() - sliderWidth) / 2;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        <span class="keyword">auto</span> side = std::min(sliderImageSize, height());</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        <span class="comment">// first put the slider in the middle</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        mSlider-&gt;setGeometry(xPos, sliderYSpacing, sliderWidth, height());</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        <span class="comment">// now put the left image directly left</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        mLeftImage-&gt;setGeometry(xPos - side, sliderYSpacing, side, side);</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160; </div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        <span class="comment">// now put the right image directly right</span></div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;        mRightImage-&gt;setGeometry(xPos + mSlider-&gt;width(),</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;                                 sliderYSpacing,</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;                                 sliderImageSize,</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;                                 height());</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160; </div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        addIconTolabel(mLeftImage, <span class="stringliteral">&quot;:/images/slow_icon.png&quot;</span>, side);</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        addIconTolabel(mRightImage, <span class="stringliteral">&quot;:/images/fast_icon.png&quot;</span>, side);</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    }</div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    QLabel* mSpeedLabel;</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160; </div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <a class="code" href="classcor_1_1_slider.html">cor::Slider</a>* mSlider;</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160; </div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    std::uint32_t mStoredValue;</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;};</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160; </div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="preprocessor">#endif // SPEEDSLIDER_H</span></div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    <span class="keywordtype">void</span> addIconTolabel(QLabel* label, <span class="keyword">const</span> QString&amp; path, <span class="keywordtype">int</span> side) {</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        <span class="keyword">auto</span> pixmap = QPixmap(path);</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        pixmap = pixmap.scaled(side, side, Qt::KeepAspectRatio, Qt::SmoothTransformation);</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;        label-&gt;setPixmap(pixmap);</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    }</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160; </div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    QLabel* mLeftImage;</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160; </div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    QLabel* mRightImage;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160; </div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    QLabel* mSpeedLabel;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    <a class="code" href="classcor_1_1_slider.html">cor::Slider</a>* mSlider;</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    std::uint32_t mStoredValue;</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;};</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160; </div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="preprocessor">#endif // SPEEDSLIDER_H</span></div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="aclass_speed_slider_html_a1e506679422332ffb0cf5b43eff8cb66"><div class="ttname"><a href="class_speed_slider.html#a1e506679422332ffb0cf5b43eff8cb66">SpeedSlider::enable</a></div><div class="ttdeci">void enable(ERoutine routine, int)</div><div class="ttdoc">enable or disable the speed slider based off of the state of the RoutineContainer</div><div class="ttdef"><b>Definition:</b> speedslider.h:40</div></div>
 <div class="ttc" id="aclasscor_1_1_slider_html_aa39e4abc35fc8d288068b40c09e2b1d3"><div class="ttname"><a href="classcor_1_1_slider.html#aa39e4abc35fc8d288068b40c09e2b1d3">cor::Slider::setColor</a></div><div class="ttdeci">void setColor(const QColor &amp;color)</div><div class="ttdoc">setColor Does a dark to light gradient on the color provided on the background of the slider to the l...</div><div class="ttdef"><b>Definition:</b> slider.cpp:75</div></div>

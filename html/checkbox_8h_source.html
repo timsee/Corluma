@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.21.82</span>
+   &#160;<span id="projectnumber">v0.21.86</span>
    </div>
   </td>
  </tr>
@@ -100,19 +100,19 @@ $(function() {
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordtype">void</span> resize() {</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        mButton-&gt;setGeometry(0, 0, this-&gt;width(), this-&gt;height());</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <span class="keyword">const</span> <span class="keyword">auto</span>&amp; size = iconSize();</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        mClearAllPixmap = QPixmap(<span class="stringliteral">&quot;:/images/selectAllIcon.png&quot;</span>);</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        mClearAllPixmap = QPixmap(<span class="stringliteral">&quot;:/images/checkbox_checked.png&quot;</span>);</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        mClearAllPixmap = mClearAllPixmap.scaled(size.width(),</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;                                                 size.height(),</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                                                 Qt::IgnoreAspectRatio,</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;                                                 Qt::SmoothTransformation);</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        mSelectAllPixmap = QPixmap(<span class="stringliteral">&quot;:/images/uncheckedBox.png&quot;</span>);</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        mSelectAllPixmap = QPixmap(<span class="stringliteral">&quot;:/images/checkbox_unchecked.png&quot;</span>);</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        mSelectAllPixmap = mSelectAllPixmap.scaled(size.width(),</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;                                                   size.height(),</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                                                   Qt::IgnoreAspectRatio,</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                                                   Qt::SmoothTransformation);</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160; </div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        mDisabledPixmap = QPixmap(<span class="stringliteral">&quot;:/images/disabledX.png&quot;</span>);</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        mDisabledPixmap = QPixmap(<span class="stringliteral">&quot;:/images/checkbox_disabled.png&quot;</span>);</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        mDisabledPixmap = mDisabledPixmap.scaled(size.width(),</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                                                 size.height(),</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;                                                 Qt::IgnoreAspectRatio,</div>

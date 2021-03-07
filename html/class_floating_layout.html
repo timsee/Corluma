@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.21.82</span>
+   &#160;<span id="projectnumber">v0.21.86</span>
    </div>
   </td>
  </tr>
@@ -77,9 +77,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a8ca7951665db870460b16027ef9d80bc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a8ca7951665db870460b16027ef9d80bc">updateRoutine</a> (const <a class="el" href="classcor_1_1_light_state.html">cor::LightState</a> &amp;state)</td></tr>
 <tr class="memdesc:a8ca7951665db870460b16027ef9d80bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateRoutine show a routine on the button  <a href="class_floating_layout.html#a8ca7951665db870460b16027ef9d80bc">More...</a><br /></td></tr>
 <tr class="separator:a8ca7951665db870460b16027ef9d80bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae25094b39f74b7a90d55d802c4620d5a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#ae25094b39f74b7a90d55d802c4620d5a">updateDiscoveryButton</a> (EProtocolType type, EConnectionState connectionState)</td></tr>
-<tr class="memdesc:ae25094b39f74b7a90d55d802c4620d5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">updateDiscoveryButton update the icon of a discovery button. Shows the discovery state of the connection.  <a href="class_floating_layout.html#ae25094b39f74b7a90d55d802c4620d5a">More...</a><br /></td></tr>
-<tr class="separator:ae25094b39f74b7a90d55d802c4620d5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7127ba9b5265516594a116bd62e619ee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a7127ba9b5265516594a116bd62e619ee">addMultiRoutineIcon</a> (std::vector&lt; QColor &gt; colors)</td></tr>
 <tr class="memdesc:a7127ba9b5265516594a116bd62e619ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">addMultiRoutineIcon add a multi routine icon  <a href="class_floating_layout.html#a7127ba9b5265516594a116bd62e619ee">More...</a><br /></td></tr>
 <tr class="separator:a7127ba9b5265516594a116bd62e619ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -102,6 +99,10 @@ Public Member Functions</h2></td></tr>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a6a2f31b40796123f8d76c6a5a4d8d673">isKeyHighlighted</a> (const QString &amp;key)</td></tr>
 <tr class="memdesc:a6a2f31b40796123f8d76c6a5a4d8d673"><td class="mdescLeft">&#160;</td><td class="mdescRight">true if key is highlighted in layout, false otherwise <br /></td></tr>
 <tr class="separator:a6a2f31b40796123f8d76c6a5a4d8d673"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2715ca8cadfdeacddadef7f0590e1c5f"><td class="memItemLeft" align="right" valign="top"><a id="a2715ca8cadfdeacddadef7f0590e1c5f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_floating_layout.html#a2715ca8cadfdeacddadef7f0590e1c5f">useDarkTheme</a> ()</td></tr>
+<tr class="memdesc:a2715ca8cadfdeacddadef7f0590e1c5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">use a darker theme for the buttons than a standard <a class="el" href="class_floating_layout.html" title="The FloatingLayout class QWidget that floats in the top right corner of the screen instead of using t...">FloatingLayout</a> <br /></td></tr>
+<tr class="separator:a2715ca8cadfdeacddadef7f0590e1c5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><dl class="section copyright"><dt>Copyright</dt><dd>Copyright (C) 2015 - 2020. Released under the GNU General Public License. </dd></dl>
@@ -350,41 +351,6 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">resource</td><td>the resource to draw on the color page button. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="ae25094b39f74b7a90d55d802c4620d5a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae25094b39f74b7a90d55d802c4620d5a">&#9670;&nbsp;</a></span>updateDiscoveryButton()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void FloatingLayout::updateDiscoveryButton </td>
-          <td>(</td>
-          <td class="paramtype">EProtocolType&#160;</td>
-          <td class="paramname"><em>type</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">EConnectionState&#160;</td>
-          <td class="paramname"><em>connectionState</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">type</td><td>comm type of discovery button </td></tr>
-    <tr><td class="paramname">connectionState</td><td>state of connection </td></tr>
   </table>
   </dd>
 </dl>

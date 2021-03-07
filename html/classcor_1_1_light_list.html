@@ -21,7 +21,7 @@
   <td id="projectlogo"><img alt="Logo" src="icon.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">Corluma
-   &#160;<span id="projectnumber">v0.21.82</span>
+   &#160;<span id="projectnumber">v0.21.86</span>
    </div>
   </td>
  </tr>
@@ -65,8 +65,12 @@ $(function() {
 Signals</h2></td></tr>
 <tr class="memitem:a1cbdef7ff44c88c8dfa8ae3cdac4eedb"><td class="memItemLeft" align="right" valign="top"><a id="a1cbdef7ff44c88c8dfa8ae3cdac4eedb"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_light_list.html#a1cbdef7ff44c88c8dfa8ae3cdac4eedb">dataUpdate</a> ()</td></tr>
-<tr class="memdesc:a1cbdef7ff44c88c8dfa8ae3cdac4eedb"><td class="mdescLeft">&#160;</td><td class="mdescRight">dataUpdate emits whenever theres a change to any device. <br /></td></tr>
+<tr class="memdesc:a1cbdef7ff44c88c8dfa8ae3cdac4eedb"><td class="mdescLeft">&#160;</td><td class="mdescRight">dataUpdate emits whenever theres a change to the state of any lights. <br /></td></tr>
 <tr class="separator:a1cbdef7ff44c88c8dfa8ae3cdac4eedb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a75016f5c37b74c49deef2db0539172e0"><td class="memItemLeft" align="right" valign="top"><a id="a75016f5c37b74c49deef2db0539172e0"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_light_list.html#a75016f5c37b74c49deef2db0539172e0">lightCountChanged</a> ()</td></tr>
+<tr class="memdesc:a75016f5c37b74c49deef2db0539172e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">lightCountChanged emits whenever theres a change to the count of lights. <br /></td></tr>
+<tr class="separator:a75016f5c37b74c49deef2db0539172e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -124,6 +128,9 @@ std::uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 <tr class="memitem:aa6400872615a39a865895fc4e2200707"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_light_list.html#aa6400872615a39a865895fc4e2200707">addLights</a> (const std::vector&lt; <a class="el" href="classcor_1_1_light.html">cor::Light</a> &gt; &amp;list)</td></tr>
 <tr class="memdesc:aa6400872615a39a865895fc4e2200707"><td class="mdescLeft">&#160;</td><td class="mdescRight">addLights attempts to add a list of lights  <a href="classcor_1_1_light_list.html#aa6400872615a39a865895fc4e2200707">More...</a><br /></td></tr>
 <tr class="separator:aa6400872615a39a865895fc4e2200707"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade57583a7888c624003e22985ff16905"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_light_list.html#ade57583a7888c624003e22985ff16905">addMood</a> (const std::vector&lt; <a class="el" href="classcor_1_1_light.html">cor::Light</a> &gt; &amp;list)</td></tr>
+<tr class="memdesc:ade57583a7888c624003e22985ff16905"><td class="mdescLeft">&#160;</td><td class="mdescRight">addLights attempts to add a list of lights as a mood. This is different than addLights since this action emits a dataUpdate, while the other emits a lightCountChanged update.  <a href="classcor_1_1_light_list.html#ade57583a7888c624003e22985ff16905">More...</a><br /></td></tr>
+<tr class="separator:ade57583a7888c624003e22985ff16905"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa8419d70387a0267b7bf07ab1048ad0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcor_1_1_light_list.html#afa8419d70387a0267b7bf07ab1048ad0">removeLights</a> (const std::vector&lt; <a class="el" href="classcor_1_1_light.html">cor::Light</a> &gt; &amp;list)</td></tr>
 <tr class="memdesc:afa8419d70387a0267b7bf07ab1048ad0"><td class="mdescLeft">&#160;</td><td class="mdescRight">removeLights attempts to remove a list of lights  <a href="classcor_1_1_light_list.html#afa8419d70387a0267b7bf07ab1048ad0">More...</a><br /></td></tr>
 <tr class="separator:afa8419d70387a0267b7bf07ab1048ad0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -226,6 +233,31 @@ std::uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if all are added, false otherwise. </dd></dl>
+
+</div>
+</div>
+<a id="ade57583a7888c624003e22985ff16905"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade57583a7888c624003e22985ff16905">&#9670;&nbsp;</a></span>addMood()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool cor::LightList::addMood </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="classcor_1_1_light.html">cor::Light</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>list</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">list</td><td>list of lights to add </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>* true if all are added, false otherwise. </dd></dl>
 
 </div>
 </div>
