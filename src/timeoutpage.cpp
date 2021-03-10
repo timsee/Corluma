@@ -39,7 +39,7 @@ void TimeoutPage::resizeEvent(QResizeEvent*) {
     auto xPos = 0u;
     mOnOffSwitch->setGeometry(0, yPos, this->width() / 10.0, this->height() / 10);
     xPos += mOnOffSwitch->width();
-    mStateLabel->setGeometry(xPos, yPos, this->width() * 5 / 10, this->height() / 10);
+    mStateLabel->setGeometry(xPos, yPos, this->width() * 6 / 10, this->height() / 10);
     yPos += mStateLabel->height();
 
     auto timeoutLightsRect = QRect(0, yPos, this->width(), this->height() - yPos);

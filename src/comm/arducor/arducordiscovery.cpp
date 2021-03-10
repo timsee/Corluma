@@ -285,6 +285,7 @@ void ArduCorDiscovery::handleDiscoveredController(const cor::Controller& discove
 
     // add to the found controllers
     mFoundControllers.insert(discoveredController.name().toStdString(), discoveredController);
+    mLastDiscoveryTime = QTime::currentTime();
 
     // update json data, if needed
     updateJSON(discoveredController);

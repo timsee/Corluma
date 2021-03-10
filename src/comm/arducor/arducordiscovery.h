@@ -100,6 +100,9 @@ public:
     /// string at the beginning of each discovery packet.
     const static QString kDiscoveryPacketIdentifier;
 
+    /// the time the last arducor light was fully discovered.
+    QTime lastDiscoveryTime() const noexcept { return mLastDiscoveryTime; }
+
 private slots:
 
     /// slot for when the startup timer times out
@@ -159,6 +162,9 @@ private:
 
     /// flag that checks if more than 2 minutes have passed
     bool mStartupTimerFinished = false;
+
+    /// the time the last arducor light was fully discovered.
+    QTime mLastDiscoveryTime;
 
     /*!
      * \brief mStartupTimer in the first two minutes of the app's lifecycle, if nanoleaf is enabled

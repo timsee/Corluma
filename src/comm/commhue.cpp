@@ -948,7 +948,7 @@ void CommHue::putJson(const hue::Bridge& bridge,
     QNetworkRequest request = QNetworkRequest(QUrl(urlString));
     request.setHeader(QNetworkRequest::ContentTypeHeader,
                       QStringLiteral("text/html; charset=utf-8"));
-    qDebug() << "request: " << urlString << "json" << strJson;
+    // qDebug() << "request: " << urlString << "json" << strJson;
     mNetworkManager->put(request, strJson.toUtf8());
     mLastSendTime = QTime::currentTime();
     mLastRequestHeader = resource;

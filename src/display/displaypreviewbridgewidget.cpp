@@ -175,15 +175,18 @@ void DisplayPreviewBridgeWidget::resize() {
     yPosFirstColumn += mNameWidget->height();
 
     if (mState == EBridgeDiscoveryState::connected) {
-        mImage->setGeometry(xSpacer, yPosFirstColumn, columnWidth, rowHeight * 4);
-        yPosFirstColumn += rowHeight * 4;
+        auto minHeight = std::min(int(columnWidth), int(rowHeight * 4));
+        mImage->setGeometry(xSpacer, yPosFirstColumn, columnWidth, minHeight);
+        yPosFirstColumn += mImage->height();
+        mManageButton->setGeometry(xSpacer, yPosFirstColumn, columnWidth, rowHeight);
+        yPosFirstColumn += mManageButton->height();
         mMetadata->setGeometry(xSpacer, yPosFirstColumn, columnWidth, rowHeight * 2);
     } else {
         mMetadata->setGeometry(xSpacer, yPosFirstColumn, columnWidth, rowHeight * 2);
         yPosFirstColumn += rowHeight * 4;
+        yPosFirstColumn += mMetadata->height();
+        mManageButton->setGeometry(xSpacer, yPosFirstColumn, columnWidth, rowHeight);
     }
-    yPosFirstColumn += mMetadata->height();
-    mManageButton->setGeometry(xSpacer, yPosFirstColumn, columnWidth, rowHeight);
 
     if (mState == EBridgeDiscoveryState::connected) {
         QRect selectedLightsRect(xSecondColumnStart,

@@ -55,8 +55,8 @@ void KitchenTimerWidget::updateLine() {
 void KitchenTimerWidget::resizeEvent(QResizeEvent*) {
     updateLine();
     auto yPos = height() * 13 / 16;
-    auto xPos = this->width() * 0.3;
-    mValueLabel->setGeometry(xPos, yPos, this->width() * 0.2f, this->height() * 3 / 16);
+    auto xPos = this->width() * 0.1;
+    mValueLabel->setGeometry(xPos, yPos, this->width() * 0.4f, this->height() * 3 / 16);
     xPos += mValueLabel->width();
     xPos += this->width() * 0.1;
 

@@ -233,10 +233,18 @@ QString DiscoveryArduCorWidget::discoveryHelpHTML() {
     } else {
         sstream << "<li> UDP port is bound, UDP lights can connect succesfully.</li>";
     }
-    sstream << "<li> Last Send Time: " << mComm->arducor()->lastSendTime().toString().toStdString()
+#ifdef USE_EXPERIMENTAL_FEATURES
+    sstream << "<li> Discovery Time: "
+            << cor::makePrettyTimeOutput(mComm->arducor()->discovery()->lastDiscoveryTime())
+                   .toStdString()
+            << " </li>";
+    sstream << "<li> Last Send Time: "
+            << cor::makePrettyTimeOutput(mComm->arducor()->lastSendTime()).toStdString()
             << " </li>";
     sstream << "<li> Last Receive Time: "
-            << mComm->arducor()->lastReceiveTime().toString().toStdString() << " </li>";
+            << cor::makePrettyTimeOutput(mComm->arducor()->lastReceiveTime()).toStdString()
+            << " </li>";
+#endif
     sstream << "</ul>";
     return QString(sstream.str().c_str());
 }

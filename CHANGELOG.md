@@ -1222,3 +1222,9 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed a UI issue with scroll areas on macOS.
 - Fixed places where text was cut off.
 - Fixed miscellaneous bugs.
+
+### **v0.21.87**
+### Bug Fixes
+- Fixed bugs with logging the last request and response from various lights.
+- Started tracking the last time a light was discovered.
+- Fixed UI bugs related to text being cut off.

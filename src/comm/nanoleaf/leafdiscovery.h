@@ -136,6 +136,9 @@ public:
     /// load the json data.
     bool loadJSON() override;
 
+    /// the time the last nanoleaf was fully discovered.
+    QTime lastDiscoveryTime() const noexcept { return mLastDiscoveryTime; }
+
 private slots:
     /// all received UPnP packets are piped here to detect if they nanoleaf related
     void receivedUPnP(const QHostAddress& sender, const QString& payload);
@@ -173,6 +176,9 @@ private:
 
     /// flag that checks if more than 2 minutes have passed
     bool mStartupTimerFinished = false;
+
+    /// the time the last nanoleaf was fully discovered.
+    QTime mLastDiscoveryTime;
 
     /// used to send packets to the nanoleaf
     CommNanoleaf* mNanoleaf;

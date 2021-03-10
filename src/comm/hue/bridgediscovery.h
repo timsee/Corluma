@@ -160,6 +160,9 @@ public:
     /// load the json data.
     bool loadJSON() override;
 
+    /// the time the last bridge was fully discovered.
+    QTime lastDiscoveryTime() const noexcept { return mLastDiscoveryTime; }
+
 private slots:
 
     /*!
@@ -286,6 +289,9 @@ private:
 
     /// true if any NUPnP traffic has been received, false otherwise.
     bool mReceivedNUPnPTraffic;
+
+    /// the time the last bridge was fully discovered.
+    QTime mLastDiscoveryTime;
 
     /*!
      * \brief kAppName application name, required by Philips in devicetype.

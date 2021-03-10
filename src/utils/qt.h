@@ -153,6 +153,9 @@ inline int guardAgainstNegativeSize(int size) {
     return size;
 }
 
+/// converts a QTime into a pretty string, useful for debugging.
+QString makePrettyTimeOutput(QTime);
+
 /// QT6 and later uses QRegularExpression, Qt5 and earlier uses QRegExp, this function allows the
 /// app to compile for both.
 QStringList regexSplit(const QString& input, const QString& regex);

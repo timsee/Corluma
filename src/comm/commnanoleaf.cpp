@@ -53,6 +53,7 @@ void CommNanoleaf::getSchedules() {
             qDebug() << __func__ << " get schedule for " << light.name();
 #endif
             mNetworkManager->get(request);
+            mLastSendTime = QTime::currentTime();
         }
     } else {
 #ifdef DEBUG_LEAF_SCHEDULES
@@ -240,6 +241,7 @@ void CommNanoleaf::putJSON(const QNetworkRequest& request, const QJsonObject& js
     qDebug() << "sending" << request.url() << " JSON: " << strJson;
 #endif
     mNetworkManager->put(request, strJson.toUtf8());
+    mLastSendTime = QTime::currentTime();
 }
 
 void CommNanoleaf::testIP(const nano::LeafMetadata& light) {
@@ -256,6 +258,7 @@ void CommNanoleaf::testIP(const nano::LeafMetadata& light) {
     QString strJson(doc.toJson(QJsonDocument::Compact));
     // qDebug() << "sending" << urlString << "port" << light.port();
     mNetworkManager->post(request, strJson.toUtf8());
+    mLastSendTime = QTime::currentTime();
 }
 
 
@@ -271,6 +274,7 @@ void CommNanoleaf::testAuth(const nano::LeafMetadata& light) {
     qDebug() << " test Auth token of " << url;
 #endif
     mNetworkManager->get(request);
+    mLastSendTime = QTime::currentTime();
 }
 
 void CommNanoleaf::stateUpdate() {
@@ -279,6 +283,7 @@ void CommNanoleaf::stateUpdate() {
             /// first, request the general state of the light
             QNetworkRequest request = networkRequest(light, "");
             mNetworkManager->get(request);
+            mLastSendTime = QTime::currentTime();
 
             // TODO: query effects when necessary, used cache lookup when possible.
             /// next request information related to its current effect (displays the color and

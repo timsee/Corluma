@@ -82,6 +82,8 @@ void LeafDiscovery::foundNewLight(nano::LeafMetadata newLight) {
              << " rotation " << newLight.rotation();
 #endif
     mFoundLights.insert(newLight.serialNumber().toStdString(), newLight);
+    mLastDiscoveryTime = QTime::currentTime();
+
     updateJSON(newLight);
 }
 

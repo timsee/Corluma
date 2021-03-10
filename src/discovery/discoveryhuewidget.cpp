@@ -453,14 +453,20 @@ QString DiscoveryHueWidget::discoveryHelpHTML() {
     } else {
         sstream << "<li> ERROR: UPnP is not active. </li>";
     }
-    sstream << "<li> Last Send Time: " << mComm->hue()->lastSendTime().toString().toStdString()
-            << " </li>";
+#ifdef USE_EXPERIMENTAL_FEATURES
+    sstream
+        << "<li> Discovery Time: "
+        << cor::makePrettyTimeOutput(mComm->hue()->discovery()->lastDiscoveryTime()).toStdString()
+        << " </li>";
+    sstream << "<li> Last Send Time: "
+            << cor::makePrettyTimeOutput(mComm->hue()->lastSendTime()).toStdString() << " </li>";
     sstream << "<li> Last Receive Time: "
-            << mComm->hue()->lastReceiveTime().toString().toStdString() << " </li>";
+            << cor::makePrettyTimeOutput(mComm->hue()->lastReceiveTime()).toStdString() << " </li>";
     sstream << "<li> Last Request Header: " << mComm->hue()->lastRequestHeader().toStdString()
             << " </li>";
     sstream << "<li> Last Request: " << mComm->hue()->lastRequest().toStdString() << " </li>";
     sstream << "<li> Last Response: " << mComm->hue()->lastResponse().toStdString() << " </li>";
+#endif
     sstream << "</ul>";
     return QString(sstream.str().c_str());
 }

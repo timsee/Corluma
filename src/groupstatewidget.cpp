@@ -22,6 +22,7 @@ GroupStateWidget::GroupStateWidget(const cor::GroupState& groupState, QWidget* p
       mAllowInteraction{true},
       mHasRendered{false},
       mDisplayState{true},
+      mCondenseWidget{false},
       mFontPtSize(16),
       mName{new QLabel(this)} {
     mName->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -130,12 +131,42 @@ QString GroupStateWidget::createName(QString nameText) {
     return nameText;
 }
 
+
+namespace {
+
+/// logic to determine if the widget should be condensed or not
+bool shouldCondenseWidget(QSize size) {
+    auto iconSide = size.height() * 0.8;
+    if (iconSide > size.width() * 0.2) {
+        return true;
+    }
+    return false;
+}
+
+} // namespace
+
 void GroupStateWidget::resize() {
     int nameX = spacer();
     if (mDisplayState) {
-        nameX = stateIconRegion().x() + stateIconRegion().width() + spacer();
+        mCondenseWidget = shouldCondenseWidget(this->size());
+        if (mCondenseWidget) {
+            mName->setGeometry(nameX,
+                               stateIconRegion().y() + stateIconRegion().height(),
+                               width() - nameX,
+                               stateIconRegion().height());
+        } else {
+            nameX = stateIconRegion().x() + stateIconRegion().width() + spacer();
+            mName->setGeometry(nameX,
+                               stateIconRegion().y(),
+                               width() - nameX,
+                               stateIconRegion().height());
+        }
+    } else {
+        mName->setGeometry(nameX,
+                           stateIconRegion().y(),
+                           width() - nameX,
+                           stateIconRegion().height());
     }
-    mName->setGeometry(nameX, stateIconRegion().y(), width() - nameX, stateIconRegion().height());
 }
 
 
@@ -152,6 +183,11 @@ QRect GroupStateWidget::stateIconRegion() {
     auto iconSpacer = this->height() * 0.1;
     int x = spacer();
     int y = iconSpacer;
-    int side = int(height() * 0.8);
-    return QRect(x, y, side, side);
+    if (mCondenseWidget) {
+        int side = int(height() * 0.4);
+        return QRect(x, y, side, side);
+    } else {
+        int side = int(height() * 0.8);
+        return QRect(x, y, side, side);
+    }
 }

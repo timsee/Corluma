@@ -109,6 +109,10 @@ private:
     /// true if state should be displayed, false if just the metadata should be displayed
     bool mDisplayState;
 
+    /// for widgets in smaller spaces, this flag denotes that objects should be drawn at smaller
+    /// sizes.
+    bool mCondenseWidget;
+
     /// font point size for widget
     int mFontPtSize;
 

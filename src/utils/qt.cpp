@@ -11,6 +11,16 @@
 
 namespace cor {
 
+QString makePrettyTimeOutput(QTime time) {
+    QString output = time.toString();
+    auto timeAgo = time.msecsTo(QTime::currentTime()) / 1000;
+    if (timeAgo > 300) {
+        timeAgo = timeAgo / 60.0;
+        return output + " (" + QString::number(timeAgo) + "min ago)";
+    }
+    return output + " (" + QString::number(timeAgo) + "s ago)";
+}
+
 QStringList regexSplit(const QString& input, const QString& regex) {
 #ifdef USE_QT_6
     QRegularExpression rx(regex);

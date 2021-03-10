@@ -513,6 +513,7 @@ hue::Bridge BridgeDiscovery::parseInitialUpdate(hue::Bridge bridge, const QJsonO
             QJsonObject schedulesObject = object["schedules"].toObject();
             QJsonObject groupsObject = object["groups"].toObject();
             bridge.lights(lightDict);
+            mLastDiscoveryTime = QTime::currentTime();
             // signal a discovered bridge to the CommHue object
             mHue->bridgeDiscovered(bridge, lightsObject, groupsObject, schedulesObject);
         }

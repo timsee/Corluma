@@ -236,11 +236,18 @@ QString DiscoveryNanoLeafWidget::discoveryHelpHTML() {
     } else {
         sstream << "<li> ERROR: UPnP is not active. </li>";
     }
-    sstream << "<li> Last Send Time: " << mComm->nanoleaf()->lastSendTime().toString().toStdString()
+#ifdef USE_EXPERIMENTAL_FEATURES
+    sstream << "<li> Discovery Time: "
+            << cor::makePrettyTimeOutput(mComm->nanoleaf()->discovery()->lastDiscoveryTime())
+                   .toStdString()
+            << " </li>";
+    sstream << "<li> Last Send Time: "
+            << cor::makePrettyTimeOutput(mComm->nanoleaf()->lastSendTime()).toStdString()
             << " </li>";
     sstream << "<li> Last Receive Time: "
-            << mComm->nanoleaf()->lastReceiveTime().toString().toStdString() << " </li>";
-    sstream << "</ul>";
+            << cor::makePrettyTimeOutput(mComm->nanoleaf()->lastReceiveTime()).toStdString()
+            << " </li>";
+#endif
     sstream << "</ul>";
     return QString(sstream.str().c_str());
 }
