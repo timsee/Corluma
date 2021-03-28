@@ -7,6 +7,9 @@
 #include <sstream>
 #include <vector>
 
+#include "comm/nanoleaf/leafeffect.h"
+#include "comm/nanoleaf/leafprotocols.h"
+#include "cor/dictionary.h"
 #include "cor/objects/light.h"
 #include "cor/range.h"
 #include "panels.h"
@@ -109,10 +112,39 @@ public:
     void IPVerified(bool verified) { mIPVerified = verified; }
 
     /// getter for current effect
-    const QString& effect() const noexcept { return mEffect; }
+    const QString& currentEffectName() const noexcept { return mCurrentEffectName; }
+
+    /// setter for current effect
+    void currentEffectName(const QString& name) { mCurrentEffectName = name; }
+
+    /// set the temporary effect for a nanoleaf
+    void temporaryEffect(const nano::LeafEffect& effect) { mTemporaryEffect = effect; }
+
+    /// getter for the temporary effect
+    const nano::LeafEffect& temporaryEffect() const noexcept { return mTemporaryEffect; }
 
     /// getter for list of effects for the light
     const std::vector<QString>& effectsList() const noexcept { return mEffectsList; }
+
+    /// getter for all effects stored on the nanoleaf
+    const cor::Dictionary<nano::LeafEffect> effects() const noexcept { return mEffects; }
+
+    /// setter for all effects stored on the nanoleaf
+    void effects(const cor::Dictionary<nano::LeafEffect>& effects) { mEffects = effects; }
+
+    /// returns the current effect, whether it is a temporary effect or a stored effect.
+    nano::LeafEffect currentEffect() const {
+        if (nano::isReservedEffect(mCurrentEffectName)) {
+            return mTemporaryEffect;
+        }
+        auto result = mEffects.item(mCurrentEffectName.toStdString());
+        if (result.second) {
+            return result.first;
+        } else {
+            qDebug() << " could not find effect in dict: " << mCurrentEffectName;
+            return {};
+        }
+    }
 
     /// getter for the state and orientation of panels
     const Panels& panels() const noexcept { return mPanelLayout; }
@@ -168,7 +200,7 @@ public:
 
         const auto& effectsObject = object["effects"].toObject();
         if (effectsObject["select"].isString()) {
-            mEffect = effectsObject["select"].toString();
+            mCurrentEffectName = effectsObject["select"].toString();
         }
 
         if (effectsObject["effectsList"].isArray()) {
@@ -250,10 +282,16 @@ private:
     //-----------
 
     /// name of current effect
-    QString mEffect;
+    QString mCurrentEffectName;
 
     /// list of names of all effects on the controller
     std::vector<QString> mEffectsList;
+
+    /// dictionary of leaf effects stored on the nanoleaf
+    cor::Dictionary<nano::LeafEffect> mEffects;
+
+    /// this stores *Dynamic* and *Static* light states.
+    nano::LeafEffect mTemporaryEffect;
 
     /// hardware name of light
     QString mHardwareName;

@@ -126,12 +126,15 @@ public:
     bool addLights(const std::vector<cor::Light>& list);
 
     /*!
-     * \brief addLights attempts to add a list of lights as a mood. This is different than addLights
+     * \brief addMood attempts to add a list of lights as a mood. This is different than addLights
      * since this action emits a dataUpdate, while the other emits a lightCountChanged update.
      * \param list list of lights to add
      * \return* true if all are added, false otherwise.
      */
     bool addMood(const std::vector<cor::Light>& list);
+
+    /// similar to addmood, only this adds a single effect to a light.
+    bool addEffect(const cor::Light&);
 
     /*!
      * \brief removeLights attempts to remove a list of lights

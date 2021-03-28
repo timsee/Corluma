@@ -153,6 +153,14 @@ inline int guardAgainstNegativeSize(int size) {
     return size;
 }
 
+/// blend two colors, where color1 uses the ratio, and color2 uses 1 - ratio.
+inline QColor blendColors(const QColor& color1, const QColor& color2, float ratio) {
+    int r = color1.red() * ratio + color2.red() * (1.0 - ratio);
+    int g = color1.green() * ratio + color2.green() * (1.0 - ratio);
+    int b = color1.blue() * ratio + color2.blue() * (1.0 - ratio);
+    return QColor(r, g, b);
+}
+
 /// converts a QTime into a pretty string, useful for debugging.
 QString makePrettyTimeOutput(QTime);
 

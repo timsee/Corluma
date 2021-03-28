@@ -4,10 +4,10 @@
  * Released under the GNU General Public License.
  */
 #include "leafpanelimage.h"
-
 #include <QBitmap>
 #include <QPainter>
 #include <QPainterPath>
+#include "utils/qt.h"
 namespace nano {
 
 namespace {
@@ -60,7 +60,10 @@ void drawHexagon(QPainter& painter, const QBrush& brush, const QRect& boundingBo
 LeafPanelImage::LeafPanelImage(QWidget* parent) : QWidget(parent), mImage{} {}
 
 
-void LeafPanelImage::drawPanels(const Panels& panels, int rotation) {
+void LeafPanelImage::drawPanels(const Panels& panels,
+                                int rotation,
+                                const cor::Palette& palette,
+                                bool isOn) {
     // get a bounding rect (which can go into negatives for its xPos and yPos)
     // because... idk ask nanoleaf...
     auto panelRect = generateRect(panels);
@@ -106,9 +109,12 @@ void LeafPanelImage::drawPanels(const Panels& panels, int rotation) {
             }
 
             // loop each image
+            int i = 0;
             for (const auto& panel : panels.positionLayout()) {
+                auto color = generateColor(i, palette, isOn);
                 // draw each image on the canvas
-                drawPanel(painter, panel, offsets);
+                drawPanel(painter, panel, offsets, color);
+                ++i;
             }
         }
 
@@ -122,10 +128,24 @@ void LeafPanelImage::drawPanels(const Panels& panels, int rotation) {
     }
 }
 
-void LeafPanelImage::drawPanel(QPainter& painter, const Panel& panel, const QPoint& offsets) {
+QColor LeafPanelImage::generateColor(int i, const cor::Palette& palette, bool isOn) {
+    auto whiteColor = QColor(230, 230, 230);
+    if (!isOn) {
+        return whiteColor;
+    } else {
+        auto adjustedI = i % palette.colors().size();
+        auto color = palette.colors()[adjustedI];
+        return cor::blendColors(whiteColor, color, 0.5);
+    }
+}
+
+void LeafPanelImage::drawPanel(QPainter& painter,
+                               const Panel& panel,
+                               const QPoint& offsets,
+                               const QColor& color) {
     auto rect = panel.boundingRect();
     rect = QRect(rect.x() + offsets.x(), rect.y() + offsets.y(), rect.width(), rect.height());
-    QBrush brush(QColor(230, 230, 230));
+    QBrush brush(color);
     switch (panel.shape()) {
         case EShapeType::triangle:
         case EShapeType::triangleShapes:

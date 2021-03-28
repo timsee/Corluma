@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QTimer>
 
+#include "comm/nanoleaf/leafeffect.h"
 #include "comm/nanoleaf/leafmetadata.h"
 #include "comm/upnpdiscovery.h"
 #include "cor/dictionary.h"
@@ -113,6 +114,10 @@ public:
 
     /// update stored data about a found device
     void updateFoundLight(const nano::LeafMetadata& light);
+
+    /// updates the stored effects on a nanoleaf.
+    void updateStoredEffects(const nano::LeafMetadata&,
+                             const std::vector<nano::LeafEffect>& effects);
 
     /// getter for state
     ENanoleafDiscoveryState state();

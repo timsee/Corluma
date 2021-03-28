@@ -9,7 +9,6 @@
 
 namespace nano {
 
-
 /*!
  * \copyright
  * Copyright (C) 2015 - 2021.
@@ -32,19 +31,6 @@ public:
     bool hasValidState(const QJsonObject& stateObject) {
         return stateObject["on"].isObject() && hasValidColor(stateObject)
                && stateObject["ct"].isObject() && stateObject["colorMode"].isString();
-    }
-
-    /// gets the speed value from the Nanoleaf Json.
-    int speedFromStateUpdate(const QJsonObject& requestPacket) {
-        auto delayTime = getSettingFromDefaultPlugin("delayTime", requestPacket);
-        if (delayTime != std::numeric_limits<int>::max()) {
-            return delayTime;
-        }
-        auto transTime = getSettingFromDefaultPlugin("transTime", requestPacket);
-        if (transTime != std::numeric_limits<int>::max()) {
-            return transTime;
-        }
-        return std::numeric_limits<int>::max();
     }
 
     /// converts a JsonArray from Nanoleaf to a vector of Qcolor
@@ -104,6 +90,7 @@ public:
 
         const auto& brightnessResult = valueAndRangeFromJSON(stateObject["brightness"].toObject());
         int brightness = brightnessResult.first;
+        state.paletteBrightness(std::uint32_t(brightness));
 
         const auto& hueResult = valueAndRangeFromJSON(stateObject["hue"].toObject());
         int hue = hueResult.first;
@@ -124,13 +111,10 @@ public:
             color.setHsvF(hue / 359.0, sat / 100.0, brightness / 100.0);
             state.color(color);
             state.routine(ERoutine::singleSolid);
-            //  state.paletteBrightness(std::uint32_t(brightness));
-        } else if (colorMode == "effect") {
-            // parse if brightness packet;
-            state.paletteBrightness(brightness);
         } else if (colorMode == "ct") {
             state.color(cor::colorTemperatureToRGB(colorTemp));
         }
+        state.effect(leafLight.currentEffectName());
 
         return state;
     }
@@ -140,7 +124,7 @@ public:
      * \param routine the routine to use for the QJsonObject
      * \return the object that contains the routine data
      */
-    QJsonObject routineToJson(ERoutine routine, int speed, int param) {
+    QJsonObject routineToJson(ERoutine routine, int speed, int /*param*/) {
         QJsonObject effectObject;
         effectObject["loop"] = true;
         effectObject["command"] = QString("display");
@@ -156,35 +140,26 @@ public:
                 effectObject["animType"] = QString("explode");
                 effectObject["loop"] = true;
                 effectObject["delayTime"] = rangeToJson(speed, speed);
-                effectObject["transTime"] =
-                    rangeToJson(kSingleBlinkTransTime, kSingleBlinkTransTime);
+                effectObject["transTime"] = rangeToJson(kGenericTransTime, kGenericTransTime);
                 break;
             }
             case ERoutine::singleWave: {
-                effectObject["animType"] = QString("wheel");
-                effectObject["linDirection"] = "left";
+                effectObject["animType"] = QString("fade");
                 effectObject["loop"] = true;
-                effectObject["transTime"] = rangeToJson(speed, speed);
+                effectObject["delayTime"] = rangeToJson(speed, speed);
                 break;
             }
             case ERoutine::singleGlimmer: {
                 effectObject["animType"] = QString("highlight");
                 effectObject["delayTime"] = rangeToJson(speed, speed);
-                effectObject["transTime"] =
-                    rangeToJson(kSingleGlimmerTransTime, kSingleGlimmerTransTime);
+                effectObject["transTime"] = rangeToJson(kGenericTransTime, kGenericTransTime);
                 break;
             }
             case ERoutine::singleFade: {
                 effectObject["animType"] = QString("explode");
                 effectObject["loop"] = true;
                 effectObject["delayTime"] = rangeToJson(speed, speed);
-                if (param == 0) {
-                    effectObject["transTime"] =
-                        rangeToJson(kSingleFadeTransTime, kSingleFadeTransTime);
-                } else {
-                    effectObject["transTime"] =
-                        rangeToJson(kSingleFadeSineTransTime, kSingleFadeSineTransTime);
-                }
+                effectObject["transTime"] = rangeToJson(kGenericTransTime, kGenericTransTime);
                 break;
             }
 
@@ -192,44 +167,41 @@ public:
                 effectObject["animType"] = QString("explode");
                 effectObject["loop"] = true;
                 effectObject["delayTime"] = rangeToJson(speed, speed);
-                effectObject["transTime"] = rangeToJson(kSingleSawtoothFade, kSingleSawtoothFade);
+                effectObject["transTime"] = rangeToJson(kGenericTransTime, kGenericTransTime);
                 break;
             }
 
             case ERoutine::multiBars: {
-                effectObject["animType"] = QString("wheel");
-                effectObject["linDirection"] = "left";
+                effectObject["animType"] = QString("fade");
                 effectObject["loop"] = true;
-                effectObject["transTime"] = rangeToJson(speed, speed);
+                effectObject["delayTime"] = rangeToJson(speed, speed);
+                effectObject["transTime"] = rangeToJson(kGenericTransTime, kGenericTransTime);
                 break;
             }
             case ERoutine::multiRandomSolid: {
                 effectObject["animType"] = QString("flow");
                 effectObject["delayTime"] = rangeToJson(speed, speed);
-                effectObject["transTime"] =
-                    rangeToJson(kMultiRandomSolidTransTime, kMultiRandomSolidTransTime);
+                effectObject["transTime"] = rangeToJson(kGenericTransTime, kGenericTransTime);
                 break;
             }
             case ERoutine::multiRandomIndividual: {
                 effectObject["animType"] = QString("random");
                 QJsonObject delayTimeObject;
                 effectObject["delayTime"] = rangeToJson(speed, speed);
-                effectObject["transTime"] =
-                    rangeToJson(kMultiRandomIndividualTransTime, kMultiRandomIndividualTransTime);
+                effectObject["transTime"] = rangeToJson(kGenericTransTime, kGenericTransTime);
                 break;
             }
             case ERoutine::multiGlimmer: {
                 effectObject["animType"] = QString("highlight");
                 effectObject["delayTime"] = rangeToJson(speed, speed);
-                effectObject["transTime"] =
-                    rangeToJson(kMultiGlimmerTransTime, kMultiGlimmerTransTime);
+                effectObject["transTime"] = rangeToJson(kGenericTransTime, kGenericTransTime);
                 break;
             }
             case ERoutine::multiFade: {
                 effectObject["animType"] = QString("explode");
                 effectObject["loop"] = true;
                 effectObject["delayTime"] = rangeToJson(speed, speed);
-                effectObject["transTime"] = rangeToJson(kMultiFadeTransTime, kMultiFadeTransTime);
+                effectObject["transTime"] = rangeToJson(kGenericTransTime, kGenericTransTime);
                 break;
             }
             default:
@@ -238,94 +210,6 @@ public:
 
         return effectObject;
     }
-
-    /// converts Json to a routine.
-    ERoutine jsonToRoutine(const QJsonObject& requestPacket) {
-        ERoutine routine = ERoutine::MAX;
-        if (requestPacket["animType"].isString()
-            && requestPacket["animType"].toString() == "static") {
-            routine = ERoutine::singleSolid;
-        } else if (isDefaultPlugin(requestPacket,
-                                   "highlight",
-                                   "70b7c636-6bf8-491f-89c1-f4103508d642")) {
-            auto value = getSettingFromDefaultPlugin("transTime", requestPacket);
-            if (value == kSingleGlimmerTransTime) {
-                routine = ERoutine::singleGlimmer;
-            } else {
-                routine = ERoutine::multiGlimmer;
-            }
-        } else if (isDefaultPlugin(requestPacket,
-                                   "explode",
-                                   "713518c1-d560-47db-8991-de780af71d1e")) {
-            auto value = getSettingFromDefaultPlugin("transTime", requestPacket);
-            if (isMultiPalette(requestPacket)) {
-                routine = ERoutine::multiFade;
-            } else {
-                if (value == kSingleFadeTransTime) {
-                    routine = ERoutine::singleFade;
-                } else if (value == kSingleFadeSineTransTime) {
-                    routine = ERoutine::singleFade;
-                } else if (value == kSingleSawtoothFade) {
-                    routine = ERoutine::singleSawtoothFade;
-                } else if (value == kSingleBlinkTransTime) {
-                    routine = ERoutine::singleBlink;
-                }
-            }
-        } else if (isDefaultPlugin(requestPacket,
-                                   "wheel",
-                                   "6970681a-20b5-4c5e-8813-bdaebc4ee4fa")) {
-            if (isMultiPalette(requestPacket)) {
-                routine = ERoutine::multiBars;
-            } else {
-                routine = ERoutine::singleWave;
-            }
-        } else if (isDefaultPlugin(requestPacket,
-                                   "random",
-                                   "ba632d3e-9c2b-4413-a965-510c839b3f71")) {
-            routine = ERoutine::multiRandomIndividual;
-        } else if (isDefaultPlugin(requestPacket, "flow", "027842e4-e1d6-4a4c-a731-be74a1ebd4cf")) {
-            routine = ERoutine::multiRandomSolid;
-        } else {
-            routine = ERoutine::multiFade;
-            qDebug() << " do not recognize routine" << requestPacket;
-        }
-        return routine;
-    }
-
-    /// converts a json object to a param, given a routine.
-    int jsonToParam(ERoutine routine, const QJsonObject& object) {
-        if (routine == ERoutine::singleGlimmer || routine == ERoutine::multiGlimmer) {
-            auto param = getSettingFromDefaultPlugin("mainColorProb", object);
-            if (param != std::numeric_limits<int>::max()) {
-                return 100 - param;
-            }
-        } else if (routine == ERoutine::singleFade) {
-            auto param = getSettingFromDefaultPlugin("transTime", object);
-            if (param == kSingleFadeSineTransTime) {
-                return 1;
-            } else {
-                return 0;
-            }
-        } else if (routine == ERoutine::singleSawtoothFade) {
-            if (object["palette"].isArray()) {
-                auto paletteArray = object["palette"].toArray();
-                if (!paletteArray.isEmpty()) {
-                    if (paletteArray.at(0).isObject()) {
-                        auto colorObject = paletteArray.at(0).toObject();
-                        if (colorObject["brightness"].isDouble()) {
-                            if (cor::isAboutEqual(0.0, colorObject["brightness"].toDouble())) {
-                                return 1;
-                            } else {
-                                return 0;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return 0;
-    }
-
 
     /// creates a palette based off of the provided options for single routines
     QJsonArray createSingleRoutinePalette(ERoutine routine, const QColor& mainColor, int param) {
@@ -370,8 +254,29 @@ public:
                 break;
             }
             case ERoutine::singleFade: {
-                std::vector<QColor> shades(10, mainColor);
-                std::vector<double> ratios = {1.0, 0.8, 0.6, 0.4, 0.2, 0.0, 0.2, 0.4, 0.6, 0.8};
+                std::vector<QColor> shades;
+                std::vector<double> ratios;
+
+                if (param == 0) {
+                    shades = std::vector<QColor>(10, mainColor);
+                    ratios = {1.0, 0.8, 0.6, 0.4, 0.2, 0.0, 0.2, 0.4, 0.6, 0.8};
+                } else {
+                    shades = std::vector<QColor>(14, mainColor);
+                    ratios = {0.0,
+                              0.03,
+                              0.15,
+                              0.34,
+                              0.56,
+                              0.77,
+                              0.92,
+                              1.0,
+                              0.92,
+                              0.77,
+                              0.56,
+                              0.34,
+                              0.15,
+                              0.03};
+                }
                 double valueCount = shades.size();
                 for (std::uint32_t i = 0; i < valueCount; ++i) {
                     shades[i].setHsvF(shades[i].hueF(),
@@ -464,82 +369,10 @@ private:
     }
 
 
-    /// true if its a palette with multiple colors, false otherwise.
-    bool isMultiPalette(const QJsonObject& object) {
-        auto receivedPalette = object["palette"].toArray();
-        std::uint32_t hueValue = std::numeric_limits<std::uint32_t>::max();
-        for (auto ref : receivedPalette) {
-            if (ref.isObject()) {
-                auto option = ref.toObject();
-                if (option["hue"].isDouble() && option["brightness"].isDouble()) {
-                    auto tempHueValue = std::uint32_t(option["hue"].toDouble());
-                    auto brightValue = std::uint32_t(option["brightness"].toDouble());
-                    // skip when one of the colors is off.
-                    if (brightValue > 0) {
-                        if (hueValue == std::numeric_limits<std::uint32_t>::max()) {
-                            hueValue = tempHueValue;
-                        } else if (tempHueValue != hueValue) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-
-    /// true if its a default plugin, false if it is not.
-    bool isDefaultPlugin(const QJsonObject& object,
-                         const QString& animationType,
-                         const QString& UUID) {
-        if (object["animType"].isString()) {
-            if (object["animType"].toString() == animationType) {
-                return true;
-            } else {
-                return (object["pluginUuid"].isString() && object["pluginUuid"] == UUID);
-            }
-        }
-        return false;
-    }
-
-    /// get a setting from both the old and new API.
-    int getSettingFromDefaultPlugin(const QString& name, const QJsonObject& object) {
-        if (object[name].isObject()) {
-            QJsonObject transPacket = object[name].toObject();
-            return int(transPacket["minValue"].toDouble());
-        } else {
-            auto pluginOptions = object["pluginOptions"].toArray();
-            for (auto ref : pluginOptions) {
-                if (ref.isObject()) {
-                    auto option = ref.toObject();
-                    if (option["name"].isString()) {
-                        auto optionName = option["name"].toString();
-                        if (optionName == name) {
-                            return option["value"].toInt();
-                        }
-                    }
-                }
-            }
-        }
-        return std::numeric_limits<int>::max();
-    }
-
 
     /// standard values for nanoleaf routines. Used to query the routines.
-    const int kSingleBlinkTransTime = 4;
-    const int kSingleGlimmerTransTime = 6;
-    // const int kSingleWaveTransTime = 20;
-    const int kSingleFadeTransTime = 5;
-    const int kSingleFadeSineTransTime = 4;
-    const int kSingleSawtoothFade = 2;
-    // const int kMultiBarsTransTime = 20;
-    const int kMultiGlimmerTransTime = 5;
-    const int kMultiRandomSolidTransTime = 10;
-    const int kMultiRandomIndividualTransTime = 10;
-    const int kMultiFadeTransTime = 6;
-
-}; // namespace nano
+    const int kGenericTransTime = 5;
+};
 
 } // namespace nano
 #endif // LEAFPACKETPARSER_H

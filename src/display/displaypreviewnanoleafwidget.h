@@ -23,6 +23,7 @@ class DisplayPreviewNanoleafWidget : public cor::ListItemWidget {
     Q_OBJECT
 public:
     explicit DisplayPreviewNanoleafWidget(const nano::LeafMetadata& leafMetadata,
+                                          cor::LightState state,
                                           nano::ELeafDiscoveryState status,
                                           QWidget* parent)
         : cor::ListItemWidget(leafMetadata.serialNumber(), parent),
@@ -34,8 +35,9 @@ public:
           mPanelLabel{new QLabel(this)},
           mRotation{420},
           mLeafMetadata{leafMetadata},
+          mState{state},
           mStatus{status} {
-        updateNanoleaf(leafMetadata, status);
+        updateNanoleaf(leafMetadata, state, status);
 
         mPanelLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         mName->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
@@ -57,11 +59,15 @@ public:
     }
 
     /// update the nanoleaf
-    void updateNanoleaf(const nano::LeafMetadata& metadata, nano::ELeafDiscoveryState status) {
-        mLeafMetadata = metadata;
+    void updateNanoleaf(const nano::LeafMetadata& metadata,
+                        const cor::LightState& state,
+                        nano::ELeafDiscoveryState status) {
         // pick up when status changes for edge cases.
         bool statusChanged = (status != mStatus);
+        bool stateChanged = (state != mState);
+        mLeafMetadata = metadata;
         mStatus = status;
+        mState = state;
         handleStatusPrompt();
         if (statusChanged) {
             // resize when status changes
@@ -77,9 +83,6 @@ public:
         } else {
             mSyncWidget->setVisible(false);
             mStatusPrompt->setVisible(true);
-
-            mStatus = status;
-            mLeafMetadata = metadata;
             if (!mLeafMetadata.name().isEmpty()) {
                 mName->setText(mLeafMetadata.name());
             } else {
@@ -90,7 +93,7 @@ public:
                     mName->setText(mLeafMetadata.IP());
                 }
             }
-            if (mLeafMetadata.panels().orientationValue() != mRotation) {
+            if (mLeafMetadata.panels().orientationValue() != mRotation || stateChanged) {
                 drawPanels();
             }
         }
@@ -189,7 +192,7 @@ private:
     void drawPanels() {
         mRotation = mLeafMetadata.panels().orientationValue();
         // render the image for the panel
-        mPanelImage->drawPanels(mLeafMetadata.panels(), mRotation);
+        mPanelImage->drawPanels(mLeafMetadata.panels(), mRotation, mState.palette(), mState.isOn());
         // draw the image to the panel label
         mPanelPixmap.convertFromImage(mPanelImage->image());
         if (!mPanelPixmap.isNull()) {
@@ -227,6 +230,9 @@ private:
 
     /// metadata widget for the nanoleaf
     nano::LeafMetadata mLeafMetadata;
+
+    /// state of the light
+    cor::LightState mState;
 
     /// status for the discovery state.
     nano::ELeafDiscoveryState mStatus;

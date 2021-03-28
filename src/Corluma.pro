@@ -14,7 +14,7 @@ linux:!android {
     TARGET = corluma
 }
 TEMPLATE = app
-VERSION = 0.21.87
+VERSION = 0.21.88
 
 #----------
 # Build flags
@@ -228,6 +228,7 @@ SOURCES += main.cpp \
     comm/datasyncarduino.cpp \
     comm/datasyncnanoleaf.cpp \
     comm/datasynctimeout.cpp \
+    comm/nanoleaf/leafeffectcontainer.cpp \
     comm/nanoleaf/leafmetadata.cpp \
     comm/nanoleaf/leafpanelimage.cpp \
     comm/upnpdiscovery.cpp \
@@ -358,9 +359,15 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     comm/hue/command.h \
     comm/hue/huemetadata.h \
     comm/hue/schedule.h \
+    comm/nanoleaf/leafeffect.h \
+    comm/nanoleaf/leafeffectcontainer.h \
+    comm/nanoleaf/leafeffectpage.h \
+    comm/nanoleaf/leafeffectscrollarea.h \
+    comm/nanoleaf/leafeffectwidget.h \
     comm/nanoleaf/leafmetadata.h \
     comm/nanoleaf/leafpacketparser.h \
     comm/nanoleaf/leafpanelimage.h \
+    comm/nanoleaf/leafprotocols.h \
     comm/nanoleaf/leafschedulewidget.h \
     comm/upnpdiscovery.h \
     colorpicker/colorpicker.h \
@@ -463,6 +470,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     routines/singlewaveroutinewidget.h \
     routines/speedslider.h \
     singlelightbrightnesswidget.h \
+    speedwidget.h \
     stateobserver.h \
     data/subgroupdata.h \
     timeobserver.h \

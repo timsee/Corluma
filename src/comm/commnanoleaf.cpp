@@ -11,6 +11,8 @@
 #include <QJsonValue>
 #include <QVariantMap>
 
+#include "comm/nanoleaf/leafeffect.h"
+#include "comm/nanoleaf/leafprotocols.h"
 #include "comm/nanoleaf/leafschedule.h"
 #include "cor/objects/light.h"
 #include "cor/objects/palette.h"
@@ -21,7 +23,12 @@
 //#define DEBUG_LEAF_TOUCHY
 
 
-CommNanoleaf::CommNanoleaf() : CommType(ECommType::nanoleaf), mUPnP{nullptr}, mPacketParser{} {
+CommNanoleaf::CommNanoleaf()
+    : CommType(ECommType::nanoleaf),
+      mUPnP{nullptr},
+      mPacketParser{},
+      mScheduleTimer{new QTimer(this)},
+      mEffectTimer{new QTimer(this)} {
     mStateUpdateInterval = 1000;
 
     mDiscovery = new nano::LeafDiscovery(this, 4000);
@@ -41,8 +48,8 @@ CommNanoleaf::CommNanoleaf() : CommType(ECommType::nanoleaf), mUPnP{nullptr}, mP
 
     connect(mStateUpdateTimer, SIGNAL(timeout()), this, SLOT(stateUpdate()));
 
-    mScheduleTimer = new QTimer(this);
     connect(mScheduleTimer, SIGNAL(timeout()), this, SLOT(getSchedules()));
+    connect(mEffectTimer, SIGNAL(timeout()), this, SLOT(getEffects()));
 }
 
 void CommNanoleaf::getSchedules() {
@@ -57,6 +64,31 @@ void CommNanoleaf::getSchedules() {
         }
     } else {
 #ifdef DEBUG_LEAF_SCHEDULES
+        qDebug() << __func__ << " skipping!";
+#endif
+    }
+}
+
+void CommNanoleaf::getEffects() {
+    if (shouldContinueStateUpdate()) {
+        for (const auto& light : mDiscovery->foundLights().items()) {
+            QNetworkRequest request = networkRequest(light, "effects");
+
+            QJsonObject effectObject;
+            effectObject["command"] = "requestAll";
+
+            QJsonObject writeObject;
+            writeObject["write"] = effectObject;
+
+            putJSON(request, writeObject);
+
+#ifdef DEBUG_LEAF_TOUCHY
+            qDebug() << __func__ << " get effects for " << light.name();
+#endif
+            mLastSendTime = QTime::currentTime();
+        }
+    } else {
+#ifdef DEBUG_LEAF_TOUCHY
         qDebug() << __func__ << " skipping!";
 #endif
     }
@@ -191,6 +223,9 @@ void CommNanoleaf::stopBackgroundTimers() {
     if (mScheduleTimer->isActive()) {
         mScheduleTimer->stop();
     }
+    if (mEffectTimer->isActive()) {
+        mEffectTimer->stop();
+    }
     //    if (mGroupTimer->isActive()) {
     //        mGroupTimer->stop();
     //    }
@@ -199,6 +234,9 @@ void CommNanoleaf::stopBackgroundTimers() {
 void CommNanoleaf::resetBackgroundTimers() {
     if (!mScheduleTimer->isActive()) {
         mScheduleTimer->start(mStateUpdateInterval * 3);
+    }
+    if (!mEffectTimer->isActive()) {
+        mEffectTimer->start(mStateUpdateInterval * 3);
     }
     //    if (!mGroupTimer->isActive()) {
     //        mGroupTimer->start(mStateUpdateInterval * 8);
@@ -280,24 +318,13 @@ void CommNanoleaf::testAuth(const nano::LeafMetadata& light) {
 void CommNanoleaf::stateUpdate() {
     if (shouldContinueStateUpdate()) {
         for (const auto& light : mDiscovery->foundLights().items()) {
-            /// first, request the general state of the light
+            /// request the general state of the light. if the current effect is *Dynamic*, this
+            /// will require a second request.
             QNetworkRequest request = networkRequest(light, "");
             mNetworkManager->get(request);
             mLastSendTime = QTime::currentTime();
 
-            // TODO: query effects when necessary, used cache lookup when possible.
-            /// next request information related to its current effect (displays the color and
-            /// routine of the light)
-            QNetworkRequest stateRequest = networkRequest(light, "effects");
-
-            QJsonObject effectObject;
-            effectObject["command"] = "request";
-            effectObject["animName"] = light.effect();
-
-            QJsonObject writeObject;
-            writeObject["write"] = effectObject;
-
-            putJSON(stateRequest, writeObject);
+            //  requestEffectUpdate(light, light.currentEffectName());
 
             /// TODO: move to own routine
             if (mDiscovery->foundLights().size() < lightDict().size()) {
@@ -313,12 +340,27 @@ void CommNanoleaf::stateUpdate() {
     }
 }
 
-void CommNanoleaf::sendPacket(const nano::LeafMetadata& metadata, const QJsonObject& object) {
+
+void CommNanoleaf::requestEffectUpdate(const nano::LeafMetadata& light, const QString& effectName) {
+    QNetworkRequest effectRequest = networkRequest(light, "effects");
+
+    QJsonObject effectObject;
+    effectObject["command"] = "request";
+    effectObject["animName"] = effectName;
+
+    QJsonObject writeObject;
+    writeObject["write"] = effectObject;
+
+    putJSON(effectRequest, writeObject);
+}
+
+
+void CommNanoleaf::sendPacket(const nano::LeafMetadata& metadata, const cor::LightState& state) {
     if (metadata.isValid() && !lightDict().empty()) {
         auto lightResult = lightFromMetadata(metadata);
         if (lightResult.second) {
             auto light = lightResult.first;
-            routineChange(metadata, object);
+            routineChange(metadata, state);
             resetBackgroundTimers();
         } else {
             qDebug() << " did not find light:" << metadata.serialNumber();
@@ -349,6 +391,7 @@ void CommNanoleaf::handleInitialDiscovery(const nano::LeafMetadata& light, const
         light.isReachable(false);
         addLights({light});
         parseStateUpdatePacket(result.first, jsonResponse.object());
+        getEffects();
         getSchedules();
     }
 }
@@ -364,10 +407,14 @@ void CommNanoleaf::handleNetworkPacket(const nano::LeafMetadata& light, const QS
             } else if (object["serialNo"].isString() && object["name"].isString()) {
                 parseStateUpdatePacket(light, object);
             } else if (object["animType"].isString() && object["palette"].isArray()) {
-                parseCommandRequestUpdatePacket(light, object);
-                mDiscovery->updateFoundLight(light);
+                parseEffectUpdate(light, object);
             } else if (object["schedules"].isArray()) {
                 parseScheduleUpdatePacket(light, object["schedules"].toArray());
+            } else if (object["animations"].isArray()) {
+                parseRequestAllUpdate(light, object["animations"].toArray());
+            } else if (object["animName"].isString()) {
+                // edge case where a partial stateUpdate packet is sent... because nanoleaf.
+                parseStaticStateUpdatePacket(light, object);
             } else {
                 qDebug() << "Do not recognize packet: " << object;
             }
@@ -428,75 +475,57 @@ void CommNanoleaf::renameLight(nano::LeafMetadata light, const QString& name) {
     }
 }
 
+void CommNanoleaf::setEffect(const nano::LeafMetadata& light, const QString& effectName) {
+    QNetworkRequest request = networkRequest(light, "effects");
 
+    QJsonObject effectObject;
+    effectObject["select"] = effectName;
 
-namespace {
-
-std::pair<QColor, std::uint32_t> brightnessAndMainColorFromVector(
-    const std::vector<QColor>& colors) {
-    QColor maxColor(0, 0, 0);
-    for (const auto& color : colors) {
-        if (color.red() >= maxColor.red() && color.green() >= maxColor.green()
-            && color.blue() >= maxColor.blue()) {
-            maxColor = color;
-        }
-    }
-    return std::make_pair(maxColor, std::uint32_t(maxColor.valueF() * 100.0));
+    putJSON(request, effectObject);
 }
 
-} // namespace
-void CommNanoleaf::parseCommandRequestUpdatePacket(const nano::LeafMetadata& leafLight,
-                                                   const QJsonObject& requestPacket) {
-    if (requestPacket["animType"].isString() && requestPacket["palette"].isArray()) {
-        auto colors = mPacketParser.jsonArrayToColorVector(requestPacket["palette"].toArray());
-
+void CommNanoleaf::parseEffectUpdate(const nano::LeafMetadata& leafLight,
+                                     const QJsonObject& effectPacket) {
+    if (nano::LeafEffect::isValidJson(effectPacket)) {
+        // convert metadata into a generic cor::Light
         auto light = nano::LeafLight(leafLight);
-        fillLight(light);
-        // NOTE: because nanoleaf, it requires two separate updates to get full data about
-        // the light. This update runs after stateUpdate, so this one marks the light as
-        // reachable but state update does not.
-        light.isReachable(true);
-        auto state = light.state();
+        // convert json into a nanoleaf effect
+        auto effect = nano::LeafEffect(effectPacket);
 
-        // add routine
-        state.routine(mPacketParser.jsonToRoutine(requestPacket));
-#ifdef DEBUG_LEAF_TOUCHY
-        if (state.routine() == ERoutine::MAX) {
-            qDebug() << requestPacket;
-            THROW_EXCEPTION("invalid routine");
+        if (effect.name() == leafLight.currentEffectName()) {
+            fillLight(light);
+            auto state = light.state();
+
+            state = effect.lightState(state);
+
+            light.state(state);
+            updateLight(light);
+
+            // if the current effect is a reserved effect, store it in the light metadata
+            if (nano::isReservedEffect(effect.name())) {
+                auto lightCopy = leafLight;
+                lightCopy.temporaryEffect(effect);
+                mDiscovery->updateFoundLight(lightCopy);
+            }
         }
-#endif
-
-        state.param(mPacketParser.jsonToParam(state.routine(), requestPacket));
-        // compute brightness and main color
-        auto colorOpsResult = brightnessAndMainColorFromVector(colors);
-        auto mainColor = colorOpsResult.first;
-        state.color(mainColor);
-
-        // NOTE: sometimes nanoleafs just send empty palettes... because why not
-        // set the palette
-        if (!colors.empty()) {
-            // take the brightness from a _different_ packet
-            cor::Palette palette(paletteToString(EPalette::custom),
-                                 colors,
-                                 state.palette().brightness());
-            state.customPalette(palette);
-            state.palette(palette);
-        }
-
-        // set the speed
-        state.speed(mPacketParser.speedFromStateUpdate(requestPacket));
-#ifdef DEBUG_LEAF_TOUCHY
-        if (state.speed() == std::numeric_limits<int>::max()) {
-            qDebug() << requestPacket;
-            THROW_EXCEPTION("speed invalid");
-        }
-#endif
-
-        light.state(state);
-        updateLight(light);
     }
 }
+
+
+void CommNanoleaf::parseRequestAllUpdate(const nano::LeafMetadata& light,
+                                         const QJsonArray& requestArray) {
+    std::vector<nano::LeafEffect> leafEffects;
+    for (auto object : requestArray) {
+        const auto& animationObject = object.toObject();
+        if (nano::LeafEffect::isValidJson(animationObject)) {
+            leafEffects.push_back(nano::LeafEffect(animationObject));
+        } else {
+            qDebug() << " invalid object for effect: " << animationObject;
+        }
+    }
+    mDiscovery->updateStoredEffects(light, leafEffects);
+}
+
 
 void CommNanoleaf::parseScheduleUpdatePacket(const nano::LeafMetadata& light,
                                              const QJsonArray& scheduleUpdate) {
@@ -517,6 +546,7 @@ void CommNanoleaf::parseStateUpdatePacket(const nano::LeafMetadata& nanoLight,
     if (nano::LeafMetadata::isValidJson(stateUpdate)) {
         // qDebug() << " state update " << stateUpdate;
         auto leafLight = nanoLight;
+        auto lastEffectName = leafLight.currentEffectName();
         leafLight.updateMetadata(stateUpdate);
 
         // move metadata for name to light, in case network packets dont contain it
@@ -526,11 +556,32 @@ void CommNanoleaf::parseStateUpdatePacket(const nano::LeafMetadata& nanoLight,
         }
         mDiscovery->updateFoundLight(leafLight);
 
+        auto light = nano::LeafLight(leafLight);
+        fillLight(light);
+
+        // check if we have enough information to determine the current state of the light. If a
+        // known effect, we can. if its a dynamic effect or another temporary effect, the best we
+        // can do is assume the previous state has not changed and send another request.
+        auto storedEffect = leafLight.effects().item(leafLight.currentEffectName().toStdString());
+        if (storedEffect.second) {
+            auto effect = storedEffect.first;
+            auto modifiedState = effect.lightState(light.state());
+            modifiedState.effect(leafLight.currentEffectName());
+            light.state(modifiedState);
+            updateLight(light);
+        } else if (!nano::isReservedEffect(leafLight.currentEffectName())) {
+            qDebug() << " did not find a stored effect for " << leafLight.currentEffectName();
+        }
+
+        // request the effect if its a temporary effect, or if its a new effect, just to make sure
+        // we have the right data.
+        if (lastEffectName != leafLight.currentEffectName()
+            || nano::isReservedEffect(leafLight.currentEffectName())) {
+            requestEffectUpdate(leafLight, leafLight.currentEffectName());
+        }
+
         QJsonObject stateObject = stateUpdate["state"].toObject();
         if (mPacketParser.hasValidState(stateObject)) {
-            auto light = nano::LeafLight(leafLight);
-            fillLight(light);
-
             light.hardwareType(leafLight.hardwareType());
             // a valid packet has been received, mark the light as reachable.
             light.isReachable(true);
@@ -545,6 +596,24 @@ void CommNanoleaf::parseStateUpdatePacket(const nano::LeafMetadata& nanoLight,
     }
 }
 
+
+void CommNanoleaf::parseStaticStateUpdatePacket(const nano::LeafMetadata& nanoLight,
+                                                const QJsonObject& stateUpdate) {
+    if (stateUpdate["animName"].toString() == nano::kSolidSingleColorEffect) {
+        auto leafLight = nanoLight;
+        auto lastEffectName = leafLight.currentEffectName();
+        leafLight.currentEffectName(stateUpdate["animName"].toString());
+
+        // move metadata for name to light, in case network packets dont contain it
+        auto result = mDiscovery->nameFromSerial(leafLight.serialNumber());
+        if (result.second) {
+            leafLight.name(result.first);
+        }
+        mDiscovery->updateFoundLight(leafLight);
+    } else {
+        qDebug() << "Did not recognize state update:" << stateUpdate;
+    }
+}
 //------------------------------------
 // Corluma Command Parsed Handlers
 //------------------------------------
@@ -592,41 +661,28 @@ void CommNanoleaf::singleSolidColorChange(const nano::LeafMetadata& light, const
 }
 
 
-void CommNanoleaf::routineChange(const nano::LeafMetadata& leafLight, QJsonObject routineObject) {
+void CommNanoleaf::routineChange(const nano::LeafMetadata& leafLight,
+                                 const cor::LightState& state) {
     // get values from JSON
-    ERoutine routine = stringToRoutine(routineObject["routine"].toString());
-    QColor color;
-    if (routineObject["hue"].isDouble() && routineObject["sat"].isDouble()
-        && routineObject["bri"].isDouble()) {
-        color.setHsvF(routineObject["hue"].toDouble(),
-                      routineObject["sat"].toDouble(),
-                      routineObject["bri"].toDouble());
-    }
-    if (routine == ERoutine::singleSolid) {
-        singleSolidColorChange(leafLight, color);
+    // create the metadata for the  effect object, without the colors
+    auto effectObject = mPacketParser.routineToJson(state.routine(), state.speed(), state.param());
+
+    // create the colors for the effect
+    if (state.routine() <= cor::ERoutineSingleColorEnd) {
+        effectObject["palette"] =
+            mPacketParser.createSingleRoutinePalette(state.routine(), state.color(), state.param());
     } else {
-        auto speed = int(routineObject["speed"].toDouble());
-        auto param = int(routineObject["param"].toDouble());
-        // create the metadata for the  effect object, without the colors
-        auto effectObject = mPacketParser.routineToJson(routine, speed, param);
-
-        // create the colors for the effect
-        if (routine <= cor::ERoutineSingleColorEnd) {
-            effectObject["palette"] =
-                mPacketParser.createSingleRoutinePalette(routine, color, param);
-        } else {
-            cor::Palette palette = cor::Palette(routineObject["palette"].toObject());
-            effectObject["palette"] =
-                mPacketParser.createMultiRoutinePalette(routine, palette.colors(), param);
-        }
-
-        // create a network request for effects
-        QNetworkRequest request = networkRequest(leafLight, "effects");
-        QJsonObject writeObject;
-
-        writeObject["write"] = effectObject;
-        putJSON(request, writeObject);
+        effectObject["palette"] = mPacketParser.createMultiRoutinePalette(state.routine(),
+                                                                          state.palette().colors(),
+                                                                          state.param());
     }
+
+    // create a network request for effects
+    QNetworkRequest request = networkRequest(leafLight, "effects");
+    QJsonObject writeObject;
+
+    writeObject["write"] = effectObject;
+    putJSON(request, writeObject);
 }
 
 void CommNanoleaf::brightnessChange(const nano::LeafMetadata& leafLight, int brightness) {

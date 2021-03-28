@@ -16,7 +16,7 @@
  *
  *
  * \brief The PaletteWidget is a widget used on the PalettePage to display the name and all the
- * routine options for a group group.
+ * colors for a palette.
  */
 class PaletteWidget : public QWidget {
     Q_OBJECT

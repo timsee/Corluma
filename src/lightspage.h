@@ -107,6 +107,10 @@ private slots:
     /// handles when a light is deselected
     void deselectLight(QString);
 
+    /// handles when an effect is selected for a light that supports them. First key is light's key,
+    /// second key is effect's key.
+    void selectEffect(QString, QString);
+
     /// handles when all lights for a controller should be selected
     void selectAllControllerLights(QString, EProtocolType);
 

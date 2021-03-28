@@ -1228,3 +1228,14 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed bugs with logging the last request and response from various lights.
 - Started tracking the last time a light was discovered.
 - Fixed UI bugs related to text being cut off.
+
+### **v0.21.88**
+### The Nanoleaf Effects Update
+- Added a new object `nano::LeafEffect`, designed to store information related to Nanoleaf's effects.
+- Added UI objects to display the effects stored locally on a Nanoleaf.
+- Added the ability to set a Nanoleaf to a stored effect.
+- Added a `transitionSpeed` member to `cor::LightState` to match how Nanoleaf handles speed. The original `speed` denotes how long a step in a routine takes, the `transitionSpeed` denotes once a routine step is completed,
+ how long it takes one color to transition to another. For Hues, both speeds are always 0. For ArduCor devices, the `transitionSpeed` is always 0.
+ - Added an `effect` member to `cor::LightState` to track when a light is using a state that is stored on the light.
+ - Added the ability to use locally stored effects in moods.
+ - Added a UI update that displays the colors the Nanoleaf is displaying on the Nanoleaf page.

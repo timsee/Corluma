@@ -27,16 +27,7 @@ PaletteWidget::PaletteWidget(const QString& name, EPalette palette, QWidget* par
     state.speed(100);
 
     auto paletteColors = palettes.palette(palette).colors();
-    std::vector<cor::Light> lights;
-    for (auto color : paletteColors) {
-        cor::Light light;
-        cor::LightState state;
-        state.isOn(true);
-        state.routine(ERoutine::singleSolid);
-        state.color(color);
-        light.state(state);
-        lights.push_back(light);
-    }
+    auto lights = cor::colorsToSolidLights(paletteColors);
     state.routine(ERoutine::multiBars);
 
     mLightVector->enableButtonInteraction(false);

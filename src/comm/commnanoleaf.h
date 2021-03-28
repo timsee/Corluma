@@ -47,9 +47,9 @@ public:
     /*!
      * \brief sendPacket send a packet based off of a JSON object containing all
      *        relevant information about the packet
-     * \param object json representation of the packet to send
+     * \param state light state to sync
      */
-    void sendPacket(const nano::LeafMetadata& metadata, const QJsonObject& object);
+    void sendPacket(const nano::LeafMetadata& metadata, const cor::LightState& state);
 
     /// search for a nanoleaf light based off of serial number
     std::pair<nano::LeafMetadata, bool> findNanoLeafLight(const QString& serialNumber);
@@ -74,6 +74,9 @@ public:
 
     /// renames a nanoleaf leaf. This data is stored in appdata.
     void renameLight(nano::LeafMetadata light, const QString& name);
+
+    /// tell the light to display an effect. This effect must exist on the light already.
+    void setEffect(const nano::LeafMetadata& light, const QString& effectName);
 
     /// getter for list of nanoleaf lights
     const cor::Dictionary<nano::LeafMetadata>& lights() { return mDiscovery->foundLights(); }
@@ -107,6 +110,9 @@ public:
      */
     void brightnessChange(const nano::LeafMetadata& light, int brightness);
 
+    /// changes the main color of a nanoleaf
+    void singleSolidColorChange(const nano::LeafMetadata& light, const QColor& color);
+
     /*!
      * \brief onOffChange turn a light on or off
      * \param lightIndex index of the light
@@ -132,7 +138,7 @@ private slots:
      * \brief routineChange change the light state of the nanoleaf. This JSON object will contain a
      * color and other information about the light.
      */
-    void routineChange(const nano::LeafMetadata& light, QJsonObject);
+    void routineChange(const nano::LeafMetadata& light, const cor::LightState& state);
 
     /// requests the state of the lights
     void stateUpdate();
@@ -141,6 +147,9 @@ private slots:
      * \brief getSchedules request schedules updates.
      */
     void getSchedules();
+
+    /// requests all effects stored on the nanoleaf.
+    void getEffects();
 
 private:
     /*!
@@ -188,6 +197,15 @@ private:
      */
     void parseStateUpdatePacket(const nano::LeafMetadata& light, const QJsonObject& stateUpdate);
 
+    /*!
+     * \brief parseStaticStateUpdatePacket when a static routine is ran, a partial packet is sent
+     * back. this parses the partial packet.
+     *
+     * \param light light to update
+     * \param stateUpdate packet to parse.
+     */
+    void parseStaticStateUpdatePacket(const nano::LeafMetadata& light,
+                                      const QJsonObject& stateUpdate);
 
     /*!
      * \brief parseScheduleUpdatePacket parse an array that contains schedule updates
@@ -198,15 +216,14 @@ private:
                                    const QJsonArray& scheduleUpdate);
 
     /*!
-     * \brief parseCommandRequestUpdatePacket parses a command request packet. These packets are
-     * received when you request the details on a command.
-     * \param requestPacket the packet with the command request data
+     * \brief parseEffectUpdate parses a command effect update packet. These packets are
+     * received when you request the details on a effect.
+     * \param effectPacket the packet with the command request data
      */
-    void parseCommandRequestUpdatePacket(const nano::LeafMetadata& light,
-                                         const QJsonObject& requestPacket);
+    void parseEffectUpdate(const nano::LeafMetadata& light, const QJsonObject& effectPacket);
 
-    /// changes the main color of a nanoleaf
-    void singleSolidColorChange(const nano::LeafMetadata& light, const QColor& color);
+    /// requests all effects stored on a nanoleaf.
+    void parseRequestAllUpdate(const nano::LeafMetadata& light, const QJsonArray& requestArray);
 
     /*!
      * \brief mNetworkManager Qt's HTTP connection object
@@ -248,6 +265,9 @@ private:
      */
     void updateSchedule(const nano::LeafMetadata& light, const nano::LeafSchedule& schedule);
 
+    /// request an update on the state of an effect
+    void requestEffectUpdate(const nano::LeafMetadata& light, const QString& effectName);
+
     /// stores the schedules for each nanoleaf.
     std::unordered_map<std::string, cor::Dictionary<nano::LeafSchedule>> mSchedules;
 
@@ -264,6 +284,9 @@ private:
      * for longer in order to keep idle timeouts in sync.
      */
     QTimer* mScheduleTimer;
+
+    /// timer for requesting effects.
+    QTimer* mEffectTimer;
 };
 
 #endif // COMMNANOLEAF_H

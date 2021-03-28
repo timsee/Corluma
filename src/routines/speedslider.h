@@ -25,6 +25,9 @@ public:
           mSpeedLabel{new QLabel("", this)},
           mSlider{new cor::Slider(this)} {
         mSpeedLabel->setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
+        mLeftImage->setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
+        mRightImage->setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
+
         mSlider->setColor(QColor(255, 0, 0));
         mSlider->setRange(2, 200);
         mSlider->setValue(100);
@@ -104,7 +107,7 @@ private:
         mSlider->setGeometry(xPos, sliderYSpacing, sliderWidth, height());
 
         // now put the left image directly left
-        mLeftImage->setGeometry(xPos - side, sliderYSpacing, side, side);
+        mLeftImage->setGeometry(xPos - side, sliderYSpacing, sliderImageSize, height());
 
         // now put the right image directly right
         mRightImage->setGeometry(xPos + mSlider->width(),

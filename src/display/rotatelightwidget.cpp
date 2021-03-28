@@ -15,7 +15,8 @@ RotateLightWidget::RotateLightWidget(QWidget* parent)
       mInstructionLabel{new QLabel(this)},
       mRotationSlider{new cor::Slider(this)},
       mLeafPanelImage{new nano::LeafPanelImage(this)},
-      mLightImage{new QLabel(this)} {
+      mLightImage{new QLabel(this)},
+      mIsOn{false} {
     isOpen(false);
     connect(mButtonOK, SIGNAL(clicked()), this, SLOT(clickedOK()));
     connect(mButtonCancel, SIGNAL(clicked()), this, SLOT(clickedCancel()));
@@ -34,9 +35,14 @@ RotateLightWidget::RotateLightWidget(QWidget* parent)
     mInstructionLabel->setText("Rotate the Nanoleafs to their proper orientation.");
 }
 
-void RotateLightWidget::setNanoleaf(const nano::LeafMetadata& leaf, int rotation) {
+void RotateLightWidget::setNanoleaf(const nano::LeafMetadata& leaf,
+                                    int rotation,
+                                    const cor::Palette& palette,
+                                    bool isOn) {
     mLeaf = leaf;
     mValue = rotation;
+    mPalette = palette;
+    mIsOn = isOn;
 
     // handle rotation input, which is a slider and a label that shows the value.
     bool blocked = mRotationSlider->blockSignals(true);
@@ -60,7 +66,7 @@ void RotateLightWidget::releasedSlider() {
 
 void RotateLightWidget::drawNanoleaf() {
     // render the image for the panel
-    mLeafPanelImage->drawPanels(mLeaf.panels(), mValue);
+    mLeafPanelImage->drawPanels(mLeaf.panels(), mValue, mPalette, mIsOn);
     // draw the image to the panel label
     mPixmap.convertFromImage(mLeafPanelImage->image());
     if (!mPixmap.isNull()) {

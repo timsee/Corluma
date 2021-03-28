@@ -55,9 +55,16 @@ void ControllerWidget::hidePage() {
 void ControllerWidget::renderUI() {
     if (mNanoleafWidget->isVisible()) {
         auto lightResult = mComm->nanoleaf()->lightFromMetadata(mNanoleafWidget->metadata());
+        // get recent metadata from discovery, instead of cached metadata from the nanoleaf widget
+        auto metadataResult =
+            mComm->nanoleaf()->findNanoLeafLight(mNanoleafWidget->metadata().serialNumber());
+        auto updatedMetadata = metadataResult.first;
+        if (!metadataResult.second) {
+            updatedMetadata = mNanoleafWidget->metadata();
+        }
         if (lightResult.second) {
             mNanoleafWidget->updateLeafMetadata(
-                mNanoleafWidget->metadata(),
+                updatedMetadata,
                 mNanoleafWidget->discoveryState(),
                 mSelectedLights->doesLightExist(mNanoleafWidget->metadata().serialNumber()));
         }

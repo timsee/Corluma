@@ -259,6 +259,20 @@ inline bool compareTwoLightVectors(const std::vector<cor::Light>& vectorA,
     return true;
 }
 
+/// utility function that convers a vector of colors to a vector of solid lights
+inline std::vector<cor::Light> colorsToSolidLights(const std::vector<QColor> colors) {
+    std::vector<cor::Light> lights;
+    for (auto color : colors) {
+        cor::Light light;
+        cor::LightState state;
+        state.isOn(true);
+        state.routine(ERoutine::singleSolid);
+        state.color(color);
+        light.state(state);
+        lights.push_back(light);
+    }
+    return lights;
+}
 
 } // namespace cor
 

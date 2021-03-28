@@ -3,8 +3,8 @@
 
 #include <QWidget>
 #include "cor/widgets/slider.h"
-#include "routines/routinewidget.h"
 #include "routines/fadebutton.h"
+#include "routines/routinewidget.h"
 
 /*!
  * \copyright
@@ -23,8 +23,10 @@ public:
           mLinearButton{new cor::FadeButton(this, "Linear", ":/images/fade/fade_linear_icon.png")},
           mSineButton{new cor::FadeButton(this, "Sine", ":/images/fade/fade_sine_icon.png")},
           mBlinkButton{new cor::FadeButton(this, "Blink", ":/images/fade/fade_blink_icon.png")},
-          mSawtoothInButton{new cor::FadeButton(this, "Saw In", ":/images/fade/fade_sawtooth_in_icon.png")},
-          mSawtoothOutButton{new cor::FadeButton(this, "Saw Out", ":/images/fade/fade_sawtooth_out_icon.png")} {
+          mSawtoothInButton{
+              new cor::FadeButton(this, "Saw In", ":/images/fade/fade_sawtooth_in_icon.png")},
+          mSawtoothOutButton{
+              new cor::FadeButton(this, "Saw Out", ":/images/fade/fade_sawtooth_out_icon.png")} {
         connect(mCheckBox,
                 SIGNAL(clicked(ECheckboxState)),
                 this,
@@ -116,30 +118,16 @@ private:
             buttonSide = usableHeight;
         }
 
-        mBlinkButton->setGeometry(xPos, yPos, buttonSide, buttonSide);
-        xPos += mBlinkButton->width() + buttonSpacer;
         mLinearButton->setGeometry(xPos, yPos, buttonSide, buttonSide);
         xPos += mLinearButton->width() + buttonSpacer;
-        if (mProtocol == EProtocolType::arduCor) {
-            mSineButton->setGeometry(xPos, yPos, buttonSide, buttonSide);
-            xPos += mSineButton->width() + buttonSpacer;
-        }
         mSawtoothInButton->setGeometry(xPos, yPos, buttonSide, buttonSide);
         xPos += mSawtoothInButton->width() + buttonSpacer;
         mSawtoothOutButton->setGeometry(xPos, yPos, buttonSide, buttonSide);
         xPos += mSawtoothOutButton->width() + buttonSpacer;
-    }
-
-    /// sine fade isnt as clear on nanoleafs, remove the option.
-    void updateProtocol() override {
-        // hide sawtooth and sine for nanoleaf, as it only supports linear fades. remap those
-        // buttons to linear in nanoleaf case.
-        if (mProtocol == EProtocolType::nanoleaf) {
-            mSineButton->setVisible(false);
-        } else {
-            mSineButton->setVisible(true);
-        }
-        resize();
+        mSineButton->setGeometry(xPos, yPos, buttonSide, buttonSide);
+        xPos += mSineButton->width() + buttonSpacer;
+        mBlinkButton->setGeometry(xPos, yPos, buttonSide, buttonSide);
+        xPos += mBlinkButton->width() + buttonSpacer;
     }
 
     /// handle when a button is pressed

@@ -24,7 +24,10 @@ public:
     explicit RotateLightWidget(QWidget* parent);
 
     /// set the nanoleaf and rotation
-    void setNanoleaf(const nano::LeafMetadata& leaf, int rotation);
+    void setNanoleaf(const nano::LeafMetadata& leaf,
+                     int rotation,
+                     const cor::Palette& palette,
+                     bool isOn);
 
     /// getter for the rotation
     int rotation() { return mValue; }
@@ -97,6 +100,12 @@ private:
 
     /// rotation value
     int mValue;
+
+    /// palette for colors of the light
+    cor::Palette mPalette;
+
+    /// true if on, false otherwise.
+    bool mIsOn;
 };
 
 #endif // ROTATELIGHTWIDGET_H

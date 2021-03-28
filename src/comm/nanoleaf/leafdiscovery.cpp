@@ -459,6 +459,26 @@ void LeafDiscovery::updateFoundLight(const nano::LeafMetadata& controller) {
     if (result.second) {
         mFoundLights.update(controller.serialNumber().toStdString(), controller);
         updateJSON(controller);
+    } else {
+        qDebug() << " failed update for " << controller.name();
+    }
+}
+
+void LeafDiscovery::updateStoredEffects(const nano::LeafMetadata& light,
+                                        const std::vector<nano::LeafEffect>& effects) {
+#ifdef DEBUG_LEAF_DISCOVERY
+    qDebug() << __func__ << controller.hardwareName();
+#endif
+    auto result = mFoundLights.item(light.serialNumber().toStdString());
+    if (result.second) {
+        std::vector<std::pair<std::string, nano::LeafEffect>> effectVector;
+        for (auto effect : effects) {
+            effectVector.push_back(std::make_pair(effect.name().toStdString(), effect));
+        }
+        cor::Dictionary<nano::LeafEffect> effectDict(effectVector);
+        auto light = result.first;
+        light.effects(effectVector);
+        mFoundLights.update(light.serialNumber().toStdString(), light);
     }
 }
 

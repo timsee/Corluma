@@ -80,6 +80,45 @@ private:
     bool sync(const cor::Light& dataDevice, const cor::Light& commDevice) override;
 
     /*!
+     * \brief syncStaticColor syncs a static color to the Nanoleaf. This is the *Static* effect,
+     * which displays a single color.
+     *
+     * \param metadata light to sync the state
+     * \param dataState desired state
+     * \param commState current state
+     * \return true if in sync
+     */
+    bool syncStaticColor(const nano::LeafMetadata& metadata,
+                         const cor::LightState& dataState,
+                         const cor::LightState& commState);
+
+    /*!
+     * \brief syncEffect syncs a pre-existing effect to the Nanoleaf. This is any effect that is
+     * stored on the nanoleaf.
+     *
+     * \param metadata light to sync the state
+     * \param dataState desired state
+     * \param commState current state
+     * \return true if in sync
+     */
+    bool syncEffect(const nano::LeafMetadata& metadata,
+                    const cor::LightState& dataState,
+                    const cor::LightState& commState);
+
+    /*!
+     * \brief syncDynamicEffect syncs a dynamic effect to the Nanoleaf. This is a state that is not
+     * stored on the nanoleaf.
+     *
+     * \param metadata light to sync the state
+     * \param dataState desired state
+     * \param commState current state
+     * \return true if in sync
+     */
+    bool syncDynamicEffect(const nano::LeafMetadata& metadata,
+                           const cor::LightState& dataState,
+                           const cor::LightState& commState);
+
+    /*!
      * \brief endOfSync end the sync thread and start the cleanup thread.
      */
     void endOfSync() override;

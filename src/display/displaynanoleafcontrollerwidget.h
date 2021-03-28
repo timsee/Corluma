@@ -9,6 +9,7 @@
 #include <QWidget>
 #include "comm/commlayer.h"
 #include "comm/commnanoleaf.h"
+#include "comm/nanoleaf/leafeffectpage.h"
 #include "comm/nanoleaf/leafmetadata.h"
 #include "comm/nanoleaf/leafpanelimage.h"
 #include "cor/widgets/button.h"
@@ -21,6 +22,7 @@
 #include "menu/groupstatelistmenu.h"
 #include "menu/lightslistmenu.h"
 #include "rotatelightwidget.h"
+#include "speedwidget.h"
 #include "syncwidget.h"
 
 /*!
@@ -43,6 +45,8 @@ public:
           mName{new QLabel(this)},
           mStateButton{new cor::Button(this, {})},
           mCheckBox{new cor::CheckBox(this)},
+          mEffectsButton{new QPushButton("Effects", this)},
+          mSpeedButton{new QPushButton("Change Speed", this)},
           mChangeName{new QPushButton("Change Name", this)},
           mChangeRotation{new QPushButton("Rotate", this)},
           mDeleteButton{new QPushButton("Delete", this)},
@@ -50,6 +54,8 @@ public:
           mSchedulesLabel{new QLabel("<b>Schedules:</b>", this)},
           mSchedulesWidget{new DisplayNanoleafSchedulesWidget(this)},
           mGreyout{new GreyOutOverlay(true, parentWidget()->parentWidget())},
+          mEffectsPage{new nano::LeafEffectPage(comm, parentWidget()->parentWidget())},
+          mSpeedWidget{new SpeedWidget(parentWidget()->parentWidget())},
           mChangeNameInput{new cor::TextInputWidget(parentWidget()->parentWidget())},
           mRotateLightWidget{new RotateLightWidget(parentWidget()->parentWidget())},
           mSyncWidget{new SyncWidget(this)},
@@ -62,12 +68,26 @@ public:
         connect(mChangeNameInput, SIGNAL(cancelClicked()), this, SLOT(closeNameWidget()));
         mChangeNameInput->setVisible(false);
 
+        // TODO: turn on the speed button when the speed slider is fully implemented.
+        mSpeedButton->setVisible(false);
+        connect(mSpeedWidget, SIGNAL(cancelClicked()), this, SLOT(closeSpeedWidget()));
+        mSpeedWidget->setVisible(false);
+
+        connect(mEffectsButton, SIGNAL(clicked(bool)), this, SLOT(handleEffectsPressed()));
+        connect(mSpeedButton, SIGNAL(clicked(bool)), this, SLOT(handleSpeedPressed()));
         connect(mChangeName, SIGNAL(clicked(bool)), this, SLOT(handleChangeNamePressed()));
         connect(mChangeRotation, SIGNAL(clicked(bool)), this, SLOT(rotateButtonPressed(bool)));
         connect(mDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteButtonPressed(bool)));
         mDeleteButton->setStyleSheet("background-color:rgb(110,30,30);");
 
         mDisplayLights->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+
+        connect(mEffectsPage, SIGNAL(closePressed()), this, SLOT(closeEffectsPressed()));
+        connect(mEffectsPage,
+                SIGNAL(selectEffect(QString, QString)),
+                this,
+                SLOT(effectSelected(QString, QString)));
+        mEffectsPage->setVisible(false);
 
         connect(mGreyout, SIGNAL(clicked()), this, SLOT(greyOutClicked()));
         mGreyout->greyOut(false);
@@ -94,6 +114,7 @@ public:
     /// getter for controller represented by the widget
     const nano::LeafMetadata& metadata() const noexcept { return mLeaf; }
 
+    /// getter for discovery state.
     nano::ELeafDiscoveryState discoveryState() const noexcept { return mDiscoveryState; }
 
     /// updates the meatadata's UI elements.
@@ -103,12 +124,16 @@ public:
         mLeaf = leafMetadata;
         mDiscoveryState = discoveryState;
 
+        if (mEffectsPage->currentEffect() != leafMetadata.currentEffectName()) {
+            mEffectsPage->updateEffects(mLeaf.currentEffect(), mLeaf.effects().items());
+        }
+        mEffectsPage->setNanoleaf(leafMetadata);
+
         if (isSelected) {
             mCheckBox->checkboxState(ECheckboxState::checked);
         } else {
             mCheckBox->checkboxState(ECheckboxState::unchecked);
         }
-
 
         if (mDiscoveryState != nano::ELeafDiscoveryState::connected) {
             mStateButton->setVisible(false);
@@ -134,6 +159,7 @@ public:
         }
         auto light = mComm->nanoleaf()->lightFromMetadata(leafMetadata);
         if (light.second) {
+            mState = light.first.state();
             mStateButton->updateRoutine(light.first.state());
         }
         auto scheduleResult = mComm->nanoleaf()->findSchedules(leafMetadata.serialNumber());
@@ -199,7 +225,12 @@ public:
         // mChangeName->setGeometry(xSpacer, yPosColumn1, columnWidth, buttonHeight);
 
         // column 2
-        yPosColumn2 += buttonHeight * 2;
+        mEffectsButton->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, buttonHeight);
+        yPosColumn2 += mEffectsButton->height();
+        if (mSpeedButton->isVisible()) {
+            mSpeedButton->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, buttonHeight);
+            yPosColumn2 += mSpeedButton->height();
+        }
         mChangeName->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, buttonHeight);
         yPosColumn2 += mChangeName->height();
         mChangeRotation->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, buttonHeight);
@@ -219,16 +250,32 @@ public:
         mDeleteButton->setGeometry(xSecondColumnStart, yPosColumn2, columnWidth, buttonHeight);
         yPosColumn2 += mDeleteButton->height();
 
-        if (mChangeNameInput->isOpen()) {
-            mGreyout->raise();
-            mChangeNameInput->resize();
-            mChangeNameInput->raise();
+        if (mLastSize != size()) {
+            if (mChangeNameInput->isOpen()) {
+                mGreyout->raise();
+                mChangeNameInput->resize();
+                mChangeNameInput->raise();
+            }
+
+            if (mSpeedWidget->isOpen()) {
+                mGreyout->raise();
+                mSpeedWidget->resize();
+                mSpeedWidget->raise();
+            }
+
+            if (mEffectsPage->isOpen()) {
+                mGreyout->raise();
+                mEffectsPage->resize();
+                mEffectsPage->raise();
+            }
+
+            if (mRotateLightWidget->isOpen()) {
+                mGreyout->raise();
+                mRotateLightWidget->resize();
+                mRotateLightWidget->raise();
+            }
         }
-        if (mRotateLightWidget->isOpen()) {
-            mGreyout->raise();
-            mRotateLightWidget->resize();
-            mRotateLightWidget->raise();
-        }
+        mLastSize = size();
     }
 signals:
 
@@ -240,6 +287,9 @@ signals:
 
     /// emits when a light should be deselected
     void deselectLight(QString);
+
+    /// emits when an effect is selected. Signals the light's serial number and the desired effect.
+    void selectEffect(QString, QString);
 
 protected:
     /*!
@@ -268,6 +318,11 @@ private slots:
         }
     }
 
+    /// handle when the effects widget is closed.
+    void closeEffectsPressed() {
+        mGreyout->greyOut(false);
+        mEffectsPage->pushOut();
+    }
 
     /// handle when the name change is pressed
     void handleChangeNamePressed() {
@@ -275,6 +330,25 @@ private slots:
         mChangeNameInput->pushIn("Change Name of Nanoleaf", mLeaf.name());
         mChangeNameInput->setVisible(true);
         mChangeNameInput->raise();
+    }
+
+    /// handles when the effects button pressed
+    void handleEffectsPressed() {
+        mGreyout->greyOut(true);
+        mEffectsPage->updateEffects(mLeaf.currentEffect(), mLeaf.effects().items());
+        mEffectsPage->pushIn("View Effects");
+        mEffectsPage->setVisible(true);
+        mEffectsPage->raise();
+    }
+
+    void effectSelected(QString light, QString effect) { emit selectEffect(light, effect); }
+
+    /// handles when the speed button is pressed
+    void handleSpeedPressed() {
+        mGreyout->greyOut(true);
+        mSpeedWidget->raise();
+        mSpeedWidget->pushIn(EProtocolType::nanoleaf, mState.speed());
+        mSpeedWidget->setVisible(true);
     }
 
     /// change a name of a nanoleaf.
@@ -297,9 +371,17 @@ private slots:
         mChangeNameInput->pushOut();
     }
 
+    /// close the speed widget
+    void closeSpeedWidget() {
+        mGreyout->greyOut(false);
+        mSpeedWidget->pushOut();
+    }
+
     /// grey out clicked
     void greyOutClicked() {
         mChangeNameInput->pushOut();
+        mSpeedWidget->pushOut();
+        mEffectsPage->pushOut();
         mGreyout->greyOut(false);
 
         if (mRotateLightWidget->isOpen()) {
@@ -328,7 +410,10 @@ private slots:
         mRotateLightWidget->raise();
         mRotateLightWidget->pushIn();
 
-        mRotateLightWidget->setNanoleaf(mLeaf, mLeaf.panels().orientationValue());
+        mRotateLightWidget->setNanoleaf(mLeaf,
+                                        mLeaf.panels().orientationValue(),
+                                        mState.palette(),
+                                        mState.isOn());
     }
 
     /// rotate widget closed
@@ -350,6 +435,13 @@ private:
     /// update the metadata for the nano::LeafMetadata
     void updateMetadata(const nano::LeafMetadata& leafMetadata) {
         std::stringstream returnString;
+        returnString << "<b>Current Effect:</b> "
+                     << effectToPrettyName(leafMetadata.currentEffectName()).toStdString()
+                     << "<br>";
+        returnString << "<b>Current Plugin:</b> "
+                     << leafMetadata.currentEffect().pluginSimpleName().toStdString() << "<br>";
+        returnString << "<b>Delay Time:</b> " << mState.speed() * 10 << "ms<br>";
+        returnString << "<b>Trans Time:</b> " << mState.transitionSpeed() * 10 << "ms<br><br>";
 
         if (mDiscoveryState == nano::ELeafDiscoveryState::connected) {
             returnString << "<b>Model:</b> " << leafMetadata.model().toStdString() << "<br>";
@@ -362,6 +454,7 @@ private:
         returnString << "<b>Port:</b> " << leafMetadata.port() << "<br><br>";
         returnString << "<b>Hardware Name:</b> " << leafMetadata.hardwareName().toStdString()
                      << "<br>";
+
         if (mDiscoveryState == nano::ELeafDiscoveryState::connected) {
             returnString << "<b>Hardware Version:</b> "
                          << leafMetadata.hardwareVersion().toStdString() << "<br>";
@@ -390,10 +483,21 @@ private:
         mMetadata->updateText(QString(returnString.str().c_str()));
     }
 
+    /// converts an effect name to a more user-friendly name
+    QString effectToPrettyName(const QString& effect) {
+        if (effect == nano::kTemporaryEffect) {
+            return "Custom";
+        }
+        return effect;
+    }
+
     /// draws the nanoleafs actual layout and rotation.
     void drawPanels() {
         // render the image for the panel
-        mPanelImage->drawPanels(mLeaf.panels(), mLeaf.panels().orientationValue());
+        mPanelImage->drawPanels(mLeaf.panels(),
+                                mLeaf.panels().orientationValue(),
+                                mState.palette(),
+                                mState.isOn());
         // draw the image to the panel label
         mPanelPixmap.convertFromImage(mPanelImage->image());
         if (!mPanelPixmap.isNull()) {
@@ -410,6 +514,9 @@ private:
 
     /// nanoleaf being displayed
     nano::LeafMetadata mLeaf;
+
+    /// state of the light
+    cor::LightState mState;
 
     /// state of discovery for nanoleaf.
     nano::ELeafDiscoveryState mDiscoveryState;
@@ -432,6 +539,12 @@ private:
     /// checkbox to select/deselect nanoleaf
     cor::CheckBox* mCheckBox;
 
+    /// button to view the effects stored on the light..
+    QPushButton* mEffectsButton;
+
+    /// button to change speed of lights.
+    QPushButton* mSpeedButton;
+
     /// button to change name.
     QPushButton* mChangeName;
 
@@ -453,6 +566,12 @@ private:
     /// widget for greying out widgets in the background
     GreyOutOverlay* mGreyout;
 
+    /// widget for effects.
+    nano::LeafEffectPage* mEffectsPage;
+
+    /// widget for changing the speed of the nanoleaf.
+    SpeedWidget* mSpeedWidget;
+
     /// input to change the name of a light
     cor::TextInputWidget* mChangeNameInput;
 
@@ -464,6 +583,9 @@ private:
 
     /// the height of a row in a scroll area
     int mRowHeight;
+
+    /// the last size of the widget.
+    QSize mLastSize;
 };
 
 

@@ -71,6 +71,10 @@ LightsPage::LightsPage(QWidget* parent,
             SIGNAL(deselectLight(QString)),
             this,
             SLOT(deselectLight(QString)));
+    connect(mControllerWidget->nanoleafWidget(),
+            SIGNAL(selectEffect(QString, QString)),
+            this,
+            SLOT(selectEffect(QString, QString)));
 
     connect(mControllerWidget->hueWidget(),
             SIGNAL(selectLight(QString)),
@@ -160,7 +164,6 @@ void LightsPage::handleNewLightsFound(std::vector<QString> uniqueIDs) {
 
 void LightsPage::deselectLight(QString lightKey) {
     auto light = mComm->lightByID(lightKey);
-    auto state = light.state();
     if (light.isReachable()) {
         mSelectedLights->removeLight(light);
         emit deselectLights({lightKey});
@@ -169,9 +172,20 @@ void LightsPage::deselectLight(QString lightKey) {
 
 void LightsPage::selectLight(QString lightKey) {
     auto light = mComm->lightByID(lightKey);
-    auto state = light.state();
     if (light.isReachable()) {
         mSelectedLights->addLight(light);
+        emit selectLights({lightKey});
+    }
+}
+
+void LightsPage::selectEffect(QString lightKey, QString effectKey) {
+    auto light = mComm->lightByID(lightKey);
+    auto state = light.state();
+    if (light.isReachable()) {
+        state.isOn(true);
+        state.effect(effectKey);
+        light.state(state);
+        mSelectedLights->addEffect(light);
         emit selectLights({lightKey});
     }
 }

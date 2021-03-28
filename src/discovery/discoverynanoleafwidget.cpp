@@ -86,6 +86,11 @@ void DiscoveryNanoLeafWidget::handleDiscovery(bool) {
 
 void DiscoveryNanoLeafWidget::handleNanoleaf(const nano::LeafMetadata& nanoleaf,
                                              nano::ELeafDiscoveryState status) {
+    auto light = mComm->nanoleaf()->lightFromMetadata(nanoleaf);
+    cor::LightState state;
+    if (light.second) {
+        state = light.first.state();
+    }
     // check if light already exists in list
     int widgetIndex = -1;
     int i = 0;
@@ -94,7 +99,7 @@ void DiscoveryNanoLeafWidget::handleNanoleaf(const nano::LeafMetadata& nanoleaf,
         if (widget->key() == nanoleaf.serialNumber()) {
             // standard case, theres a unique ID for this bridge
             widgetIndex = i;
-            nanoleafWidget->updateNanoleaf(nanoleaf, status);
+            nanoleafWidget->updateNanoleaf(nanoleaf, state, status);
             nanoleafWidget->setShouldHighlight(
                 mSelectedLights->doesLightExist(nanoleaf.serialNumber()));
         }
@@ -103,7 +108,8 @@ void DiscoveryNanoLeafWidget::handleNanoleaf(const nano::LeafMetadata& nanoleaf,
 
     // if it doesnt exist, add it
     if (widgetIndex == -1) {
-        auto widget = new DisplayPreviewNanoleafWidget(nanoleaf, status, mListWidget->mainWidget());
+        auto widget =
+            new DisplayPreviewNanoleafWidget(nanoleaf, state, status, mListWidget->mainWidget());
         widget->setShouldHighlight(mSelectedLights->doesLightExist(nanoleaf.serialNumber()));
         connect(widget, SIGNAL(clicked(QString)), this, SLOT(nanoleafClicked(QString)));
         mListWidget->insertWidget(widget);

@@ -364,6 +364,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
 
 
                                     state.speed(intVector[x + 9]);
+                                    state.transitionSpeed(0);
                                     metadata.timeout(intVector[x + 10]);
                                     metadata.minutesUntilTimeout(intVector[x + 11]);
 

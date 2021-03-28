@@ -11,8 +11,10 @@
 #include <algorithm>
 #include <vector>
 
+#include "comm/nanoleaf/leafprotocols.h"
 #include "cor/presetpalettes.h"
 #include "utils/color.h"
+
 #define MAX_SPEED 200
 
 namespace cor {
@@ -25,9 +27,15 @@ void LightList::updateState(const cor::LightState& newState) {
     for (auto&& light : mLights) {
         auto stateCopy = newState;
 
-        if (newState.routine() != ERoutine::singleSolid) {
-            if (light.protocol() == EProtocolType::nanoleaf) {
+        if (light.protocol() == EProtocolType::nanoleaf) {
+            if (newState.routine() != ERoutine::singleSolid) {
                 stateCopy.speed(MAX_SPEED - newState.speed());
+            }
+
+            if (newState.routine() == ERoutine::singleSolid) {
+                stateCopy.effect(nano::kSolidSingleColorEffect);
+            } else {
+                stateCopy.effect(nano::kTemporaryEffect);
             }
         }
 
@@ -270,18 +278,26 @@ std::vector<QColor> LightList::multiColorScheme() {
             break;
         }
     }
+    bool hasCapabilities = hasLightWithProtocol(EProtocolType::arduCor)
+                           || hasLightWithProtocol(EProtocolType::nanoleaf);
 
     std::vector<QColor> colorScheme;
     int count = 0;
     int max = 6;
 
     if (!hasMultiRoutine) {
-        for (const auto& light : mLights) {
-            auto state = light.state();
-            colorScheme.push_back(state.color());
-            count++;
-            if (count >= max) {
-                break;
+        if (hasCapabilities) {
+            return cor::defaultCustomColors();
+        } else {
+            // all are showing single color routines, just treat
+            // each one as a new color in a palette
+            for (const auto& light : mLights) {
+                auto state = light.state();
+                colorScheme.push_back(state.color());
+                count++;
+                if (count >= max) {
+                    break;
+                }
             }
         }
     } else {
@@ -378,6 +394,12 @@ bool LightList::addMood(const std::vector<cor::Light>& list) {
     }
     emit dataUpdate();
     return true;
+}
+
+bool LightList::addEffect(const cor::Light& light) {
+    auto retValue = addLight(light);
+    emit dataUpdate();
+    return retValue;
 }
 
 bool LightList::removeLights(const std::vector<cor::Light>& list) {
@@ -593,5 +615,6 @@ std::size_t LightList::lightCount() {
     }
     return count;
 }
+
 
 } // namespace cor
