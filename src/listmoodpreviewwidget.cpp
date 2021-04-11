@@ -14,6 +14,7 @@
 
 ListMoodPreviewWidget::ListMoodPreviewWidget(const cor::Mood& mood, QWidget* parent)
     : cor::ListItemWidget(mood.name(), parent),
+      mPalette{new cor::PaletteWidget(this)},
       mMood{mood} {
     mIsChecked = false;
     mIsSelected = false;
@@ -36,11 +37,9 @@ ListMoodPreviewWidget::ListMoodPreviewWidget(const cor::Mood& mood, QWidget* par
 
     mName->setStyleSheet(backgroundStyleSheet);
 
-    mPalette = new cor::LightVectorWidget(4, 2, true, this);
-    mPalette->hideOffLights(true);
+    mPalette->skipOffLightStates(true);
     mPalette->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mPalette->enableButtonInteraction(false);
-    mPalette->updateLights(mMood.lights());
+    mPalette->show(cor::lightStatesFromLights(mMood.lights()));
 
     // setup layout
     mTopLayout = new QHBoxLayout;

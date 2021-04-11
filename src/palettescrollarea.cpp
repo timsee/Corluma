@@ -20,7 +20,7 @@ PaletteScrollArea::PaletteScrollArea(QWidget* parent) : QScrollArea(parent) {
         labels[i] = paletteToString(EPalette(i + 1));
     }
 
-    mPaletteWidgets = std::vector<PaletteWidget*>(labels.size(), nullptr);
+    mPaletteWidgets = std::vector<StoredPaletteWidget*>(labels.size(), nullptr);
     mLayout = new QGridLayout;
     mLayout->setSpacing(0);
     mLayout->setContentsMargins(9, 0, 0, 0);
@@ -33,7 +33,7 @@ PaletteScrollArea::PaletteScrollArea(QWidget* parent) : QScrollArea(parent) {
             columnIndex = 0;
             rowIndex++;
         }
-        mPaletteWidgets[groupIndex] = new PaletteWidget(labels[groupIndex], EPalette(preset), this);
+        mPaletteWidgets[groupIndex] = new StoredPaletteWidget(labels[groupIndex], EPalette(preset), this);
         mLayout->addWidget(mPaletteWidgets[groupIndex], rowIndex, columnIndex);
         connect(mPaletteWidgets[groupIndex],
                 SIGNAL(paletteButtonClicked(EPalette)),

@@ -4,54 +4,54 @@
  * Released under the GNU General Public License.
  */
 
-#include "palettewidget.h"
+#include "storedpalettewidget.h"
 
 #include <QPainter>
 #include <QStyleOption>
 #include "cor/presetpalettes.h"
 #include "utils/qt.h"
 
-PaletteWidget::PaletteWidget(const QString& name, EPalette palette, QWidget* parent)
+StoredPaletteWidget::StoredPaletteWidget(const QString& name, EPalette palette, QWidget* parent)
     : QWidget(parent),
-      mLightVector{new cor::LightVectorWidget(3, 3, true, this)},
+      mLightVector{new cor::PaletteWidget(this)},
       mLabel{new QLabel(name, this)},
       mPalette{palette},
       mIsChecked{false} {
     mLabel->setWordWrap(true);
     mLabel->setStyleSheet("background-color:rgba(0,0,0,0);");
 
-    PresetPalettes palettes;
-    cor::LightState state;
-    state.isOn(true);
-    state.palette(palettes.palette(palette));
-    state.speed(100);
+    mLightVector->showInSingleLine(true);
 
+    PresetPalettes palettes;
     auto paletteColors = palettes.palette(palette).colors();
     auto lights = cor::colorsToSolidLights(paletteColors);
-    state.routine(ERoutine::multiBars);
 
-    mLightVector->enableButtonInteraction(false);
-    mLightVector->updateLights(lights);
+    mLightVector->show(paletteColors);
 }
 
-void PaletteWidget::setChecked(EPalette palette) {
+void StoredPaletteWidget::setChecked(EPalette palette) {
     mIsChecked = (palette == mPalette);
     update();
 }
 
-void PaletteWidget::resize() {
+void StoredPaletteWidget::resize() {
     auto yPos = 0u;
     auto rowHeight = height() / 5;
 
     mLabel->setGeometry(0, yPos, width(), rowHeight);
     yPos += mLabel->height();
 
-    mLightVector->setGeometry(0, yPos, width(), rowHeight * 4);
+    auto xSpacer = width() / 15;
+    auto ySpacer = height() / 15;
+    mLightVector->setGeometry(xSpacer,
+                              yPos + ySpacer,
+                              width() - xSpacer * 2,
+                              (rowHeight * 4) - ySpacer * 2);
     // yPos += mLightVector->height();
 }
 
 
-void PaletteWidget::paintEvent(QPaintEvent*) {
+void StoredPaletteWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.initFrom(this);
     QPainter painter(this);

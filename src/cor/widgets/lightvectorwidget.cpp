@@ -42,7 +42,7 @@ LightVectorWidget::LightVectorWidget(std::uint32_t width,
             state.routine(ERoutine::singleSolid);
             state.color(QColor(0, 0, 0));
             mArrayColorsButtons[i] = new cor::Button(this, state);
-            mArrayColorsButtons[i]->setIconPercent(0.9);
+            mArrayColorsButtons[i]->setIconPercent(1.0);
             mArrayColorsButtons[i]->setLabelMode(true);
             mArrayColorsButtons[i]->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
             connect(mArrayColorsButtons[std::size_t(i)],
@@ -115,7 +115,7 @@ void LightVectorWidget::enableButtonInteraction(bool enable) {
 }
 
 void LightVectorWidget::resizeEvent(QResizeEvent*) {
-    const QSize widgetSize(height() / int(mHeight), height() / int(mHeight));
+    const QSize widgetSize(width() / int(mWidth), height() / int(mHeight));
     for (auto widget : mArrayColorsButtons) {
         widget->setFixedSize(widgetSize);
     }

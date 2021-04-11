@@ -1236,6 +1236,13 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Added the ability to set a Nanoleaf to a stored effect.
 - Added a `transitionSpeed` member to `cor::LightState` to match how Nanoleaf handles speed. The original `speed` denotes how long a step in a routine takes, the `transitionSpeed` denotes once a routine step is completed,
  how long it takes one color to transition to another. For Hues, both speeds are always 0. For ArduCor devices, the `transitionSpeed` is always 0.
- - Added an `effect` member to `cor::LightState` to track when a light is using a state that is stored on the light.
- - Added the ability to use locally stored effects in moods.
- - Added a UI update that displays the colors the Nanoleaf is displaying on the Nanoleaf page.
+- Added an `effect` member to `cor::LightState` to track when a light is using a state that is stored on the light.
+- Added the ability to use locally stored effects in moods.
+- Added a UI update that displays the colors the Nanoleaf is displaying on the Nanoleaf page.
+
+### **v0.21.89**
+### The cor::PaletteWidget Update
+- Split the `nano::LeafEffectPage` into two subpages: one for sound based effects, and one for standard effects.
+- Added a `cor::PaletteWidget` for displaying a palette of colors.
+- Fixed bugs with syncing Nanoleaf Lights.
+- Fixed miscellaneous bugs.

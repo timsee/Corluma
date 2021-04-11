@@ -35,26 +35,54 @@ public:
           mBackButton(new QPushButton("<", this)),
           mHeader(new QLabel(this)),
           mMetadata{new QLabel(this)},
-          mCurrentPalette(new LeafEffectWidget({}, false, this)),
-          mStoredEffects{new nano::LeafEffectScrollArea(this)} {
+          mIsSoundControlled{false},
+          mStandardButton{new QPushButton("Standard", this)},
+          mSoundButton{new QPushButton("Sound", this)},
+          mStandardEffects{new nano::LeafEffectScrollArea(this)},
+          mSoundEffects{new nano::LeafEffectScrollArea(this)} {
         mHeader->setWordWrap(true);
-        mCurrentPalette->displayCheckbox(false);
         connect(mBackButton, SIGNAL(clicked()), this, SLOT(clickedClose()));
 
-        connect(mStoredEffects, SIGNAL(selectEffect(QString)), this, SLOT(effectSelected(QString)));
+        mStandardButton->setCheckable(true);
+        mSoundButton->setCheckable(true);
+
+        connect(mStandardButton, SIGNAL(clicked(bool)), this, SLOT(standardButtonPressed(bool)));
+        connect(mSoundButton, SIGNAL(clicked(bool)), this, SLOT(soundButtonPressed(bool)));
+
+        mMetadata->setVisible(false);
+        connect(mStandardEffects,
+                SIGNAL(selectEffect(QString)),
+                this,
+                SLOT(effectSelected(QString)));
+
+        connect(mSoundEffects, SIGNAL(selectEffect(QString)), this, SLOT(effectSelected(QString)));
+
+        mSoundEffects->setVisible(false);
+        highlightButtons();
     }
 
     /// set the current nanoleaf being used
     void setNanoleaf(const nano::LeafMetadata& metadata) { mLeaf = metadata; }
 
     /// returns the current effect being displayed at the top.
-    const QString& currentEffect() { return mCurrentPalette->effect().name(); }
+    const QString& currentEffect() { return mCurrentEffect.name(); }
 
     /// update the effects displayed
     void updateEffects(const nano::LeafEffect& currentEffect,
                        const std::vector<nano::LeafEffect>& effects) {
-        mCurrentPalette->update(currentEffect, true);
-        mStoredEffects->showEffects(currentEffect.name(), effects);
+        mCurrentEffect = currentEffect;
+
+        std::vector<nano::LeafEffect> standardEffects;
+        std::vector<nano::LeafEffect> soundEffects;
+        for (const auto& effect : effects) {
+            if (effect.pluginType() == "rhythm") {
+                soundEffects.push_back(effect);
+            } else {
+                standardEffects.push_back(effect);
+            }
+        }
+        mSoundEffects->showEffects(currentEffect.name(), soundEffects);
+        mStandardEffects->showEffects(currentEffect.name(), standardEffects);
     }
 
     /// pushes widget in
@@ -87,7 +115,7 @@ public:
         QSize size = parentWidget()->size();
         setFixedSize(int(size.width() * 0.75f), int(size.height() * 0.75f));
 
-        auto rowHeight = height() / 8;
+        auto rowHeight = height() / 10;
         auto backButtonWidth = width() / 6;
         auto columnWidth = width() / 2;
 
@@ -100,21 +128,28 @@ public:
         mHeader->setGeometry(xPos, yPos, width() - backButtonWidth, rowHeight);
         yPos += mHeader->height();
 
-        mMetadata->setGeometry(0, yPos, columnWidth, rowHeight * 2);
-        mCurrentPalette->setGeometry(columnWidth, yPos, columnWidth, rowHeight * 2);
-        yPos += mCurrentPalette->height();
+        mStandardButton->setGeometry(0, yPos, columnWidth, rowHeight);
+        mSoundButton->setGeometry(columnWidth, yPos, columnWidth, rowHeight);
+        yPos += mStandardButton->height();
+
+        //        mMetadata->setGeometry(0, yPos, width(), rowHeight);
+        //        yPos += mMetadata->height();
 
         auto ySpacer = height() / 30;
         yPos += ySpacer;
 
-        mStoredEffects->setGeometry(0, yPos, width(), rowHeight * 5 - ySpacer);
-        mStoredEffects->resize(QRect(0, yPos, width(), rowHeight * 5 - ySpacer), rowHeight);
+        mStandardEffects->setGeometry(0, yPos, width(), rowHeight * 9 - ySpacer);
+        mStandardEffects->resize(QRect(0, yPos, width(), rowHeight * 9 - ySpacer), rowHeight);
+
+        mSoundEffects->setGeometry(0, yPos, width(), rowHeight * 9 - ySpacer);
+        mSoundEffects->resize(QRect(0, yPos, width(), rowHeight * 9 - ySpacer), rowHeight);
     }
 
 signals:
     /// emits when close is pressed
     void closePressed();
 
+    /// signals when an effect is selected, signals the light's serial number and the effect's name.
     void selectEffect(QString, QString);
 
 private slots:
@@ -124,6 +159,26 @@ private slots:
 
     /// handles when an effect is selected, tells the nanoleaf to use this effect.
     void effectSelected(QString name) { emit selectEffect(mLeaf.serialNumber(), name); }
+
+    /// handles when a standard button is pressed.
+    void standardButtonPressed(bool) {
+        mIsSoundControlled = false;
+        highlightButtons();
+
+        mSoundEffects->setVisible(false);
+        mStandardEffects->setVisible(true);
+        resize();
+    }
+
+    /// handles when a sound button is pressed.
+    void soundButtonPressed(bool) {
+        mIsSoundControlled = true;
+        highlightButtons();
+
+        mSoundEffects->setVisible(true);
+        mStandardEffects->setVisible(false);
+        resize();
+    }
 
 protected:
     /// detects when widget is resized
@@ -140,6 +195,18 @@ protected:
     }
 
 private:
+    /// handles highlighting buttons.
+    void highlightButtons() {
+        if (mIsSoundControlled) {
+            mSoundButton->setChecked(true);
+            mStandardButton->setChecked(false);
+        } else {
+            mSoundButton->setChecked(false);
+            mStandardButton->setChecked(true);
+        }
+    }
+
+
     /// the current nanoleaf
     nano::LeafMetadata mLeaf;
 
@@ -155,11 +222,23 @@ private:
     /// metadata about the effects displayed
     QLabel* mMetadata;
 
-    /// widget for the current palette
-    nano::LeafEffectWidget* mCurrentPalette;
+    /// true if sound controlled, false otherwsie
+    bool mIsSoundControlled;
 
-    /// scroll area to display all the effects.
-    nano::LeafEffectScrollArea* mStoredEffects;
+    /// button to show standard routiens
+    QPushButton* mStandardButton;
+
+    /// button to show sound based routines
+    QPushButton* mSoundButton;
+
+    /// current effect shown
+    nano::LeafEffect mCurrentEffect;
+
+    /// scroll area to display all the standard effects.
+    nano::LeafEffectScrollArea* mStandardEffects;
+
+    /// scroll area for effects based on sound.
+    nano::LeafEffectScrollArea* mSoundEffects;
 };
 
 } // namespace nano

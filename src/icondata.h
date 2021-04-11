@@ -130,7 +130,10 @@ public:
      *
      * \return a QPixmap representation of the data
      */
-    const QPixmap renderAsQPixmap();
+    QPixmap renderAsQPixmap();
+
+    /// takes the image data and renders it as a QImage.
+    QImage renderAsQImage();
 
 private:
     /*!

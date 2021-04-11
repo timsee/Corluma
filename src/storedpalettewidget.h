@@ -7,7 +7,7 @@
 
 #include "cor/objects/light.h"
 #include "cor/widgets/button.h"
-#include "cor/widgets/lightvectorwidget.h"
+#include "cor/widgets/palettewidget.h"
 
 /*!
  * \copyright
@@ -18,10 +18,10 @@
  * \brief The PaletteWidget is a widget used on the PalettePage to display the name and all the
  * colors for a palette.
  */
-class PaletteWidget : public QWidget {
+class StoredPaletteWidget : public QWidget {
     Q_OBJECT
 public:
-    explicit PaletteWidget(const QString& name, EPalette palette, QWidget* parent);
+    explicit StoredPaletteWidget(const QString& name, EPalette palette, QWidget* parent);
 
     /*!
      * \brief setChecked acts similarly to the setChecked of a standard QPushButton, but
@@ -52,7 +52,7 @@ protected:
 
 private:
     /// vector that shows the colors in a palette
-    cor::LightVectorWidget* mLightVector;
+    cor::PaletteWidget* mLightVector;
 
     /*!
      * \brief mLabel label for name of preset group.

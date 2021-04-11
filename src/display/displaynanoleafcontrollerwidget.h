@@ -10,6 +10,7 @@
 #include "comm/commlayer.h"
 #include "comm/commnanoleaf.h"
 #include "comm/nanoleaf/leafeffectpage.h"
+#include "comm/nanoleaf/leafeffectwidget.h"
 #include "comm/nanoleaf/leafmetadata.h"
 #include "comm/nanoleaf/leafpanelimage.h"
 #include "cor/widgets/button.h"
@@ -54,6 +55,7 @@ public:
           mSchedulesLabel{new QLabel("<b>Schedules:</b>", this)},
           mSchedulesWidget{new DisplayNanoleafSchedulesWidget(this)},
           mGreyout{new GreyOutOverlay(true, parentWidget()->parentWidget())},
+          mEffect{new nano::LeafEffectWidget({}, false, this)},
           mEffectsPage{new nano::LeafEffectPage(comm, parentWidget()->parentWidget())},
           mSpeedWidget{new SpeedWidget(parentWidget()->parentWidget())},
           mChangeNameInput{new cor::TextInputWidget(parentWidget()->parentWidget())},
@@ -79,6 +81,8 @@ public:
         connect(mChangeRotation, SIGNAL(clicked(bool)), this, SLOT(rotateButtonPressed(bool)));
         connect(mDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteButtonPressed(bool)));
         mDeleteButton->setStyleSheet("background-color:rgb(110,30,30);");
+
+        mEffect->displayCheckbox(false);
 
         mDisplayLights->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 
@@ -124,6 +128,7 @@ public:
         mLeaf = leafMetadata;
         mDiscoveryState = discoveryState;
 
+        mEffect->update(mLeaf.currentEffect(), true);
         if (mEffectsPage->currentEffect() != leafMetadata.currentEffectName()) {
             mEffectsPage->updateEffects(mLeaf.currentEffect(), mLeaf.effects().items());
         }
@@ -190,6 +195,7 @@ public:
         int xSecondColumnStart = int(this->width() / 2 * 1.05);
         int columnWidth = int((this->width() / 2) * 0.95);
         int xSpacer = this->width() / 20;
+        int ySpacer = this->height() / 15;
 
         mGreyout->resize();
 
@@ -220,7 +226,9 @@ public:
 
 
         // column 1
-        mMetadata->setGeometry(xSpacer, yPosColumn1, columnWidth, buttonHeight * 5);
+        mEffect->setGeometry(xSpacer, yPosColumn1, columnWidth, buttonHeight * 2);
+        yPosColumn1 += mEffect->height() + ySpacer;
+        mMetadata->setGeometry(xSpacer, yPosColumn1, columnWidth, buttonHeight * 3 - ySpacer);
         yPosColumn1 += mMetadata->height();
         // mChangeName->setGeometry(xSpacer, yPosColumn1, columnWidth, buttonHeight);
 
@@ -435,27 +443,16 @@ private:
     /// update the metadata for the nano::LeafMetadata
     void updateMetadata(const nano::LeafMetadata& leafMetadata) {
         std::stringstream returnString;
-        returnString << "<b>Current Effect:</b> "
-                     << effectToPrettyName(leafMetadata.currentEffectName()).toStdString()
-                     << "<br>";
-        returnString << "<b>Current Plugin:</b> "
-                     << leafMetadata.currentEffect().pluginSimpleName().toStdString() << "<br>";
-        returnString << "<b>Delay Time:</b> " << mState.speed() * 10 << "ms<br>";
-        returnString << "<b>Trans Time:</b> " << mState.transitionSpeed() * 10 << "ms<br><br>";
-
-        if (mDiscoveryState == nano::ELeafDiscoveryState::connected) {
-            returnString << "<b>Model:</b> " << leafMetadata.model().toStdString() << "<br>";
-            returnString << "<b>Firmware:</b> " << leafMetadata.firmware().toStdString() << "<br>";
-            returnString << "<b>Serial:</b> " << leafMetadata.serialNumber().toStdString()
-                         << "<br><br>";
-        }
-
         returnString << "<b>IP:</b> " << leafMetadata.IP().toStdString() << "<br>";
         returnString << "<b>Port:</b> " << leafMetadata.port() << "<br><br>";
         returnString << "<b>Hardware Name:</b> " << leafMetadata.hardwareName().toStdString()
                      << "<br>";
 
         if (mDiscoveryState == nano::ELeafDiscoveryState::connected) {
+            returnString << "<b>Model:</b> " << leafMetadata.model().toStdString() << "<br>";
+            returnString << "<b>Firmware:</b> " << leafMetadata.firmware().toStdString() << "<br>";
+            returnString << "<b>Serial:</b> " << leafMetadata.serialNumber().toStdString()
+                         << "<br><br>";
             returnString << "<b>Hardware Version:</b> "
                          << leafMetadata.hardwareVersion().toStdString() << "<br>";
 
@@ -565,6 +562,9 @@ private:
 
     /// widget for greying out widgets in the background
     GreyOutOverlay* mGreyout;
+
+    /// effect to display.
+    nano::LeafEffectWidget* mEffect;
 
     /// widget for effects.
     nano::LeafEffectPage* mEffectsPage;

@@ -400,9 +400,12 @@ std::uint32_t IconData::height() {
     return mHeight;
 }
 
-const QPixmap IconData::renderAsQPixmap() {
-    return QPixmap::fromImage(
-        QImage(mBuffer.data(), int(mWidth), int(mHeight), QImage::Format_RGB888));
+QPixmap IconData::renderAsQPixmap() {
+    return QPixmap::fromImage(renderAsQImage());
+}
+
+QImage IconData::renderAsQImage() {
+    return QImage(mBuffer.data(), int(mWidth), int(mHeight), QImage::Format_RGB888);
 }
 
 QColor IconData::getMiddleColor(const QColor& first, const QColor& second) {

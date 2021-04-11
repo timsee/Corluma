@@ -570,7 +570,7 @@ void CommNanoleaf::parseStateUpdatePacket(const nano::LeafMetadata& nanoLight,
             light.state(modifiedState);
             updateLight(light);
         } else if (!nano::isReservedEffect(leafLight.currentEffectName())) {
-            qDebug() << " did not find a stored effect for " << leafLight.currentEffectName();
+            // qDebug() << " did not find a stored effect for " << leafLight.currentEffectName();
         }
 
         // request the effect if its a temporary effect, or if its a new effect, just to make sure

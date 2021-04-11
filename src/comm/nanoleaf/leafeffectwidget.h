@@ -7,8 +7,8 @@
 #include <QWidget>
 #include "comm/nanoleaf/leafeffect.h"
 #include "cor/widgets/checkbox.h"
-#include "cor/widgets/lightvectorwidget.h"
 #include "cor/widgets/listitemwidget.h"
+#include "cor/widgets/palettewidget.h"
 #include "utils/qt.h"
 
 namespace nano {
@@ -29,7 +29,7 @@ public:
         : cor::ListItemWidget(effect.name(), parent),
           mName{new QLabel(this)},
           mMetadata{new QLabel(this)},
-          mLights{new cor::LightVectorWidget(3, 3, true, this)},
+          mPalette{new cor::PaletteWidget(this)},
           mCheckBox{new cor::CheckBox(this)},
           mDisplayCheckbox{true} {
         setStyleSheet("background-color:rgb(33,32,32);");
@@ -51,7 +51,7 @@ public:
         mEffect = effect;
         mName->setText("<b>" + mEffect.name() + "</b>");
         mMetadata->setText(generateMetadataText());
-        mLights->updateLights(cor::colorsToSolidLights(effect.colors()));
+        mPalette->show(effect.colors());
 
         setSelected(isSelected);
     }
@@ -121,11 +121,12 @@ private:
         mName->setGeometry(0, yPos, width() - buttonSide, rowHeight);
         mCheckBox->setGeometry(mName->width(), yPos, buttonSide, buttonSide);
         yPos += mName->height() + ySpacer;
+        mPalette->setGeometry(0, yPos, width(), rowHeight);
+        yPos += mPalette->height();
 
         auto xPos = 0;
-        mMetadata->setGeometry(xPos, yPos, columnWidth, rowHeight * 5);
+        mMetadata->setGeometry(xPos, yPos, width(), rowHeight * 4);
         xPos += mMetadata->width();
-        mLights->setGeometry(xPos, yPos, columnWidth, rowHeight * 5);
     }
 
     /// generate metadata about the effect
@@ -144,9 +145,6 @@ private:
         if (mEffect.mainColorProb() != nano::LeafEffect::invalidParam()) {
             sstream << "<b>Color Prob:</b> " << mEffect.mainColorProb() << "%<br>";
         }
-        if (mEffect.pluginType() == "rhythm") {
-            sstream << "<b>Uses Rhythm Controller</b><br>";
-        }
         return QString(sstream.str().c_str());
     }
 
@@ -157,7 +155,7 @@ private:
     QLabel* mMetadata;
 
     /// displays the colors in the effect
-    cor::LightVectorWidget* mLights;
+    cor::PaletteWidget* mPalette;
 
     /// checkbox to select/deselect effect
     cor::CheckBox* mCheckBox;

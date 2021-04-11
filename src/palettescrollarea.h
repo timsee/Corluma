@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QScrollArea>
 
-#include "palettewidget.h"
+#include "storedpalettewidget.h"
 
 /*!
  * \copyright
@@ -51,7 +51,7 @@ private:
      * \brief mPaletteWidgets vector of all palettes widgets getting displayed in the
      * scroll area.
      */
-    std::vector<PaletteWidget*> mPaletteWidgets;
+    std::vector<StoredPaletteWidget*> mPaletteWidgets;
 
     /*!
      * \brief mPresetHueLayout layout of all hue preset widgets.

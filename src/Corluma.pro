@@ -14,7 +14,7 @@ linux:!android {
     TARGET = corluma
 }
 TEMPLATE = app
-VERSION = 0.21.88
+VERSION = 0.21.89
 
 #----------
 # Build flags
@@ -246,6 +246,7 @@ SOURCES += main.cpp \
     colorpicker/schemegenerator.cpp \
     controllerwidget.cpp \
     cor/lightlist.cpp \
+    cor/widgets/palettewidget.cpp \
     debugconnectionspoofer.cpp \
     discovery/discoveryhuewidget.cpp \
     discovery/discoverynanoleafwidget.cpp \
@@ -287,10 +288,10 @@ SOURCES += main.cpp \
     routines/routinecontainer.cpp \
     mooddetailedwidget.cpp \
     moodsyncwidget.cpp \
-    palettewidget.cpp \
     parentgroupwidget.cpp \
     stateobserver.cpp \
     data/subgroupdata.cpp \
+    storedpalettewidget.cpp \
     timeoutpage.cpp \
     utils/qt.cpp \
     utils/cormath.cpp \
@@ -387,6 +388,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     cor/lightlist.h \
     cor/objects/groupstate.h \
     cor/widgets/expandingtextscrollarea.h \
+    cor/widgets/palettewidget.h \
     data/moodparentdata.h \
     debugconnectionspoofer.h \
     discovery/discoveryhuewidget.h \
@@ -457,7 +459,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     routines/routinecontainer.h \
     mooddetailedwidget.h \
     moodsyncwidget.h \
-    palettewidget.h \
     parentgroupwidget.h \
     routines/routinewidget.h \
     routines/multiglimmerroutinewidget.h \
@@ -473,6 +474,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     speedwidget.h \
     stateobserver.h \
     data/subgroupdata.h \
+    storedpalettewidget.h \
     timeobserver.h \
     timeoutpage.h \
     utils/exception.h \

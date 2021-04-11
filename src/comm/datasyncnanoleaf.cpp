@@ -190,43 +190,52 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
         if (!dataState.isOn()) {
             return false;
         }
-    } else if (dataState.routine() == ERoutine::singleSolid) {
-        // this should show a static color, use static sync
-        allInSync = syncStaticColor(metadata, dataState, commState);
-        if (!allInSync) {
-            resetThrottle(dataDevice.uniqueID(), dataDevice.commType());
-        }
-    } else if (!nano::isReservedEffect(dataState.effect())) {
-        // this is using a pre-existing effect, make sure its syncing the effect we expect
-        allInSync = syncEffect(metadata, dataState, commState);
-        resetThrottle(dataDevice.uniqueID(), dataDevice.commType());
-    } else if (dataState != commState) {
-        allInSync = syncDynamicEffect(metadata, dataState, commState);
-        resetThrottle(dataDevice.uniqueID(), dataDevice.commType());
     }
 
-    // sync brightness as a standard case
-    auto brightnessInSync = true;
-    std::uint32_t brightness = 0u;
-    if (dataState.routine() > cor::ERoutineSingleColorEnd) {
-        brightnessInSync =
-            checkIfInSyncByOne(commState.palette().brightness(), dataState.palette().brightness());
-        brightness = dataState.palette().brightness();
-    } else {
-        brightnessInSync = checkIfInSyncByOne(commState.color().valueF() * 100.0,
-                                              dataState.color().valueF() * 100.0);
-        //            qDebug() << "single color rbgihtness is out of sync! Comm: "
-        //                     << commState.color().valueF() * 100.0
-        //                     << " vs  data: " << dataState.color().valueF() * 100.0 <<
-        //                     "out of sync "
-        //                     << brightnessInSync;
-        brightness = dataState.color().valueF() * 100.0;
+
+    if (dataState.routine() == ERoutine::singleSolid) {
+        // this should show a static color, use static sync
+        allInSync = syncStaticColor(metadata, dataState, commState);
+    } else if (!nano::isReservedEffect(dataState.effect()) && dataState.effect() != "Default") {
+        // this is using a pre-existing effect, make sure its syncing the effect we expect
+        allInSync = syncEffect(metadata, dataState, commState);
+    } else if (dataState != commState) {
+        allInSync = syncDynamicEffect(metadata, dataState, commState);
     }
-    if (!brightnessInSync) {
-        mComm->nanoleaf()->brightnessChange(metadata, brightness);
+
+
+    if (dataState.isOn()) {
+        // sync brightness as a standard case
+        auto brightnessInSync = true;
+        std::uint32_t brightness = 0u;
+        if (dataState.routine() > cor::ERoutineSingleColorEnd) {
+            brightnessInSync = checkIfInSyncByOne(commState.palette().brightness(),
+                                                  dataState.palette().brightness());
+            brightness = dataState.palette().brightness();
+        } else {
+            brightnessInSync = checkIfInSyncByOne(commState.color().valueF() * 100.0,
+                                                  dataState.color().valueF() * 100.0);
+            //            qDebug() << "single color rbgihtness is out of sync! Comm: "
+            //                     << commState.color().valueF() * 100.0
+            //                     << " vs  data: " << dataState.color().valueF() * 100.0 <<
+            //                     "out of sync "
+            //                     << brightnessInSync;
+            brightness = dataState.color().valueF() * 100.0;
+        }
+        if (!brightnessInSync) {
+            allInSync = false;
+            mComm->nanoleaf()->brightnessChange(metadata, brightness);
+        }
+    }
+
+    if (!allInSync) {
         resetThrottle(dataDevice.uniqueID(), dataDevice.commType());
-        allInSync = false;
     }
+#ifdef DEBUG_DATA_SYNC_NANOLEAF
+    if (allInSync) {
+        qDebug() << " finished syncing " << metadata.name();
+    }
+#endif
     return allInSync;
 }
 
@@ -251,7 +260,7 @@ bool DataSyncNanoLeaf::syncEffect(const nano::LeafMetadata& metadata,
     if (dataState.effect() != commState.effect()) {
 #ifdef DEBUG_DATA_SYNC_NANOLEAF
         qDebug() << " effect out of sync, comm: " << commState.effect()
-                 << " data: " << dataState.effect();
+                 << " data: " << dataState.effect() << " for " << metadata.name();
 #endif
         mComm->nanoleaf()->setEffect(metadata, dataState.effect());
         return false;
@@ -275,15 +284,13 @@ bool DataSyncNanoLeaf::syncDynamicEffect(const nano::LeafMetadata& metadata,
                      << routineToString(dataState.routine());
         }
 #endif
+
         bool speedInSync = (commState.speed() == dataState.speed());
 #ifdef DEBUG_DATA_SYNC_NANOLEAF
         if (!speedInSync) {
             qDebug() << " speed comm " << commState.speed() << " vs " << dataState.speed();
         }
 #endif
-        if (dataState.routine() == ERoutine::singleSolid) {
-            speedInSync = true;
-        }
 
         bool paramsInSync = true;
         if (dataState.routine() == ERoutine::singleGlimmer
@@ -301,6 +308,7 @@ bool DataSyncNanoLeaf::syncDynamicEffect(const nano::LeafMetadata& metadata,
         if (dataState.routine() > cor::ERoutineSingleColorEnd) {
             colorInSync = compareTwoPalettes(commState.palette(), dataState.palette());
 #ifdef DEBUG_DATA_SYNC_NANOLEAF
+            qDebug() << " palette in sync: " << colorInSync;
             if (!checkIfInSyncByOne(commState.palette().brightness(),
                                     dataState.palette().brightness())) {
                 qDebug() << " brightness is desycning palette" << commState.palette().brightness()

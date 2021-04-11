@@ -9,8 +9,8 @@
 
 #include "comm/commtype.h"
 #include "cor/objects/mood.h"
-#include "cor/widgets/lightvectorwidget.h"
 #include "cor/widgets/listitemwidget.h"
+#include "cor/widgets/palettewidget.h"
 #include "icondata.h"
 
 /*!
@@ -102,7 +102,7 @@ private:
     QLabel* mName;
 
     /// palette showing the colors
-    cor::LightVectorWidget* mPalette;
+    cor::PaletteWidget* mPalette;
 
     /// stored local copy of the group data.
     cor::Mood mMood;
