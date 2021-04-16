@@ -53,6 +53,7 @@ public:
           mDeleteButton{new QPushButton("Delete", this)},
           mMetadata{new cor::ExpandingTextScrollArea(this)},
           mSchedulesLabel{new QLabel("<b>Schedules:</b>", this)},
+          mCurrentEffectLabel{new QLabel("<b>Current Effect:</b>", this)},
           mSchedulesWidget{new DisplayNanoleafSchedulesWidget(this)},
           mGreyout{new GreyOutOverlay(true, parentWidget()->parentWidget())},
           mEffect{new nano::LeafEffectWidget({}, false, this)},
@@ -142,19 +143,25 @@ public:
 
         if (mDiscoveryState != nano::ELeafDiscoveryState::connected) {
             mStateButton->setVisible(false);
+            mEffectsButton->setVisible(false);
             mChangeRotation->setVisible(false);
             mChangeName->setVisible(false);
             mDisplayLights->setVisible(false);
             mCheckBox->setVisible(false);
             mSyncWidget->setVisible(true);
+            mCurrentEffectLabel->setVisible(false);
+            mEffect->setVisible(false);
             mSyncWidget->changeState(ESyncState::syncing);
         } else {
             mStateButton->setVisible(true);
+            mEffectsButton->setVisible(true);
             mChangeRotation->setVisible(true);
             mChangeName->setVisible(true);
             mCheckBox->setVisible(true);
             mDisplayLights->setVisible(true);
             mSyncWidget->setVisible(false);
+            mCurrentEffectLabel->setVisible(true);
+            mEffect->setVisible(true);
             mSyncWidget->changeState(ESyncState::synced);
         }
         if (!leafMetadata.name().isEmpty()) {
@@ -165,6 +172,11 @@ public:
         auto light = mComm->nanoleaf()->lightFromMetadata(leafMetadata);
         if (light.second) {
             mState = light.first.state();
+            if (mState.isOn()) {
+                mCurrentEffectLabel->setText("<b>Current Effect:</b>");
+            } else {
+                mCurrentEffectLabel->setText("Currently Off, Effect if On:");
+            }
             mStateButton->updateRoutine(light.first.state());
         }
         auto scheduleResult = mComm->nanoleaf()->findSchedules(leafMetadata.serialNumber());
@@ -226,8 +238,10 @@ public:
 
 
         // column 1
+        mCurrentEffectLabel->setGeometry(xSpacer, yPosColumn1, columnWidth, buttonHeight * 0.75);
+        yPosColumn1 += mCurrentEffectLabel->height();
         mEffect->setGeometry(xSpacer, yPosColumn1, columnWidth, buttonHeight * 2);
-        yPosColumn1 += mEffect->height() + ySpacer;
+        yPosColumn1 += mEffect->height();
         mMetadata->setGeometry(xSpacer, yPosColumn1, columnWidth, buttonHeight * 3 - ySpacer);
         yPosColumn1 += mMetadata->height();
         // mChangeName->setGeometry(xSpacer, yPosColumn1, columnWidth, buttonHeight);
@@ -556,6 +570,9 @@ private:
 
     /// label for schedules widget
     QLabel* mSchedulesLabel;
+
+    /// label above the effect.
+    QLabel* mCurrentEffectLabel;
 
     /// widget for schedules.
     DisplayNanoleafSchedulesWidget* mSchedulesWidget;

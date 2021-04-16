@@ -33,7 +33,12 @@ DiscoveryHueWidget::DiscoveryHueWidget(QWidget* parent,
       mHasLights{false},
       mBridgeIndex{0},
       mRowHeight{10u},
-      mHueDiscoveryState{EHueDiscoveryState::findingIpAddress} {}
+      mHueDiscoveryState{EHueDiscoveryState::findingIpAddress} {
+#ifdef USE_EXPERIMENTAL_FEATURES
+    mHelpView->useDebugButton(true);
+    connect(mHelpView, SIGNAL(debugPressed()), this, SLOT(debugClicked()));
+#endif
+}
 
 void DiscoveryHueWidget::hueDiscoveryUpdate(EHueDiscoveryState newState) {
     if (newState != mHueDiscoveryState) {
@@ -470,3 +475,9 @@ QString DiscoveryHueWidget::discoveryHelpHTML() {
     sstream << "</ul>";
     return QString(sstream.str().c_str());
 }
+
+#ifdef USE_EXPERIMENTAL_FEATURES
+void DiscoveryHueWidget::debugClicked() {
+    qDebug() << " Debug clicked!";
+}
+#endif

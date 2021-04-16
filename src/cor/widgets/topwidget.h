@@ -22,7 +22,8 @@ class TopWidget : public QWidget {
 public:
     /// constructor
     explicit TopWidget(const QString& title, const QString& resource, QWidget* parent)
-        : QWidget(parent) {
+        : QWidget(parent),
+          mDebugButton{new QPushButton("Debug")} {
         mLayout = new QHBoxLayout();
 
         mButton = new QPushButton(this);
@@ -34,10 +35,21 @@ public:
         mTitle->setAlignment(Qt::AlignBottom);
         mTitle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
+#ifdef USE_EXPERIMENTAL_FEATURES
+        mDebugButton->setVisible(false);
+        mDebugButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        connect(mDebugButton, SIGNAL(clicked(bool)), this, SLOT(clickedDebug(bool)));
+#endif
+
         mResource = resource;
 
         mLayout->addWidget(mButton, 1);
+#ifdef USE_EXPERIMENTAL_FEATURES
+        mLayout->addWidget(mTitle, 9);
+        mLayout->addWidget(mDebugButton, 1);
+#else
         mLayout->addWidget(mTitle, 10);
+#endif
         mLayout->setContentsMargins(0, 0, 0, 0);
         mLayout->setSpacing(6);
         setLayout(mLayout);
@@ -54,9 +66,17 @@ public:
     }
 
 
+#ifdef USE_EXPERIMENTAL_FEATURES
+    /// shows the debug button.
+    void showDebugButton(bool showDebugButton) { mDebugButton->setVisible(showDebugButton); }
+#endif
+
 signals:
     /// emitted whenever its button is clicked
     void clicked(bool);
+
+    /// emitted when debug is clicked
+    void debugClicked(bool);
 
 protected:
     /// handles when the widget resizes
@@ -74,6 +94,9 @@ private slots:
     /// handles when the button is pressed internally
     void buttonPressed(bool pressed) { emit clicked(pressed); }
 
+    /// handles when the debug button is pressed.
+    void clickedDebug(bool pressed) { emit debugClicked(pressed); }
+
 private:
     /// resource for the button's graphic
     QString mResource;
@@ -83,6 +106,11 @@ private:
 
     /// title of widget
     QLabel* mTitle;
+
+#ifdef USE_EXPERIMENTAL_FEATURES
+    /// debug button at right hand side of widget
+    QPushButton* mDebugButton;
+#endif
 
     /// layout for widget
     QHBoxLayout* mLayout;

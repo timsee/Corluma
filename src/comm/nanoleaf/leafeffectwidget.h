@@ -116,7 +116,7 @@ private:
         auto rowHeight = height() / 7;
         auto buttonSide = rowHeight;
 
-        auto columnWidth = width() / 2;
+        // auto columnWidth = width() / 2;
         auto yPos = ySpacer;
         mName->setGeometry(0, yPos, width() - buttonSide, rowHeight);
         mCheckBox->setGeometry(mName->width(), yPos, buttonSide, buttonSide);

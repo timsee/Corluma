@@ -31,6 +31,10 @@ public:
     /// is set, only on light states are shown.
     void skipOffLightStates(bool skipOffLightStates) { mSkipOffLightStates = skipOffLightStates; }
 
+    /// true to force squares to be rendered, false if the components will stretch to fit the
+    /// region. By default this is false.
+    void shouldForceSquares(bool shouldForceSquares) { mForceSquares = shouldForceSquares; }
+
     /// shows a vector of colors as the palette. All colors are assumed to be displayed as solid
     /// colors.
     void show(const std::vector<QColor>& colors);
@@ -47,24 +51,18 @@ protected:
 
 private:
     /// draws a single color on the palette widget in the defined region.
-    void drawSolidColor(QPainter& painter,
-                        const QColor& color,
-                        const QSize& rectSize,
-                        const QPoint& offset);
+    void drawSolidColor(QPainter& painter, const QColor& color, const QRect& renderRect);
 
 
-    /// draws a light state on the palette widget in te defined region.
-    void drawLightState(QPainter& painter,
-                        const cor::LightState& state,
-                        const QSize& rectSize,
-                        const QPoint& offset);
+    /// draws a light state on the palette widget in the defined region.
+    void drawLightState(QPainter& painter, const cor::LightState& state, const QRect& renderRect);
 
     /// generates the grid size based on the number of palette components used.
     QSize generateGridSize();
 
-    /// generates the offset of a componenet of the palette based on the number of the component,
-    /// the item size, and the grid size.
-    QPoint generateOffset(const QSize& itemSize, const QSize& gridSize, std::uint32_t i);
+    /// generates the render region of a componenet of the palette based on the number of the
+    /// component, the widget size, and the grid size.
+    QRect generateRenderRegion(const QSize& gridSize, std::uint32_t i);
 
     /// vector of colors to be used as the palette.
     std::vector<QColor> mSolidColors;
@@ -80,6 +78,9 @@ private:
 
     /// true if using a single line, false otherwise.
     bool mIsSingleLine;
+
+    /// true if all components should be rendered as a square, false if they are stretched to fit.
+    bool mForceSquares;
 };
 
 } // namespace cor

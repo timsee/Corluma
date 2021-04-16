@@ -120,6 +120,11 @@ private slots:
     /// delete a bridge is pressed, so this bridge should be deleted.
     void deleteBridgePressed(QString, EProtocolType);
 
+#ifdef USE_EXPERIMENTAL_FEATURES
+    /// use when the debug button is pressed.
+    void debugClicked();
+#endif
+
 protected:
     /// called when the widget resizes
     virtual void resizeEvent(QResizeEvent*) override;

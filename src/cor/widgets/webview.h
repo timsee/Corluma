@@ -39,6 +39,9 @@ public:
 
         mTopWidget = new cor::TopWidget(title, ":images/closeX.png", this);
         connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(closeButtonPressed(bool)));
+#ifdef USE_EXPERIMENTAL_FEATURES
+        connect(mTopWidget, SIGNAL(debugClicked(bool)), this, SLOT(debugClicked(bool)));
+#endif
 
         if (!htmlPath.isEmpty()) {
             QFile file(htmlPath);
@@ -67,13 +70,28 @@ public:
     /// update the html programmatically
     void updateHTML(const QString& input) { mTextBrowser->setHtml(input); }
 
+#ifdef USE_EXPERIMENTAL_FEATURES
+    /// show the debug button
+    void useDebugButton(bool useDebugButton) { mTopWidget->showDebugButton(useDebugButton); }
+#endif
+
 signals:
     /// emits whenever wthe close button is pressed
     void closePressed();
 
+#ifdef USE_EXPERIMENTAL_FEATURES
+    /// emits when the debug button is pressed.
+    void debugPressed();
+#endif
+
 private slots:
     /// handles when the close button is pressed internally
     void closeButtonPressed(bool) { emit closePressed(); }
+
+#ifdef USE_EXPERIMENTAL_FEATURES
+    /// handles when a debug button is clicked
+    void debugClicked(bool) { emit debugPressed(); }
+#endif
 
 protected:
     /// called whenever the widget is repainted

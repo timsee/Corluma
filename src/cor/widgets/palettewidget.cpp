@@ -1,6 +1,7 @@
 #include "palettewidget.h"
 #include <QPainter>
 #include <QStyleOption>
+#include <algorithm>
 #include "icondata.h"
 
 namespace cor {
@@ -8,7 +9,8 @@ namespace cor {
 PaletteWidget::PaletteWidget(QWidget* parent)
     : QWidget(parent),
       mSkipOffLightStates{false},
-      mIsSingleLine{false} {}
+      mIsSingleLine{false},
+      mForceSquares{false} {}
 
 void PaletteWidget::show(const std::vector<QColor>& colors) {
     mIsSolidColors = true;
@@ -17,6 +19,7 @@ void PaletteWidget::show(const std::vector<QColor>& colors) {
 
 void PaletteWidget::show(const std::vector<cor::LightState>& states) {
     auto statesCopy = states;
+    // remove all off lights, if the widget is configured to do this
     if (mSkipOffLightStates) {
         std::vector<cor::LightState> nonOffLightStates;
         for (const auto& lightState : states) {
@@ -26,6 +29,26 @@ void PaletteWidget::show(const std::vector<cor::LightState>& states) {
             statesCopy = nonOffLightStates;
         }
     }
+    // sort by color
+    std::sort(statesCopy.begin(),
+              statesCopy.end(),
+              [](const cor::LightState& a, const cor::LightState& b) -> bool {
+                  double hueA;
+                  if (a.routine() <= cor::ERoutineSingleColorEnd) {
+                      hueA = a.color().hueF();
+                  } else {
+                      hueA = a.palette().averageColor().hueF();
+                  }
+
+                  double hueB;
+                  if (b.routine() <= cor::ERoutineSingleColorEnd) {
+                      hueB = b.color().hueF();
+                  } else {
+                      hueB = b.palette().averageColor().hueF();
+                  }
+                  return hueA < hueB;
+              });
+
     mIsSolidColors = false;
     mStates = statesCopy;
 }
@@ -33,7 +56,6 @@ void PaletteWidget::show(const std::vector<cor::LightState>& states) {
 
 void PaletteWidget::paintEvent(QPaintEvent*) {
     auto gridSize = generateGridSize();
-    auto itemSize = QSize(width() / gridSize.width(), height() / gridSize.height());
 
     QStyleOption opt;
     opt.initFrom(this);
@@ -42,14 +64,14 @@ void PaletteWidget::paintEvent(QPaintEvent*) {
     std::uint32_t i = 0;
     if (mIsSolidColors) {
         for (const auto& color : mSolidColors) {
-            auto offset = generateOffset(itemSize, gridSize, i);
-            drawSolidColor(painter, color, itemSize, offset);
+            auto renderRegion = generateRenderRegion(gridSize, i);
+            drawSolidColor(painter, color, renderRegion);
             ++i;
         }
     } else {
         for (const auto& state : mStates) {
-            auto offset = generateOffset(itemSize, gridSize, i);
-            drawLightState(painter, state, itemSize, offset);
+            auto renderRegion = generateRenderRegion(gridSize, i);
+            drawLightState(painter, state, renderRegion);
             ++i;
         }
     }
@@ -57,28 +79,41 @@ void PaletteWidget::paintEvent(QPaintEvent*) {
 
 void PaletteWidget::drawSolidColor(QPainter& painter,
                                    const QColor& color,
-                                   const QSize& rectSize,
-                                   const QPoint& offset) {
-    painter.fillRect(QRect(offset, rectSize), QBrush(color));
+                                   const QRect& renderRect) {
+    painter.fillRect(renderRect, QBrush(color));
 }
 
 
 void PaletteWidget::drawLightState(QPainter& painter,
                                    const cor::LightState& state,
-                                   const QSize& rectSize,
-                                   const QPoint& offset) {
+                                   const QRect& renderRegion) {
     IconData icon;
     icon.setRoutine(state);
-    painter.drawImage(QRect(offset, rectSize), icon.renderAsQImage());
+    painter.drawImage(renderRegion, icon.renderAsQImage());
 }
 
 
-QPoint PaletteWidget::generateOffset(const QSize& itemSize,
-                                     const QSize& gridSize,
-                                     std::uint32_t i) {
+QRect PaletteWidget::generateRenderRegion(const QSize& gridSize, std::uint32_t i) {
     auto height = i / gridSize.width();
     auto width = i % gridSize.width();
-    return QPoint(itemSize.width() * width, itemSize.height() * height);
+
+    auto itemWidth = this->width() / gridSize.width();
+    auto itemHeight = this->height() / gridSize.height();
+    QSize itemSize;
+    QSize offset;
+    if (mForceSquares) {
+        auto side = std::min(itemWidth, itemHeight);
+        itemSize = QSize(side, side);
+        offset = QSize((this->width() - (gridSize.width() * side)) / 2,
+                       (this->height() - (gridSize.height() * side)) / 2);
+    } else {
+        itemSize = QSize(itemWidth, itemHeight);
+        offset = QSize(0, 0);
+    }
+    return QRect(offset.width() + itemSize.width() * width,
+                 offset.height() + itemSize.height() * height,
+                 itemSize.width(),
+                 itemSize.height());
 }
 
 

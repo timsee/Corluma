@@ -1246,3 +1246,10 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Added a `cor::PaletteWidget` for displaying a palette of colors.
 - Fixed bugs with syncing Nanoleaf Lights.
 - Fixed miscellaneous bugs.
+
+### **v0.21.90**
+### Bug Fixes
+- Fixed the aspect ratio of the splash screen on certain iOS devices.
+- Added an optional Debug button to to `WebViews`.
+- Added more options to the `cor::PaletteWidget`.
+- Fixed miscellaneous bugs.
