@@ -108,6 +108,34 @@ void MenuParentGroupContainer::updateDataGroupInUI(const cor::Group& dataGroup,
     }
 }
 
+
+void MenuParentGroupContainer::updateLightStates(const QString& name,
+                                                 const std::vector<cor::LightState>& lightStates) {
+    bool existsInContainer = false;
+    for (const auto& widget : mParentGroupWidgets) {
+        if (widget->text() == name) {
+            existsInContainer = true;
+            widget->updateStates(lightStates);
+        }
+    }
+    if (!existsInContainer) {
+        qDebug() << "WARNING: could not find " << name << "in menugroupcontainer";
+    }
+}
+
+void MenuParentGroupContainer::hideLightStates(const QString& name) {
+    bool existsInContainer = false;
+    for (const auto& widget : mParentGroupWidgets) {
+        if (widget->text() == name) {
+            existsInContainer = true;
+            widget->showStates(false);
+        }
+    }
+    if (!existsInContainer) {
+        qDebug() << "WARNING: could not find " << name << "in menugroupcontainer";
+    }
+}
+
 void MenuParentGroupContainer::initParentGroupWidget(const cor::Group& group, const QString& key) {
     auto widget = new ParentGroupWidget(key, group.name(), cor::EWidgetType::condensed, true, this);
     QScroller::grabGesture(widget, QScroller::LeftMouseButtonGesture);

@@ -27,7 +27,8 @@ public:
     explicit LeftHandMenuTopLightWidget(QWidget* parent)
         : QWidget(parent),
           mParentWidget{new ParentGroupWidget("", "", cor::EWidgetType::condensed, true, this)},
-          mSubgroupButton{new cor::GroupButton(this, "")} {
+          mSubgroupButton{new cor::GroupButton(this, "")},
+          mIsParent{false} {
         mParentWidget->setVisible(false);
         connect(mParentWidget, SIGNAL(pressed()), this, SLOT(parentGroupWidgetPressed()));
         mParentWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -46,16 +47,28 @@ public:
         mSubgroupButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     }
 
+    /// show the given light states on the parent widget
+    void showParentStates(const std::vector<cor::LightState>& lightStates) {
+        mParentWidget->updateStates(lightStates);
+    }
+
+    /// show the given light states on the subgroup widget
+    void showSubgroupStates(const std::vector<cor::LightState>& lightStates) {
+        mSubgroupButton->updateStates(lightStates);
+    }
+
     /// getter for the ParentGroupWidget, shown when the subgroup menu is open or the light menu
     ParentGroupWidget* parentWidget() { return mParentWidget; }
 
     /// sets the parent group to show
     void showParentWidget(const QString& parentGroupName, std::uint64_t parentID) {
+        mIsParent = true;
         mSubgroupButton->setVisible(false);
         mParentID = parentID;
         mParentWidget->changeText(parentGroupName);
         mParentWidget->showButtons(true);
         mParentWidget->setVisible(true);
+        resize();
     }
 
     /// unique ID for the parent group
@@ -66,9 +79,11 @@ public:
 
     /// sets the subgroup to show
     void showSubgroup(const QString& subgroupName, std::uint64_t subgroupID) {
+        mIsParent = false;
         mSubgroupID = subgroupID;
         mSubgroupButton->changeText(subgroupName);
         mSubgroupButton->setVisible(true);
+        resize();
     }
 
     /// unique ID for the subgroup
@@ -118,11 +133,11 @@ private:
     /// resize programmatically
     void resize() {
         auto yPos = 0;
-        if (mParentWidget->isVisible() && mSubgroupButton->isVisible()) {
+        if (!mIsParent) {
             mParentWidget->setGeometry(0, 0, width(), height() / 2);
             yPos += mParentWidget->height();
             mSubgroupButton->setGeometry(0, yPos, width(), height() / 2);
-        } else if (mParentWidget->isVisible()) {
+        } else {
             mParentWidget->setFixedHeight(height());
             mParentWidget->setGeometry(0, 0, width(), height());
         }
@@ -139,6 +154,9 @@ private:
 
     /// unique ID for the subgroup
     std::uint64_t mSubgroupID;
+
+    /// true if parent, false otherwise.
+    bool mIsParent;
 };
 
 #endif // LEFTHANDMENUTOPLIGHTWIDGET_H

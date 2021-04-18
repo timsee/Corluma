@@ -97,14 +97,11 @@ private slots:
     /// called when a group is selected or deselected
     void groupSelected(std::uint64_t key, bool shouldSelect);
 
-    /// called when buttons should be shown or hidden
-    void shouldShowButtons(std::uint64_t, bool);
-
     /// called when a parent group is changed
     void parentGroupClicked(std::uint64_t ID);
 
     /// transition from the subgroups to the lights, by showing the lights for a specific group
-    void showSubgroupLights(std::uint64_t);
+    void subgroupClicked(std::uint64_t);
 
     /// handles when a light is clicked
     void lightClicked(QString key) {
@@ -143,6 +140,9 @@ private:
         }
         return std::make_pair(selectedCount, reachableCount);
     }
+
+    /// queries the light states from the commlayer and updates the palettewidget for each group.
+    void updateLightStates();
 
     /// counts the number of selected lights and the number of reachable lights for a vector of
     /// groups

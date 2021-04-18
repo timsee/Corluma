@@ -6,6 +6,7 @@
 #include <QPushButton>
 #include <QWidget>
 #include "cor/widgets/checkbox.h"
+#include "cor/widgets/palettewidget.h"
 
 namespace cor {
 /*!
@@ -57,6 +58,23 @@ public:
 
     /// true to show the button, false to not.
     void showButton(bool shouldShowButton) { mShowButton = shouldShowButton; }
+
+    /// getter as to whether states are showign or not
+    bool showStates() const noexcept { return mShowStates; }
+
+    /// true to show the states, false otherwise
+    void showStates(bool showStates) {
+        if (mShowStates != showStates) {
+            mShowStates = showStates;
+            resize();
+        }
+    }
+
+    /// updates the shown states, sets states to showing if they are not already showing.
+    void updateStates(const std::vector<cor::LightState>& lightStates) {
+        mShowStates = true;
+        mPaletteWidget->show(lightStates);
+    }
 
     /// set whether the button should show select all or deselect all
     void setSelectAll(bool shoudlSelect);
@@ -115,7 +133,14 @@ private:
     /// label for checkbox
     QLabel* mTitle;
 
+    /// checkbox for selecting/deselecting a group.
     cor::CheckBox* mCheckBox;
+
+    /// widget for displaying palettes.
+    cor::PaletteWidget* mPaletteWidget;
+
+    /// true to show the states, false otherwise.
+    bool mShowStates;
 };
 
 } // namespace cor

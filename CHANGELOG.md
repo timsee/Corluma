@@ -1253,3 +1253,8 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Added an optional Debug button to to `WebViews`.
 - Added more options to the `cor::PaletteWidget`.
 - Fixed miscellaneous bugs.
+
+### **v0.21.91**
+### The Group LightStates Update
+- The `LeftHandMenu` now shows the state of all on lights for each group.
+- Fixed miscellaneous bugs.

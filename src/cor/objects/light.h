@@ -275,10 +275,13 @@ inline std::vector<cor::Light> colorsToSolidLights(const std::vector<QColor>& co
 }
 
 /// converts a vector lights to their respective states.
-inline std::vector<cor::LightState> lightStatesFromLights(const std::vector<cor::Light>& lights) {
+inline std::vector<cor::LightState> lightStatesFromLights(const std::vector<cor::Light>& lights,
+                                                          bool skipUnreachableStates) {
     std::vector<cor::LightState> lightStates;
     for (const auto& light : lights) {
-        lightStates.push_back(light.state());
+        if ((skipUnreachableStates && light.isReachable()) || !skipUnreachableStates) {
+            lightStates.push_back(light.state());
+        }
     }
     return lightStates;
 }

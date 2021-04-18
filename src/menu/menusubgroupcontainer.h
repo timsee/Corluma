@@ -45,6 +45,10 @@ public:
                 ID = mParentID;
             }
             auto group = mGroups->groupFromID(ID);
+            // add a way to denote this is a parent group.
+            if (button->key() == "All") {
+                group.name("All");
+            }
             if (group.isValid()) {
                 groups.push_back(group);
             }
@@ -64,6 +68,39 @@ public:
     void highlightSubgroups(
         const std::unordered_map<std::uint64_t, std::pair<std::uint32_t, std::uint32_t>>&
             subgroupCounts);
+
+
+    void showState(std::uint64_t groupID, const std::vector<cor::LightState> states) {
+        for (auto button : mButtons) {
+            auto ID = mGroups->subgroups().subgroupIDFromRenamedGroup(mParentID, button->key());
+            if (button->key() == "All") {
+                ID = mParentID;
+            }
+            if (ID != std::numeric_limits<std::uint64_t>::max()) {
+                if (ID == groupID) {
+                    button->updateStates(states);
+                    return;
+                }
+            }
+        }
+        qDebug() << " group not found for update" << groupID;
+    }
+
+    void hideStates(std::uint64_t groupID) {
+        for (auto button : mButtons) {
+            auto ID = mGroups->subgroups().subgroupIDFromRenamedGroup(mParentID, button->key());
+            if (button->key() == "All") {
+                ID = mParentID;
+            }
+            if (ID != std::numeric_limits<std::uint64_t>::max()) {
+                if (ID == groupID) {
+                    button->showStates(false);
+                    return;
+                }
+            }
+        }
+        qDebug() << " group not found for hiding" << groupID;
+    }
 
     /// true if empty, false if theres at least one button
     bool empty() { return mButtons.empty(); }
@@ -91,8 +128,8 @@ signals:
     /// emitted when a group button is pressed. This emits its unique ID
     void subgroupClicked(std::uint64_t key);
 
-    /// emitted when a group's toggle button is pressed. This emits its actual group name, instead
-    /// of its displayed group name.
+    /// emitted when a group's toggle button is pressed. This emits its actual group name,
+    /// instead of its displayed group name.
     void groupSelectAllToggled(std::uint64_t key, bool selectAll);
 
 protected:

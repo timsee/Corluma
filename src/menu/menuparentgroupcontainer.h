@@ -35,6 +35,12 @@ public:
      */
     void updateDataGroupInUI(const cor::Group& dataGroup, const std::vector<cor::Group>& uiGroups);
 
+    /// update the light states for the parent with the given name.
+    void updateLightStates(const QString& name, const std::vector<cor::LightState>& lightStates);
+
+    /// hide the light states for the parent with the given name.
+    void hideLightStates(const QString& name);
+
     /// generates a vector of groups represented by the widgets used by the Parent Groups
     const std::vector<cor::Group> parentGroups();
 

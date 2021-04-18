@@ -8,6 +8,7 @@
 
 #include "cor/objects/group.h"
 #include "cor/protocols.h"
+#include "cor/widgets/palettewidget.h"
 
 /*!
  * \copyright
@@ -34,10 +35,22 @@ public:
      * \brief showButtons getter that checks if buttons are showing
      * \return  true if buttons are showing, false otherwise.
      */
-    bool showButtons() { return mShowButtons; }
+    bool showButtons() const noexcept { return mShowButtons; }
 
     /// set to true to show all widgets, false to just show the dropdown widget.
     void showButtons(bool showButtons);
+
+    /// getter as to whether states are showign or not
+    bool showStates() const noexcept { return mShowStates; }
+
+    /// true to show the states, false otherwise
+    void showStates(bool showStates);
+
+    /// updates the shown states, sets states to showing if they are not already showing.
+    void updateStates(const std::vector<cor::LightState>& lightStates) {
+        mShowStates = true;
+        mPaletteWidget->show(lightStates);
+    }
 
     /// getter for key
     const QString& key() const noexcept { return mKey; }
@@ -101,6 +114,9 @@ private:
      */
     QLabel* mArrowIcon;
 
+    /// widget for displaying palettes.
+    cor::PaletteWidget* mPaletteWidget;
+
     /// pixmap for icon that conveys no buttons being shown
     QPixmap mClosedPixmap;
 
@@ -130,6 +146,9 @@ private:
      * \brief mButtonHeight height of a button
      */
     int mButtonHeight;
+
+    /// true to show the states, false otherwise.
+    bool mShowStates;
 };
 
 #endif // DROPDOWNTOPWIDGET_H

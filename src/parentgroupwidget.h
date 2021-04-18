@@ -31,6 +31,9 @@ public:
     /// change the text of the dropdownwidget
     void changeText(const QString& text) { mName->setText(text); }
 
+    /// getter for name of parent.
+    QString text() { return mName->text(); }
+
     /// update the checked devices of the group that matches the key
     void updateCheckedLights(std::uint32_t checkedLightCount, std::uint32_t reachableLightCount);
 

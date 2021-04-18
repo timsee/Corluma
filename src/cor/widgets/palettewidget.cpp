@@ -15,6 +15,7 @@ PaletteWidget::PaletteWidget(QWidget* parent)
 void PaletteWidget::show(const std::vector<QColor>& colors) {
     mIsSolidColors = true;
     mSolidColors = colors;
+    update();
 }
 
 void PaletteWidget::show(const std::vector<cor::LightState>& states) {
@@ -51,6 +52,7 @@ void PaletteWidget::show(const std::vector<cor::LightState>& states) {
 
     mIsSolidColors = false;
     mStates = statesCopy;
+    update();
 }
 
 

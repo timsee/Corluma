@@ -21,10 +21,15 @@ DropdownTopWidget::DropdownTopWidget(const QString& key,
                                      bool hideEdit,
                                      QWidget* parent)
     : QWidget(parent),
-      mKey(key) {
+      mPaletteWidget{new cor::PaletteWidget(this)},
+      mKey{key},
+      mShowStates{false} {
     mType = type;
     mShowButtons = false;
     mHideEdit = hideEdit;
+
+    mPaletteWidget->skipOffLightStates(true);
+    mPaletteWidget->shouldForceSquares(true);
 
     connect(this, SIGNAL(pressed()), this, SLOT(widgetPressed()));
 
@@ -88,14 +93,21 @@ void DropdownTopWidget::resize() {
 
     auto xPos = width() - mButtonHeight;
     mArrowIcon->setGeometry(xPos, 0u, mButtonHeight, mButtonHeight);
+    xPos -= mArrowIcon->width();
 
     if (!mHideEdit) {
         mEditButton->setGeometry(xPos, 0u, mButtonHeight, mButtonHeight);
         xPos -= mEditButton->width();
     }
 
+    if (mShowStates) {
+        mPaletteWidget->setGeometry(xPos, 0u, mButtonHeight, mButtonHeight);
+        xPos -= mPaletteWidget->width();
+    }
+
     auto rightSpacer = width() * 0.03;
-    mName->setGeometry(rightSpacer, 0, xPos - rightSpacer, mButtonHeight);
+    auto nameWidth = xPos - rightSpacer;
+    mName->setGeometry(rightSpacer, 0, nameWidth, mButtonHeight);
 }
 
 void DropdownTopWidget::showButtons(bool showButtons) {
@@ -105,4 +117,10 @@ void DropdownTopWidget::showButtons(bool showButtons) {
     } else {
         mArrowIcon->setPixmap(mClosedPixmap);
     }
+}
+
+
+void DropdownTopWidget::showStates(bool showStates) {
+    mShowStates = showStates;
+    resize();
 }

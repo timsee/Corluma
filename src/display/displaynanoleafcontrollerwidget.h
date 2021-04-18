@@ -57,7 +57,7 @@ public:
           mSchedulesWidget{new DisplayNanoleafSchedulesWidget(this)},
           mGreyout{new GreyOutOverlay(true, parentWidget()->parentWidget())},
           mEffect{new nano::LeafEffectWidget({}, false, this)},
-          mEffectsPage{new nano::LeafEffectPage(comm, parentWidget()->parentWidget())},
+          mEffectsPage{new nano::LeafEffectPage(parentWidget()->parentWidget())},
           mSpeedWidget{new SpeedWidget(parentWidget()->parentWidget())},
           mChangeNameInput{new cor::TextInputWidget(parentWidget()->parentWidget())},
           mRotateLightWidget{new RotateLightWidget(parentWidget()->parentWidget())},

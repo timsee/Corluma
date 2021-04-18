@@ -14,7 +14,7 @@ linux:!android {
     TARGET = corluma
 }
 TEMPLATE = app
-VERSION = 0.21.90
+VERSION = 0.21.91
 
 #----------
 # Build flags

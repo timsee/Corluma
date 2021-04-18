@@ -39,7 +39,7 @@ ListMoodPreviewWidget::ListMoodPreviewWidget(const cor::Mood& mood, QWidget* par
 
     mPalette->skipOffLightStates(true);
     mPalette->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mPalette->show(cor::lightStatesFromLights(mMood.lights()));
+    mPalette->show(cor::lightStatesFromLights(mMood.lights(), false));
 
     // setup layout
     mTopLayout = new QHBoxLayout;

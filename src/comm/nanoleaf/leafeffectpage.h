@@ -29,9 +29,8 @@ namespace nano {
 class LeafEffectPage : public QWidget, public cor::Page {
     Q_OBJECT
 public:
-    explicit LeafEffectPage(CommLayer* comm, QWidget* parent)
+    explicit LeafEffectPage(QWidget* parent)
         : QWidget(parent),
-          mComm{comm},
           mBackButton(new QPushButton("<", this)),
           mHeader(new QLabel(this)),
           mMetadata{new QLabel(this)},
@@ -209,9 +208,6 @@ private:
 
     /// the current nanoleaf
     nano::LeafMetadata mLeaf;
-
-    /// pointer to comm layer.
-    CommLayer* mComm;
 
     /// back button
     QPushButton* mBackButton;
