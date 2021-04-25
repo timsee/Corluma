@@ -80,11 +80,11 @@ public:
             case EShapeType::miniTriangleShapes:
             case EShapeType::triangleShapes:
             case EShapeType::controllerShapes:
-                return true;
-            case EShapeType::triangle:
             case EShapeType::square:
             case EShapeType::controlSquareMaster:
             case EShapeType::controlSquarePassive:
+                return true;
+            case EShapeType::triangle:
             case EShapeType::rhythm:
             default:
                 return false;

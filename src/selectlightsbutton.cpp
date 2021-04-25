@@ -11,12 +11,13 @@
 #include <QtGui>
 
 #include "cor/objects/light.h"
+#include "cor/stylesheets.h"
 #include "icondata.h"
 #include "utils/qt.h"
 
 SelectLightsButton::SelectLightsButton(QWidget* parent) : QWidget(parent) {
     mLabel = new QLabel("Tap to Select Lights", this);
-    mLabel->setStyleSheet("background-color:rgba(0,0,0,0);");
+    mLabel->setStyleSheet(cor::kTransparentStylesheet);
     mLabel->setAlignment(Qt::AlignCenter);
     mIsHighlighted = false;
     mIsIn = false;

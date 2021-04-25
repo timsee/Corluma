@@ -12,6 +12,7 @@
 #include <QPainter>
 #include <QStyleOption>
 
+#include "cor/stylesheets.h"
 #include "utils/qt.h"
 
 
@@ -38,15 +39,15 @@ ListLightWidget::ListLightWidget(const cor::Light& light,
       mTimeoutLabel{new QLabel(this)},
       mCondenseStandardWidget{false} {
     mTimeoutLabel->setVisible(false);
-    mTimeoutLabel->setStyleSheet("background-color:rgba(0,0,0,0);");
+    mTimeoutLabel->setStyleSheet(cor::kTransparentStylesheet);
 
     mTypeIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mTypeIcon->setStyleSheet("background-color:rgba(0,0,0,0);");
+    mTypeIcon->setStyleSheet(cor::kTransparentStylesheet);
 
     mName->setText(createName(light.name()));
     mName->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mName->setAlignment(Qt::AlignVCenter);
-    mName->setStyleSheet("background-color:rgba(0,0,0,0);");
+    mName->setStyleSheet(cor::kTransparentStylesheet);
 
     mKey = light.uniqueID();
     updateWidget(light);

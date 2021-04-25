@@ -30,7 +30,6 @@ SingleLightBrightnessWidget::SingleLightBrightnessWidget(const QSize& size,
     mBrightnessSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mBrightnessSlider->setRange(2, 100);
     mBrightnessSlider->setValue(2);
-    mBrightnessSlider->setFixedHeight(size.height() / 2);
     mBrightnessSlider->setHeightPercentage(0.8f);
     mBrightnessSlider->setColor(QColor(255, 255, 255));
     mBrightnessSlider->enable(true);
@@ -94,12 +93,12 @@ void SingleLightBrightnessWidget::resize() {
     if (mIsIn) {
         this->setGeometry(mPositionX,
                           mTopSpacer,
-                          this->parentWidget()->width() - mSize.width(),
+                          this->parentWidget()->width() - mSize.width() * 2,
                           mSize.height() - mTopSpacer);
     } else {
         this->setGeometry(mPositionX,
                           int(-1 * height()),
-                          this->parentWidget()->width() - mSize.width(),
+                          this->parentWidget()->width() - mSize.width() * 2,
                           mSize.height() - mTopSpacer);
     }
 
@@ -109,13 +108,13 @@ void SingleLightBrightnessWidget::resize() {
         mBrightnessSlider->setGeometry(height() * 0.15 + side,
                                        0,
                                        width() - int(mSize.width() * 2),
-                                       height());
+                                       height() / 2);
 
     } else {
         mBrightnessSlider->setGeometry(height() * 0.15 + side,
                                        0,
                                        width() - int(mSize.width() * 1.2),
-                                       height());
+                                       height() / 2);
     }
 }
 

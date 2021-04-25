@@ -16,6 +16,7 @@
 #include "controllerwidget.h"
 #include "cor/objects/page.h"
 #include "cor/widgets/button.h"
+#include "cor/widgets/loadingscreen.h"
 #include "debugconnectionspoofer.h"
 #include "discoverywidget.h"
 #include "edit/chooseeditpage.h"
@@ -24,6 +25,7 @@
 #include "edit/editgrouppage.h"
 #include "edit/editmoodpage.h"
 #include "floatinglayout.h"
+#include "globalstatewidget.h"
 #include "greyoutoverlay.h"
 #include "icondata.h"
 #include "mainviewport.h"
@@ -159,6 +161,9 @@ private slots:
     /// loads most of the pages. These are not loaded automatically since they require wifi to be
     /// enabled.
     void loadPages();
+
+    /// handle when the loading screen is done loading.
+    void loadingPageComplete();
 
     /*!
      * \brief wifiChecker checks whether wifi is enabled.
@@ -362,6 +367,10 @@ private:
     /// left hand menu.
     LeftHandMenu* mLeftHandMenu;
 
+    /// Displays the currently selected lights and their respective states in the top right of the
+    /// application.
+    GlobalStateWidget* mGlobalStateWidget;
+
     /// edit page for editing groups and rooms
     cor::EditGroupPage* mEditGroupPage;
 
@@ -382,6 +391,9 @@ private:
      * mEditPage
      */
     GreyOutOverlay* mGreyOut;
+
+    /// displays above the MainWindow while the MainWindow loads in the background.
+    LoadingScreen* mLoadingScreen;
 
     /// sets up the object that listens to the states of various apps
     void setupStateObserver();

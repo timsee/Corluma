@@ -68,9 +68,6 @@ public:
     /// getter for how many pixels of the menu are currently showing
     int showingWidth();
 
-    /// called when the number of lights selected changed
-    void lightCountChanged();
-
     /// update the state of the timeout button
     void updateTimeoutButton(bool timeoutEnabled, std::uint32_t timeoutValue);
 
@@ -140,9 +137,6 @@ private:
     /// list of selected lights
     cor::LightList* mSelectedLights;
 
-    /// palette that shows the currently selected devices
-    cor::LightVectorWidget* mMainPalette;
-
     /// pointer to comm layer
     CommLayer* mComm;
 
@@ -171,9 +165,6 @@ private:
     /// timeout button
     TimeoutButton* mTimeoutButton;
 #endif // USE_EXPERIMENTAL_FEATURES
-
-    /// stored values for last devices to prevent unnecessary renders
-    std::vector<cor::Light> mLastDataLights;
 
     /// last time lights were rendered.
     QTime mLastRenderTime;

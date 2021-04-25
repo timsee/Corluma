@@ -8,7 +8,9 @@
 
 #include "cor/objects/group.h"
 #include "cor/protocols.h"
+#include "cor/stylesheets.h"
 #include "cor/widgets/palettewidget.h"
+#include "utils/qt.h"
 
 /*!
  * \copyright
@@ -50,6 +52,11 @@ public:
     void updateStates(const std::vector<cor::LightState>& lightStates) {
         mShowStates = true;
         mPaletteWidget->show(lightStates);
+        if (!mPaletteWidget->isShowingAnything()) {
+            mName->setStyleSheet(cor::kTransparentAndBoldStylesheet);
+        } else {
+            mName->setStyleSheet(cor::kGradientStylesheet);
+        }
     }
 
     /// getter for key

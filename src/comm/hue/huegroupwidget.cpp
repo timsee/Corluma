@@ -5,6 +5,7 @@
  */
 
 #include "huegroupwidget.h"
+#include "cor/stylesheets.h"
 
 #include <QGraphicsOpacityEffect>
 #include <QStyleOption>
@@ -15,8 +16,7 @@ namespace hue {
 
 HueGroupWidget::HueGroupWidget(QWidget* parent, std::uint32_t index, const cor::Group& group)
     : QWidget(parent) {
-    const QString styleSheet = "background-color: rgba(0,0,0,0);";
-    setStyleSheet(styleSheet);
+    setStyleSheet(cor::kTransparentStylesheet);
 
     mName = new QLabel("<b>" + group.name() + "</b>", this);
     auto font = mName->font();

@@ -43,7 +43,8 @@ public:
     /// colors.
     void show(const std::vector<cor::LightState>& states);
 
-signals:
+    /// true if showing any colors/light states, false if all buffers are empty.
+    bool isShowingAnything();
 
 protected:
     /// renders the widget

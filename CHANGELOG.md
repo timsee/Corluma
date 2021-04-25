@@ -1258,3 +1258,11 @@ _This is the first of a series of updates to address design issues in the `ListR
 ### The Group LightStates Update
 - The `LeftHandMenu` now shows the state of all on lights for each group.
 - Fixed miscellaneous bugs.
+
+### **v0.21.92**
+### The Colorful Update
+- Added the `GlobalStateWidget` to the top right of the application to show which lights are currently selected and their current states.
+- Reworked the `StandardLightsMenu`to show more information about the lights in each room/group.
+- Added a secondary loading screen.
+- Added `Stylesheets.h` to cut down on repeated stylesheets.
+- Fixed miscellaneous bugs.

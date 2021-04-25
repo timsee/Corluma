@@ -13,6 +13,7 @@
 #include "discovery/discoverytopmenu.h"
 #include "floatinglayout.h"
 #include "globalbrightnesswidget.h"
+#include "globalstatewidget.h"
 #include "lightspage.h"
 #include "moodpage.h"
 #include "multicolorstatewidget.h"
@@ -53,7 +54,8 @@ public:
                      MainWindow* mainWindow,
                      LightsPage* lightsPage,
                      PalettePage* palettePage,
-                     ColorPage* colorPage);
+                     ColorPage* colorPage,
+                     GlobalStateWidget* globalStateWidget);
 
     /// resizes the menus programmatically
     void resize(int xOffset);
@@ -229,6 +231,9 @@ private:
     /// poitner to lights page, using during flaoting layout clicks
     LightsPage* mLightsPage;
 
+    /// displays the currently selected lights and their respective states.
+    GlobalStateWidget* mGlobalStateWidget;
+
     /// current page being displayed
     EPage mCurrentPage;
 
@@ -250,17 +255,11 @@ private:
     /// move lights menus to their proper location during resizes.
     void moveLightsMenu();
 
-    /// can run into issues on certain screen ratios, so to be safe, compute once and store
-    int mPaletteWidth;
-
     /// last key for color page.
     QString mLastColorButtonKey;
 
     /// renders an update for the UI periodically
     QTimer* mRenderTimer;
-
-    /// palette that shows the currently selected devices
-    cor::LightVectorWidget* mMainPalette;
 
     /// hamburger icon in top left for opening the main menu
     QPushButton* mMenuButton;

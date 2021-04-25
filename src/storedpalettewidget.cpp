@@ -9,6 +9,7 @@
 #include <QPainter>
 #include <QStyleOption>
 #include "cor/presetpalettes.h"
+#include "cor/stylesheets.h"
 #include "utils/qt.h"
 
 StoredPaletteWidget::StoredPaletteWidget(const QString& name, EPalette palette, QWidget* parent)
@@ -18,7 +19,7 @@ StoredPaletteWidget::StoredPaletteWidget(const QString& name, EPalette palette, 
       mPalette{palette},
       mIsChecked{false} {
     mLabel->setWordWrap(true);
-    mLabel->setStyleSheet("background-color:rgba(0,0,0,0);");
+    mLabel->setStyleSheet(cor::kTransparentStylesheet);
 
     mLightVector->showInSingleLine(true);
 

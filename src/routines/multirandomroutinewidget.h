@@ -30,7 +30,7 @@ public:
                 this,
                 SLOT(checkBoxClicked(ECheckboxState)));
 
-        mStateLabel->setStyleSheet(mTransparentStylesheet);
+        mStateLabel->setStyleSheet(cor::kTransparentStylesheet);
 
         mDropdownMenu->setEditable(false);
         mDropdownMenu->addItem(mRandomIndividualString);

@@ -44,6 +44,7 @@ public:
                            MainWindow* mainWindow,
                            LightsPage* lightsPage,
                            TopMenu* topMenu,
+                           GlobalStateWidget* globalStateWidget,
                            QObject* parent);
 
 public slots:
@@ -162,6 +163,9 @@ private:
 
     /// mood page
     MoodPage* mMoodPage;
+
+    /// shows the global state of the application.
+    GlobalStateWidget* mGlobalStateWidget;
 
     /// stored brightness during ambient colors
     std::uint32_t mBrightness;

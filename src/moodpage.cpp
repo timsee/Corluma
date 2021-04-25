@@ -35,8 +35,9 @@ MoodPage::MoodPage(QWidget* parent, GroupData* groups, CommLayer* comm)
     connect(mGreyOut, SIGNAL(clicked()), this, SLOT(greyoutClicked()));
 
     connect(mGroups, SIGNAL(newMoodAdded(QString)), this, SLOT(newMoodAdded(QString)));
-
-    resize();
+          
+    mMoodMenu->setVisible(false);
+    mPlaceholderWidget->setVisible(false);
 }
 
 void MoodPage::newMoodAdded(const QString&) {

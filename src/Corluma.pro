@@ -14,7 +14,7 @@ linux:!android {
     TARGET = corluma
 }
 TEMPLATE = app
-VERSION = 0.21.91
+VERSION = 0.21.92
 
 #----------
 # Build flags
@@ -246,6 +246,7 @@ SOURCES += main.cpp \
     colorpicker/schemegenerator.cpp \
     controllerwidget.cpp \
     cor/lightlist.cpp \
+    cor/widgets/loadingscreen.cpp \
     cor/widgets/palettewidget.cpp \
     debugconnectionspoofer.cpp \
     discovery/discoveryhuewidget.cpp \
@@ -387,7 +388,9 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     controllerwidget.h \
     cor/lightlist.h \
     cor/objects/groupstate.h \
+    cor/stylesheets.h \
     cor/widgets/expandingtextscrollarea.h \
+    cor/widgets/loadingscreen.h \
     cor/widgets/palettewidget.h \
     data/moodparentdata.h \
     debugconnectionspoofer.h \
@@ -431,6 +434,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     globalbrightnesswidget.h \
     data/orphandata.h \
     data/parentdata.h \
+    globalstatewidget.h \
     groupstatewidget.h \
     lightspage.h \
     listmoodwidget.h \

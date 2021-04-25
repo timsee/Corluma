@@ -12,6 +12,7 @@
 #include <QPainter>
 #include <QStyleOption>
 
+#include "cor/stylesheets.h"
 #include "utils/qt.h"
 
 
@@ -27,7 +28,7 @@ GroupStateWidget::GroupStateWidget(const cor::GroupState& groupState, QWidget* p
       mName{new QLabel(this)} {
     mName->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mName->setAlignment(Qt::AlignVCenter);
-    mName->setStyleSheet("background-color:rgba(0,0,0,0);");
+    mName->setStyleSheet(cor::kTransparentStylesheet);
 
     mKey = mGroupState.stringUniqueID();
     updateState(mGroupState);

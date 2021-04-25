@@ -3,6 +3,7 @@
 
 #include <QLabel>
 #include "cor/objects/lightstate.h"
+#include "cor/stylesheets.h"
 #include "cor/widgets/checkbox.h"
 #include "icondata.h"
 
@@ -23,7 +24,6 @@ class RoutineWidget : public QWidget {
 public:
     RoutineWidget(QWidget* parent, const QString& name, ERoutine routine)
         : QWidget(parent),
-          mTransparentStylesheet{"background-color:rgba(0,0,0,0);"},
           mLeftWidgetSize{30, 10},
           mProtocol{EProtocolType::arduCor},
           mCheckBox{new cor::CheckBox(this)},
@@ -35,7 +35,7 @@ public:
 
         mCheckBox->checkboxState(ECheckboxState::unchecked);
 
-        mName->setStyleSheet(mTransparentStylesheet);
+        mName->setStyleSheet(cor::kTransparentStylesheet);
     }
 
     virtual ~RoutineWidget() = default;
@@ -117,7 +117,7 @@ protected:
                                Qt::KeepAspectRatio,
                                Qt::FastTransformation);
         mIcon->setPixmap(pixmap);
-        mIcon->setStyleSheet("background-color:rgba(0,0,0,0);");
+        mIcon->setStyleSheet(cor::kTransparentStylesheet);
     }
 
 
@@ -140,9 +140,6 @@ protected:
         yPos += mIcon->height();
         mName->setGeometry(xSpacer, yPos, mLeftWidgetSize.width(), widgetRowHeight);
     }
-
-    /// style sheet for transparency
-    QString mTransparentStylesheet;
 
     /// the size allocated for the widgets on the top left
     QSize mLeftWidgetSize;

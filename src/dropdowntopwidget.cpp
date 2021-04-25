@@ -29,20 +29,21 @@ DropdownTopWidget::DropdownTopWidget(const QString& key,
     mHideEdit = hideEdit;
 
     mPaletteWidget->skipOffLightStates(true);
-    mPaletteWidget->shouldForceSquares(true);
+    mPaletteWidget->showInSingleLine(true);
 
     connect(this, SIGNAL(pressed()), this, SLOT(widgetPressed()));
+
 
     mName = new QLabel(this);
     mName->setWordWrap(true);
     mName->setText(name);
     mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    mName->setStyleSheet("font: bold; background-color: rgba(0,0,0,0);");
+    mName->setStyleSheet(cor::kTransparentAndBoldStylesheet);
     mName->setAlignment(Qt::AlignVCenter);
 
 
     mEditButton = new QPushButton(this);
-    mEditButton->setStyleSheet("border: none; background-color: rgba(0,0,0,0);");
+    mEditButton->setStyleSheet(cor::kTransparentStylesheet);
     mEditButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mEditButton, SIGNAL(clicked(bool)), this, SLOT(editButtonClicked(bool)));
     mEditIcon = QPixmap(":/images/edit_icon.png");
@@ -54,7 +55,7 @@ DropdownTopWidget::DropdownTopWidget(const QString& key,
     mArrowIcon->setPixmap(mClosedPixmap);
     mArrowIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mArrowIcon->setAlignment(Qt::AlignCenter);
-    mArrowIcon->setStyleSheet("background-color: rgba(0,0,0,0);");
+    mArrowIcon->setStyleSheet(cor::kTransparentStylesheet);
 
     resize();
     showButtons(false);
@@ -73,7 +74,7 @@ void DropdownTopWidget::resizeEvent(QResizeEvent*) {
 
 void DropdownTopWidget::resize() {
     auto originalIconSide = mButtonHeight;
-    mButtonHeight = height();
+    mButtonHeight = height() * 0.75;
 
     if (mButtonHeight != originalIconSide) {
         mClosedPixmap = QPixmap(":/images/closedArrow.png");
@@ -91,23 +92,20 @@ void DropdownTopWidget::resize() {
         showButtons(mShowButtons);
     }
 
-    auto xPos = width() - mButtonHeight;
-    mArrowIcon->setGeometry(xPos, 0u, mButtonHeight, mButtonHeight);
+    auto xPos = width();
+    mArrowIcon->setGeometry(xPos - mButtonHeight, 0u, mButtonHeight, height());
     xPos -= mArrowIcon->width();
 
     if (!mHideEdit) {
-        mEditButton->setGeometry(xPos, 0u, mButtonHeight, mButtonHeight);
+        mEditButton->setGeometry(xPos - mButtonHeight, 0u, mButtonHeight, height());
         xPos -= mEditButton->width();
     }
 
-    if (mShowStates) {
-        mPaletteWidget->setGeometry(xPos, 0u, mButtonHeight, mButtonHeight);
-        xPos -= mPaletteWidget->width();
-    }
+    auto spaceWidth = (width() / 20);
+    mPaletteWidget->setGeometry(0, 0, xPos, height());
 
-    auto rightSpacer = width() * 0.03;
-    auto nameWidth = xPos - rightSpacer;
-    mName->setGeometry(rightSpacer, 0, nameWidth, mButtonHeight);
+    auto previewHeight = height() / 4;
+    mName->setGeometry(spaceWidth, previewHeight, xPos - spaceWidth, height() - previewHeight);
 }
 
 void DropdownTopWidget::showButtons(bool showButtons) {
@@ -118,7 +116,6 @@ void DropdownTopWidget::showButtons(bool showButtons) {
         mArrowIcon->setPixmap(mClosedPixmap);
     }
 }
-
 
 void DropdownTopWidget::showStates(bool showStates) {
     mShowStates = showStates;

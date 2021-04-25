@@ -33,7 +33,7 @@ public:
         mPercentLabel->setWordWrap(true);
         mPercentLabel->setAlignment(Qt::AlignVCenter);
         mPercentLabel->setText("Frequency:<br>" + QString::number(defaultValue) + "%");
-        mPercentLabel->setStyleSheet(mTransparentStylesheet);
+        mPercentLabel->setStyleSheet(cor::kTransparentStylesheet);
 
         connect(mCheckBox,
                 SIGNAL(clicked(ECheckboxState)),

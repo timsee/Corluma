@@ -13,6 +13,7 @@
 #include <QPainterPath>
 #include <QStyleOption>
 
+#include "cor/stylesheets.h"
 #include "utils/exception.h"
 #include "utils/qt.h"
 
@@ -56,18 +57,17 @@ ColorSchemeButton::ColorSchemeButton(EColorSchemeType type,
     : QWidget(parent),
       mResourcePath{imagePath} {
     mEnabled = true;
-    const QString transparentStyleSheet = "font-size:12pt; background-color: rgba(0,0,0,0);";
 
     mTitle = new QLabel(colorSchemeTypeToString(type), this);
     mTitle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mTitle->setStyleSheet(transparentStyleSheet);
+    mTitle->setStyleSheet(cor::kTransparentStylesheet);
     mTitle->setAlignment(Qt::AlignCenter);
 
     mState = EColorSchemeButtonState::deselected;
 
     mButton = new QLabel(this);
     mButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mButton->setStyleSheet(transparentStyleSheet);
+    mButton->setStyleSheet(cor::kTransparentStylesheet);
     mButton->setAlignment(Qt::AlignCenter);
 
     setMinimumHeight(mTitle->height());

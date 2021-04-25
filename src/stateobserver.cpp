@@ -17,6 +17,7 @@ StateObserver::StateObserver(cor::LightList* data,
                              MainWindow* mainWindow,
                              LightsPage* lightsPage,
                              TopMenu* topMenu,
+                             GlobalStateWidget* globalStateWidget,
                              QObject* parent)
     : QObject(parent),
       mData{data},
@@ -30,6 +31,7 @@ StateObserver::StateObserver(cor::LightList* data,
       mColorPage{mMainViewport->colorPage()},
       mPalettePage{mMainViewport->palettePage()},
       mMoodPage{mMainViewport->moodPage()},
+      mGlobalStateWidget{globalStateWidget},
       mSpeed{100},
       mTimeObserver{new TimeObserver(this)} {}
 
@@ -184,7 +186,6 @@ void StateObserver::moodChanged(std::uint64_t moodID) {
         mData->addMood(moodDict.items());
         if (!moodDict.items().empty()) {
             mTopMenu->lightCountChanged();
-            mMainWindow->leftHandMenu()->lightCountChanged();
         }
     }
 }
@@ -339,7 +340,6 @@ void StateObserver::lightsDeleted(std::vector<QString> keys) {
 }
 
 void StateObserver::lightCountChangedFromLightsPage(std::vector<QString>) {
-    mMainWindow->leftHandMenu()->lightCountChanged();
     mMainWindow->leftHandMenu()->updateLights();
     lightCountChanged();
 }

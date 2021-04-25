@@ -12,6 +12,7 @@
 #include <QtGui>
 
 #include "cor/objects/light.h"
+#include "cor/stylesheets.h"
 #include "icondata.h"
 #include "menu/lefthandmenu.h"
 #include "utils/qt.h"
@@ -29,12 +30,12 @@ LeftHandButton::LeftHandButton(const QString& text,
     mResourcePath = iconResource;
 
     mTitle = new QLabel(text, this);
-    mTitle->setStyleSheet("background-color:rgba(0,0,0,0);");
+    mTitle->setStyleSheet(cor::kTransparentStylesheet);
     mTitle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     mIcon = new QLabel(text, this);
     mIcon->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    mIcon->setStyleSheet("background-color:rgba(0,0,0,0);");
+    mIcon->setStyleSheet(cor::kTransparentStylesheet);
     updateIcon(iconResource);
     renderButton();
 }
@@ -52,12 +53,12 @@ LeftHandButton::LeftHandButton(const QString& text,
     mState = state;
 
     mTitle = new QLabel(text, this);
-    mTitle->setStyleSheet("background-color:rgba(0,0,0,0);");
+    mTitle->setStyleSheet(cor::kTransparentStylesheet);
     mTitle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     mIcon = new QLabel(text, this);
     mIcon->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    mIcon->setStyleSheet("background-color:rgba(0,0,0,0);");
+    mIcon->setStyleSheet(cor::kTransparentStylesheet);
     updateState(state);
     renderButton();
 }

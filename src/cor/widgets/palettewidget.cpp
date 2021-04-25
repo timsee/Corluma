@@ -55,6 +55,13 @@ void PaletteWidget::show(const std::vector<cor::LightState>& states) {
     update();
 }
 
+bool PaletteWidget::isShowingAnything() {
+    if (mIsSolidColors) {
+        return !mSolidColors.empty();
+    } else {
+        return !mStates.empty();
+    }
+}
 
 void PaletteWidget::paintEvent(QPaintEvent*) {
     auto gridSize = generateGridSize();

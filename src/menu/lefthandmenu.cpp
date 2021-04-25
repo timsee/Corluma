@@ -30,7 +30,6 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
       mButtonsEnabled{false},
       mSpacer{new QWidget(this)},
       mSelectedLights{devices},
-      mMainPalette{new cor::LightVectorWidget(6, 2, true, this)},
       mComm{comm},
       mData{lights},
       mGroups{groups},
@@ -54,12 +53,6 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
             this,
             SLOT(selectAllToggled(std::uint64_t, bool)));
 #endif
-
-    // --------------
-    // Setup Main Palette
-    // -------------
-    mMainPalette->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mMainPalette->setStyleSheet("background-color:rgb(33,32,32);");
 
     //---------------
     // Setup Buttons
@@ -161,9 +154,8 @@ void LeftHandMenu::resize() {
     mSettingsButton->setGeometry(0, yPos, width, buttonHeight);
     yPos += mSettingsButton->height();
 
-    mMainPalette->setGeometry(0, yPos, this->width(), int(buttonHeight * 1.2));
-
-    yPos += int(mMainPalette->height() + height() * 0.02);
+    // second time to use as a spacer
+    yPos += mSettingsButton->height();
 
 #ifndef DISABLE_LIGHTS_MENU
     QRect lightMenuRect(0, yPos, this->width(), this->height() - yPos);
@@ -193,11 +185,6 @@ void LeftHandMenu::pushOut() {
     }
 }
 
-void LeftHandMenu::lightCountChanged() {
-    const auto& lights = mComm->commLightsFromVector(mSelectedLights->lights());
-    mMainPalette->updateLights(lights);
-}
-
 
 
 void LeftHandMenu::updateLights() {
@@ -206,13 +193,6 @@ void LeftHandMenu::updateLights() {
     mLightMenu->updateMenu();
     mLightMenu->selectLights(cor::lightVectorToIDs(mData->lights()));
 #endif
-    auto filledDataLights = mComm->commLightsFromVector(mData->lights());
-    if (filledDataLights != mLastDataLights) {
-        // take the lights being used as the app's expectation, and get their current state by
-        // polling the CommLayer for its understanding of these lights
-        mLastDataLights = filledDataLights;
-        mMainPalette->updateLights(filledDataLights);
-    }
 }
 
 
@@ -291,7 +271,6 @@ void LeftHandMenu::lightClicked(const QString& lightKey) {
 
         // update UI
         emit changedLightCount();
-        lightCountChanged();
         updateLights();
     }
 }
@@ -313,7 +292,6 @@ void LeftHandMenu::selectAllToggled(std::uint64_t ID, bool shouldSelect) {
         }
         updateLights();
         emit changedLightCount();
-        lightCountChanged();
     } else {
         qDebug() << " group not found " << ID;
     }

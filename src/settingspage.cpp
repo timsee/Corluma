@@ -15,6 +15,7 @@
 #include <QStyleOption>
 
 #include "comm/commhue.h"
+#include "cor/stylesheets.h"
 #include "listlightwidget.h"
 #include "mainwindow.h"
 #include "utils/qt.h"
@@ -64,7 +65,7 @@ SettingsPage::SettingsPage(QWidget* parent,
 #endif
 
     mAppVersionLabel->setText(QString("v" + mAppVersionLabel->text()));
-    mAppVersionLabel->setStyleSheet("background-color:rgba(0,0,0,0);");
+    mAppVersionLabel->setStyleSheet(cor::kTransparentStylesheet);
 
     //------------
     // ScrollArea Widget

@@ -28,7 +28,6 @@ GlobalBrightnessWidget::GlobalBrightnessWidget(const QSize& size,
     mBrightnessSlider->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mBrightnessSlider->setRange(2, 100);
     mBrightnessSlider->setValue(2);
-    mBrightnessSlider->setFixedHeight(size.height() / 2);
     mBrightnessSlider->setHeightPercentage(0.8f);
     mBrightnessSlider->setColor(QColor(255, 255, 255));
     mBrightnessSlider->enable(false);
@@ -38,8 +37,6 @@ GlobalBrightnessWidget::GlobalBrightnessWidget(const QSize& size,
     // Setup on/off switch
     // --------------
     mOnOffSwitch = new cor::Switch(this);
-    mOnOffSwitch->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mOnOffSwitch->setFixedSize(QSize(size.width(), size.height() / 2));
     connect(mOnOffSwitch, SIGNAL(switchChanged(bool)), this, SLOT(changedSwitchState(bool)));
     mOnOffSwitch->setSwitchState(ESwitchState::disabled);
 
@@ -121,28 +118,27 @@ void GlobalBrightnessWidget::resize() {
     if (mIsIn) {
         this->setGeometry(mPositionX,
                           mTopSpacer,
-                          this->parentWidget()->width() - mSize.width(),
+                          this->parentWidget()->width() - mSize.width() * 2,
                           mSize.height() - mTopSpacer);
     } else {
         this->setGeometry(mPositionX,
                           int(-1 * height()),
-                          this->parentWidget()->width() - mSize.width(),
+                          this->parentWidget()->width() - mSize.width() * 2,
                           mSize.height() - mTopSpacer);
     }
 
-    mOnOffSwitch->setGeometry(0, 0, mSize.width(), height());
+
+    auto onOffWidth = mSize.width() * 0.6;
+    mOnOffSwitch->setGeometry(0, 0, onOffWidth, height() / 2);
     // handle individual widget sizes
     if (mIsLeftAlwaysOpen) {
-        mBrightnessSlider->setGeometry(mSize.width() + 5,
+        mBrightnessSlider->setGeometry(onOffWidth + 5,
                                        0,
-                                       width() - int(mSize.width() * 2),
-                                       height());
+                                       width() - int(mSize.width() - onOffWidth),
+                                       height() / 2);
 
     } else {
-        mBrightnessSlider->setGeometry(mSize.width() + 5,
-                                       0,
-                                       width() - int(mSize.width() * 1.2),
-                                       height());
+        mBrightnessSlider->setGeometry(onOffWidth + 5, 0, width() - int(onOffWidth), height() / 2);
     }
 }
 

@@ -5,6 +5,7 @@
 #include <QLayout>
 #include <QPushButton>
 #include <QWidget>
+#include "cor/stylesheets.h"
 #include "utils/exception.h"
 #include "utils/qt.h"
 
@@ -31,9 +32,9 @@ public:
         : QWidget(parent),
           mButton{new QLabel(this)},
           mState{ECheckboxState::disabled} {
-        const QString transparentStyleSheet = "background-color: rgba(0,0,0,0);";
         mButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        mButton->setStyleSheet(transparentStyleSheet);
+        mButton->setAlignment(Qt::AlignCenter);
+        mButton->setStyleSheet(cor::kTransparentStylesheet);
     }
 
     /// getter for checkbox state

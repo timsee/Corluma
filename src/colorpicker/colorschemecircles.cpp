@@ -5,6 +5,7 @@
  */
 
 #include "colorschemecircles.h"
+#include "cor/stylesheets.h"
 
 #include <QDebug>
 #include <QPainter>
@@ -155,7 +156,7 @@ ColorSchemeCircles::ColorSchemeCircles(std::size_t count, ColorWheel* wheel, QWi
       mCircles{count},
       mSchemeType{EColorSchemeType::custom},
       mWheel{wheel} {
-    setStyleSheet("background-color:rgba(0,0,0,0);");
+    setStyleSheet(cor::kTransparentStylesheet);
 #ifdef RENDER_BUTTONS_AS_IMAGES
     renderButtons(mWheel);
 #endif

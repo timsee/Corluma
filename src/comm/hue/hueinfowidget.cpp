@@ -12,6 +12,7 @@
 #include <QtCore>
 #include <QtGui>
 #include "cor/protocols.h"
+#include "cor/stylesheets.h"
 #include "utils/qt.h"
 
 namespace hue {
@@ -32,24 +33,22 @@ HueInfoWidget::HueInfoWidget(HueMetadata light, QWidget* parent)
       mDeleteButton{new QPushButton("Delete Light", this)},
       mLight(light),
       mTypeIcon(new QLabel(this)) {
-    const QString styleSheet = "background-color:rgba(0,0,0,0);";
-
-    mName->setStyleSheet(styleSheet);
+    mName->setStyleSheet(cor::kTransparentStylesheet);
 
     mModelID->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    mModelID->setStyleSheet(styleSheet);
+    mModelID->setStyleSheet(cor::kTransparentStylesheet);
 
     mSoftwareVersion->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    mSoftwareVersion->setStyleSheet(styleSheet);
+    mSoftwareVersion->setStyleSheet(cor::kTransparentStylesheet);
 
     mUniqueID->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    mUniqueID->setStyleSheet(styleSheet);
+    mUniqueID->setStyleSheet(cor::kTransparentStylesheet);
 
     mType->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    mType->setStyleSheet(styleSheet);
+    mType->setStyleSheet(cor::kTransparentStylesheet);
 
     mType->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-    mTypeIcon->setStyleSheet(styleSheet);
+    mTypeIcon->setStyleSheet(cor::kTransparentStylesheet);
 
     connect(mChangeNameButton, SIGNAL(clicked(bool)), this, SLOT(changeNameButtonPressed(bool)));
     connect(mDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteButtonPressed(bool)));

@@ -130,12 +130,20 @@ void LeafPanelImage::drawPanels(const Panels& panels,
 
 QColor LeafPanelImage::generateColor(int i, const cor::Palette& palette, bool isOn) {
     auto whiteColor = QColor(230, 230, 230);
-    if (!isOn) {
-        return whiteColor;
-    } else {
-        auto adjustedI = i % palette.colors().size();
+    auto adjustedI = i % palette.colors().size();
+    if (adjustedI < palette.colors().size()) {
         auto color = palette.colors()[adjustedI];
-        return cor::blendColors(whiteColor, color, 0.5);
+        if (!isOn) {
+            return whiteColor;
+        } else if (color.valueF() < 0.1) {
+            return QColor(150, 150, 150);
+        } else {
+            auto newValue = cor::map(color.valueF(), 0.0, 1.0, 0.5, 1.0);
+            return QColor::fromHsvF(color.hueF(), color.valueF(), newValue);
+            // cor::blendColors(color, whiteColor, 0.8);
+        }
+    } else {
+        return whiteColor;
     }
 }
 

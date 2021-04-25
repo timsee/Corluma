@@ -22,7 +22,8 @@ TopMenu::TopMenu(QWidget* parent,
                  MainWindow* mainWindow,
                  LightsPage* lightsPage,
                  PalettePage* palettePage,
-                 ColorPage* colorPage)
+                 ColorPage* colorPage,
+                 GlobalStateWidget* globalStateWidget)
     : QWidget(parent),
       mStartSelectLightsButton{int(cor::applicationSize().height() * 0.1f)},
       mLastParentSizeColorMenu{0, 0},
@@ -36,15 +37,14 @@ TopMenu::TopMenu(QWidget* parent,
       mPalettePage(palettePage),
       mColorPage(colorPage),
       mLightsPage{lightsPage},
+      mGlobalStateWidget{globalStateWidget},
       mCurrentPage{EPage::colorPage},
       mSize{QSize(int(cor::applicationSize().height() * 0.1f),
                   int(cor::applicationSize().height() * 0.1f))},
-      mPaletteWidth{mSize.width() * 3},
       mLastColorButtonKey{"HSV"},
       mRenderTimer{new QTimer(this)},
-      mMainPalette{new cor::LightVectorWidget(6, 2, true, this)},
       mMenuButton{new QPushButton(this)},
-      mGlobalBrightness{new GlobalBrightnessWidget(mSize,
+      mGlobalBrightness{new GlobalBrightnessWidget(QSize(mSize.width(), mSize.height()),
                                                    mMainWindow->leftHandMenu()->alwaysOpen(),
                                                    mComm,
                                                    mData,
@@ -78,12 +78,6 @@ TopMenu::TopMenu(QWidget* parent,
     // --------------
     mGlobalBrightness->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mSingleLightBrightness->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-    // --------------
-    // Setup Main Palette
-    // -------------
-    mMainPalette->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mMainPalette->enableButtonInteraction(false);
 
     // --------------
     // Routine Floating Layout
@@ -175,13 +169,6 @@ TopMenu::TopMenu(QWidget* parent,
 
     showFloatingLayout(mCurrentPage);
 
-    auto colorMenuWidth = cor::applicationSize().width() - mColorFloatingLayout->width();
-    if (mPaletteWidth > colorMenuWidth) {
-        mPaletteWidth = colorMenuWidth;
-    }
-    mMainPalette->setFixedHeight(int(mSize.height() * 0.8));
-    mMainPalette->setFixedWidth(mPaletteWidth);
-
     // update the lights menu to reflect the proper state
     updateLightsMenu();
 
@@ -270,19 +257,11 @@ void TopMenu::resize(int xOffset) {
 
     mGlobalBrightness->resize();
     mSingleLightBrightness->resize();
-    if (mMainWindow->leftHandMenu()->alwaysOpen()) {
-        mMainPalette->setVisible(false);
-    } else {
-        mMainPalette->setVisible(true);
-    }
 
     int yPos = mMenuButton->height() + padding;
     mStartSelectLightsButton = yPos;
     mFloatingMenuStart = yPos;
-    yPos += mSize.height() / 2;
-
-    mMainPalette->setGeometry(0, yPos, mPaletteWidth, mSize.height() / 2);
-    yPos += mMainPalette->height() + padding;
+    yPos += mSize.height() + padding;
 
     mSelectLightsButton->resize(mStartSelectLightsButton);
 
@@ -646,7 +625,7 @@ void TopMenu::updateUI() {
     auto currentLights = mComm->commLightsFromVector(mData->lights());
     if (currentLights != mLastDevices) {
         mLastDevices = currentLights;
-        mMainPalette->updateLights(currentLights);
+        mGlobalStateWidget->update(cor::lightStatesFromLights(mLastDevices, true));
     }
 }
 

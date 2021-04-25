@@ -74,6 +74,11 @@ public:
     void updateStates(const std::vector<cor::LightState>& lightStates) {
         mShowStates = true;
         mPaletteWidget->show(lightStates);
+        if (!mPaletteWidget->isShowingAnything()) {
+            mTitle->setStyleSheet(cor::kTransparentStylesheet);
+        } else {
+            mTitle->setStyleSheet(cor::kGradientStylesheet);
+        }
     }
 
     /// set whether the button should show select all or deselect all
@@ -130,14 +135,14 @@ private:
     /// count of checked devices
     std::uint32_t mCheckedCount;
 
-    /// label for checkbox
-    QLabel* mTitle;
-
     /// checkbox for selecting/deselecting a group.
     cor::CheckBox* mCheckBox;
 
     /// widget for displaying palettes.
     cor::PaletteWidget* mPaletteWidget;
+
+    /// label for checkbox
+    QLabel* mTitle;
 
     /// true to show the states, false otherwise.
     bool mShowStates;

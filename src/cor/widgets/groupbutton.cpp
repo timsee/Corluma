@@ -27,17 +27,15 @@ GroupButton::GroupButton(QWidget* parent, const QString& text)
       mShouldHighlight{true},
       mReachableCount{0},
       mCheckedCount{0},
-      mTitle{new QLabel(text, this)},
       mCheckBox{new cor::CheckBox(this)},
       mPaletteWidget{new cor::PaletteWidget(this)},
+      mTitle{new QLabel(text, this)},
       mShowStates{false} {
-    const QString transparentStyleSheet = "background-color: rgba(0,0,0,0);";
-
     mPaletteWidget->skipOffLightStates(true);
-    mPaletteWidget->shouldForceSquares(true);
+    mPaletteWidget->showInSingleLine(true);
 
     mTitle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mTitle->setStyleSheet(transparentStyleSheet);
+    mTitle->setStyleSheet(cor::kTransparentStylesheet);
     mTitle->setAlignment(Qt::AlignVCenter);
     mTitle->setAttribute(Qt::WA_TransparentForMouseEvents);
 
@@ -52,22 +50,18 @@ GroupButton::GroupButton(QWidget* parent, const QString& text)
 
 void GroupButton::resize() {
     const auto& size = iconSize();
-    // spacer is going to be applied twice, but adds 10% of the space overall.
-    auto spaceWidth = (width() / 20);
 
-    auto xPos = width() - spaceWidth - size.width();
+    auto xPos = width();
     if (mShowButton) {
-        mCheckBox->setGeometry(xPos, 0, size.width(), height());
+        mCheckBox->setGeometry(xPos - size.width(), 0, size.width(), height());
         xPos -= mCheckBox->width();
     }
 
-    mPaletteWidget->setGeometry(xPos, 0u, size.width(), size.height());
-    if (mShowStates) {
-        xPos -= mPaletteWidget->width();
-    }
+    mPaletteWidget->setGeometry(0, 0, xPos, height());
 
-    auto nameWidth = xPos - spaceWidth;
-    mTitle->setGeometry(spaceWidth, 0, nameWidth, height());
+    auto previewHeight = height() / 4;
+    auto spaceWidth = (width() / 20);
+    mTitle->setGeometry(spaceWidth, previewHeight, xPos - spaceWidth, height() - previewHeight);
 
     if (handleSelectAllButton(mCheckedCount, mReachableCount)) {
         update();

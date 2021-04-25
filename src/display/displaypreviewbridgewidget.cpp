@@ -32,8 +32,7 @@ DisplayPreviewBridgeWidget::DisplayPreviewBridgeWidget(const hue::Bridge& bridge
       mMetadata{new QLabel(this)},
       mManageButton{new QPushButton("Manage", this)},
       mRowHeight{rowHeight} {
-    const QString styleSheet = "background-color: rgba(0,0,0,0);";
-    setStyleSheet(styleSheet);
+    setStyleSheet(cor::kTransparentStylesheet);
     mNameWidget = new QLabel("<b>Name:</b> " + bridge.customName(), this);
     mNameWidget->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 

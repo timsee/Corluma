@@ -7,15 +7,12 @@
 #include <QWidget>
 #include "comm/arducor/controller.h"
 #include "cor/lightlist.h"
+#include "cor/stylesheets.h"
 #include "cor/widgets/lightvectorwidget.h"
 #include "cor/widgets/listitemwidget.h"
 #include "syncwidget.h"
 #include "utils/qt.h"
 
-namespace {
-const QString kTransparentStyleSheet = "background-color: rgba(0,0,0,0);";
-
-}
 
 /*!
  * \copyright
@@ -41,8 +38,8 @@ public:
           mLightVector{nullptr},
           mController{controller},
           mStatusType{status} {
-        mName->setStyleSheet(kTransparentStyleSheet);
-        mSyncWidget->setStyleSheet(kTransparentStyleSheet);
+        mName->setStyleSheet(cor::kTransparentStylesheet);
+        mSyncWidget->setStyleSheet(cor::kTransparentStylesheet);
         createIcons(controller, status);
     }
 
@@ -200,7 +197,7 @@ private:
     void initLightVector(std::uint32_t lightCount) {
         mLightVector = new cor::LightVectorWidget(lightCount, 1, true, this);
         mLightVector->enableButtonInteraction(false);
-        mLightVector->setStyleSheet(kTransparentStyleSheet);
+        mLightVector->setStyleSheet(cor::kTransparentStylesheet);
         if (lightCount == 1) {
             mLightVector->setButtonIconPercent(0.8f);
         } else {

@@ -26,7 +26,7 @@ public:
                 this,
                 SLOT(checkBoxClicked(ECheckboxState)));
 
-        mLightCountLabel->setStyleSheet(mTransparentStylesheet);
+        mLightCountLabel->setStyleSheet(cor::kTransparentStylesheet);
 
         mDropdownLightCount->setEditable(false);
         for (auto i = 1; i <= 5; ++i) {

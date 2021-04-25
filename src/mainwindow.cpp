@@ -56,11 +56,13 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
           mData,
           mGroups,
           this)},
+      mGlobalStateWidget{new GlobalStateWidget(this)},
       mEditGroupPage{new cor::EditGroupPage(this, mComm, mGroups)},
       mChooseEditPage{new ChooseEditPage(this)},
       mChooseGroupWidget{new ChooseGroupWidget(this, mComm, mGroups)},
       mChooseMoodWidget{new ChooseMoodWidget(this, mComm, mGroups)},
-      mGreyOut{new GreyOutOverlay(!mLeftHandMenu->alwaysOpen(), this)} {
+      mGreyOut{new GreyOutOverlay(!mLeftHandMenu->alwaysOpen(), this)},
+      mLoadingScreen{new LoadingScreen(this)} {
     mGroups->loadJsonFromFile();
 
     // disable experimental features if not experimental features are not enabled
@@ -76,6 +78,10 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     setMinimumSize(minimumSize);
 
+    mLoadingScreen->setGeometry(QRect(0, 0, geometry().width(), geometry().height()));
+    connect(mLoadingScreen, SIGNAL(readyToClose()), this, SLOT(loadingPageComplete()));
+    mLoadingScreen->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
     mTimeToLights.start();
 
     // uses floating layouts so these must be initialized after the app's size is set.
@@ -88,7 +94,9 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
                            this,
                            mMainViewport->lightsPage(),
                            mMainViewport->palettePage(),
-                           mMainViewport->colorPage());
+                           mMainViewport->colorPage(),
+                           mGlobalStateWidget);
+
     mStateObserver = new cor::StateObserver(mData,
                                             mComm,
                                             mGroups,
@@ -96,6 +104,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
                                             this,
                                             mMainViewport->lightsPage(),
                                             mTopMenu,
+                                            mGlobalStateWidget,
                                             this);
 
     mTouchListener = new TouchListener(this, mLeftHandMenu, mTopMenu, mData);
@@ -107,6 +116,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
 #ifdef USE_SHARE_UTILS
     connect(mShareUtils, SIGNAL(fileUrlReceived(QString)), this, SLOT(receivedURL(QString)));
 #endif
+
 
     // --------------
     // Setup Wifi Checker
@@ -144,6 +154,9 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
             this,
             SLOT(leftHandMenuButtonPressed(EPage)));
     connect(mLeftHandMenu, SIGNAL(createNewGroup()), this, SLOT(openEditGroupMenu()));
+
+    mGlobalStateWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mGlobalStateWidget->setVisible(true);
 
     // --------------
     // Setup GreyOut View
@@ -592,6 +605,7 @@ void MainWindow::resize() {
         mTopMenu->resize(0);
     }
 
+
     int xPos = 5u;
     int width = this->width() - 10;
     if (mLeftHandMenu->alwaysOpen()) {
@@ -634,6 +648,16 @@ void MainWindow::resize() {
     resizeFullPageWidget(mChooseMoodWidget, mChooseMoodWidget->isOpen());
 
     mNoWifiWidget->setGeometry(QRect(0, 0, geometry().width(), geometry().height()));
+
+    mLoadingScreen->setGeometry(QRect(0, 0, geometry().width(), geometry().height()));
+
+
+    // global state widget is always in top right
+    auto globalStateWidgetSize = QSize(this->width() * 0.15, height() * 0.075);
+    mGlobalStateWidget->setGeometry(this->width() - globalStateWidgetSize.width(),
+                                    0,
+                                    globalStateWidgetSize.width(),
+                                    globalStateWidgetSize.height());
 }
 
 void MainWindow::greyoutClicked() {
@@ -661,6 +685,10 @@ void MainWindow::wifiChecker() {
 #endif
 
     mNoWifiWidget->setVisible(!mWifiFound);
+    if (!mLoadingScreen->isReady()) {
+        mLoadingScreen->setVisible(true);
+        mLoadingScreen->raise();
+    }
     if (mWifiFound) {
         mNoWifiWidget->setVisible(false);
     } else {
@@ -678,12 +706,14 @@ void MainWindow::backButtonPressed() {
 void MainWindow::pushInLeftHandMenu() {
     mGreyOut->greyOut(true);
     mLeftHandMenu->pushIn();
+    mGlobalStateWidget->raise();
 }
 
 void MainWindow::pushOutLeftHandMenu() {
     mGreyOut->greyOut(false);
     mLeftHandMenu->pushOut();
     pushInTapToSelectLights();
+    mGlobalStateWidget->raise();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent* event) {
@@ -900,7 +930,7 @@ void MainWindow::editPageUpdateMoods() {
 bool MainWindow::isAnyWidgetAbove() {
     if (mMainViewport->settingsPage()->isOpen() || mEditGroupPage->isOpen()
         || mEditMoodPage->isOpen() || mMainViewport->lightsPage()->isAnyPageOpen()
-        || mNoWifiWidget->isVisible()) {
+        || mNoWifiWidget->isVisible() || mLoadingScreen->isVisible()) {
         return true;
     }
     return false;
@@ -915,11 +945,15 @@ void MainWindow::reorderWidgets() {
 
     if (mLeftHandMenu->alwaysOpen()) {
         mLeftHandMenu->raise();
+        mGlobalStateWidget->raise();
         mGreyOut->raise();
     } else {
         mGreyOut->raise();
         mLeftHandMenu->raise();
+        mGlobalStateWidget->raise();
     }
+
+    mLoadingScreen->raise();
 }
 
 void MainWindow::debugModeClicked() {
@@ -927,6 +961,14 @@ void MainWindow::debugModeClicked() {
     mDebugMode = true;
     mDebugConnections->initiateSpoofedConnections();
 }
+
+
+void MainWindow::loadingPageComplete() {
+    if (mAnyDiscovered && mLoadingScreen->isReady()) {
+        mLoadingScreen->setVisible(false);
+    }
+}
+
 
 void MainWindow::anyDiscovered(bool discovered) {
     if (!mAnyDiscovered && discovered) {
@@ -938,5 +980,11 @@ void MainWindow::anyDiscovered(bool discovered) {
         }
         mMainViewport->settingsPage()->enableButtons(true);
         mLeftHandMenu->enableButtons(true);
+    }
+    if (mLoadingScreen->isReady()) {
+        mLoadingScreen->setVisible(false);
+    } else {
+        mLoadingScreen->raise();
+        mLoadingScreen->setVisible(true);
     }
 }

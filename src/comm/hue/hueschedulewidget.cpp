@@ -5,6 +5,7 @@
  */
 
 #include "hueschedulewidget.h"
+#include "cor/stylesheets.h"
 
 #include <QGraphicsOpacityEffect>
 #include <QStyleOption>
@@ -26,8 +27,7 @@ HueScheduleWidget::HueScheduleWidget(QWidget* parent, hue::Schedule schedule)
       mIndexLabel{new QLabel(this)},
       mAutoDeleteLabel{new QLabel(this)},
       mIsTimeout{schedule.name().contains(kTimeoutString)} {
-    const QString styleSheet = "background-color: rgba(0,0,0,0);";
-    setStyleSheet(styleSheet);
+    setStyleSheet(cor::kTransparentStylesheet);
 
     mNameLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     mTimeLabel->setAttribute(Qt::WA_TransparentForMouseEvents, true);
