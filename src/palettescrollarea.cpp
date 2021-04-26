@@ -5,13 +5,13 @@
  */
 
 #include "palettescrollarea.h"
-
 #include <QScroller>
+#include "cor/stylesheets.h"
 
 PaletteScrollArea::PaletteScrollArea(QWidget* parent) : QScrollArea(parent) {
     mScrollWidget = new QWidget(this);
     setWidget(mScrollWidget);
-    setStyleSheet("background-color:transparent;");
+    setStyleSheet(cor::kTransparentStylesheet);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     QScroller::grabGesture(viewport(), QScroller::LeftMouseButtonGesture);
 
@@ -33,7 +33,8 @@ PaletteScrollArea::PaletteScrollArea(QWidget* parent) : QScrollArea(parent) {
             columnIndex = 0;
             rowIndex++;
         }
-        mPaletteWidgets[groupIndex] = new StoredPaletteWidget(labels[groupIndex], EPalette(preset), this);
+        mPaletteWidgets[groupIndex] =
+            new StoredPaletteWidget(labels[groupIndex], EPalette(preset), this);
         mLayout->addWidget(mPaletteWidgets[groupIndex], rowIndex, columnIndex);
         connect(mPaletteWidgets[groupIndex],
                 SIGNAL(paletteButtonClicked(EPalette)),
@@ -45,7 +46,7 @@ PaletteScrollArea::PaletteScrollArea(QWidget* parent) : QScrollArea(parent) {
 
     setWidgetResizable(true);
     widget()->setLayout(mLayout);
-    setStyleSheet("background-color:rgb(33, 32, 32);");
+    setStyleSheet(cor::kDarkerGreyBackground);
 }
 
 void PaletteScrollArea::highlightButton(EPalette palette) {

@@ -56,7 +56,7 @@ private slots:
     void parentGroupClicked(std::uint64_t);
 
     /// handles when the parent group widget at the top of the menu is pressed
-    void parentGroupWidgetPressed();
+    void parentGroupWidgetPressed(QString);
 
 private:
     /// pointer to comm layer
@@ -78,7 +78,7 @@ private:
     QScrollArea* mParentScrollArea;
 
     /// dropdown top widget used to display the parent group widget
-    ParentGroupWidget* mParentWidget;
+    cor::GroupButton* mParentWidget;
 
     /// shows the parent group widgets
     MenuParentGroupContainer* mParentGroupContainer;

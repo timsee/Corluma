@@ -67,10 +67,10 @@ public:
                 SLOT(checkBoxClicked(ECheckboxState)));
 
         connect(mDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteButtonPressed(bool)));
-        mDeleteButton->setStyleSheet("background-color:rgb(110,30,30);");
+        mDeleteButton->setStyleSheet(cor::kDeleteButtonBackground);
 
         connect(mLights, SIGNAL(clickedLight(cor::Light)), this, SLOT(lightClicked(cor::Light)));
-        this->setStyleSheet("background-color:rgb(33,32,32);");
+        this->setStyleSheet(cor::kDarkerGreyBackground);
     }
 
     /// getter for controller represented by the widget

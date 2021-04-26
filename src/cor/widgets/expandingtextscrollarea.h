@@ -6,6 +6,8 @@
 #include <QScroller>
 #include <QTextEdit>
 
+#include "cor/stylesheets.h"
+
 namespace cor {
 
 /*!
@@ -26,7 +28,7 @@ public:
         setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
         setWidget(mText);
         QScroller::grabGesture(viewport(), QScroller::LeftMouseButtonGesture);
-        setStyleSheet("background-color:rgb(33,32,32);");
+        setStyleSheet(cor::kDarkerGreyBackground);
 
         horizontalScrollBar()->setVisible(false);
 

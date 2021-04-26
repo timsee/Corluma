@@ -29,7 +29,7 @@ public:
           mGroupWidget{new DisplayGroupWidget(this, comm, groups)},
           mCreateButton{new QPushButton("Create", this)} {
         mBottomButtons->hideForward(true);
-        mCreateButton->setStyleSheet("background-color:rgb(69,67,67);");
+        mCreateButton->setStyleSheet(cor::kLighterGreyBackground);
         connect(mCreateButton, SIGNAL(clicked(bool)), this, SLOT(createGroup(bool)));
     }
 

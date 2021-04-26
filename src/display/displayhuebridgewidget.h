@@ -89,7 +89,7 @@ public:
 
         connect(mChangeName, SIGNAL(clicked(bool)), this, SLOT(handleChangeBridgeNamePressed()));
         connect(mDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteButtonPressed(bool)));
-        mDeleteButton->setStyleSheet("background-color:rgb(110,30,30);");
+        mDeleteButton->setStyleSheet(cor::kDeleteButtonBackground);
 
         connect(mChangeNameInput, SIGNAL(textAdded(QString)), this, SLOT(nameChanged(QString)));
         connect(mChangeNameInput, SIGNAL(cancelClicked()), this, SLOT(closeNameWidget()));
@@ -128,7 +128,7 @@ public:
         mHueLightDiscovery->isOpen(false);
         connect(mHueLightDiscovery, SIGNAL(closePressed()), this, SLOT(hueDiscoveryClosePressed()));
         connect(mLights, SIGNAL(clickedLight(cor::Light)), this, SLOT(lightClicked(cor::Light)));
-        auto styleSheet = "background-color:rgb(33,32,32);";
+        auto styleSheet = cor::kDarkerGreyBackground;
         mName->setStyleSheet(styleSheet);
         mLightsLabel->setStyleSheet(styleSheet);
 

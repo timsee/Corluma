@@ -32,7 +32,7 @@ public:
           mPalette{new cor::PaletteWidget(this)},
           mCheckBox{new cor::CheckBox(this)},
           mDisplayCheckbox{true} {
-        setStyleSheet("background-color:rgb(33,32,32);");
+        setStyleSheet(cor::kDarkerGreyBackground);
         mMetadata->setWordWrap(true);
         mMetadata->setAlignment(Qt::AlignTop);
         update(effect, isSelected);

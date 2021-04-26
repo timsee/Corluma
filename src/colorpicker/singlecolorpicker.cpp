@@ -10,6 +10,7 @@
 #include <QGraphicsOpacityEffect>
 #include <QMouseEvent>
 
+#include "cor/stylesheets.h"
 #include "utils/color.h"
 
 SingleColorPicker::SingleColorPicker(QWidget* parent) : ColorPicker(parent) {
@@ -264,13 +265,11 @@ void SingleColorPicker::tempBrightSlidersChanged(std::uint32_t temperature,
 
 void SingleColorPicker::setBackgroundForSliders(QWidget* sliders) {
     if (mColorWheel->wheelBackground() == EWheelBackground::dark) {
-        const QString stylesheet = "background-color:rgb(33, 32, 32);";
-        sliders->setStyleSheet(stylesheet);
-        this->setStyleSheet(stylesheet);
+        sliders->setStyleSheet(cor::kDarkerGreyBackground);
+        this->setStyleSheet(cor::kDarkerGreyBackground);
     } else if (mColorWheel->wheelBackground() == EWheelBackground::light) {
-        const QString stylesheet = "background-color:rgb(48, 47, 47);";
-        sliders->setStyleSheet(stylesheet);
-        this->setStyleSheet(stylesheet);
+        sliders->setStyleSheet(cor::kStandardGreyBackground);
+        this->setStyleSheet(cor::kStandardGreyBackground);
     }
 }
 

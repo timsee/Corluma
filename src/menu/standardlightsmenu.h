@@ -10,7 +10,6 @@
 #include "listlightwidget.h"
 #include "menu/lefthandmenutoplightwidget.h"
 #include "menusubgroupcontainer.h"
-#include "parentgroupwidget.h"
 
 #include "menulightcontainer.h"
 #include "menuparentgroupcontainer.h"

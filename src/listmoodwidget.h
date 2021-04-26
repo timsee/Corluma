@@ -8,8 +8,8 @@
 #include <QWidget>
 
 #include "cor/objects/mood.h"
+#include "cor/widgets/groupbutton.h"
 #include "cor/widgets/listitemwidget.h"
-#include "dropdowntopwidget.h"
 #include "listmoodpreviewwidget.h"
 #include "menu/menumoodcontainer.h"
 
@@ -87,8 +87,8 @@ private slots:
     void selectMood(std::uint64_t key) { emit moodSelected(mKey, key); }
 
 private:
-    /// widget for showing/hiding and selecting/deselecting
-    DropdownTopWidget* mDropdownTopWidget;
+    /// widget for showing/hiding
+    cor::GroupButton* mGroupButton;
 
     /// displays the moods in the widget
     MenuMoodContainer* mMoodContainer;

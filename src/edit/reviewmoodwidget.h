@@ -22,16 +22,14 @@
 class ReviewMoodWidget : public EditPageChildWidget {
     Q_OBJECT
 public:
-    explicit ReviewMoodWidget(QWidget* parent,
-                              CommLayer* comm,
-                              GroupData* groups)
+    explicit ReviewMoodWidget(QWidget* parent, CommLayer* comm, GroupData* groups)
         : EditPageChildWidget(parent),
           mGroups{groups},
           mTopLabel{new QLabel("Review:", this)},
           mMoodWidget{new DisplayMoodWidget(this, comm, groups)},
           mCreateButton{new QPushButton("Create", this)} {
         mBottomButtons->hideForward(true);
-        mCreateButton->setStyleSheet("background-color:rgb(69,67,67);");
+        mCreateButton->setStyleSheet(cor::kLighterGreyBackground);
         connect(mCreateButton, SIGNAL(clicked(bool)), this, SLOT(createMood(bool)));
     }
 

@@ -59,8 +59,7 @@ public:
     /// programmatically choose to show or hide buttons
     void showButtons(bool showButtons) {
         for (auto button : mButtons) {
-            button->showButton(showButtons);
-            button->resize();
+            button->showSelectAllCheckbox(showButtons);
         }
     }
 

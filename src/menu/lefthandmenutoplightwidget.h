@@ -4,7 +4,6 @@
 #include <QWidget>
 
 #include "cor/widgets/groupbutton.h"
-#include "parentgroupwidget.h"
 
 /*!
  * \copyright
@@ -12,13 +11,13 @@
  * Released under the GNU General Public License.
  *
  *
- * \brief The LeftHandMenuTopLightWidget class holds a single DropdownTopWidget and a
- * cor::GroupButton. These widgets are used as a sort of metadata about the LeftHandMenu's scroll
- * area. If the scroll area is showing anything other than parent groups, this widget is shown and
- * allows the user to go "up a level" and show other states. So if LeftHandMenu is showing lights
- * that are part of a subgroup of a parent group, this widget shows both the subgroup and the parent
- * group. Clicking on the subgroup allows the user to choose a different subgroup, and clicking on
- * the parent group allows the user to choose a different parent group.
+ * \brief The LeftHandMenuTopLightWidget class holds two cor::GroupButton widgets.
+ * These widgets are used as a sort of metadata about the LeftHandMenu's scroll area. If the scroll
+ * area is showing anything other than parent groups, this widget is shown and allows the user to go
+ * "up a level" and show other states. So if LeftHandMenu is showing lights that are part of a
+ * subgroup of a parent group, this widget shows both the subgroup and the parent group. Clicking on
+ * the subgroup allows the user to choose a different subgroup, and clicking on the parent group
+ * allows the user to choose a different parent group.
  */
 class LeftHandMenuTopLightWidget : public QWidget {
     Q_OBJECT
@@ -26,11 +25,16 @@ public:
     /// constructor
     explicit LeftHandMenuTopLightWidget(QWidget* parent)
         : QWidget(parent),
-          mParentWidget{new ParentGroupWidget("", "", cor::EWidgetType::condensed, true, this)},
-          mSubgroupButton{new cor::GroupButton(this, "")},
+          mParentWidget{new cor::GroupButton("", this)},
+          mSubgroupButton{new cor::GroupButton("", this)},
           mIsParent{false} {
         mParentWidget->setVisible(false);
-        connect(mParentWidget, SIGNAL(pressed()), this, SLOT(parentGroupWidgetPressed()));
+        mParentWidget->changeArrowState(cor::EArrowState::closed);
+        mParentWidget->showSelectAllCheckbox(false);
+        connect(mParentWidget,
+                SIGNAL(groupButtonPressed(QString)),
+                this,
+                SLOT(parentGroupWidgetPressed(QString)));
         mParentWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
         setStyleSheet("border: none; background-color:rgb(33,32,32);");
@@ -58,7 +62,7 @@ public:
     }
 
     /// getter for the ParentGroupWidget, shown when the subgroup menu is open or the light menu
-    ParentGroupWidget* parentWidget() { return mParentWidget; }
+    cor::GroupButton* parentWidget() { return mParentWidget; }
 
     /// sets the parent group to show
     void showParentWidget(const QString& parentGroupName, std::uint64_t parentID) {
@@ -66,7 +70,7 @@ public:
         mSubgroupButton->setVisible(false);
         mParentID = parentID;
         mParentWidget->changeText(parentGroupName);
-        mParentWidget->showButtons(true);
+        mParentWidget->changeArrowState(cor::EArrowState::open);
         mParentWidget->setVisible(true);
         resize();
     }
@@ -122,7 +126,7 @@ private slots:
     }
 
     /// handles when the parent group widget is pressed
-    void parentGroupWidgetPressed() { emit changeToParentGroups(); }
+    void parentGroupWidgetPressed(QString) { emit changeToParentGroups(); }
 
     /// handles when the select all button is pressed from the subgroup
     void subgroupSelectAllToggled(QString, bool shouldSelect) {
@@ -144,7 +148,7 @@ private:
     }
 
     /// dropdown top widget used to display the parent group widget
-    ParentGroupWidget* mParentWidget;
+    cor::GroupButton* mParentWidget;
 
     /// group button for displaying the currently opened subgroup
     cor::GroupButton* mSubgroupButton;

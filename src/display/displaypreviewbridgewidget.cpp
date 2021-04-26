@@ -118,10 +118,10 @@ void DisplayPreviewBridgeWidget::setChecked(bool checked) {
 void DisplayPreviewBridgeWidget::handleButtonState() {
     if (mState == EBridgeDiscoveryState::connected) {
         mManageButton->setText("Manage");
-        mManageButton->setStyleSheet("background-color: rgb(48,47,47);");
+        mManageButton->setStyleSheet(cor::kStandardGreyBackground);
     } else {
         mManageButton->setText("Delete");
-        mManageButton->setStyleSheet("background-color: rgb(110,32,32);");
+        mManageButton->setStyleSheet(cor::kDeleteButtonBackground);
     }
 }
 

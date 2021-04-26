@@ -17,7 +17,7 @@ SingleColorStateWidget::SingleColorStateWidget(QWidget* parent) : QWidget(parent
     mSyncWidget = new SyncWidget(this);
     mSyncWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    setStyleSheet("background-color:rgb(33, 32, 32);");
+    setStyleSheet(cor::kDarkerGreyBackground);
 }
 
 void SingleColorStateWidget::updateState(const QColor& color, ERoutine routine) {

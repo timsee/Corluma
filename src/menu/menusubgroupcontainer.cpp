@@ -41,7 +41,7 @@ void MenuSubgroupContainer::clear() {
 }
 
 void MenuSubgroupContainer::addGroup(const QString& group) {
-    auto groupButton = new cor::GroupButton(this, group);
+    auto groupButton = new cor::GroupButton(group, this);
     connect(groupButton, SIGNAL(groupButtonPressed(QString)), this, SLOT(buttonPressed(QString)));
     connect(groupButton,
             SIGNAL(groupSelectAllToggled(QString, bool)),
@@ -98,8 +98,8 @@ void MenuSubgroupContainer::highlightSubgroups(
         if (ID != std::numeric_limits<std::uint64_t>::max()) {
             auto countResults = subgroupCounts.find(ID);
             if (countResults != subgroupCounts.end()) {
-                button->handleSelectAllButton(countResults->second.first,
-                                              countResults->second.second);
+                button->handleSelectAllCheckbox(countResults->second.first,
+                                                countResults->second.second);
             } else {
                 qDebug() << " couldnt find in groups " << button->key();
             }

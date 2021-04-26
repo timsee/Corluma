@@ -14,7 +14,7 @@ linux:!android {
     TARGET = corluma
 }
 TEMPLATE = app
-VERSION = 0.21.92
+VERSION = 0.21.93
 
 #----------
 # Build flags
@@ -289,7 +289,6 @@ SOURCES += main.cpp \
     routines/routinecontainer.cpp \
     mooddetailedwidget.cpp \
     moodsyncwidget.cpp \
-    parentgroupwidget.cpp \
     stateobserver.cpp \
     data/subgroupdata.cpp \
     storedpalettewidget.cpp \
@@ -323,7 +322,6 @@ SOURCES += main.cpp \
     lightinfolistwidget.cpp \
     appsettings.cpp \
     listsimplegroupwidget.cpp \
-    dropdowntopwidget.cpp \
     nowifiwidget.cpp \
     listmoodpreviewwidget.cpp \
     data/groupdata.cpp \
@@ -463,7 +461,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     routines/routinecontainer.h \
     mooddetailedwidget.h \
     moodsyncwidget.h \
-    parentgroupwidget.h \
     routines/routinewidget.h \
     routines/multiglimmerroutinewidget.h \
     routines/multibarsroutinewidget.h \
@@ -513,7 +510,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     lightinfolistwidget.h \
     appsettings.h \
     listsimplegroupwidget.h \
-    dropdowntopwidget.h \
     nowifiwidget.h \
     listmoodpreviewwidget.h \
     data/groupdata.h \

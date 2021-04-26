@@ -43,7 +43,7 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     }
 
     mSpacer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mSpacer->setStyleSheet("border: none; background-color:rgb(33,32,32);");
+    mSpacer->setStyleSheet(cor::kDarkerGreyBackground);
 
 #ifndef DISABLE_LIGHTS_MENU
     mLightMenu = new StandardLightsMenu(this, mComm, mGroups, "LeftHandMenu");

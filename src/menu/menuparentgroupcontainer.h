@@ -4,8 +4,8 @@
 #include <QWidget>
 #include <unordered_map>
 #include "cor/objects/group.h"
+#include "cor/widgets/groupbutton.h"
 #include "data/groupdata.h"
-#include "parentgroupwidget.h"
 
 using MenuParentGroupCounts =
     std::unordered_map<std::uint64_t, std::pair<std::uint32_t, std::uint32_t>>;
@@ -60,7 +60,7 @@ public:
     int resizeParentGroupWidgets(int buttonHeight);
 
     /*!
-     * \brief initRoomsWidget constructor helper for making a DropdownTopWidget
+     * \brief initRoomsWidget constructor helper for making a cor::GroupButton
      *
      * \param group group of lights for collection
      * \param key key for collection
@@ -91,7 +91,7 @@ private:
     GroupData* mGroups;
 
     /// vector of parent group widgets
-    std::vector<ParentGroupWidget*> mParentGroupWidgets;
+    std::vector<cor::GroupButton*> mParentGroupWidgets;
 };
 
 #endif // MENUPARENTGROUPCONTAINER_H

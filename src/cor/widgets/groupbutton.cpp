@@ -19,18 +19,22 @@
 
 namespace cor {
 
-GroupButton::GroupButton(QWidget* parent, const QString& text)
+GroupButton::GroupButton(const QString& key, const QString& text, QWidget* parent)
     : QWidget(parent),
+      mKey{key},
       mIsSelected{false},
-      mShowButton{true},
+      mShowSelectAll{true},
       mHighlightByCountOfLights{true},
       mShouldHighlight{true},
+      mShowStates{false},
+      mArrowState{EArrowState::disabled},
       mReachableCount{0},
       mCheckedCount{0},
+      mButtonHeight{0},
       mCheckBox{new cor::CheckBox(this)},
+      mArrowIcon{new QLabel(this)},
       mPaletteWidget{new cor::PaletteWidget(this)},
-      mTitle{new QLabel(text, this)},
-      mShowStates{false} {
+      mTitle{new QLabel(text, this)} {
     mPaletteWidget->skipOffLightStates(true);
     mPaletteWidget->showInSingleLine(true);
 
@@ -39,20 +43,45 @@ GroupButton::GroupButton(QWidget* parent, const QString& text)
     mTitle->setAlignment(Qt::AlignVCenter);
     mTitle->setAttribute(Qt::WA_TransparentForMouseEvents);
 
+    mArrowIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mArrowIcon->setAlignment(Qt::AlignCenter);
+    mArrowIcon->setStyleSheet(cor::kTransparentStylesheet);
+
     connect(mCheckBox,
             SIGNAL(clicked(ECheckboxState)),
             this,
             SLOT(checkBoxClicked(ECheckboxState)));
 
-    handleSelectAllButton(0u, 0u);
+    handleSelectAllCheckbox(0u, 0u);
 }
 
 
 void GroupButton::resize() {
+    auto originalIconSide = mButtonHeight;
     const auto& size = iconSize();
+    mButtonHeight = size.height();
 
     auto xPos = width();
-    if (mShowButton) {
+
+    if (mArrowState != EArrowState::disabled) {
+        if (mButtonHeight != originalIconSide) {
+            QPixmap pixmap;
+            if (mArrowState == EArrowState::closed) {
+                pixmap = QPixmap(":/images/closedArrow.png");
+            } else if (mArrowState == EArrowState::open) {
+                pixmap = QPixmap(":/images/openedArrow.png");
+            }
+            pixmap = pixmap.scaled(mButtonHeight,
+                                   mButtonHeight,
+                                   Qt::KeepAspectRatio,
+                                   Qt::SmoothTransformation);
+            mArrowIcon->setPixmap(pixmap);
+        }
+        mArrowIcon->setGeometry(xPos - mButtonHeight, 0u, mButtonHeight, height());
+        xPos -= mArrowIcon->width();
+    }
+
+    if (mShowSelectAll) {
         mCheckBox->setGeometry(xPos - size.width(), 0, size.width(), height());
         xPos -= mCheckBox->width();
     }
@@ -63,13 +92,13 @@ void GroupButton::resize() {
     auto spaceWidth = (width() / 20);
     mTitle->setGeometry(spaceWidth, previewHeight, xPos - spaceWidth, height() - previewHeight);
 
-    if (handleSelectAllButton(mCheckedCount, mReachableCount)) {
+    if (handleSelectAllCheckbox(mCheckedCount, mReachableCount)) {
         update();
     }
 }
 
-bool GroupButton::handleSelectAllButton(std::uint32_t checkedDevicesCount,
-                                        uint32_t reachableDevicesCount) {
+bool GroupButton::handleSelectAllCheckbox(std::uint32_t checkedDevicesCount,
+                                          uint32_t reachableDevicesCount) {
     bool renderFlag = false;
     ECheckboxState state;
     if (reachableDevicesCount == 0) {
@@ -80,7 +109,7 @@ bool GroupButton::handleSelectAllButton(std::uint32_t checkedDevicesCount,
         state = ECheckboxState::unchecked;
     }
 
-    if (mShowButton) {
+    if (mShowSelectAll) {
         mCheckBox->setVisible(true);
         if (mCheckBox->checkboxState() != state) {
             mCheckBox->checkboxState(state);
@@ -124,6 +153,19 @@ void GroupButton::checkBoxClicked(ECheckboxState state) {
     }
 }
 
+void GroupButton::changeArrowState(EArrowState arrowState) {
+    mArrowState = arrowState;
+    if (mArrowState == EArrowState::open) {
+        mArrowIcon->setVisible(true);
+    } else if (mArrowState == EArrowState::closed) {
+        mArrowIcon->setVisible(true);
+    } else if (mArrowState == EArrowState::disabled) {
+        mArrowIcon->setVisible(false);
+    }
+    resize();
+}
+
+
 void GroupButton::resizeEvent(QResizeEvent*) {
     resize();
 }
@@ -152,7 +194,7 @@ void GroupButton::paintEvent(QPaintEvent*) {
 
 void GroupButton::mouseReleaseEvent(QMouseEvent* event) {
     if (cor::isMouseEventTouchUpInside(event, this, true)) {
-        if (!(mShowButton && cor::isMouseEventTouchUpInside(event, mCheckBox, false))) {
+        if (!(mShowSelectAll && cor::isMouseEventTouchUpInside(event, mCheckBox, false))) {
             emit groupButtonPressed(mTitle->text());
         }
     }

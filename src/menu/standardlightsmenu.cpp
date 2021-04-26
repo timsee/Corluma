@@ -89,7 +89,7 @@ StandardLightsMenu::StandardLightsMenu(QWidget* parent,
     initScrollArea(mParentGroupContainer, mParentScrollArea);
     initScrollArea(mSubgroupContainer, mSubgroupScrollArea);
     initScrollArea(mLightContainer, mLightScrollArea);
-    setStyleSheet("background-color:rgb(33,32,32);");
+    setStyleSheet(cor::kDarkerGreyBackground);
 }
 
 void StandardLightsMenu::highlightLight(QString lightID) {
@@ -254,12 +254,13 @@ void StandardLightsMenu::highlightTopWidget() {
             // miscellaneous group
             auto parentGroup = mGroups->orphanGroup();
             auto counts = groupSelectedAndReachableCount(parentGroup);
-            mScrollTopWidget->parentWidget()->updateCheckedLights(counts.first, counts.second);
+            mScrollTopWidget->parentWidget()->handleSelectAllCheckbox(counts.first, counts.second);
         } else {
             auto parentGroup = mGroups->groupFromID(mScrollTopWidget->parentID());
             if (parentGroup.isValid()) {
                 auto counts = groupSelectedAndReachableCount(parentGroup);
-                mScrollTopWidget->parentWidget()->updateCheckedLights(counts.first, counts.second);
+                mScrollTopWidget->parentWidget()->handleSelectAllCheckbox(counts.first,
+                                                                          counts.second);
             } else {
                 qDebug() << " invalid parent group for top light widget";
             }
@@ -271,8 +272,9 @@ void StandardLightsMenu::highlightTopWidget() {
         auto subgroup = mGroups->groupFromID(mScrollTopWidget->subgroupID());
         if (subgroup.isValid()) {
             auto counts = groupSelectedAndReachableCount(subgroup);
-            mScrollTopWidget->subgroupWidget()->handleSelectAllButton(counts.first, counts.second);
-            mScrollTopWidget->subgroupWidget()->showButton(!mSingleLightMode);
+            mScrollTopWidget->subgroupWidget()->handleSelectAllCheckbox(counts.first,
+                                                                        counts.second);
+            mScrollTopWidget->subgroupWidget()->showSelectAllCheckbox(!mSingleLightMode);
         } else {
             qDebug() << " invalid subgroup Group for top light widget";
         }
@@ -360,7 +362,7 @@ void StandardLightsMenu::parentGroupClicked(std::uint64_t ID) {
         name = "Miscellaneous";
     }
     mScrollTopWidget->showParentWidget(name, ID);
-    mScrollTopWidget->subgroupWidget()->showButton(!mSingleLightMode);
+    mScrollTopWidget->subgroupWidget()->showSelectAllCheckbox(!mSingleLightMode);
 
     // check for subgroups
     auto subgroups = mGroups->subgroups().subgroupIDsForGroup(ID);

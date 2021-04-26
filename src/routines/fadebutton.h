@@ -4,6 +4,8 @@
 #include <QLabel>
 #include <QPushButton>
 
+#include "cor/stylesheets.h"
+
 namespace cor {
 
 /*!
@@ -24,7 +26,7 @@ public:
           mLabel{new QLabel(label, this)},
           mButton{new QPushButton(this)} {
         mLabel->setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
-        mLabel->setStyleSheet("background-color:rgb(33,32,32);");
+        mLabel->setStyleSheet(cor::kDarkerGreyBackground);
 
 
         mButton->setCheckable(true);

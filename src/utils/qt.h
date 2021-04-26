@@ -20,6 +20,8 @@
 #include <QRegularExpression>
 #endif
 
+#include "cor/stylesheets.h"
+
 #define TRANSITION_TIME_MSEC 150
 
 class MainWindow;

@@ -81,7 +81,7 @@ public:
         connect(mChangeName, SIGNAL(clicked(bool)), this, SLOT(handleChangeNamePressed()));
         connect(mChangeRotation, SIGNAL(clicked(bool)), this, SLOT(rotateButtonPressed(bool)));
         connect(mDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteButtonPressed(bool)));
-        mDeleteButton->setStyleSheet("background-color:rgb(110,30,30);");
+        mDeleteButton->setStyleSheet(cor::kDeleteButtonBackground);
 
         mEffect->displayCheckbox(false);
 
@@ -107,7 +107,7 @@ public:
                 this,
                 SLOT(checkBoxClicked(ECheckboxState)));
 
-        this->setStyleSheet("background-color:rgb(33,32,32);");
+        this->setStyleSheet(cor::kDarkerGreyBackground);
 
         connect(mRotateLightWidget, SIGNAL(cancelClicked()), this, SLOT(rotateWidgetClosed()));
         connect(mRotateLightWidget,

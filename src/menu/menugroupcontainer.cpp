@@ -26,8 +26,8 @@ void MenuGroupContainer::showGroups(std::vector<std::uint64_t> groups, int butto
 }
 
 void MenuGroupContainer::addGroup(const QString& group) {
-    auto groupButton = new cor::GroupButton(this, group);
-    groupButton->showButton(false);
+    auto groupButton = new cor::GroupButton(group, this);
+    groupButton->showSelectAllCheckbox(false);
     groupButton->highlightByCountOfLights(false);
     groupButton->highlight(false);
     connect(groupButton, SIGNAL(groupButtonPressed(QString)), this, SLOT(buttonPressed(QString)));

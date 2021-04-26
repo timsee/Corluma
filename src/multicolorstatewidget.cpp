@@ -14,7 +14,7 @@ MultiColorStateWidget::MultiColorStateWidget(QWidget* parent) : QWidget(parent),
     mSwatchWidget = new SwatchVectorWidget(6, 1, this);
     mSwatchWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    setStyleSheet("background-color:rgb(33, 32, 32);");
+    setStyleSheet(cor::kDarkerGreyBackground);
 }
 
 void MultiColorStateWidget::updateState(std::vector<QColor> colors) {

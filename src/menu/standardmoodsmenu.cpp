@@ -30,12 +30,17 @@ StandardMoodsMenu::StandardMoodsMenu(QWidget* widget, CommLayer* comm, GroupData
       mCurrentParent{0u},
       mWidgetHeight{0u},
       mParentScrollArea{new QScrollArea(this)},
-      mParentWidget{new ParentGroupWidget("", "", cor::EWidgetType::condensed, true, this)},
+      mParentWidget{new cor::GroupButton("", "", this)},
       mParentGroupContainer{new MenuParentGroupContainer(mParentScrollArea, groups)},
       mMoodScrollArea{new QScrollArea(this)},
       mMoodContainer{new MenuMoodContainer(mMoodScrollArea)} {
     mParentWidget->setVisible(false);
-    connect(mParentWidget, SIGNAL(pressed()), this, SLOT(parentGroupWidgetPressed()));
+    mParentWidget->changeArrowState(cor::EArrowState::closed);
+    mParentWidget->showSelectAllCheckbox(false);
+    connect(mParentWidget,
+            SIGNAL(groupButtonPressed(QString)),
+            this,
+            SLOT(parentGroupWidgetPressed(QString)));
     mParentWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     mParentGroupContainer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -185,7 +190,7 @@ void StandardMoodsMenu::parentGroupClicked(std::uint64_t key) {
     changeStateToMoods();
 }
 
-void StandardMoodsMenu::parentGroupWidgetPressed() {
+void StandardMoodsMenu::parentGroupWidgetPressed(QString) {
     mCurrentParent = 0;
     mParentWidget->setVisible(false);
     changeStateToParents();
@@ -193,6 +198,6 @@ void StandardMoodsMenu::parentGroupWidgetPressed() {
 
 void StandardMoodsMenu::showParentWidget(const QString& parentGroupName) {
     mParentWidget->changeText(parentGroupName);
-    mParentWidget->showButtons(true);
+    mParentWidget->changeArrowState(cor::EArrowState::open);
     mParentWidget->setVisible(true);
 }

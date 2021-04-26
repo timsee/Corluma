@@ -30,7 +30,7 @@ LightInfoListWidget::LightInfoListWidget(QWidget* parent)
     mNewLightButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mNewLightButton, SIGNAL(clicked(bool)), this, SLOT(findNewLightButtonPressed(bool)));
     mNewLightButton->setEnabled(true);
-    mNewLightButton->setStyleSheet("background-color:rgb(30,110,30);");
+    mNewLightButton->setStyleSheet(cor::kEditButtonBackground);
 }
 
 

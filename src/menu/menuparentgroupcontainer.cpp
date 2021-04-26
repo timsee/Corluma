@@ -33,7 +33,7 @@ int MenuParentGroupContainer::resizeParentGroupWidgets(int buttonHeight) {
     // check if any is open
     std::sort(mParentGroupWidgets.begin(),
               mParentGroupWidgets.end(),
-              [](DropdownTopWidget* a, DropdownTopWidget* b) { return a->key() < b->key(); });
+              [](cor::GroupButton* a, cor::GroupButton* b) { return a->key() < b->key(); });
     for (auto widget : mParentGroupWidgets) {
         widget->setVisible(true);
         widget->setGeometry(0, yPos, this->width(), buttonHeight);
@@ -84,8 +84,8 @@ void MenuParentGroupContainer::highlightParentGroups(
         }
         auto countResults = parentCounts.find(ID);
         if (countResults != parentCounts.end()) {
-            parentWidget->updateCheckedLights(countResults->second.first,
-                                              countResults->second.second);
+            parentWidget->handleSelectAllCheckbox(countResults->second.first,
+                                                  countResults->second.second);
             parentWidget->update();
         }
     }
@@ -137,9 +137,11 @@ void MenuParentGroupContainer::hideLightStates(const QString& name) {
 }
 
 void MenuParentGroupContainer::initParentGroupWidget(const cor::Group& group, const QString& key) {
-    auto widget = new ParentGroupWidget(key, group.name(), cor::EWidgetType::condensed, true, this);
+    auto widget = new cor::GroupButton(key, group.name(), this);
+    widget->changeArrowState(cor::EArrowState::closed);
+    widget->showSelectAllCheckbox(false);
     QScroller::grabGesture(widget, QScroller::LeftMouseButtonGesture);
-    connect(widget, SIGNAL(dropdownPressed(QString)), this, SLOT(parentPressed(QString)));
+    connect(widget, SIGNAL(groupButtonPressed(QString)), this, SLOT(parentPressed(QString)));
 
     mParentGroupWidgets.push_back(widget);
     resizeParentGroupWidgets(mButtonHeight);

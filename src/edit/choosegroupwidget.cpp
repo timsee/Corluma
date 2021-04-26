@@ -58,10 +58,10 @@ void ChooseGroupWidget::handleBottomState() {
     mActionButton->setEnabled(mSelectedGroup != 0u);
     if (mDesiredAction == cor::EGroupAction::edit) {
         mActionButton->setText("Edit");
-        mActionButton->setStyleSheet("background-color:rgb(30,110,30);");
+        mActionButton->setStyleSheet(cor::kEditButtonBackground);
     } else if (mDesiredAction == cor::EGroupAction::remove) {
         mActionButton->setText("Delete");
-        mActionButton->setStyleSheet("background-color:rgb(110,30,30);");
+        mActionButton->setStyleSheet(cor::kDeleteButtonBackground);
     }
 }
 

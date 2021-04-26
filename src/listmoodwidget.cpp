@@ -14,43 +14,47 @@ ListMoodWidget::ListMoodWidget(const QString& name,
                                QWidget* parent)
     : cor::ListItemWidget(key, parent),
       mMoodContainer{new MenuMoodContainer(this)} {
-    mDropdownTopWidget = new DropdownTopWidget(name, name, cor::EWidgetType::full, true, this);
-    mDropdownTopWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mGroupButton = new cor::GroupButton(name, this);
+    mGroupButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     connect(mMoodContainer,
             SIGNAL(moodSelected(std::uint64_t)),
             this,
             SLOT(selectMood(std::uint64_t)));
-    mMoodContainer->showMoods(moods, mDropdownTopWidget->height() * 2);
+    mMoodContainer->showMoods(moods, mGroupButton->height() * 2);
     resize();
 }
 
 
 void ListMoodWidget::updateMoods(const std::vector<cor::Mood>& moods) {
     mMoodContainer->setVisible(true);
-    mMoodContainer->showMoods(moods, mDropdownTopWidget->height() * 2);
+    mMoodContainer->showMoods(moods, mGroupButton->height() * 2);
 }
 
 void ListMoodWidget::setShowButtons(bool show) {
-    mDropdownTopWidget->showButtons(show);
+    if (show) {
+        mGroupButton->changeArrowState(cor::EArrowState::open);
+    } else {
+        mGroupButton->changeArrowState(cor::EArrowState::closed);
+    }
     mMoodContainer->setVisible(show);
 
     resize();
-    emit buttonsShown(mKey, mDropdownTopWidget->showButtons());
+    emit buttonsShown(mKey, mGroupButton->isArrowOpen());
 }
 
 void ListMoodWidget::resize() {
-    if (mDropdownTopWidget->showButtons()) {
-        setFixedHeight(mMoodContainer->height() + mDropdownTopWidget->height());
+    if (mGroupButton->isArrowOpen()) {
+        setFixedHeight(mMoodContainer->height() + mGroupButton->height());
     } else {
-        setFixedHeight(mDropdownTopWidget->height());
+        setFixedHeight(mGroupButton->height());
     }
     auto yPos = 0;
-    mDropdownTopWidget->setGeometry(0, yPos, width(), mDropdownTopWidget->height());
-    yPos += mDropdownTopWidget->height();
+    mGroupButton->setGeometry(0, yPos, width(), mGroupButton->height());
+    yPos += mGroupButton->height();
 
     if (mMoodContainer->isVisible()) {
-        mMoodContainer->setGeometry(0, yPos, width(), height() - mDropdownTopWidget->height());
+        mMoodContainer->setGeometry(0, yPos, width(), height() - mGroupButton->height());
         mMoodContainer->resize();
     }
 }
@@ -65,7 +69,7 @@ void ListMoodWidget::mouseReleaseEvent(QMouseEvent* event) {
         return;
     }
     if (cor::isMouseEventTouchUpInside(event, this, true)) {
-        setShowButtons(!mDropdownTopWidget->showButtons());
+        setShowButtons(!mGroupButton->isArrowOpen());
     }
     event->ignore();
 }

@@ -33,7 +33,7 @@ public:
         font.setPointSize(20);
         mName->setFont(font);
 
-        this->setStyleSheet("background-color:rgb(33,32,32);");
+        this->setStyleSheet(cor::kDarkerGreyBackground);
     }
 
     /// getter for group represented by the widget
