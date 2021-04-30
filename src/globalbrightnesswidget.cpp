@@ -118,12 +118,12 @@ void GlobalBrightnessWidget::resize() {
     if (mIsIn) {
         this->setGeometry(mPositionX,
                           mTopSpacer,
-                          this->parentWidget()->width() - mSize.width() * 2,
+                          this->parentWidget()->width() - mSize.width(),
                           mSize.height() - mTopSpacer);
     } else {
         this->setGeometry(mPositionX,
                           int(-1 * height()),
-                          this->parentWidget()->width() - mSize.width() * 2,
+                          this->parentWidget()->width() - mSize.width(),
                           mSize.height() - mTopSpacer);
     }
 
@@ -134,11 +134,14 @@ void GlobalBrightnessWidget::resize() {
     if (mIsLeftAlwaysOpen) {
         mBrightnessSlider->setGeometry(onOffWidth + 5,
                                        0,
-                                       width() - int(mSize.width() - onOffWidth),
+                                       width() - int(mSize.width() * 3 - onOffWidth),
                                        height() / 2);
 
     } else {
-        mBrightnessSlider->setGeometry(onOffWidth + 5, 0, width() - int(onOffWidth), height() / 2);
+        mBrightnessSlider->setGeometry(onOffWidth + 5,
+                                       0,
+                                       width() - mSize.width() * 1.5 - int(onOffWidth),
+                                       height() / 2);
     }
 }
 

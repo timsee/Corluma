@@ -97,8 +97,8 @@ TopMenu::TopMenu(QWidget* parent,
             SIGNAL(buttonPressed(QString)),
             this,
             SLOT(floatingLayoutButtonPressed(QString)));
-    mPaletteFloatingLayout->setupButtons({QString("HSV"), QString("Preset")}, EButtonSize::small);
-    mPaletteFloatingLayout->highlightButton("HSV");
+    mPaletteFloatingLayout->setupButtons({QString("Preset"), QString("HSV")}, EButtonSize::small);
+    mPaletteFloatingLayout->highlightButton("Preset");
 
     // --------------
     // Moods Floating Layout

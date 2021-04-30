@@ -214,8 +214,8 @@ void StateObserver::lightCountChanged() {
 
     if (mPalettePage->isOpen()) {
         if (mData->empty() || !mData->supportsRoutines()) {
-            mPalettePage->setMode(EGroupMode::wheel);
-            mTopMenu->highlightButton("HSV");
+            mPalettePage->setMode(EGroupMode::presets);
+            mTopMenu->highlightButton("Preset");
         } else {
             auto routineAndParam = mData->routineAndParam();
             mPalettePage->routines()->highlightRoutine(routineAndParam.first,

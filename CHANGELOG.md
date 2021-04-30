@@ -1266,3 +1266,15 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Added a secondary loading screen.
 - Added `Stylesheets.h` to cut down on repeated stylesheets.
 - Fixed miscellaneous bugs.
+
+### **v0.21.93**
+### Bug Fixes
+- Moved more repeated stylesheets to `stylesheets.h`
+- Combined `DropDownTopWidget` and `ParentGroupWidget` into `cor::GroupButton`
+
+### **v0.21.94**
+### The QML Update
+- Changed the default page of the "Multi Color" page to be the `PalettePage`.
+- Added support for QML for the `LoadingScreen` to support Lottie animations in Qt 6.1.
+- Added a new animation to `LoadingScreen`.
+- Added new logic that checks the discovery state of lights on the `LoadingScreen`.

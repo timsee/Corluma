@@ -14,7 +14,7 @@ linux:!android {
     TARGET = corluma
 }
 TEMPLATE = app
-VERSION = 0.21.93
+VERSION = 0.21.94
 
 #----------
 # Build flags
@@ -113,7 +113,7 @@ equals(BUILD_STATIC_CORLUMA, 1) {
 # Dependencies
 #----------
 
-QT += core gui widgets network
+QT += core gui widgets network quickwidgets
 equals(SHOULD_USE_SERIAL, 1) {
   QT += serialport
 }

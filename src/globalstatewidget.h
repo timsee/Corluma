@@ -6,6 +6,8 @@
 #include "cor/objects/lightstate.h"
 #include "cor/stylesheets.h"
 #include "cor/widgets/palettewidget.h"
+#include "listplaceholderwidget.h"
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2021.
@@ -21,12 +23,23 @@ class GlobalStateWidget : public QWidget {
 public:
     explicit GlobalStateWidget(QWidget* parent)
         : QWidget(parent),
-          mPaletteWidget{new cor::PaletteWidget(this)} {
+          mPaletteWidget{new cor::PaletteWidget(this)},
+          mPlaceholderWidget{new ListPlaceholderWidget(this, "No lights selected")} {
         mPaletteWidget->shouldForceSquares(true);
+        mPlaceholderWidget->setFontSize(12);
     }
 
     /// updates the palette to new light states.
-    void update(const std::vector<cor::LightState>& states) { mPaletteWidget->show(states); }
+    void update(const std::vector<cor::LightState>& states) {
+        if (states.empty()) {
+            mPlaceholderWidget->setVisible(true);
+            mPaletteWidget->setVisible(false);
+        } else {
+            mPlaceholderWidget->setVisible(false);
+            mPaletteWidget->setVisible(true);
+        }
+        mPaletteWidget->show(states);
+    }
 
 signals:
 
@@ -39,6 +52,7 @@ protected:
      */
     virtual void resizeEvent(QResizeEvent*) {
         mPaletteWidget->setGeometry(QRect(0, 0, width(), height()));
+        mPlaceholderWidget->setGeometry(QRect(0, 0, width(), height()));
     }
 
     /// handles when a mouse is released.
@@ -54,6 +68,9 @@ protected:
 private:
     /// displays the light states in the widget.
     cor::PaletteWidget* mPaletteWidget;
+
+    /// placeholder that states when no lights are selected.
+    ListPlaceholderWidget* mPlaceholderWidget;
 };
 
 #endif // GLOBALSTATEWIDGET_H

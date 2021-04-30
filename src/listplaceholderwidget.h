@@ -20,7 +20,7 @@ public:
     explicit ListPlaceholderWidget(QWidget* parent) : QWidget(parent), mText{new QLabel(this)} {
         mText->setWordWrap(true);
         setAutoFillBackground(true);
-        setStyleSheet("background-color:rgb(33,32,32); font-size:20pt;");
+        setFontSize(20);
     }
 
     ListPlaceholderWidget(QWidget* parent, const QString& text) : ListPlaceholderWidget(parent) {
@@ -29,6 +29,13 @@ public:
 
     /// set the text to display
     void setText(const QString& text) { mText->setText(text); }
+
+
+    /// set the font size of the widget.
+    void setFontSize(int fontSize) {
+        setStyleSheet(QString("background-color:rgb(33,32,32); font-size:%1pt;")
+                          .arg(QString::number(fontSize)));
+    }
 
 protected:
     /// resizes the widgets

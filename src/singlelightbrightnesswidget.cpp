@@ -107,13 +107,13 @@ void SingleLightBrightnessWidget::resize() {
     if (mIsLeftAlwaysOpen) {
         mBrightnessSlider->setGeometry(height() * 0.15 + side,
                                        0,
-                                       width() - int(mSize.width() * 2),
+                                       width() - int(mSize.width() * 3),
                                        height() / 2);
 
     } else {
         mBrightnessSlider->setGeometry(height() * 0.15 + side,
                                        0,
-                                       width() - int(mSize.width() * 1.2),
+                                       width() - int(mSize.width() * 2),
                                        height() / 2);
     }
 }

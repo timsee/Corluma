@@ -25,8 +25,8 @@ PalettePage::PalettePage(QWidget* parent)
 
     mColorPicker->setVisible(false);
 
-    mMode = EGroupMode::presets;
-    setMode(EGroupMode::wheel);
+    mMode = EGroupMode::wheel;
+    setMode(EGroupMode::presets);
 }
 
 void PalettePage::paletteButtonClicked(EPalette palette) {

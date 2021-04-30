@@ -82,5 +82,9 @@
         <file>images/fade/fade_sawtooth_in_icon.png</file>
         <file>images/fade/fade_linear_icon.png</file>
         <file>images/question_mark.png</file>
+        <file>loading.qml</file>
+        <file>images/gif/light_search.gif</file>
+        <file>images/gif/syncing.gif</file>
+        <file>images/gif/syncing_complete.gif</file>
     </qresource>
 </RCC>

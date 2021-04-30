@@ -48,7 +48,10 @@ public:
 
 protected:
     /// renders the widget
-    virtual void paintEvent(QPaintEvent*);
+    void paintEvent(QPaintEvent*) override;
+
+    /// handles when events change.
+    void changeEvent(QEvent* event) override;
 
 private:
     /// draws a single color on the palette widget in the defined region.

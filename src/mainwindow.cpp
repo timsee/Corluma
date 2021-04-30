@@ -62,7 +62,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
       mChooseGroupWidget{new ChooseGroupWidget(this, mComm, mGroups)},
       mChooseMoodWidget{new ChooseMoodWidget(this, mComm, mGroups)},
       mGreyOut{new GreyOutOverlay(!mLeftHandMenu->alwaysOpen(), this)},
-      mLoadingScreen{new LoadingScreen(this)} {
+      mLoadingScreen{new LoadingScreen(mComm, mAppSettings, this)} {
     mGroups->loadJsonFromFile();
 
     // disable experimental features if not experimental features are not enabled
@@ -653,7 +653,12 @@ void MainWindow::resize() {
 
 
     // global state widget is always in top right
-    auto globalStateWidgetSize = QSize(this->width() * 0.15, height() * 0.075);
+    QSize globalStateWidgetSize;
+    if (mLeftHandMenu->alwaysOpen()) {
+        globalStateWidgetSize = QSize(this->width() * 0.15, height() * 0.075);
+    } else {
+        globalStateWidgetSize = QSize(this->width() * 0.2, height() * 0.075);
+    }
     mGlobalStateWidget->setGeometry(this->width() - globalStateWidgetSize.width(),
                                     0,
                                     globalStateWidgetSize.width(),
@@ -966,6 +971,7 @@ void MainWindow::debugModeClicked() {
 void MainWindow::loadingPageComplete() {
     if (mAnyDiscovered && mLoadingScreen->isReady()) {
         mLoadingScreen->setVisible(false);
+        mLoadingScreen->cancelTimer();
     }
 }
 
@@ -983,6 +989,7 @@ void MainWindow::anyDiscovered(bool discovered) {
     }
     if (mLoadingScreen->isReady()) {
         mLoadingScreen->setVisible(false);
+        mLoadingScreen->cancelTimer();
     } else {
         mLoadingScreen->raise();
         mLoadingScreen->setVisible(true);

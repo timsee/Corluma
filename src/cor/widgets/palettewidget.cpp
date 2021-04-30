@@ -1,4 +1,6 @@
 #include "palettewidget.h"
+#include <QEvent>
+#include <QGraphicsOpacityEffect>
 #include <QPainter>
 #include <QStyleOption>
 #include <algorithm>
@@ -84,6 +86,21 @@ void PaletteWidget::paintEvent(QPaintEvent*) {
             ++i;
         }
     }
+}
+
+void PaletteWidget::changeEvent(QEvent* event) {
+    // qDebug() << " event " << event->type();
+
+    // TODO: this lags on mobile...
+    //    if (event->type() == QEvent::EnabledChange && isEnabled()) {
+    //        QGraphicsOpacityEffect* effect = new QGraphicsOpacityEffect(this);
+    //        effect->setOpacity(1.0);
+    //        this->setGraphicsEffect(effect);
+    //    } else if (event->type() == QEvent::EnabledChange && !isEnabled()) {
+    //        QGraphicsOpacityEffect* effect = new QGraphicsOpacityEffect(this);
+    //        effect->setOpacity(0.5);
+    //        this->setGraphicsEffect(effect);
+    //    }
 }
 
 void PaletteWidget::drawSolidColor(QPainter& painter,
