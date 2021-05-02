@@ -23,19 +23,16 @@ class GlobalStateWidget : public QWidget {
 public:
     explicit GlobalStateWidget(QWidget* parent)
         : QWidget(parent),
-          mPaletteWidget{new cor::PaletteWidget(this)},
-          mPlaceholderWidget{new ListPlaceholderWidget(this, "No lights selected")} {
-        mPaletteWidget->shouldForceSquares(true);
-        mPlaceholderWidget->setFontSize(12);
+          mPaletteWidget{new cor::PaletteWidget(this)} {
+        mPaletteWidget->showInSingleLine(true);
+        setStyleSheet(cor::kTransparentStylesheet);
     }
 
     /// updates the palette to new light states.
     void update(const std::vector<cor::LightState>& states) {
         if (states.empty()) {
-            mPlaceholderWidget->setVisible(true);
             mPaletteWidget->setVisible(false);
         } else {
-            mPlaceholderWidget->setVisible(false);
             mPaletteWidget->setVisible(true);
         }
         mPaletteWidget->show(states);
@@ -52,25 +49,14 @@ protected:
      */
     virtual void resizeEvent(QResizeEvent*) {
         mPaletteWidget->setGeometry(QRect(0, 0, width(), height()));
-        mPlaceholderWidget->setGeometry(QRect(0, 0, width(), height()));
     }
 
     /// handles when a mouse is released.
     virtual void mouseReleaseEvent(QMouseEvent*) { emit clicked(); }
 
-    /// paints the background of the widget.
-    virtual void paintEvent(QPaintEvent*) {
-        QPainter painter(this);
-        painter.setRenderHint(QPainter::Antialiasing);
-        painter.fillRect(rect(), QBrush(QColor(33, 32, 32)));
-    }
-
 private:
     /// displays the light states in the widget.
     cor::PaletteWidget* mPaletteWidget;
-
-    /// placeholder that states when no lights are selected.
-    ListPlaceholderWidget* mPlaceholderWidget;
 };
 
 #endif // GLOBALSTATEWIDGET_H

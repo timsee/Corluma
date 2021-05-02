@@ -54,8 +54,7 @@ public:
                      MainWindow* mainWindow,
                      LightsPage* lightsPage,
                      PalettePage* palettePage,
-                     ColorPage* colorPage,
-                     GlobalStateWidget* globalStateWidget);
+                     ColorPage* colorPage);
 
     /// resizes the menus programmatically
     void resize(int xOffset);
@@ -215,6 +214,9 @@ private:
 
     /// helper that generates where the color state menus should put their top-left point
     QPoint colorStateStartPoint();
+
+    /// helper that generates where the brightness sldier should put its top left point.
+    QPoint brightnessSliderStartPoint();
 
     /// move the color state widgets.
     void moveColorStateWidgets();

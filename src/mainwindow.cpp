@@ -56,7 +56,6 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
           mData,
           mGroups,
           this)},
-      mGlobalStateWidget{new GlobalStateWidget(this)},
       mEditGroupPage{new cor::EditGroupPage(this, mComm, mGroups)},
       mChooseEditPage{new ChooseEditPage(this)},
       mChooseGroupWidget{new ChooseGroupWidget(this, mComm, mGroups)},
@@ -94,8 +93,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
                            this,
                            mMainViewport->lightsPage(),
                            mMainViewport->palettePage(),
-                           mMainViewport->colorPage(),
-                           mGlobalStateWidget);
+                           mMainViewport->colorPage());
 
     mStateObserver = new cor::StateObserver(mData,
                                             mComm,
@@ -104,7 +102,6 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
                                             this,
                                             mMainViewport->lightsPage(),
                                             mTopMenu,
-                                            mGlobalStateWidget,
                                             this);
 
     mTouchListener = new TouchListener(this, mLeftHandMenu, mTopMenu, mData);
@@ -154,9 +151,6 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
             this,
             SLOT(leftHandMenuButtonPressed(EPage)));
     connect(mLeftHandMenu, SIGNAL(createNewGroup()), this, SLOT(openEditGroupMenu()));
-
-    mGlobalStateWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mGlobalStateWidget->setVisible(true);
 
     // --------------
     // Setup GreyOut View
@@ -650,19 +644,6 @@ void MainWindow::resize() {
     mNoWifiWidget->setGeometry(QRect(0, 0, geometry().width(), geometry().height()));
 
     mLoadingScreen->setGeometry(QRect(0, 0, geometry().width(), geometry().height()));
-
-
-    // global state widget is always in top right
-    QSize globalStateWidgetSize;
-    if (mLeftHandMenu->alwaysOpen()) {
-        globalStateWidgetSize = QSize(this->width() * 0.15, height() * 0.075);
-    } else {
-        globalStateWidgetSize = QSize(this->width() * 0.2, height() * 0.075);
-    }
-    mGlobalStateWidget->setGeometry(this->width() - globalStateWidgetSize.width(),
-                                    0,
-                                    globalStateWidgetSize.width(),
-                                    globalStateWidgetSize.height());
 }
 
 void MainWindow::greyoutClicked() {
@@ -711,19 +692,23 @@ void MainWindow::backButtonPressed() {
 void MainWindow::pushInLeftHandMenu() {
     mGreyOut->greyOut(true);
     mLeftHandMenu->pushIn();
-    mGlobalStateWidget->raise();
 }
 
 void MainWindow::pushOutLeftHandMenu() {
     mGreyOut->greyOut(false);
     mLeftHandMenu->pushOut();
     pushInTapToSelectLights();
-    mGlobalStateWidget->raise();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent* event) {
     if (event->key() == Qt::Key_Back) {
         backButtonPressed();
+        // android can trigger the back button from swiping from the far extreme of the window.
+        // This handles this behavior more elegantly on our Qt side of things.
+        if (cor::leftHandMenuMoving() || !mTouchListener->pressHasBeenReleased()) {
+            pushOutLeftHandMenu();
+            mTouchListener->pressHasBeenReleased(true);
+        }
     }
     event->accept();
 }
@@ -950,12 +935,10 @@ void MainWindow::reorderWidgets() {
 
     if (mLeftHandMenu->alwaysOpen()) {
         mLeftHandMenu->raise();
-        mGlobalStateWidget->raise();
         mGreyOut->raise();
     } else {
         mGreyOut->raise();
         mLeftHandMenu->raise();
-        mGlobalStateWidget->raise();
     }
 
     mLoadingScreen->raise();

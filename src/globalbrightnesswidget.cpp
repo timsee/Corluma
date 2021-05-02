@@ -9,15 +9,12 @@
 #include "utils/qt.h"
 
 GlobalBrightnessWidget::GlobalBrightnessWidget(const QSize& size,
-                                               bool isLeftAlwaysOpen,
                                                CommLayer* comm,
                                                cor::LightList* data,
                                                QWidget* parent)
     : QWidget(parent),
       mIsIn{false},
       mSize{size},
-      mIsLeftAlwaysOpen{isLeftAlwaysOpen},
-      mAnyInteraction{false},
       mComm{comm},
       mData{data} {
     // --------------
@@ -46,14 +43,6 @@ GlobalBrightnessWidget::GlobalBrightnessWidget(const QSize& size,
     mOnOffCheckTimer->start(500);
 
     mElapsedTime.restart();
-
-    if (isLeftAlwaysOpen) {
-        mPositionX = int(mSize.width() * 0.1);
-    } else {
-        mPositionX = int(mSize.width());
-    }
-    mTopSpacer = mSize.height() / 8;
-    resize();
 }
 
 void GlobalBrightnessWidget::updateColor(const QColor& color) {
@@ -75,7 +64,6 @@ void GlobalBrightnessWidget::lightCountChanged(bool isOn,
                                                std::uint32_t brightness,
                                                std::size_t count) {
     if (count > 0) {
-        pushIn();
         mBrightnessSlider->enable(true);
         if (isOn) {
             mOnOffSwitch->setSwitchState(ESwitchState::on);
@@ -86,69 +74,41 @@ void GlobalBrightnessWidget::lightCountChanged(bool isOn,
         updateBrightness(brightness);
         updateColor(color);
     } else {
-        pushOut();
         mBrightnessSlider->enable(false);
         mBrightnessSlider->setValue(0);
         mOnOffSwitch->setSwitchState(ESwitchState::disabled);
     }
 }
 
-void GlobalBrightnessWidget::pushIn() {
+void GlobalBrightnessWidget::pushIn(const QPoint& point) {
     if (!mIsIn) {
-        cor::moveWidget(this,
-                        QPoint(mPositionX, int(-1 * height())),
-                        QPoint(mPositionX, mTopSpacer));
+        cor::moveWidget(this, geometry().topLeft(), point);
         raise();
         setVisible(true);
     }
     mIsIn = true;
 }
 
-void GlobalBrightnessWidget::pushOut() {
+void GlobalBrightnessWidget::pushOut(const QPoint& point) {
     if (mIsIn) {
-        cor::moveWidget(this,
-                        QPoint(mPositionX, mTopSpacer),
-                        QPoint(mPositionX, int(-1 * height())));
+        cor::moveWidget(this, geometry().topLeft(), point);
     }
     mIsIn = false;
 }
 
-void GlobalBrightnessWidget::resize() {
-    //  handle global size
-    if (mIsIn) {
-        this->setGeometry(mPositionX,
-                          mTopSpacer,
-                          this->parentWidget()->width() - mSize.width(),
-                          mSize.height() - mTopSpacer);
-    } else {
-        this->setGeometry(mPositionX,
-                          int(-1 * height()),
-                          this->parentWidget()->width() - mSize.width(),
-                          mSize.height() - mTopSpacer);
-    }
 
-
+void GlobalBrightnessWidget::resizeEvent(QResizeEvent*) {
     auto onOffWidth = mSize.width() * 0.6;
     mOnOffSwitch->setGeometry(0, 0, onOffWidth, height() / 2);
-    // handle individual widget sizes
-    if (mIsLeftAlwaysOpen) {
-        mBrightnessSlider->setGeometry(onOffWidth + 5,
-                                       0,
-                                       width() - int(mSize.width() * 3 - onOffWidth),
-                                       height() / 2);
-
-    } else {
-        mBrightnessSlider->setGeometry(onOffWidth + 5,
-                                       0,
-                                       width() - mSize.width() * 1.5 - int(onOffWidth),
-                                       height() / 2);
-    }
+    mBrightnessSlider->setGeometry(onOffWidth + 5,
+                                   0,
+                                   width() - mOnOffSwitch->width() - 5,
+                                   height() / 2);
 }
 
 
 void GlobalBrightnessWidget::brightnessSliderChanged(int newBrightness) {
     mElapsedTime.restart();
-    mAnyInteraction = true;
     auto color = mBrightnessSlider->color();
     color.setHsvF(color.hueF(), color.saturationF(), newBrightness / 100.0);
     updateColor(color);
@@ -156,7 +116,7 @@ void GlobalBrightnessWidget::brightnessSliderChanged(int newBrightness) {
 }
 
 void GlobalBrightnessWidget::checkifOn() {
-    if (mElapsedTime.elapsed() > 5000 || !mAnyInteraction) {
+    if (mElapsedTime.elapsed() > 5000) {
         // get comm representation of lights
         auto commLights = mComm->commLightsFromVector(mData->lights());
 
@@ -177,6 +137,5 @@ void GlobalBrightnessWidget::checkifOn() {
 
 void GlobalBrightnessWidget::changedSwitchState(bool state) {
     mElapsedTime.restart();
-    mAnyInteraction = true;
     emit isOnUpdate(state);
 }

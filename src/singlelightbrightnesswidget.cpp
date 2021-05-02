@@ -15,13 +15,10 @@
 #include "utils/qt.h"
 
 
-SingleLightBrightnessWidget::SingleLightBrightnessWidget(const QSize& size,
-                                                         bool isLeftAlwaysOpen,
-                                                         QWidget* parent)
+SingleLightBrightnessWidget::SingleLightBrightnessWidget(const QSize& size, QWidget* parent)
     : QWidget(parent),
       mIsIn{false},
-      mSize{size},
-      mIsLeftAlwaysOpen{isLeftAlwaysOpen} {
+      mSize{size} {
     // --------------
     // Setup Brightness Slider
     // --------------
@@ -34,14 +31,6 @@ SingleLightBrightnessWidget::SingleLightBrightnessWidget(const QSize& size,
     mBrightnessSlider->setColor(QColor(255, 255, 255));
     mBrightnessSlider->enable(true);
     connect(mBrightnessSlider, SIGNAL(valueChanged(int)), this, SLOT(brightnessSliderChanged(int)));
-
-    if (isLeftAlwaysOpen) {
-        mPositionX = int(mSize.width() * 0.1);
-    } else {
-        mPositionX = int(mSize.width());
-    }
-    mTopSpacer = mSize.height() / 8;
-    resize();
 }
 
 void SingleLightBrightnessWidget::updateColor(const QColor& color) {
@@ -68,54 +57,28 @@ void SingleLightBrightnessWidget::updateBrightness(std::uint32_t brightness) {
 }
 
 
-void SingleLightBrightnessWidget::pushIn() {
+void SingleLightBrightnessWidget::pushIn(const QPoint& point) {
     if (!mIsIn) {
-        cor::moveWidget(this,
-                        QPoint(mPositionX, int(-1 * height())),
-                        QPoint(mPositionX, mTopSpacer));
+        cor::moveWidget(this, geometry().topLeft(), point);
         raise();
         setVisible(true);
     }
     mIsIn = true;
 }
 
-void SingleLightBrightnessWidget::pushOut() {
+void SingleLightBrightnessWidget::pushOut(const QPoint& point) {
     if (mIsIn) {
-        cor::moveWidget(this,
-                        QPoint(mPositionX, mTopSpacer),
-                        QPoint(mPositionX, int(-1 * height())));
+        cor::moveWidget(this, geometry().topLeft(), point);
     }
     mIsIn = false;
 }
 
-void SingleLightBrightnessWidget::resize() {
-    //  handle global size
-    if (mIsIn) {
-        this->setGeometry(mPositionX,
-                          mTopSpacer,
-                          this->parentWidget()->width() - mSize.width() * 2,
-                          mSize.height() - mTopSpacer);
-    } else {
-        this->setGeometry(mPositionX,
-                          int(-1 * height()),
-                          this->parentWidget()->width() - mSize.width() * 2,
-                          mSize.height() - mTopSpacer);
-    }
-
+void SingleLightBrightnessWidget::resizeEvent(QResizeEvent*) {
     auto side = height() / 2;
-    // handle individual widget sizes
-    if (mIsLeftAlwaysOpen) {
-        mBrightnessSlider->setGeometry(height() * 0.15 + side,
-                                       0,
-                                       width() - int(mSize.width() * 3),
-                                       height() / 2);
-
-    } else {
-        mBrightnessSlider->setGeometry(height() * 0.15 + side,
-                                       0,
-                                       width() - int(mSize.width() * 2),
-                                       height() / 2);
-    }
+    mBrightnessSlider->setGeometry(height() * 0.15 + side,
+                                   0,
+                                   width() - int(mSize.width() * 0.6),
+                                   height() / 2);
 }
 
 void SingleLightBrightnessWidget::brightnessSliderChanged(int newBrightness) {

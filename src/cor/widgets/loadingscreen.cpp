@@ -4,7 +4,7 @@
 #include "comm/commhue.h"
 #include "comm/commnanoleaf.h"
 
-#define MIN_TIME_TO_SHOW_LOADING_SCREEN 8
+#define MIN_TIME_TO_SHOW_LOADING_SCREEN 5
 #define MAX_TIME_TO_SHOW_LOADING_SCREEN 15
 
 LoadingScreen::LoadingScreen(CommLayer* comm, AppSettings* appSettings, QWidget* parent)

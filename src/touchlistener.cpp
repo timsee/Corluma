@@ -13,6 +13,7 @@ TouchListener::TouchListener(MainWindow* mainWindow,
                              TopMenu* topMenu,
                              cor::LightList* data)
     : QObject(mainWindow),
+      mPressHasBeenReleased{false},
       mMainWindow{mainWindow},
       mLeftHandMenu{leftHandMenu},
       mMainViewport{mainWindow->viewport()},
@@ -23,6 +24,7 @@ void TouchListener::pressEvent(QMouseEvent* event) {
     mStartPoint = event->pos();
     mHandleAsMenuSpace = (mStartPoint.x() < mLeftHandMenu->width());
     mLeftHandMenu->isMoving(false);
+    mPressHasBeenReleased = false;
 }
 
 void TouchListener::moveEvent(QMouseEvent* event) {
@@ -30,8 +32,8 @@ void TouchListener::moveEvent(QMouseEvent* event) {
     if (!mLeftHandMenu->alwaysOpen()) {
         auto pos = event->pos();
 
-        // if the pointer ever goes beyond the LeftHandMenu's width, make the start point the edge
-        // of the LeftHandMenu
+        // if the pointer ever goes beyond the LeftHandMenu's width, make the start point the
+        // edge of the LeftHandMenu
         if (pos.x() > mLeftHandMenu->width()) {
             mStartPoint = QPoint(mLeftHandMenu->width(), pos.y());
         }
@@ -76,6 +78,10 @@ void TouchListener::moveEvent(QMouseEvent* event) {
 }
 
 void TouchListener::releaseEvent(QMouseEvent* event) {
+    handleRelease(event);
+}
+
+void TouchListener::handleRelease(QMouseEvent* event) {
     if (!mLeftHandMenu->alwaysOpen() && !mMainWindow->isAnyWidgetAbove()) {
         mLeftHandMenu->isMoving(false);
         // check special cases for released mouse events.
@@ -102,6 +108,7 @@ void TouchListener::releaseEvent(QMouseEvent* event) {
                 mMainWindow->pushOutLeftHandMenu();
             }
         }
+        mPressHasBeenReleased = true;
     }
 }
 

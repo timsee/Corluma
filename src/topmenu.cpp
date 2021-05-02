@@ -22,8 +22,7 @@ TopMenu::TopMenu(QWidget* parent,
                  MainWindow* mainWindow,
                  LightsPage* lightsPage,
                  PalettePage* palettePage,
-                 ColorPage* colorPage,
-                 GlobalStateWidget* globalStateWidget)
+                 ColorPage* colorPage)
     : QWidget(parent),
       mStartSelectLightsButton{int(cor::applicationSize().height() * 0.1f)},
       mLastParentSizeColorMenu{0, 0},
@@ -37,20 +36,15 @@ TopMenu::TopMenu(QWidget* parent,
       mPalettePage(palettePage),
       mColorPage(colorPage),
       mLightsPage{lightsPage},
-      mGlobalStateWidget{globalStateWidget},
+      mGlobalStateWidget{new GlobalStateWidget(this)},
       mCurrentPage{EPage::colorPage},
       mSize{QSize(int(cor::applicationSize().height() * 0.1f),
                   int(cor::applicationSize().height() * 0.1f))},
       mLastColorButtonKey{"HSV"},
       mRenderTimer{new QTimer(this)},
       mMenuButton{new QPushButton(this)},
-      mGlobalBrightness{new GlobalBrightnessWidget(QSize(mSize.width(), mSize.height()),
-                                                   mMainWindow->leftHandMenu()->alwaysOpen(),
-                                                   mComm,
-                                                   mData,
-                                                   this)},
-      mSingleLightBrightness{
-          new SingleLightBrightnessWidget(mSize, mMainWindow->leftHandMenu()->alwaysOpen(), this)},
+      mGlobalBrightness{new GlobalBrightnessWidget(mSize, mComm, mData, this)},
+      mSingleLightBrightness{new SingleLightBrightnessWidget(mSize, this)},
       mPaletteFloatingLayout{new FloatingLayout(mMainWindow)},
       mMoodsFloatingLayout{new FloatingLayout(mMainWindow)},
       mColorFloatingLayout{new FloatingLayout(mMainWindow)},
@@ -154,6 +148,10 @@ TopMenu::TopMenu(QWidget* parent,
             this,
             SLOT(floatingLayoutButtonPressed(QString)));
 
+
+    mGlobalStateWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mGlobalStateWidget->setVisible(true);
+
     // --------------
     // Select Lights Button
     // --------------
@@ -242,21 +240,52 @@ void TopMenu::showMenu() {
     mMultiColorStateWidget->raise();
     mDiscoveryTopMenu->raise();
     mAddLightsFloatingLayout->raise();
+    mGlobalStateWidget->raise();
 }
 
 void TopMenu::resize(int xOffset) {
     auto parentSize = parentWidget()->size();
     moveFloatingLayout();
 
+
+    auto xPosTop = 0;
     int padding = 5;
     mMenuButton->setGeometry(int(mSize.width() * 0.1),
                              int(mSize.height() * 0.025),
                              int(mSize.width() * 0.75f),
                              int(mSize.height() * 0.75f));
     cor::resizeIcon(mMenuButton, ":/images/hamburger_icon.png", 0.7f);
+    xPosTop += mMenuButton->x() + mMenuButton->width();
 
-    mGlobalBrightness->resize();
-    mSingleLightBrightness->resize();
+
+    auto sliderWidth = width() - (brightnessSliderStartPoint().x() + mSize.width() * 0.5);
+    auto slidersStartPoint = brightnessSliderStartPoint();
+    auto brightnessHeight = mSize.height() - slidersStartPoint.y();
+
+
+    // global state widget is always in top right
+    QSize globalStateWidgetSize = QSize(sliderWidth, mSize.height() * 0.2);
+    mGlobalStateWidget->setGeometry(slidersStartPoint.x(),
+                                    0,
+                                    globalStateWidgetSize.width(),
+                                    globalStateWidgetSize.height());
+
+
+    auto shownSlider =
+        QRect(slidersStartPoint.x(), slidersStartPoint.y(), sliderWidth, brightnessHeight);
+    auto hiddenSlider =
+        QRect(slidersStartPoint.x(), -1 * brightnessHeight, sliderWidth, brightnessHeight);
+    if (mGlobalBrightness->isIn()) {
+        mGlobalBrightness->setGeometry(shownSlider);
+    } else {
+        mGlobalBrightness->setGeometry(hiddenSlider);
+    }
+
+    if (mSingleLightBrightness->isIn()) {
+        mSingleLightBrightness->setGeometry(shownSlider);
+    } else {
+        mSingleLightBrightness->setGeometry(hiddenSlider);
+    }
 
     int yPos = mMenuButton->height() + padding;
     mStartSelectLightsButton = yPos;
@@ -343,6 +372,15 @@ QPoint TopMenu::colorStateStartPoint() {
     return QPoint(width, mSize.height() * 2 / 3);
 }
 
+
+QPoint TopMenu::brightnessSliderStartPoint() {
+    int width = mSize.width() * 0.25;
+    if (!mMainWindow->leftHandMenu()->alwaysOpen()) {
+        width += mMenuButton->geometry().x() + mMenuButton->width();
+    }
+    return QPoint(width, mGlobalStateWidget->height() + mSize.height() * 0.025);
+}
+
 void TopMenu::showSingleColorStateWidget(bool show) {
     auto startPoint = colorStateStartPoint();
     if (show) {
@@ -362,7 +400,7 @@ void TopMenu::showMultiColorStateWidget(bool show) {
         mMultiColorStateWidget->updateSyncStatus(ESyncState::synced);
     } else {
         mMultiColorStateWidget->pushOut(startPoint);
-        mSingleLightBrightness->pushOut();
+        mSingleLightBrightness->pushOut(brightnessSliderStartPoint());
         mMultiColorStateWidget->pushOut(startPoint);
     }
 }
@@ -707,16 +745,20 @@ void TopMenu::updateScheme(const std::vector<QColor>& colors, std::uint32_t inde
 void TopMenu::handleBrightnessSliders() {
     if (mData->empty()) {
         // hide both, its empty
-        mSingleLightBrightness->pushOut();
-        mGlobalBrightness->pushOut();
+        mSingleLightBrightness->pushOut(
+            QPoint(brightnessSliderStartPoint().x(), -1 * mSingleLightBrightness->height()));
+        mGlobalBrightness->pushOut(
+            QPoint(brightnessSliderStartPoint().x(), -1 * mGlobalBrightness->height()));
     } else {
         bool updateGlobalBrightness = false;
         if (mCurrentPage == EPage::palettePage) {
             if (mPalettePage->mode() == EGroupMode::wheel) {
                 if (mPalettePage->colorPicker()->currentScheme() == EColorSchemeType::custom) {
-                    mGlobalBrightness->pushOut();
+                    QPoint point(brightnessSliderStartPoint().x(),
+                                 -1 * mGlobalBrightness->height());
+                    mGlobalBrightness->pushOut(point);
                     if (!mSingleLightBrightness->isIn()) {
-                        mSingleLightBrightness->pushIn();
+                        mSingleLightBrightness->pushIn(brightnessSliderStartPoint());
                     }
                     auto paletteColors = mPalettePage->palette().colors();
                     if (!paletteColors.empty()) {
@@ -737,12 +779,13 @@ void TopMenu::handleBrightnessSliders() {
         }
 
         if (updateGlobalBrightness) {
-            mGlobalBrightness->pushIn();
+            mGlobalBrightness->pushIn(brightnessSliderStartPoint());
             mGlobalBrightness->lightCountChanged(mData->isOn(),
                                                  mData->mainColor(),
                                                  mData->brightness(),
                                                  mData->lights().size());
-            mSingleLightBrightness->pushOut();
+            QPoint point(brightnessSliderStartPoint().x(), -1 * mSingleLightBrightness->height());
+            mSingleLightBrightness->pushOut(point);
         }
     }
 }

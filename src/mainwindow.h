@@ -367,10 +367,6 @@ private:
     /// left hand menu.
     LeftHandMenu* mLeftHandMenu;
 
-    /// Displays the currently selected lights and their respective states in the top right of the
-    /// application.
-    GlobalStateWidget* mGlobalStateWidget;
-
     /// edit page for editing groups and rooms
     cor::EditGroupPage* mEditGroupPage;
 

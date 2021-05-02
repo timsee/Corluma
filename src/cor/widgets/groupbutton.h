@@ -123,7 +123,7 @@ public:
         mShowStates = true;
         mPaletteWidget->show(lightStates);
         if (!mPaletteWidget->isShowingAnything()) {
-            mTitle->setStyleSheet(cor::kTransparentStylesheet);
+            mTitle->setStyleSheet(cor::kTransparentAndBoldStylesheet);
         } else {
             mTitle->setStyleSheet(cor::kGradientStylesheet);
         }

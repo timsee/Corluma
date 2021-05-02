@@ -20,7 +20,7 @@ class SingleLightBrightnessWidget : public QWidget {
 
 public:
     /// constructor
-    explicit SingleLightBrightnessWidget(const QSize& size, bool isLeftAlwaysOpen, QWidget* parent);
+    explicit SingleLightBrightnessWidget(const QSize& size, QWidget* parent);
 
     /// update state of widget
     void updateColor(const QColor& color);
@@ -34,14 +34,11 @@ public:
     /// true if in, false otherwise
     bool isIn() { return mIsIn; }
 
-    /// resize the widget programmatically
-    void resize();
-
     /// push in the widget
-    void pushIn();
+    void pushIn(const QPoint&);
 
     /// push out the widget
-    void pushOut();
+    void pushOut(const QPoint&);
 
 signals:
     /// the new value of the brightness slider
@@ -60,21 +57,15 @@ protected:
      */
     void paintEvent(QPaintEvent* event);
 
+    /// handles when the widget resizes.
+    void resizeEvent(QResizeEvent*);
+
 private:
     /// true if in, false if out
     bool mIsIn;
 
     /// size used for determining widget size
     QSize mSize;
-
-    /// true if left menu is always open in app, false otherwise
-    bool mIsLeftAlwaysOpen;
-
-    /// x position of widget
-    int mPositionX;
-
-    /// how many pixels of space between widget and top
-    int mTopSpacer;
 
     /*!
      * \brief mBrightnessSlider slider for adjusting the brightness of all selected devices.

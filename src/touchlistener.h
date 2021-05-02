@@ -45,7 +45,16 @@ public:
     /// handles when the mouse is released
     void releaseEvent(QMouseEvent* event);
 
+    /// checks if the current press has been released.
+    bool pressHasBeenReleased() { return mPressHasBeenReleased; }
+
+    /// programmatically releases the press.
+    void pressHasBeenReleased(bool hasBeenReleased) { mPressHasBeenReleased = hasBeenReleased; }
+
 private:
+    /// handles when a mouse press is released.
+    void handleRelease(QMouseEvent* event);
+
     /// helper that looks at  the state of various widgets and the current touch location and
     /// determines if the LeftHandMenu should move.
     bool shouldMoveMenu(QPoint pos);
@@ -59,6 +68,9 @@ private:
 
     /// true if left hand menu is being moved, false otherwise
     bool mMovingMenu;
+
+    /// tracks whether a press has been released or not. Note: this does not scale to multi touch.
+    bool mPressHasBeenReleased;
 
     /// pointer to MainWindow
     MainWindow* mMainWindow;

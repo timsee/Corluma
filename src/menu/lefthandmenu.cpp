@@ -28,7 +28,9 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     : QWidget(parent),
       mAlwaysOpen{alwaysOpen},
       mButtonsEnabled{false},
+      mIsIn{false},
       mSpacer{new QWidget(this)},
+      mStateWidget{new GlobalStateWidget(this)},
       mSelectedLights{devices},
       mComm{comm},
       mData{lights},
@@ -130,9 +132,13 @@ void LeftHandMenu::resize() {
     }
 
     auto buttonHeight = mRowHeight;
-    auto yPos = int(height() * 0.02);
+
+    mStateWidget->setGeometry(0, 0, width, buttonHeight * 0.4);
+
+    auto yPos = mStateWidget->height() + int(height() * 0.02);
 
     mSpacer->setGeometry(0, 0, width, height());
+
 
     mSingleColorButton->setGeometry(0, yPos, width, buttonHeight);
     yPos += mSingleColorButton->height();
@@ -193,6 +199,9 @@ void LeftHandMenu::updateLights() {
     mLightMenu->updateMenu();
     mLightMenu->selectLights(cor::lightVectorToIDs(mData->lights()));
 #endif
+    if (!alwaysOpen() && isIn()) {
+        mStateWidget->update(cor::lightStatesFromLights(mData->lights(), true));
+    }
 }
 
 
@@ -341,14 +350,6 @@ QWidget* LeftHandMenu::selectedButton() {
     }
 #endif
     return nullptr;
-}
-
-void LeftHandMenu::mouseReleaseEvent(QMouseEvent* event) {
-    if (!cor::leftHandMenuMoving()) {
-        event->accept();
-    } else {
-        event->ignore();
-    }
 }
 
 int LeftHandMenu::showingWidth() {

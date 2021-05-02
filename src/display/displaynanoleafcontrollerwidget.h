@@ -114,6 +114,8 @@ public:
                 SIGNAL(valueChanged(int)),
                 this,
                 SLOT(rotateWidgetChangedAngle(int)));
+
+        mStateButton->setVisible(false);
     }
 
     /// getter for controller represented by the widget
@@ -153,7 +155,7 @@ public:
             mEffect->setVisible(false);
             mSyncWidget->changeState(ESyncState::syncing);
         } else {
-            mStateButton->setVisible(true);
+            mStateButton->setVisible(false); // currently hidden
             mEffectsButton->setVisible(true);
             mChangeRotation->setVisible(true);
             mChangeName->setVisible(true);

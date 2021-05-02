@@ -39,13 +39,13 @@ GroupButton::GroupButton(const QString& key, const QString& text, QWidget* paren
     mPaletteWidget->showInSingleLine(true);
 
     mTitle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    mTitle->setStyleSheet(cor::kTransparentStylesheet);
+    mTitle->setStyleSheet(cor::kTransparentAndBoldStylesheet);
     mTitle->setAlignment(Qt::AlignVCenter);
     mTitle->setAttribute(Qt::WA_TransparentForMouseEvents);
 
     mArrowIcon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mArrowIcon->setAlignment(Qt::AlignCenter);
-    mArrowIcon->setStyleSheet(cor::kTransparentStylesheet);
+    mArrowIcon->setStyleSheet(cor::kTransparentAndBoldStylesheet);
 
     connect(mCheckBox,
             SIGNAL(clicked(ECheckboxState)),

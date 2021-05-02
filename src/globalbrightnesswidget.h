@@ -23,7 +23,6 @@ class GlobalBrightnessWidget : public QWidget {
 public:
     /// constructor
     explicit GlobalBrightnessWidget(const QSize& size,
-                                    bool isLeftAlwaysOpen,
                                     CommLayer* comm,
                                     cor::LightList* data,
                                     QWidget* parent);
@@ -40,14 +39,11 @@ public:
     /// getter for brightness
     int brightness() { return mBrightnessSlider->value(); }
 
-    /// resize the widget programmatically
-    void resize();
-
     /// push in the widget
-    void pushIn();
+    void pushIn(const QPoint&);
 
     /// push out the widget
-    void pushOut();
+    void pushOut(const QPoint&);
 
     /// true if in, false otherwise
     bool isIn() const noexcept { return mIsIn; }
@@ -64,6 +60,10 @@ signals:
 
     /// the switch for turning all the lights on or off has been toggled
     void isOnUpdate(bool isOn);
+
+protected:
+    /// handles when the widget resizes.
+    void resizeEvent(QResizeEvent*);
 
 private slots:
     /*!
@@ -88,17 +88,8 @@ private:
     /// current color of slider
     QColor mColor;
 
-    /// size used for determining widget size
+    /// set at cosntruction, used to determine fixed sized widgets.
     QSize mSize;
-
-    /// true if left menu is always open in app, false otherwise
-    bool mIsLeftAlwaysOpen;
-
-    /// x position of widget
-    int mPositionX;
-
-    /// how many pixels of space between widget and top
-    int mTopSpacer;
 
     /*!
      * \brief mBrightnessSlider slider for adjusting the brightness of all selected devices.
@@ -110,10 +101,6 @@ private:
 
     /// tracks how long its been since an update
     QElapsedTimer mElapsedTime;
-
-    /// set whenever there is any interaction with the on/off switch, acts as a cooldown for
-    /// updates.
-    bool mAnyInteraction;
 
     /// pointer to CommLayer to check on/off state
     CommLayer* mComm;

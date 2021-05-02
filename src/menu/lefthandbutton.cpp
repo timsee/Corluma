@@ -111,8 +111,10 @@ void LeftHandButton::mouseReleaseEvent(QMouseEvent* event) {
     if (cor::isMouseEventTouchUpInside(event, this, true) && mMenu->geometry().x() == 0) {
         update();
         emit pressed(mPage);
+        event->accept();
+    } else {
+        event->ignore();
     }
-    event->ignore();
 }
 
 void LeftHandButton::resizeEvent(QResizeEvent*) {

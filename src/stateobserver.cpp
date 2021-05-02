@@ -17,7 +17,6 @@ StateObserver::StateObserver(cor::LightList* data,
                              MainWindow* mainWindow,
                              LightsPage* lightsPage,
                              TopMenu* topMenu,
-                             GlobalStateWidget* globalStateWidget,
                              QObject* parent)
     : QObject(parent),
       mData{data},
@@ -31,7 +30,6 @@ StateObserver::StateObserver(cor::LightList* data,
       mColorPage{mMainViewport->colorPage()},
       mPalettePage{mMainViewport->palettePage()},
       mMoodPage{mMainViewport->moodPage()},
-      mGlobalStateWidget{globalStateWidget},
       mSpeed{100},
       mTimeObserver{new TimeObserver(this)} {}
 

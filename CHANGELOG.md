@@ -1278,3 +1278,11 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Added support for QML for the `LoadingScreen` to support Lottie animations in Qt 6.1.
 - Added a new animation to `LoadingScreen`.
 - Added new logic that checks the discovery state of lights on the `LoadingScreen`.
+
+### **v0.21.95**
+### The TopMenu Update
+- Simplified `GlobalBrightnessWidget` and `SingleLightBrightnessWidget`.
+- Moved `GlobalStateWidget` to the top of `TopMenu` and the top of `LeftHandMenu`.
+- Fixed bug on android systems when pulling out the `LeftHandMenu`.
+- Updated the font of the splash screen.
+- Fixed miscellaneous bugs.

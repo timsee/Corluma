@@ -9,6 +9,7 @@
 #include "cor/lightlist.h"
 #include "cor/widgets/lightvectorwidget.h"
 #include "data/groupdata.h"
+#include "globalstatewidget.h"
 #include "lefthandbutton.h"
 #include "standardlightsmenu.h"
 #include "timeoutbutton.h"
@@ -104,10 +105,6 @@ private slots:
     /// handles when the new group button is pressed
     void newGroupButtonPressed();
 
-protected:
-    /// handles when the mouse releases from the LeftHandMenu.
-    void mouseReleaseEvent(QMouseEvent*) override;
-
 private:
     /// true if menu should be always open for landscape orientation, false otherwise
     bool mAlwaysOpen;
@@ -125,11 +122,14 @@ private:
     /// point to start the widget at
     QPoint mStartPoint;
 
-    /// the menu that allows the user to select lights or groups of lights
-    StandardLightsMenu* mLightMenu;
-
     /// spacer for top of widget
     QWidget* mSpacer;
+
+    /// displays the state of the selected lights.
+    GlobalStateWidget* mStateWidget;
+
+    /// the menu that allows the user to select lights or groups of lights
+    StandardLightsMenu* mLightMenu;
 
     /// thread for rendering updates to the UI
     QTimer* mRenderThread;
