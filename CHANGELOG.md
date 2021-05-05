@@ -1286,3 +1286,11 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Fixed bug on android systems when pulling out the `LeftHandMenu`.
 - Updated the font of the splash screen.
 - Fixed miscellaneous bugs.
+
+### **v0.21.96**
+### The Mirror Update
+- Most menus on the right hand side of the `TopMenu` have been moved to the left hand side.
+- All menus on the third row of the `TopMenu` have been moved. They have either been added as part of the left hand menu, or are on the right hand side.
+- Updated padding and spacing on various widgets.
+- Fixed bugs where the wrong `TopMenu` buttons were highlighted.
+- Fixed miscellaneous bugs.

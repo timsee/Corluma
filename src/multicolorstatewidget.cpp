@@ -11,14 +11,14 @@ MultiColorStateWidget::MultiColorStateWidget(QWidget* parent) : QWidget(parent),
     mSyncWidget = new SyncWidget(this);
     mSyncWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    mSwatchWidget = new SwatchVectorWidget(6, 1, this);
-    mSwatchWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mPaletteWidget = new cor::PaletteWidget(this);
+    mPaletteWidget->showInSingleLine(true);
 
     setStyleSheet(cor::kDarkerGreyBackground);
 }
 
 void MultiColorStateWidget::updateState(std::vector<QColor> colors) {
-    mSwatchWidget->updateColors(colors);
+    mPaletteWidget->show(colors);
 }
 
 void MultiColorStateWidget::updateSyncStatus(ESyncState state) {
@@ -27,9 +27,9 @@ void MultiColorStateWidget::updateSyncStatus(ESyncState state) {
 
 void MultiColorStateWidget::resize() {
     int xPos = this->geometry().x();
-    mSyncWidget->setGeometry(xPos, 0, width() / 7, height());
+    mSyncWidget->setGeometry(xPos, 0, height(), height());
     xPos += mSyncWidget->width();
-    mSwatchWidget->setGeometry(xPos, 0, width() * 6 / 7, height());
+    mPaletteWidget->setGeometry(xPos, 0, width() - height(), height());
 }
 
 void MultiColorStateWidget::resizeEvent(QResizeEvent*) {
@@ -37,7 +37,7 @@ void MultiColorStateWidget::resizeEvent(QResizeEvent*) {
 }
 
 void MultiColorStateWidget::pushIn(const QPoint& startPoint) {
-    QPoint hiddenPoint(-this->width(), startPoint.y());
+    QPoint hiddenPoint(parentWidget()->width(), startPoint.y());
     if (!isIn()) {
         cor::moveWidget(this, hiddenPoint, startPoint);
         mIsIn = true;
@@ -45,7 +45,7 @@ void MultiColorStateWidget::pushIn(const QPoint& startPoint) {
 }
 
 void MultiColorStateWidget::pushOut(const QPoint& startPoint) {
-    QPoint hiddenPoint(-this->width(), startPoint.y());
+    QPoint hiddenPoint(parentWidget()->width(), startPoint.y());
     if (isIn()) {
         cor::moveWidget(this, startPoint, hiddenPoint);
         mIsIn = false;

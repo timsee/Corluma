@@ -44,7 +44,7 @@ void SingleColorStateWidget::resizeEvent(QResizeEvent*) {
 }
 
 void SingleColorStateWidget::pushIn(const QPoint& startPoint) {
-    QPoint hiddenPoint(-this->width(), startPoint.y());
+    QPoint hiddenPoint(parentWidget()->width(), startPoint.y());
     if (!isIn()) {
         cor::moveWidget(this, hiddenPoint, startPoint);
         mIsIn = true;
@@ -52,7 +52,7 @@ void SingleColorStateWidget::pushIn(const QPoint& startPoint) {
 }
 
 void SingleColorStateWidget::pushOut(const QPoint& startPoint) {
-    QPoint hiddenPoint(-this->width(), startPoint.y());
+    QPoint hiddenPoint(parentWidget()->width(), startPoint.y());
     if (isIn()) {
         cor::moveWidget(this, startPoint, hiddenPoint);
         mIsIn = false;

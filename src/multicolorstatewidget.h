@@ -6,7 +6,9 @@
 #include "colorpicker/swatchvectorwidget.h"
 #include "cor/protocols.h"
 #include "cor/widgets/button.h"
+#include "cor/widgets/palettewidget.h"
 #include "syncwidget.h"
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2020.
@@ -55,8 +57,8 @@ private:
     /// widget for displaying sync state
     SyncWidget* mSyncWidget;
 
-    /// swatch vector widget for showing the colors picked in the color scheme
-    SwatchVectorWidget* mSwatchWidget;
+    /// palette widget for showing the colors picked in the color scheme
+    cor::PaletteWidget* mPaletteWidget;
 };
 
 #endif // MULTICOLORSTATEWIDGET_H

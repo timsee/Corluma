@@ -180,13 +180,7 @@ void DiscoveryWidget::paintEvent(QPaintEvent*) {
 }
 
 void DiscoveryWidget::resize() {
-    int yPos = 0;
-    auto rowHeight = height() / 12;
-    mSpacer->setGeometry(0, yPos, width(), rowHeight);
-    yPos += mSpacer->height();
-
-    mPlaceholder->setGeometry(0, yPos, width(), rowHeight * 11);
-    yPos += mPlaceholder->height();
+    mPlaceholder->setGeometry(0, 0, width(), height());
 
     if (mType == EProtocolType::arduCor) {
         mArduCorWidget->setGeometry(mPlaceholder->geometry());

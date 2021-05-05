@@ -361,7 +361,6 @@ void DiscoveryHueWidget::resize() {
             totalButtons++;
         }
     }
-    yPos += rowHeight;
     bool buttonsShown = false;
     if (totalButtons < 2) {
         for (auto button : mBridgeButtons) {
@@ -387,7 +386,10 @@ void DiscoveryHueWidget::resize() {
     if (buttonsShown) {
         height = rowHeight * 8;
     }
-    auto lightRect = QRect(int(width() * 0.025), yPos, int(width() * 0.95), height);
+    if (yPos == 0) {
+        yPos += this->height() * 0.05;
+    }
+    auto lightRect = QRect(int(width() * 0.03), yPos, int(width() - width() * 0.06), height);
     mPlaceholderWidget->setGeometry(lightRect);
     for (auto widget : mBridgeWidgets) {
         if (widget != nullptr) {

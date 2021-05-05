@@ -82,7 +82,7 @@ public:
      *
      * \param skipTransition true to move immediately, false to transition normally.
      */
-    void showRoutineWidget(bool skipTransition);
+    // void showRoutineWidget(bool skipTransition);
 
     /// true to hide menu button, false to display it
     void hideMenuButton(bool shouldHide);
@@ -199,18 +199,33 @@ private:
     /// handles the right button menus
     void handleButtonLayouts();
 
-    /// pushes the floating layout specified out to the right and off screen.
-    void pushRightFloatingLayout(FloatingLayout* layout);
+    /// pushes the floating layout specified out to the left and off screen.
+    void leftPushOutFloatingLayout(FloatingLayout* layout);
 
-    /// push right the lights menus.
-    void pushRightLightsMenus();
+    /// pushes the floating layout specific out to the right and off screen.
+    void rightPushOutFloatingLayout(FloatingLayout* layout);
 
-    /// pulls the floating layout specified in from the right to the left and places it in the top
-    /// right.
-    void pullLeftFloatingLayout(FloatingLayout* layout);
+    /// push out the lights menus.
+    void pushOutLightsMenus();
 
-    /// pull left the lights menu.
-    void pullLeftLightsMenu();
+    /// pushes the floating layout into the screen from the left.
+    void leftPushInFloatingLayout(FloatingLayout* layout);
+
+    /// pushes the floating layout into the screen from the right.
+    void rightPushInFloatingLayout(FloatingLayout* layout);
+
+    /// push in the lights menu.
+    void pushInLeftLightsMenu();
+
+    /// width offset from the left menu. this will be a different value depending on if the
+    /// lefthandmenu is always open or not.
+    int widthOffsetFromLeftMenu();
+
+    /// move the color page menus
+    void moveColorPageMenus(bool skipTransition);
+
+    /// move the palette page menus.
+    void movePalettePageMenus(bool skipTransition);
 
     /// helper that generates where the color state menus should put their top-left point
     QPoint colorStateStartPoint();
@@ -257,6 +272,9 @@ private:
     /// move lights menus to their proper location during resizes.
     void moveLightsMenu();
 
+    /// true if we should show the routine widget, false otherwise.
+    bool shouldShowRoutineWidget();
+
     /// last key for color page.
     QString mLastColorButtonKey;
 
@@ -275,17 +293,20 @@ private:
     /// floating layout for palette page.
     FloatingLayout* mPaletteFloatingLayout;
 
+    /// floating layout for palette page when there is a routine.
+    FloatingLayout* mPaletteAndRoutineFloatingLayout;
+
     /// floating layout for moods page.
     FloatingLayout* mMoodsFloatingLayout;
 
     /// floating layout for color page.
     FloatingLayout* mColorFloatingLayout;
 
+    /// floating layout for color page when there is a routine.
+    FloatingLayout* mColorAndRoutineFloatingLayout;
+
     /// floating layout for timeout widget.
     FloatingLayout* mTimeoutFloatingLayout;
-
-    /// routine widget for ColorPage and PalettePage
-    FloatingLayout* mRoutineFloatingLayout;
 
     /// floating layout to add new lights
     FloatingLayout* mAddLightsFloatingLayout;

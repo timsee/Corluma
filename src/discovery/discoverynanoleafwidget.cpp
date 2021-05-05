@@ -24,8 +24,7 @@ DiscoveryNanoLeafWidget::DiscoveryNanoLeafWidget(QWidget* parent,
           "No Nanoleaf lights have been discovered. Give the lights up to a minute to discover "
           "automatically. If that doesn't work, click the ? button for more debugging tips, or "
           "click the + to add an IP address manually.")},
-      mHasLights{false},
-      mLabel{new QLabel(this)} {
+      mHasLights{false} {
     mListWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     QScroller::grabGesture(mListWidget->viewport(), QScroller::LeftMouseButtonGesture);
 }
@@ -178,10 +177,9 @@ void DiscoveryNanoLeafWidget::resizeEvent(QResizeEvent*) {
 }
 
 void DiscoveryNanoLeafWidget::resize() {
-    auto yPos = 0u;
-    mLabel->setGeometry(0, 0, int(width() * 0.7), int(height() * 0.1));
-    yPos += mLabel->height();
-    auto lightRect = QRect(int(width() * 0.025), yPos, int(width() * 0.95), int(height() * 0.9));
+    auto yPos = height() * 0.05;
+    auto lightRect =
+        QRect(int(width() * 0.03), yPos, int(width() - width() * 0.06), int(height() * 0.9));
     mListWidget->setGeometry(lightRect);
     mPlaceholderWidget->setGeometry(lightRect);
     mGreyout->resize();

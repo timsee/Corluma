@@ -92,9 +92,6 @@ private:
 
     /// buffer for last IP address used
     QString mLastIP;
-
-    /// label to prompt the user through the application.
-    QLabel* mLabel;
 };
 
 #endif // DISCOVERYNANOLEAFWIDGET_H

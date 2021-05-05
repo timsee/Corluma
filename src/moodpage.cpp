@@ -35,7 +35,7 @@ MoodPage::MoodPage(QWidget* parent, GroupData* groups, CommLayer* comm)
     connect(mGreyOut, SIGNAL(clicked()), this, SLOT(greyoutClicked()));
 
     connect(mGroups, SIGNAL(newMoodAdded(QString)), this, SLOT(newMoodAdded(QString)));
-          
+
     mMoodMenu->setVisible(false);
     mPlaceholderWidget->setVisible(false);
 }
@@ -59,9 +59,9 @@ void MoodPage::selectedMood(const QString&, std::uint64_t moodKey) {
 }
 
 void MoodPage::resize() {
-    auto mainWidgetHeight = height() * 0.97;
-    auto xSpacer = width() * 0.02;
-    auto mainRect = QRect(xSpacer, 0, width() - xSpacer * 2, mainWidgetHeight);
+    auto mainWidgetHeight = height() * 0.9;
+    auto xSpacer = width() * 0.03;
+    auto mainRect = QRect(xSpacer, height() * 0.05, width() - xSpacer * 2, mainWidgetHeight);
     if (mGroups->moods().empty()) {
         mPlaceholderWidget->setGeometry(mainRect);
     } else {

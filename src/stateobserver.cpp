@@ -198,7 +198,6 @@ void StateObserver::lightCountChanged() {
         if (mData->empty() || !mData->supportsRoutines()) {
             mColorPage->showRoutines(false);
             mTopMenu->closeRoutinesPage();
-            mTopMenu->highlightButton("HSV");
         } else {
             auto routineAndParam = mData->routineAndParam();
             mColorPage->routines()->highlightRoutine(routineAndParam.first, routineAndParam.second);

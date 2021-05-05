@@ -76,13 +76,12 @@ void DisplayPreviewBridgeWidget::updateBridge(const hue::Bridge& bridge) {
 }
 
 void DisplayPreviewBridgeWidget::handleBridgeState(EBridgeDiscoveryState state) {
-    auto min = width();
-    auto width = int(min * 0.333f);
-    auto imageSize = QSize(width, width);
+    auto imageSide = std::min(mImage->width(), mImage->height());
+    auto imageSize = QSize(imageSide, imageSide);
     if (state != EBridgeDiscoveryState::connected) {
-        imageSize = QSize(width * 2, width * 2);
+        imageSize = QSize(imageSide * 2, imageSide * 2);
     }
-    if (state != mState || (mBridgePixmap.size() != QSize(width, width))) {
+    if (state != mState || (mBridgePixmap.size() != QSize(imageSide, imageSide))) {
         if (state == EBridgeDiscoveryState::connected) {
             mBridgePixmap = QPixmap(":images/hue_bridge.png");
             mBridgePixmap = mBridgePixmap.scaled(imageSize.width(),

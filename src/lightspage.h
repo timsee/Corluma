@@ -41,7 +41,7 @@ public:
     EProtocolType currentProtocol() { return mDiscoveryWidget->currentProtocol(); }
 
     /// true if any pages are open for the controller
-    bool isAnyPageOpen() { return mDiscoveryWidget->isOpen() || mControllerWidget->isOpen(); }
+    bool isAnyPageOpen() { return mControllerWidget->isOpen(); }
 
     /// setup a (hacky) signal from TopMenu
     void setupTopMenu(TopMenu*);

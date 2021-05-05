@@ -162,41 +162,35 @@ private:
 
     /// resize widget programmatically
     void resize() {
-        auto size = mOriginalSize;
-
-        auto ratio = float(size.height()) / size.width();
-        auto width = size.width() * 0.15f;
-        auto height = size.height() * 0.07f;
+        auto ratio = float(mOriginalSize.height()) / mOriginalSize.width();
+        auto width = mOriginalSize.width() * 0.15f;
         if (ratio > 1.3f) {
-            width = size.width() * 0.2f;
-            height = size.height() * 0.1f;
+            width = mOriginalSize.width() * 0.2f;
         }
-        size = QSize(int(width), int(height));
-
+        int height = mOriginalSize.height() * 0.08;
 
         auto xPos = 0;
         auto buttonCount = 0;
         if (mAppSettings->enabled(EProtocolType::arduCor)) {
-            mArduCorButton->setGeometry(xPos, 0, size.width(), size.height());
+            mArduCorButton->setGeometry(xPos, 0, width, height);
             xPos += mArduCorButton->width();
             ++buttonCount;
         }
 
         if (mAppSettings->enabled(EProtocolType::hue)) {
-            mHueButton->setGeometry(xPos, 0, size.width(), size.height());
+            mHueButton->setGeometry(xPos, 0, width, height);
             xPos += mHueButton->width();
             ++buttonCount;
         }
 
         if (mAppSettings->enabled(EProtocolType::nanoleaf)) {
-            mNanoleafButton->setGeometry(xPos, 0, size.width(), size.height());
+            mNanoleafButton->setGeometry(xPos, 0, width, height);
             xPos += mNanoleafButton->width();
             ++buttonCount;
         }
 
-        int fixedWidth = size.width() * buttonCount;
-        int fixedHeight = size.height();
-        setFixedSize(QSize(fixedWidth, fixedHeight));
+        int fixedWidth = width * buttonCount;
+        setFixedSize(QSize(fixedWidth, height));
     }
 
     /// original size of application.

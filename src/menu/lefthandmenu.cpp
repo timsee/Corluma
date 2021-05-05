@@ -133,12 +133,14 @@ void LeftHandMenu::resize() {
 
     auto buttonHeight = mRowHeight;
 
-    mStateWidget->setGeometry(0, 0, width, buttonHeight * 0.4);
+    mStateWidget->setGeometry(0, 0, width, buttonHeight * 0.2);
 
     auto yPos = mStateWidget->height() + int(height() * 0.02);
 
     mSpacer->setGeometry(0, 0, width, height());
 
+    mLightsButton->setGeometry(0, yPos, width, buttonHeight);
+    yPos += mLightsButton->height();
 
     mSingleColorButton->setGeometry(0, yPos, width, buttonHeight);
     yPos += mSingleColorButton->height();
@@ -148,9 +150,6 @@ void LeftHandMenu::resize() {
 
     mMoodButton->setGeometry(0, yPos, width, buttonHeight);
     yPos += mMoodButton->height();
-
-    mLightsButton->setGeometry(0, yPos, width, buttonHeight);
-    yPos += mLightsButton->height();
 
 #ifdef USE_EXPERIMENTAL_FEATURES
     mTimeoutButton->setGeometry(0, yPos, width, buttonHeight);

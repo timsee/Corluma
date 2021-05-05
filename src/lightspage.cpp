@@ -300,6 +300,8 @@ void LightsPage::hideWidgets() {
 
 void LightsPage::shouldShowControllerWidget() {
     mControllerWidget->setVisible(true);
+    mDiscoveryWidget->isOpen(false);
+    mControllerWidget->isOpen(true);
     mControllerWidget->raise();
     mDiscoveryWidget->hide();
     resize();
@@ -307,5 +309,7 @@ void LightsPage::shouldShowControllerWidget() {
 
 void LightsPage::hideControllerWidget() {
     mDiscoveryWidget->show();
+    mDiscoveryWidget->isOpen(true);
+    mControllerWidget->isOpen(false);
     mControllerWidget->setVisible(false);
 }

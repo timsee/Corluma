@@ -93,14 +93,16 @@ cor::Palette PalettePage::palette() {
 
 void PalettePage::resize() {
     auto yPos = int(height() * 0.05);
-    QSize scrollAreaSize(int(width()), int(height() * 0.94f));
-    mPaletteScrollArea->setGeometry(0, yPos, scrollAreaSize.width(), scrollAreaSize.height());
+    auto xPos = int(width() * 0.03);
+    QSize scrollAreaSize(int(width() - xPos * 2), int(height() - yPos * 2));
+    QRect rect(xPos, yPos, scrollAreaSize.width(), scrollAreaSize.height());
+    mPaletteScrollArea->setGeometry(rect);
     mPaletteScrollArea->resize();
 
-    mColorPicker->setGeometry(0, yPos, width(), int(height() * 0.94));
+    mColorPicker->setGeometry(rect);
     mColorPicker->resize();
 
-    mRoutineWidget->setGeometry(0, yPos, width(), height() * 0.94);
+    mRoutineWidget->setGeometry(rect);
 }
 
 void PalettePage::lightCountChanged(std::size_t count) {

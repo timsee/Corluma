@@ -26,10 +26,6 @@ DiscoveryArduCorWidget::DiscoveryArduCorWidget(QWidget* parent,
       mHasLights{false} {
     mListWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     QScroller::grabGesture(mListWidget->viewport(), QScroller::LeftMouseButtonGesture);
-
-    mTopLabel = new QLabel(this);
-    mTopLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mTopLabel->setAlignment(Qt::AlignLeft | Qt::AlignBottom);
 }
 
 void DiscoveryArduCorWidget::checkIfIPExists(const QString& IP) {
@@ -133,10 +129,9 @@ void DiscoveryArduCorWidget::resizeEvent(QResizeEvent*) {
 }
 
 void DiscoveryArduCorWidget::resize() {
-    auto yPos = 0u;
-    mTopLabel->setGeometry(0, 0, int(width() * 0.7), int(height() * 0.1));
-    yPos += mTopLabel->height();
-    auto lightRect = QRect(int(width() * 0.025), yPos, int(width() * 0.95), int(height() * 0.9));
+    auto yPos = height() * 0.05;
+    auto lightRect =
+        QRect(int(width() * 0.03), yPos, int(width() - width() * 0.06), int(height() * 0.9));
     mListWidget->setGeometry(lightRect);
     mPlaceholderWidget->setGeometry(lightRect);
     mGreyout->resize();
