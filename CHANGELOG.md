@@ -1294,3 +1294,9 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Updated padding and spacing on various widgets.
 - Fixed bugs where the wrong `TopMenu` buttons were highlighted.
 - Fixed miscellaneous bugs.
+
+### **v0.21.97**
+### Bug Fixes
+- Added icons for groups and rooms to widgets that worked with both.
+- Added more options to `cor::PaletteWidget`.
+- Fixed miscellaneous bugs.

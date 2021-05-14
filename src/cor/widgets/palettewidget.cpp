@@ -10,9 +10,11 @@ namespace cor {
 
 PaletteWidget::PaletteWidget(QWidget* parent)
     : QWidget(parent),
+      mPreferPalettesOverRoutines{false},
       mSkipOffLightStates{false},
       mIsSingleLine{false},
-      mForceSquares{false} {}
+      mForceSquares{false},
+      mBrightnessMode{EBrightnessMode::none} {}
 
 void PaletteWidget::show(const std::vector<QColor>& colors) {
     mIsSolidColors = true;
@@ -74,18 +76,40 @@ void PaletteWidget::paintEvent(QPaintEvent*) {
 
     std::uint32_t i = 0;
     if (mIsSolidColors) {
+        auto brightness = calculateBrightness(mSolidColors, mBrightnessMode);
         for (const auto& color : mSolidColors) {
             auto renderRegion = generateRenderRegion(gridSize, i);
-            drawSolidColor(painter, color, renderRegion);
+            renderRegion =
+                correctRenderRegionEdgeCases(renderRegion, geometry(), i, mSolidColors.size());
+            drawSolidColor(painter, color, brightness, renderRegion);
             ++i;
         }
     } else {
+        auto brightness = calculateBrightness(mStates, mBrightnessMode);
         for (const auto& state : mStates) {
             auto renderRegion = generateRenderRegion(gridSize, i);
-            drawLightState(painter, state, renderRegion);
+            renderRegion =
+                correctRenderRegionEdgeCases(renderRegion, geometry(), i, mStates.size());
+
+            if (mPreferPalettesOverRoutines) {
+                drawPaletteOnlyLightState(painter, state, brightness, renderRegion);
+            } else {
+                drawLightState(painter, state, brightness, renderRegion);
+            }
             ++i;
         }
     }
+}
+
+QRect PaletteWidget::correctRenderRegionEdgeCases(QRect rect,
+                                                  const QRect& boundingRect,
+                                                  std::uint32_t i,
+                                                  std::uint32_t lightCount) {
+    if (mIsSingleLine && (i == lightCount - 1) && (rect.topRight().x() != boundingRect.width())) {
+        auto diff = width() - rect.topRight().x();
+        rect = QRect(rect.x(), rect.y(), rect.width() + diff, rect.height());
+    }
+    return rect;
 }
 
 void PaletteWidget::changeEvent(QEvent* event) {
@@ -105,17 +129,132 @@ void PaletteWidget::changeEvent(QEvent* event) {
 
 void PaletteWidget::drawSolidColor(QPainter& painter,
                                    const QColor& color,
+                                   float brightness,
                                    const QRect& renderRect) {
-    painter.fillRect(renderRect, QBrush(color));
+    auto colorCopy = color;
+    if (mBrightnessMode != EBrightnessMode::none) {
+        colorCopy = QColor::fromHsvF(color.hueF(), color.saturationF(), brightness);
+    }
+    painter.fillRect(renderRect, QBrush(colorCopy));
 }
 
 
 void PaletteWidget::drawLightState(QPainter& painter,
                                    const cor::LightState& state,
+                                   float brightness,
                                    const QRect& renderRegion) {
+    auto stateCopy = state;
+    if (mBrightnessMode != EBrightnessMode::none) {
+        if (state.routine() <= cor::ERoutineSingleColorEnd) {
+            stateCopy.color(
+                QColor::fromHsvF(state.color().hueF(), state.color().saturationF(), brightness));
+        } else {
+            auto paletteCopy = stateCopy.palette();
+            paletteCopy.brightness(brightness * 100.0f);
+            stateCopy.palette(paletteCopy);
+        }
+    }
     IconData icon;
-    icon.setRoutine(state);
+    icon.setRoutine(stateCopy);
     painter.drawImage(renderRegion, icon.renderAsQImage());
+}
+
+
+void PaletteWidget::drawPaletteOnlyLightState(QPainter& painter,
+                                              const cor::LightState& state,
+                                              float brightness,
+                                              const QRect& renderRect) {
+    auto stateCopy = state;
+    if (mBrightnessMode != EBrightnessMode::none) {
+        if (state.routine() <= cor::ERoutineSingleColorEnd) {
+            stateCopy.color(
+                QColor::fromHsvF(state.color().hueF(), state.color().saturationF(), brightness));
+        } else {
+            auto paletteCopy = stateCopy.palette();
+            paletteCopy.brightness(brightness * 100.0f);
+            stateCopy.palette(paletteCopy);
+        }
+    }
+
+    // TODO: should palette brightness be used here?
+    if (!state.isOn()) {
+        painter.fillRect(renderRect, QColor(0, 0, 0));
+    } else if (state.routine() <= cor::ERoutineSingleColorEnd) {
+        painter.fillRect(renderRect, stateCopy.color());
+    } else {
+        auto colorCount = stateCopy.palette().colors().size();
+        auto colorWidth = renderRect.width() / colorCount;
+        std::uint32_t i = 0;
+        for (auto color : stateCopy.palette().colors()) {
+            QRect rect(renderRect.x() + i * colorWidth,
+                       renderRect.y(),
+                       colorWidth,
+                       renderRect.height());
+            rect = correctRenderRegionEdgeCases(rect, renderRect, i, colorCount);
+            painter.fillRect(rect, color);
+            ++i;
+        }
+    }
+}
+
+
+float PaletteWidget::calculateBrightness(const std::vector<QColor>& colors, EBrightnessMode mode) {
+    if (mode == EBrightnessMode::average) {
+        float bright = 0.0f;
+        for (const auto& color : colors) {
+            bright += color.valueF();
+        }
+        return bright / colors.size();
+    } else if (mode == EBrightnessMode::max) {
+        float bright = 0.0f;
+        for (const auto& color : colors) {
+            if (color.valueF() > bright) {
+                bright = color.valueF();
+            }
+        }
+        return bright;
+    } else {
+        return 0.0;
+    }
+}
+
+float PaletteWidget::calculateBrightness(const std::vector<cor::LightState>& states,
+                                         EBrightnessMode mode) {
+    if (mode == EBrightnessMode::average) {
+        float bright = 0.0f;
+        std::uint32_t onLights = 0u;
+        for (const auto& state : states) {
+            if (state.isOn()) {
+                ++onLights;
+                if (state.routine() <= cor::ERoutineSingleColorEnd) {
+                    bright += state.color().valueF();
+                } else {
+                    bright += state.palette().brightness() / 100.0f;
+                }
+            }
+        }
+        if (onLights > 0) {
+            return bright / onLights;
+        } else {
+            return 0.0;
+        }
+    } else if (mode == EBrightnessMode::max) {
+        float bright = 0.0f;
+        for (const auto& state : states) {
+            if (state.routine() <= cor::ERoutineSingleColorEnd) {
+                if (state.color().valueF() > bright) {
+                    bright = state.color().valueF();
+                }
+            } else {
+                if (state.palette().brightness() > bright) {
+                    bright = state.palette().brightness() / 100.0f;
+                }
+            }
+        }
+        return bright;
+    } else {
+        return 0.0;
+    }
 }
 
 

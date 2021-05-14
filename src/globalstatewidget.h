@@ -25,6 +25,8 @@ public:
         : QWidget(parent),
           mPaletteWidget{new cor::PaletteWidget(this)} {
         mPaletteWidget->showInSingleLine(true);
+        mPaletteWidget->shouldPreferPalettesOverRoutines(true);
+        mPaletteWidget->setBrightnessMode(cor::EBrightnessMode::none);
         setStyleSheet(cor::kTransparentStylesheet);
     }
 

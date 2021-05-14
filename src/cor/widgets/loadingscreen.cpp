@@ -21,6 +21,7 @@ LoadingScreen::LoadingScreen(CommLayer* comm, AppSettings* appSettings, QWidget*
     mAnimation->setAttribute(Qt::WA_AlwaysStackOnTop);
     mAnimation->setClearColor(QColor(48, 47, 47));
 
+    mText->setStyleSheet("font-size:16pt;");
     connect(mUpdateTimer, SIGNAL(timeout()), this, SLOT(handleUpdate()));
     mUpdateTimer->start(1000);
 }
@@ -34,27 +35,31 @@ void LoadingScreen::resizeEvent(QResizeEvent*) {
 }
 
 void LoadingScreen::handleUpdate() {
-    auto textUpdate = mCounter % 3;
+    auto textUpdate = mCounter % 4;
     switch (textUpdate) {
         case 0:
-            mText->setText("Looking for Lights.  ");
+            mText->setText("Looking for Lights.   ");
             break;
         case 1:
-            mText->setText("Looking for Lights.. ");
+            mText->setText("Looking for Lights..  ");
             break;
         case 2:
+            mText->setText("Looking for Lights..  ");
+            break;
         default:
-            mText->setText("Looking for Lights...");
+            mText->setText("Looking for Lights....");
             break;
     }
 
 
     if (mCounter < MIN_TIME_TO_SHOW_LOADING_SCREEN) {
-        // skip checking if ready, give time for new lights
+        // don't exit yet, give time to pre-load lights that are quick to connect
     } else if (mCounter > MAX_TIME_TO_SHOW_LOADING_SCREEN) {
-        // force out of the loading screen if its taken longer than 20 seconds
+        // force out of the loading screen if its taking longer than MAX_TIME_TO_SHOW_LOADING_SCREEN
+        // seconds.
         markAsReady();
     } else {
+        // standard case, check if expected lights have connected for each protocol type.
         if (verifyIfEnoughLightsConnected()) {
             markAsReady();
         }

@@ -15,29 +15,26 @@
 namespace hue {
 
 HueGroupWidget::HueGroupWidget(QWidget* parent, std::uint32_t index, const cor::Group& group)
-    : QWidget(parent) {
+    : QWidget(parent),
+      mName{new QLabel("<b>" + group.name() + "</b>", this)},
+      mGroupIcon{new QLabel(this)},
+      mIndex{new QLabel("<b>Index:</b> " + QString::number(index), this)},
+      mGroupDescription{new QLabel(
+          generateDescription(group.lights().size(), group.type() == cor::EGroupType::room),
+          this)},
+      mLastSize{0, 0},
+      mGroup{group} {
     setStyleSheet(cor::kTransparentStylesheet);
 
-    mName = new QLabel("<b>" + group.name() + "</b>", this);
     auto font = mName->font();
     auto fontSize = int(font.pointSize() * 1.33);
     font.setPointSize(fontSize);
     mName->setFont(font);
-    mName->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mName->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mIndex = new QLabel("<b>Index:</b> " + QString::number(index), this);
-    mIndex->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mIndex->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-    mGroupDescription = new QLabel(generateDescription(group.lights().size(), false), this);
-    mGroupDescription->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     mGroupDescription->setAttribute(Qt::WA_TransparentForMouseEvents, true);
-
-    mLayout = new QVBoxLayout(this);
-    mLayout->addWidget(mName, 1);
-    mLayout->addWidget(mIndex, 1);
-    mLayout->addWidget(mGroupDescription, 1);
 }
 
 QString HueGroupWidget::generateDescription(std::size_t lightCount, bool isRoom) {
@@ -49,9 +46,54 @@ QString HueGroupWidget::generateDescription(std::size_t lightCount, bool isRoom)
     }
     returnString += ", with ";
     returnString += QString::number(lightCount);
-    returnString += " lights.</i>";
+    if (lightCount == 1) {
+        returnString += " light.</i>";
+    } else {
+        returnString += " lights.</i>";
+    }
     return returnString;
 }
+
+
+void HueGroupWidget::resize() {
+    auto yPos = 0u;
+    auto rowHeight = height() / 3;
+    auto xSpacer = width() * 0.03;
+    auto buttonWidth = width() - xSpacer;
+
+    auto iconWidth = rowHeight;
+    auto xPos = xSpacer;
+    mGroupIcon->setGeometry(xPos, yPos, iconWidth, rowHeight);
+    xPos += mGroupIcon->width();
+    mName->setGeometry(xPos, yPos, buttonWidth - iconWidth, rowHeight);
+    yPos += rowHeight;
+
+    mIndex->setGeometry(xSpacer, yPos, buttonWidth, rowHeight);
+    yPos += rowHeight;
+
+    mGroupDescription->setGeometry(xSpacer, yPos, buttonWidth, rowHeight);
+    yPos += rowHeight;
+
+    if (QSize(iconWidth * 0.9, iconWidth * 0.9) != mLastSize) {
+        renderIcon();
+    }
+}
+
+void HueGroupWidget::renderIcon() {
+    mLastSize = QSize(mGroupIcon->width() * 0.9, mGroupIcon->width() * 0.9);
+    QPixmap pixmap;
+    if (mGroup.type() == cor::EGroupType::room) {
+        pixmap = QPixmap(":/images/room_icon.png");
+    } else {
+        pixmap = QPixmap(":/images/groups_icon.png");
+    }
+    pixmap = pixmap.scaled(mLastSize.width(),
+                           mLastSize.height(),
+                           Qt::KeepAspectRatio,
+                           Qt::SmoothTransformation);
+    mGroupIcon->setPixmap(pixmap);
+}
+
 
 void HueGroupWidget::paintEvent(QPaintEvent*) {
     QStyleOption opt;

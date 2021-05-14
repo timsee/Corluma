@@ -37,6 +37,8 @@ GroupButton::GroupButton(const QString& key, const QString& text, QWidget* paren
       mTitle{new QLabel(text, this)} {
     mPaletteWidget->skipOffLightStates(true);
     mPaletteWidget->showInSingleLine(true);
+    mPaletteWidget->shouldPreferPalettesOverRoutines(true);
+    mPaletteWidget->setBrightnessMode(cor::EBrightnessMode::average);
 
     mTitle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     mTitle->setStyleSheet(cor::kTransparentAndBoldStylesheet);

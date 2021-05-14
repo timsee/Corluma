@@ -28,9 +28,20 @@ protected:
     /// paints the background on the widget
     void paintEvent(QPaintEvent*);
 
+    void resizeEvent(QResizeEvent*) { resize(); }
+
 private:
+    /// resizes programmatically
+    void resize();
+
+    /// renders the icon for the widget.
+    void renderIcon();
+
     /// name of the group
     QLabel* mName;
+
+    /// icon of group type
+    QLabel* mGroupIcon;
 
     /// index of the group, used by its controller
     QLabel* mIndex;
@@ -41,8 +52,11 @@ private:
     /// helper that generates a plain-english description of the group
     QString generateDescription(std::size_t lightCount, bool isRoom);
 
-    /// layout for widget
-    QVBoxLayout* mLayout;
+    /// last size of the icon
+    QSize mLastSize;
+
+    /// the group displayed by the widget.
+    cor::Group mGroup;
 };
 
 } // namespace hue

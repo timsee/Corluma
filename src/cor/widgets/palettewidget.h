@@ -5,6 +5,8 @@
 #include "cor/objects/lightstate.h"
 namespace cor {
 
+enum class EBrightnessMode { none, average, max };
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2021.
@@ -35,6 +37,16 @@ public:
     /// region. By default this is false.
     void shouldForceSquares(bool shouldForceSquares) { mForceSquares = shouldForceSquares; }
 
+    /// handles if it should prefer palettes colors over showing the routines. This will show the
+    /// colors of the palettes but none of the IconData ways of showing what routine is showing.
+    void shouldPreferPalettesOverRoutines(bool preferPalettes) {
+        mPreferPalettesOverRoutines = preferPalettes;
+    }
+
+    /// changes the mode of how brightness is handled (IE, should all lights be averaged together,
+    /// should each light show its brighntess independently, etc.)
+    void setBrightnessMode(EBrightnessMode mode) { mBrightnessMode = mode; }
+
     /// shows a vector of colors as the palette. All colors are assumed to be displayed as solid
     /// colors.
     void show(const std::vector<QColor>& colors);
@@ -55,11 +67,23 @@ protected:
 
 private:
     /// draws a single color on the palette widget in the defined region.
-    void drawSolidColor(QPainter& painter, const QColor& color, const QRect& renderRect);
+    void drawSolidColor(QPainter& painter,
+                        const QColor& color,
+                        float brightness,
+                        const QRect& renderRect);
 
 
     /// draws a light state on the palette widget in the defined region.
-    void drawLightState(QPainter& painter, const cor::LightState& state, const QRect& renderRect);
+    void drawLightState(QPainter& painter,
+                        const cor::LightState& state,
+                        float brightness,
+                        const QRect& renderRect);
+
+    /// draws a light state, but instead of using IconData, it uses just the colors.
+    void drawPaletteOnlyLightState(QPainter& painter,
+                                   const cor::LightState& state,
+                                   float brightness,
+                                   const QRect& renderRect);
 
     /// generates the grid size based on the number of palette components used.
     QSize generateGridSize();
@@ -68,11 +92,26 @@ private:
     /// component, the widget size, and the grid size.
     QRect generateRenderRegion(const QSize& gridSize, std::uint32_t i);
 
+    /// corrects edge cases with regions.
+    QRect correctRenderRegionEdgeCases(QRect inputRect,
+                                       const QRect& boundingRect,
+                                       std::uint32_t i,
+                                       std::uint32_t lightCount);
+
+    /// calculates the brightness for colors
+    float calculateBrightness(const std::vector<QColor>&, EBrightnessMode);
+
+    /// calculates the brgihtness for light states
+    float calculateBrightness(const std::vector<cor::LightState>&, EBrightnessMode);
+
     /// vector of colors to be used as the palette.
     std::vector<QColor> mSolidColors;
 
     /// vector of lightstates to be used as the palette
     std::vector<cor::LightState> mStates;
+
+    /// true if we should use palettes instead of routines to determine colors displayed.
+    bool mPreferPalettesOverRoutines;
 
     /// true if you should skip off lightstates, false otherwise.
     bool mSkipOffLightStates;
@@ -85,6 +124,9 @@ private:
 
     /// true if all components should be rendered as a square, false if they are stretched to fit.
     bool mForceSquares;
+
+    /// mode for displaying the brightness of the widget
+    EBrightnessMode mBrightnessMode;
 };
 
 } // namespace cor

@@ -27,10 +27,12 @@ public:
         : QWidget(parent),
           mGroupButton{new QPushButton("Group", this)},
           mRoomButton{new QPushButton("Room", this)},
-          mDescription{new QLabel(this)} {
+          mDescription{new QLabel(this)},
+          mLastSize{0, 0} {
         mDescription->setWordWrap(true);
         mGroupButton->setCheckable(true);
         mRoomButton->setCheckable(true);
+
 
         connect(mGroupButton, SIGNAL(clicked(bool)), this, SLOT(groupCheckboxPressed(bool)));
         connect(mRoomButton, SIGNAL(clicked(bool)), this, SLOT(roomCheckboxPressed(bool)));
@@ -107,6 +109,26 @@ private:
         yPos += mGroupButton->height();
 
         mDescription->setGeometry(0, yPos, this->width(), widgetHeight * 2);
+
+
+        QSize iconSize(widgetHeight * 0.8, widgetHeight * 0.8);
+        if (iconSize != mLastSize) {
+            mLastSize = iconSize;
+            QPixmap pixmap(":/images/groups_icon.png");
+            pixmap = pixmap.scaled(mLastSize.width(),
+                                   mLastSize.height(),
+                                   Qt::KeepAspectRatio,
+                                   Qt::SmoothTransformation);
+            mGroupButton->setIcon(QIcon(pixmap));
+            mGroupButton->setIconSize(mLastSize);
+            QPixmap pixmap2(":/images/room_icon.png");
+            pixmap2 = pixmap2.scaled(mLastSize.width(),
+                                     mLastSize.height(),
+                                     Qt::KeepAspectRatio,
+                                     Qt::SmoothTransformation);
+            mRoomButton->setIcon(QIcon(pixmap2));
+            mRoomButton->setIconSize(mLastSize);
+        }
     }
 
     /// updates the description of a room or a group to help out the user in making their selection
@@ -136,6 +158,9 @@ private:
 
     /// true if locked, false if not.
     bool mLock;
+
+    /// last size used for the icon.
+    QSize mLastSize;
 };
 
 #endif // GROUPROOMCHECKBOXWIDGET_H
