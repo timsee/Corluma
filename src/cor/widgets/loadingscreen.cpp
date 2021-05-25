@@ -85,8 +85,7 @@ bool LoadingScreen::verifyIfEnoughLightsConnected() {
 
     bool nanoleafIsReady = false;
     if (mAppSettings->enabled(EProtocolType::nanoleaf)) {
-        nanoleafIsReady = !mComm->nanoleaf()->discovery()->foundLights().empty()
-                          && mComm->nanoleaf()->discovery()->notFoundLights().size() < 2;
+        nanoleafIsReady = !mComm->nanoleaf()->discovery()->foundLights().empty();
     } else {
         nanoleafIsReady = true;
     }

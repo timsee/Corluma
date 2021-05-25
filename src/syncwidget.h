@@ -11,7 +11,7 @@
 #include <QWidget>
 
 /// state of the sync widget
-enum class ESyncState { synced, syncing, notSynced };
+enum class ESyncState { synced, syncing, notSynced, hidden };
 
 /*!
  * \brief The SyncWidget class is a basic widget that shows whether or not two things are in sync.

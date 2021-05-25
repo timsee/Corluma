@@ -286,6 +286,7 @@ SOURCES += main.cpp \
     menu/standardlightsmenu.cpp \
     menu/standardmoodsmenu.cpp \
     menu/statelesslightslistmenu.cpp \
+    palettedetailedwidget.cpp \
     routines/routinecontainer.cpp \
     mooddetailedwidget.cpp \
     moodsyncwidget.cpp \
@@ -457,6 +458,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     menu/standardmoodsmenu.h \
     menu/statelesslightslistmenu.h \
     menu/timeoutbutton.h \
+    palettedetailedwidget.h \
     routines/fadebutton.h \
     routines/routinecontainer.h \
     mooddetailedwidget.h \

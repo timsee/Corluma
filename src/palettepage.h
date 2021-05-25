@@ -5,6 +5,8 @@
 #include "colorpicker/multicolorpicker.h"
 #include "cor/objects/page.h"
 #include "cor/presetpalettes.h"
+#include "greyoutoverlay.h"
+#include "palettedetailedwidget.h"
 #include "routines/routinecontainer.h"
 
 class PaletteScrollArea;
@@ -57,6 +59,9 @@ public:
     /// update the brightness of the palette page assets
     void updateBrightness(std::uint32_t brightness);
 
+    /// widget that shows the details of a palette.
+    PaletteDetailedWidget* detailedWidget() { return mDetailedWidget; }
+
     /*!
      * show the preset greset group widgets, but show the version
      * with less features designed for selecting hue colors.
@@ -70,10 +75,7 @@ public:
     MultiColorPicker* colorPicker() { return mColorPicker; }
 
     /// getter for currently selected color scheme
-    const std::vector<QColor>& colorScheme() const noexcept { return mColorScheme; }
-
-    /// getter for palette enum
-    EPalette paletteEnum() const noexcept { return mPaletteEnum; }
+    const std::vector<QColor>& colorScheme() const noexcept { return mPalette.colors(); }
 
     /// creates a palette based on the settings of its pages
     cor::Palette palette();
@@ -84,12 +86,21 @@ public:
 signals:
 
     /// a button was pressed, signaling a routine change.
-    void paletteUpdate(EPalette);
+    void paletteUpdate(cor::Palette);
 
 private slots:
 
     /// handles when a palette button is clicked
-    void paletteButtonClicked(EPalette);
+    void paletteButtonClicked(cor::Palette);
+
+    /// handles when greyout is clicked
+    void greyoutClicked();
+
+    /// handles when the details widget signals it wants to close.
+    void detailedClosePressed();
+
+    /// handles when a palette is asking to be synced.
+    void paletteSyncClicked(cor::Palette);
 
 protected:
     /*!
@@ -101,14 +112,14 @@ private:
     /// changes the light count, affecting the menus on the page
     void lightCountChanged(std::size_t count);
 
+    /// called when a request for a detailed palette is sent
+    void detailedPaletteView(const cor::Palette& palette);
+
     /// mode
     EGroupMode mMode;
 
-    /// enum representing the palette. If no enum can be assigned, the enum is EPalette::custom
-    EPalette mPaletteEnum;
-
-    /// stores the last values given by the color scheme.
-    std::vector<QColor> mColorScheme;
+    /// palette that is currently selected.
+    cor::Palette mPalette;
 
     /// preset data for palettes from ArduCor
     PresetPalettes mPresetPalettes;
@@ -122,6 +133,12 @@ private:
     /// widget that determines which routine displays the colors (IE, show all colors on random
     /// lights, fade between colors, etc.)
     RoutineContainer* mRoutineWidget;
+
+    /// widget that displays details about a selected palette.
+    PaletteDetailedWidget* mDetailedWidget;
+
+    /// greyout for mood detailed widget
+    GreyOutOverlay* mGreyOut;
 };
 
 #endif // PresetColorsPage_H

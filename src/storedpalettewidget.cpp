@@ -12,10 +12,10 @@
 #include "cor/stylesheets.h"
 #include "utils/qt.h"
 
-StoredPaletteWidget::StoredPaletteWidget(const QString& name, EPalette palette, QWidget* parent)
+StoredPaletteWidget::StoredPaletteWidget(const cor::Palette& palette, QWidget* parent)
     : QWidget(parent),
       mLightVector{new cor::PaletteWidget(this)},
-      mLabel{new QLabel(name, this)},
+      mLabel{new QLabel(palette.name(), this)},
       mPalette{palette},
       mIsChecked{false} {
     mLabel->setWordWrap(true);
@@ -23,15 +23,17 @@ StoredPaletteWidget::StoredPaletteWidget(const QString& name, EPalette palette, 
 
     mLightVector->showInSingleLine(true);
 
-    PresetPalettes palettes;
-    auto paletteColors = palettes.palette(palette).colors();
-    auto lights = cor::colorsToSolidLights(paletteColors);
-
-    mLightVector->show(paletteColors);
+    mLightVector->show(palette.colors());
 }
 
-void StoredPaletteWidget::setChecked(EPalette palette) {
-    mIsChecked = (palette == mPalette);
+void StoredPaletteWidget::updatePalette(const cor::Palette& palette) {
+    mLabel->setText(palette.name());
+    mLightVector->show(palette.colors());
+    mPalette = palette;
+}
+
+void StoredPaletteWidget::setChecked(cor::Palette palette) {
+    mIsChecked = (palette.name() == mPalette.name());
     update();
 }
 

@@ -1300,3 +1300,10 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Added icons for groups and rooms to widgets that worked with both.
 - Added more options to `cor::PaletteWidget`.
 - Fixed miscellaneous bugs.
+
+### **v0.21.98**
+### The Palette Update Part 1
+- Removed reliance on the `EPalette` enum.
+- Added `PaletteDetailedWidget` to display more information on a palette.
+- Fixed a bug in the multi color picker.
+- Fixed miscellaneous bugs.

@@ -42,6 +42,9 @@ void SyncWidget::changeState(ESyncState state) {
             mLabel->setVisible(false);
             mMovieLabel->setVisible(true);
             mMovie->start();
+        } else if (mState == ESyncState::hidden) {
+            mLabel->setVisible(false);
+            mMovieLabel->setVisible(false);
         }
     }
 }

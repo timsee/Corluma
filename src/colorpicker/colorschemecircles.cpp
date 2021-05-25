@@ -211,7 +211,7 @@ int ColorSchemeCircles::positionIsUnderCircle(QPointF newPos) {
     const auto& rect = mWheel->rect();
     const auto& wheelRect = mWheel->wheelRect();
 
-    for (std::size_t x = mCircles.size() - 1; x > 0; --x) {
+    for (int x = mCircles.size() - 1; x >= 0; --x) {
         auto center = cor::circlePointToDenormalizedPoint(mCircles[x].center, rect, wheelRect);
         auto lowX = int(center.x() - radius);
         auto highX = int(center.x() + radius);

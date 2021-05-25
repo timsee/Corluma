@@ -29,9 +29,9 @@ ChooseStateWidget::ChooseStateWidget(QWidget* parent)
             SLOT(ambientUpdateReceived(std::uint32_t, std::uint32_t)));
 
     connect(mPaletteScrollArea,
-            SIGNAL(paletteClicked(EPalette)),
+            SIGNAL(paletteClicked(cor::Palette)),
             this,
-            SLOT(paletteButtonClicked(EPalette)));
+            SLOT(paletteButtonClicked(cor::Palette)));
 
     connect(mRoutinesWidget,
             SIGNAL(newRoutineSelected(ERoutine, int, int)),
@@ -182,13 +182,12 @@ void ChooseStateWidget::changeToRoutine() {
     resize();
 }
 
-void ChooseStateWidget::paletteButtonClicked(EPalette paletteType) {
+void ChooseStateWidget::paletteButtonClicked(cor::Palette palette) {
     if (mState.routine() <= cor::ERoutineSingleColorEnd) {
         if (mProtocol == EProtocolType::arduCor || mProtocol == EProtocolType::nanoleaf) {
             mState.routine(ERoutine::multiGlimmer);
         }
     }
-    auto palette = mPresetPalettes.palette(paletteType);
     mState.palette(palette);
     mState.isOn(true);
     mRoutinesWidget->changeColorScheme(palette.colors());

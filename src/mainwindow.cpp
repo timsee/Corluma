@@ -286,9 +286,9 @@ void MainWindow::setupStateObserver() {
 
     // palette page setup
     connect(mMainViewport->palettePage(),
-            SIGNAL(paletteUpdate(EPalette)),
+            SIGNAL(paletteUpdate(cor::Palette)),
             mStateObserver,
-            SLOT(paletteChanged(EPalette)));
+            SLOT(paletteChanged(cor::Palette)));
 
     connect(mMainViewport->palettePage()->colorPicker(),
             SIGNAL(schemeUpdate(std::vector<QColor>, std::uint32_t)),

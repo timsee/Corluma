@@ -617,4 +617,32 @@ std::size_t LightList::lightCount() {
 }
 
 
+bool LightList::allLightsShowingPalette(const cor::Palette& palette) const noexcept {
+    if (mLights.empty()) {
+        return false;
+    }
+
+    bool showingPalette = true;
+    for (const auto& light : mLights) {
+        if (light.protocol() == EProtocolType::arduCor
+            || light.protocol() == EProtocolType::nanoleaf) {
+            if (light.state().isOn()) {
+                if (light.state().routine() <= cor::ERoutineSingleColorEnd) {
+                    return false;
+                } else if (!(light.state().palette() == palette)) {
+                    return false;
+                }
+            } else {
+                showingPalette = false;
+            }
+        } else if (light.protocol() == EProtocolType::hue) {
+            // check if any color shown is in the palette
+            if (!light.state().isOn() || !palette.colorIsInPalette(light.state().color())) {
+                return false;
+            }
+        }
+    }
+    return showingPalette;
+}
+
 } // namespace cor

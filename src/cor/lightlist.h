@@ -208,6 +208,9 @@ public:
      */
     std::size_t lightCount();
 
+    /// helper function that checks if all lights are currently showing a palette.
+    bool allLightsShowingPalette(const cor::Palette&) const noexcept;
+
 signals:
 
     /*!

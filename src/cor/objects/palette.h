@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "cor/protocols.h"
+#include "utils/color.h"
 #include "utils/cormath.h"
 #include "utils/exception.h"
 
@@ -140,6 +141,16 @@ public:
             b += color.blue();
         }
         return QColor(r / mColors.size(), g / mColors.size(), b / mColors.size());
+    }
+
+    /// true if a color exists in the palette that is at least 95% similar to the given color.
+    bool colorIsInPalette(const QColor& colorToCheck) const noexcept {
+        for (const auto& color : mColors) {
+            if (cor::colorDifference(colorToCheck, color) < 0.05) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /// getter for the enum of the palette

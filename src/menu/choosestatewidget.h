@@ -56,7 +56,7 @@ private slots:
     void ambientUpdateReceived(std::uint32_t newAmbientValue, std::uint32_t newBrightness);
 
     /// handles when a palette button is clicked
-    void paletteButtonClicked(EPalette);
+    void paletteButtonClicked(cor::Palette);
 
     /// handles when a routine button is clicked
     void routineChanged(ERoutine, int, int);

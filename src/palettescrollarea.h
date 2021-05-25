@@ -28,7 +28,7 @@ public:
      *
      * \param palette the color group that the highlighted button implements.
      */
-    void highlightButton(EPalette palette);
+    void highlightButton(cor::Palette palette);
 
     /// programmatically resize
     void resize();
@@ -36,12 +36,12 @@ public:
 signals:
 
     /// emits the palette clicked when a button is clicked
-    void paletteClicked(EPalette);
+    void paletteClicked(cor::Palette);
 
 private slots:
 
     /// handles a button click and converts it to a signal.
-    void buttonClicked(EPalette);
+    void buttonClicked(cor::Palette);
 
 private:
     /// widget used as main widget of QScrollArea.

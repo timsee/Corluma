@@ -21,7 +21,10 @@
 class StoredPaletteWidget : public QWidget {
     Q_OBJECT
 public:
-    explicit StoredPaletteWidget(const QString& name, EPalette palette, QWidget* parent);
+    explicit StoredPaletteWidget(const cor::Palette& palette, QWidget* parent);
+
+    /// updates the palette displayed by the widget.
+    void updatePalette(const cor::Palette& palette);
 
     /*!
      * \brief setChecked acts similarly to the setChecked of a standard QPushButton, but
@@ -30,7 +33,7 @@ public:
      *
      * \param palette palette to use
      */
-    void setChecked(EPalette palette);
+    void setChecked(cor::Palette palette);
 
     /// resize this widget and all subwidgets
     void resize();
@@ -41,7 +44,7 @@ signals:
      * \brief paletteButtonClicked signal that any of the lightsbuttons were pressed and emitting
      *        their own signal.
      */
-    void paletteButtonClicked(EPalette);
+    void paletteButtonClicked(cor::Palette);
 
 protected:
     /// handles when the mouse is released on a button. This acts as clicking a button.
@@ -60,7 +63,7 @@ private:
     QLabel* mLabel;
 
     /// palette enum
-    EPalette mPalette;
+    cor::Palette mPalette;
 
     /// true if checked, false otherwise
     bool mIsChecked;

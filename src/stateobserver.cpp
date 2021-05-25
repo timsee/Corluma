@@ -116,7 +116,7 @@ void StateObserver::isOnChanged(bool isOn) {
 }
 
 
-void StateObserver::paletteChanged(EPalette) {
+void StateObserver::paletteChanged(cor::Palette) {
     mData->isOn(true);
 
     computeState();
@@ -231,7 +231,7 @@ void StateObserver::dataInSync(bool inSync) {
     if (mMainViewport->currentPage() == EPage::colorPage) {
         mTopMenu->singleColorStateWidget()->updateSyncStatus(state);
     } else if (mMainViewport->currentPage() == EPage::palettePage) {
-        mTopMenu->multiColorStateWidget()->updateSyncStatus(state);
+        mPalettePage->detailedWidget()->updateSyncStatus(state);
     } else if (mMainViewport->currentPage() == EPage::moodPage) {
         mMoodPage->moodDetailedWidget()->updateSyncStatus(state);
     }

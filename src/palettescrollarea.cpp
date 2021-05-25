@@ -6,6 +6,7 @@
 
 #include "palettescrollarea.h"
 #include <QScroller>
+#include "cor/presetpalettes.h"
 #include "cor/stylesheets.h"
 
 PaletteScrollArea::PaletteScrollArea(QWidget* parent) : QScrollArea(parent) {
@@ -28,18 +29,20 @@ PaletteScrollArea::PaletteScrollArea(QWidget* parent) : QScrollArea(parent) {
     std::uint32_t groupIndex = 0;
     int rowIndex = -1;
     int columnIndex = 0;
+    PresetPalettes palettes;
     for (auto preset = int(EPalette::water); preset < int(EPalette::unknown); preset++) {
         if ((columnIndex % 3) == 0) {
             columnIndex = 0;
             rowIndex++;
         }
+
         mPaletteWidgets[groupIndex] =
-            new StoredPaletteWidget(labels[groupIndex], EPalette(preset), this);
+            new StoredPaletteWidget(palettes.palette(EPalette(preset)), this);
         mLayout->addWidget(mPaletteWidgets[groupIndex], rowIndex, columnIndex);
         connect(mPaletteWidgets[groupIndex],
-                SIGNAL(paletteButtonClicked(EPalette)),
+                SIGNAL(paletteButtonClicked(cor::Palette)),
                 this,
-                SLOT(buttonClicked(EPalette)));
+                SLOT(buttonClicked(cor::Palette)));
         columnIndex++;
         groupIndex++;
     }
@@ -49,13 +52,13 @@ PaletteScrollArea::PaletteScrollArea(QWidget* parent) : QScrollArea(parent) {
     setStyleSheet(cor::kDarkerGreyBackground);
 }
 
-void PaletteScrollArea::highlightButton(EPalette palette) {
+void PaletteScrollArea::highlightButton(cor::Palette palette) {
     for (auto widget : mPaletteWidgets) {
         widget->setChecked(palette);
     }
 }
 
-void PaletteScrollArea::buttonClicked(EPalette palette) {
+void PaletteScrollArea::buttonClicked(cor::Palette palette) {
     emit paletteClicked(palette);
 }
 

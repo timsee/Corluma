@@ -11,17 +11,28 @@
 
 PalettePage::PalettePage(QWidget* parent)
     : QWidget(parent),
-      mColorScheme(6, QColor(0, 255, 0)),
       mPaletteScrollArea{new PaletteScrollArea(this)},
       mColorPicker{new MultiColorPicker(this)},
-      mRoutineWidget{new RoutineContainer(this, ERoutineGroup::multi)} {
+      mRoutineWidget{new RoutineContainer(this, ERoutineGroup::multi)},
+      mDetailedWidget{new PaletteDetailedWidget(parentWidget())},
+      mGreyOut{new GreyOutOverlay(false, parentWidget())} {
     grabGesture(Qt::SwipeGesture);
     mRoutineWidget->setVisible(false);
 
-    connect(mPaletteScrollArea,
-            SIGNAL(paletteClicked(EPalette)),
+    mDetailedWidget->setGeometry(0, -1 * height(), width(), height());
+    mDetailedWidget->setVisible(false);
+    connect(mDetailedWidget, SIGNAL(pressedClose()), this, SLOT(detailedClosePressed()));
+    connect(mDetailedWidget,
+            SIGNAL(syncPalette(cor::Palette)),
             this,
-            SLOT(paletteButtonClicked(EPalette)));
+            SLOT(paletteSyncClicked(cor::Palette)));
+
+    connect(mGreyOut, SIGNAL(clicked()), this, SLOT(greyoutClicked()));
+
+    connect(mPaletteScrollArea,
+            SIGNAL(paletteClicked(cor::Palette)),
+            this,
+            SLOT(paletteButtonClicked(cor::Palette)));
 
     mColorPicker->setVisible(false);
 
@@ -29,25 +40,32 @@ PalettePage::PalettePage(QWidget* parent)
     setMode(EGroupMode::presets);
 }
 
-void PalettePage::paletteButtonClicked(EPalette palette) {
-    mPaletteEnum = palette;
-    mColorScheme = mPresetPalettes.palette(mPaletteEnum).colors();
-    mPaletteScrollArea->highlightButton(mPaletteEnum);
-
+void PalettePage::paletteSyncClicked(cor::Palette palette) {
     emit paletteUpdate(palette);
+}
+
+void PalettePage::paletteButtonClicked(cor::Palette palette) {
+    mPalette = palette;
+    mPaletteScrollArea->highlightButton(palette);
+
+    detailedPaletteView(palette);
+    // emit paletteUpdate(paletteEnum);
 }
 
 void PalettePage::updateBrightness(std::uint32_t brightness) {
     if (mMode == EGroupMode::wheel) {
-        auto color = mColorScheme[mColorPicker->selectedLight()];
+        auto colors = mPalette.colors();
+        auto color = colors[mColorPicker->selectedLight()];
         color.setHsvF(color.hueF(), color.saturationF(), color.valueF() / 100.0);
-        mColorScheme[mColorPicker->selectedLight()] = color;
+        colors[mColorPicker->selectedLight()] = color;
+
+        mPalette = cor::Palette(mPalette.name(), colors, 100);
         mColorPicker->updateBrightness(brightness);
     }
 }
 
 void PalettePage::update(std::size_t count, const std::vector<QColor>& colorScheme) {
-    if (mColorScheme.empty()) {
+    if (colorScheme.empty()) {
         if (count > 0) {
             mColorPicker->updateBrightness(colorScheme[0].valueF() * 100.0);
         } else {
@@ -55,10 +73,10 @@ void PalettePage::update(std::size_t count, const std::vector<QColor>& colorSche
         }
     }
     if (!colorScheme.empty()) {
-        mColorScheme = colorScheme;
+        mPalette = cor::Palette(mPalette.name(), colorScheme, 100);
     }
     lightCountChanged(count);
-    mColorPicker->updateColorStates(mColorScheme);
+    mColorPicker->updateColorStates(mPalette.colors());
 }
 
 void PalettePage::setMode(EGroupMode mode) {
@@ -72,15 +90,14 @@ void PalettePage::setMode(EGroupMode mode) {
                 mRoutineWidget->setVisible(false);
                 break;
             case EGroupMode::wheel:
-                mPaletteEnum = EPalette::custom;
                 mColorPicker->setVisible(true);
                 // TODO: this causes a crash in some cases
-                mColorPicker->updateColorStates(mColorScheme);
+                mColorPicker->updateColorStates(mPalette.colors());
                 mRoutineWidget->setVisible(false);
                 break;
             case EGroupMode::routines:
                 mRoutineWidget->setVisible(true);
-                mRoutineWidget->changeColorScheme(mColorScheme);
+                mRoutineWidget->changeColorScheme(mPalette.colors());
                 break;
         }
         mMode = mode;
@@ -88,7 +105,7 @@ void PalettePage::setMode(EGroupMode mode) {
 }
 
 cor::Palette PalettePage::palette() {
-    return cor::Palette(paletteToString(paletteEnum()), colorScheme(), 100u);
+    return mPalette;
 }
 
 void PalettePage::resize() {
@@ -103,19 +120,51 @@ void PalettePage::resize() {
     mColorPicker->resize();
 
     mRoutineWidget->setGeometry(rect);
+
+    if (mDetailedWidget->isOpen()) {
+        mDetailedWidget->resize();
+    }
+    mGreyOut->resize();
 }
 
 void PalettePage::lightCountChanged(std::size_t count) {
-    mColorPicker->updateColorCount(mColorScheme.size());
+    mColorPicker->updateColorCount(mPalette.colors().size());
     if (count == 0) {
-        mPaletteScrollArea->setEnabled(false);
+        // mPaletteScrollArea->setEnabled(false);
         mColorPicker->enable(false, EColorPickerType::color);
     } else {
-        mPaletteScrollArea->setEnabled(true);
+        // mPaletteScrollArea->setEnabled(true);
         mColorPicker->enable(true, EColorPickerType::color);
     }
 }
 
 void PalettePage::resizeEvent(QResizeEvent*) {
     resize();
+}
+
+
+void PalettePage::greyoutClicked() {
+    if (mDetailedWidget->isOpen()) {
+        detailedClosePressed();
+    }
+}
+
+
+void PalettePage::detailedClosePressed() {
+    mGreyOut->greyOut(false);
+    mDetailedWidget->pushOut();
+}
+
+
+void PalettePage::detailedPaletteView(const cor::Palette& palette) {
+    mGreyOut->greyOut(true);
+
+    //    const auto& moodResult = mGroups->moods().item(QString::number(key).toStdString());
+    //    if (moodResult.second) {
+    //        mMoodDetailedWidget->update(moodResult.first);
+    //    }
+
+
+    mDetailedWidget->update(palette);
+    mDetailedWidget->pushIn();
 }
