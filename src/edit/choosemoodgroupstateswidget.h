@@ -24,7 +24,7 @@ enum class EChooseMoodGroupsState { disabled, addGroup, changeState, removeGroup
 class ChooseMoodGroupStatesWidget : public EditPageChildWidget {
     Q_OBJECT
 public:
-    explicit ChooseMoodGroupStatesWidget(QWidget* parent, GroupData* groups)
+    explicit ChooseMoodGroupStatesWidget(QWidget* parent, GroupData* groups, PaletteData* palettes)
         : EditPageChildWidget(parent),
           mChooseLabel{new QLabel("Choose Groups:", this)},
           mSelectedLabel{new QLabel("Group Defaults:", this)},
@@ -34,7 +34,7 @@ public:
           mLeftButton{new QPushButton(this)},
           mRightButton{new QPushButton(this)},
           mTopStateWidget{new GroupStateWidget(cor::GroupState(), this)},
-          mStateWidget{new ChooseStateWidget(this)},
+          mStateWidget{new ChooseStateWidget(this, palettes)},
           mRowHeight{10} {
         mBottomButtons->enableForward(false);
 

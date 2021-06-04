@@ -16,7 +16,9 @@
 
 //#define DEBUG_INVALID_PACKET
 
-CommArduCor::CommArduCor(QObject* parent) : QObject(parent) {
+CommArduCor::CommArduCor(QObject* parent, PaletteData* palettes)
+    : QObject(parent),
+      mPalettes{palettes} {
     mUDP = std::make_shared<CommUDP>();
     connect(mUDP.get(),
             SIGNAL(packetReceived(QString, QString, ECommType)),
@@ -358,7 +360,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                     if (palette == EPalette::custom) {
                                         state.palette(state.customPalette());
                                     } else {
-                                        state.palette(mPresetPalettes.palette(palette));
+                                        state.palette(mPalettes->enumToPalette(palette));
                                     }
                                     state.paletteBrightness(std::uint32_t(brightness * 100.0));
 
@@ -394,18 +396,21 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                     auto customColorCount = std::uint32_t(intVector[2]);
                                     std::uint32_t j = 3;
                                     std::vector<QColor> colors = state.customPalette().colors();
-                                    std::uint32_t brightness = state.customPalette().brightness();
+                                    std::uint32_t brightness = state.paletteBrightness();
                                     for (std::uint32_t i = 0; i < customColorCount; ++i) {
                                         colors[i] = QColor(intVector[j],
                                                            intVector[j + 1],
                                                            intVector[j + 2]);
                                         j = j + 3;
                                     }
-                                    state.customPalette(
-                                        cor::Palette(paletteToString(EPalette::custom),
-                                                     colors,
-                                                     brightness));
-                                    if (state.palette().paletteEnum() == EPalette::custom) {
+
+
+                                    auto palette = cor::CustomPalette(colors);
+                                    state.paletteBrightness(brightness);
+
+                                    state.customPalette(palette);
+                                    if (light.state().palette().uniqueID()
+                                        == cor::kCustomPaletteID) {
                                         state.palette(state.customPalette());
                                     }
                                     light.state(state);
@@ -470,17 +475,16 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                 } else {
                                     if (intVector.size() > 4) {
                                         // store brightness from previous data
-                                        auto brightness =
-                                            std::uint32_t(state.palette().brightness());
+                                        auto brightness = std::uint32_t(state.paletteBrightness());
                                         auto palette = EPalette(intVector[tempIndex]);
                                         if (palette == EPalette::custom) {
                                             state.palette(state.customPalette());
                                         } else {
-                                            state.palette(mPresetPalettes.palette(palette));
+                                            state.palette(mPalettes->enumToPalette(palette));
                                         }
                                         state.paletteBrightness(brightness);
                                         ++tempIndex;
-                                        if (state.palette().paletteEnum() == EPalette::unknown) {
+                                        if (palette == EPalette::unknown) {
                                             isValid = false;
                                         }
                                     } else {
@@ -544,10 +548,8 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                         }
                                         std::vector<QColor> colors = state.customPalette().colors();
                                         colors[index] = QColor(red, green, blue);
-                                        auto brightness = state.customPalette().brightness();
-                                        auto paletteString = paletteToString(EPalette::custom);
-                                        state.customPalette(
-                                            cor::Palette(paletteString, colors, brightness));
+                                        auto palette = cor::CustomPalette(colors);
+                                        state.customPalette(palette);
                                         light.state(state);
                                         light.isReachable(true);
                                         commByType(type)->updateLight(light);

@@ -1,11 +1,16 @@
 #include "lightslistmenu.h"
+#include <QPainter>
 #include <QScrollBar>
 #include <QScroller>
+#include <QStyleOption>
+#include "utils/painterutils.h"
+#include "utils/qt.h"
 
 LightsListMenu::LightsListMenu(QWidget* parent, bool allowInteraction)
     : QWidget(parent),
       mScrollArea{new QScrollArea(this)},
       mLightContainer{new MenuLightContainer(mScrollArea, allowInteraction, "LightsListMenu")},
+      mOutlineBox{new cor::WidgetOutlineBox(cor::EPaintRectOptions::allSides, this)},
       mRowHeight{10},
       mSingleLightMode{false} {
     mLightContainer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -37,6 +42,8 @@ void LightsListMenu::resize(const QRect& inputRect, int buttonHeight) {
     }
     mLightContainer->setFixedHeight(heightCount * buttonHeight);
     mLightContainer->moveLightWidgets(QSize(this->width(), buttonHeight), QPoint(0, 0));
+
+    mOutlineBox->setGeometry(0, 0, width(), height());
 }
 
 void LightsListMenu::updateLights() {
@@ -87,4 +94,12 @@ void LightsListMenu::addLights(const std::vector<cor::Light>& lights) {
 
 void LightsListMenu::clear() {
     mLightContainer->clear();
+}
+
+
+void LightsListMenu::paintEvent(QPaintEvent*) {
+    QStyleOption opt;
+    opt.initFrom(this);
+    QPainter painter(this);
+    painter.fillRect(rect(), QBrush(cor::kBackgroundColor));
 }

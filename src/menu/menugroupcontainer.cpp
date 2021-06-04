@@ -29,7 +29,6 @@ void MenuGroupContainer::addGroup(const QString& group) {
     auto groupButton = new cor::GroupButton(group, this);
     groupButton->showSelectAllCheckbox(false);
     groupButton->highlightByCountOfLights(false);
-    groupButton->highlight(false);
     connect(groupButton, SIGNAL(groupButtonPressed(QString)), this, SLOT(buttonPressed(QString)));
     mButtons.push_back(groupButton);
     groupButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -43,7 +42,6 @@ void MenuGroupContainer::buttonPressed(const QString& key) {
     for (const auto& widget : mButtons) {
         auto isWidget = (widget->key() == key);
         widget->setSelectAll(isWidget);
-        widget->highlight(isWidget);
     }
     emit groupClicked(mGroups->groupNameToID(key));
 }

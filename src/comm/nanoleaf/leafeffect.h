@@ -50,12 +50,15 @@ public:
     }
 
     /// creates a palette based off of a LeafEffect given a global brightness.
-    cor::Palette palette(int brightness) const { return cor::Palette(mName, mColors, brightness); }
+    cor::Palette palette() const {
+        auto palette = cor::Palette(cor::kUnknownPaletteID, mName, mColors);
+        return palette;
+    }
 
     /// creates a LightState based off of a LeafEffect given a pre-existeing state.
     cor::LightState lightState(const cor::LightState& inputState) const {
         auto state = inputState;
-        auto brightness = inputState.palette().brightness();
+        auto brightness = inputState.paletteBrightness();
 
         state.routine(mRoutine);
         state.param(mParam);
@@ -65,8 +68,9 @@ public:
         state.color(mainColor);
         // NOTE: sometimes nanoleafs just send empty palettes...
         if (!colors().empty()) {
-            state.customPalette(palette(brightness));
-            state.palette(palette(brightness));
+            state.customPalette(palette());
+            state.palette(palette());
+            state.paletteBrightness(brightness);
         }
         // set the speed
         state.speed(routineSpeed());

@@ -79,11 +79,14 @@ private:
                         float brightness,
                         const QRect& renderRect);
 
-    /// draws a light state, but instead of using IconData, it uses just the colors.
-    void drawPaletteOnlyLightState(QPainter& painter,
-                                   const cor::LightState& state,
-                                   float brightness,
-                                   const QRect& renderRect);
+    /// takes a state and converts it to colors of a given size. These are then aggregated and
+    /// sorted.
+    std::vector<std::pair<QColor, int>> convertStateColors(const cor::LightState& state,
+                                                           float brightness,
+                                                           const QRect& renderRect);
+
+    /// draws the colors provided in the state pairs
+    void drawColorsFromStates(QPainter& painter, std::vector<std::pair<QColor, int>>);
 
     /// generates the grid size based on the number of palette components used.
     QSize generateGridSize();

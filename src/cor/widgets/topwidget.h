@@ -22,8 +22,14 @@ class TopWidget : public QWidget {
 public:
     /// constructor
     explicit TopWidget(const QString& title, const QString& resource, QWidget* parent)
-        : QWidget(parent),
-          mDebugButton{new QPushButton("Debug")} {
+        : QWidget(parent)
+#ifdef USE_EXPERIMENTAL_FEATURES
+          ,
+          mDebugButton {
+        new QPushButton("Debug")
+    }
+#endif
+    {
         mLayout = new QHBoxLayout();
 
         mButton = new QPushButton(this);

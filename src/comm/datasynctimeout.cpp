@@ -17,7 +17,7 @@ DataSyncTimeout::DataSyncTimeout(cor::LightList* data,
       mAppSettings(appSettings) {
     mData = data;
     mComm = comm;
-    mArduCorParser = new ArduCorPacketParser();
+    mArduCorParser = new ArduCorPacketParser(this, nullptr);
     mType = EDataSyncType::timeout;
     mUpdateInterval = 1000;
     connect(mComm,

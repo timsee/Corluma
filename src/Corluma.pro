@@ -14,14 +14,14 @@ linux:!android {
     TARGET = corluma
 }
 TEMPLATE = app
-VERSION = 0.21.96
+VERSION = 0.21.99
 
 #----------
 # Build flags
 #----------
 
 # flag to use experimental features that may not be part of the standard release.
-SHOULD_USE_EXPERIMENTAL_FEATURES = 1
+SHOULD_USE_EXPERIMENTAL_FEATURES = 0
 # flag to use serial ArduCor devices. Not all versions of Qt nor do all supported devices have serial.
 SHOULD_USE_SERIAL = 1
 # flag to build in support for shareutils. This allows sharing on mobile devices, but can conflict in mobile updates
@@ -248,6 +248,7 @@ SOURCES += main.cpp \
     cor/lightlist.cpp \
     cor/widgets/loadingscreen.cpp \
     cor/widgets/palettewidget.cpp \
+    data/palettedata.cpp \
     debugconnectionspoofer.cpp \
     discovery/discoveryhuewidget.cpp \
     discovery/discoverynanoleafwidget.cpp \
@@ -257,7 +258,6 @@ SOURCES += main.cpp \
     display/displaypreviewbridgewidget.cpp \
     cor/widgets/slider.cpp \
     cor/widgets/listwidget.cpp \
-    cor/presetpalettes.cpp \
     cor/jsonsavedata.cpp \
     cor/widgets/lightvectorwidget.cpp \
     cor/listlayout.cpp \
@@ -294,6 +294,7 @@ SOURCES += main.cpp \
     data/subgroupdata.cpp \
     storedpalettewidget.cpp \
     timeoutpage.cpp \
+    utils/painterutils.cpp \
     utils/qt.cpp \
     utils/cormath.cpp \
     comm/hue/lightdiscovery.cpp \
@@ -391,7 +392,9 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     cor/widgets/expandingtextscrollarea.h \
     cor/widgets/loadingscreen.h \
     cor/widgets/palettewidget.h \
+    cor/widgets/widgetoutlinebox.h \
     data/moodparentdata.h \
+    data/palettedata.h \
     debugconnectionspoofer.h \
     discovery/discoveryhuewidget.h \
     discovery/discoverynanoleafwidget.h \
@@ -400,7 +403,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     discovery/discoveryarducorwidget.h \
     cor/protocols.h \
     cor/range.h \
-    cor/presetpalettes.h \
     cor/jsonsavedata.h \
     cor/listlayout.h \
     cor/dictionary.h \
@@ -515,6 +517,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     nowifiwidget.h \
     listmoodpreviewwidget.h \
     data/groupdata.h \
+    utils/painterutils.h \
     utils/reachability.h \
     utils/color.h \
     utils/qt.h \

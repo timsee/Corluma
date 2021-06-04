@@ -15,7 +15,6 @@
 #include <algorithm>
 #include "comm/commhue.h"
 #include "comm/commnanoleaf.h"
-#include "cor/presetpalettes.h"
 #include "stateobserver.h"
 #include "topmenu.h"
 #include "utils/exception.h"
@@ -36,10 +35,11 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
       mShareChecker{new QTimer(this)},
       mNoWifiWidget{new NoWifiWidget(this)},
       mGroups{new GroupData(this)},
-      mComm{new CommLayer(this, mGroups)},
+      mPalettes{new PaletteData()},
+      mComm{new CommLayer(this, mGroups, mPalettes)},
       mData{new cor::LightList(this)},
       mAppSettings{new AppSettings},
-      mDataSyncArduino{new DataSyncArduino(mData, mComm, mAppSettings)},
+      mDataSyncArduino{new DataSyncArduino(mData, mComm, mPalettes, mAppSettings)},
       mDataSyncHue{new DataSyncHue(mData, mComm, mAppSettings)},
       mDataSyncNanoLeaf{new DataSyncNanoLeaf(mData, mComm, mAppSettings)},
       mDataSyncTimeout{new DataSyncTimeout(mData, mComm, mAppSettings, this)},
@@ -48,7 +48,8 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
       mShareUtils{new ShareUtils(this)},
 #endif
       mDebugConnections{new DebugConnectionSpoofer(mComm)},
-      mMainViewport{new MainViewport(this, mComm, mData, mGroups, mAppSettings, mDataSyncTimeout)},
+      mMainViewport{
+          new MainViewport(this, mComm, mData, mGroups, mPalettes, mAppSettings, mDataSyncTimeout)},
       mLeftHandMenu{new LeftHandMenu(
           startingSize.width() / float(startingSize.height()) > 1.0f ? true : false,
           mData,
@@ -84,7 +85,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     mTimeToLights.start();
 
     // uses floating layouts so these must be initialized after the app's size is set.
-    mEditMoodPage = new cor::EditMoodPage(this, mComm, mGroups, mData);
+    mEditMoodPage = new cor::EditMoodPage(this, mComm, mGroups, mPalettes, mData);
     mTopMenu = new TopMenu(this,
                            mData,
                            mComm,
@@ -139,7 +140,6 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
             SIGNAL(enableDebugMode()),
             this,
             SLOT(debugModeClicked()));
-
 
     // --------------
     // Setup Left Hand Menu
@@ -952,7 +952,7 @@ void MainWindow::debugModeClicked() {
 
 
 void MainWindow::loadingPageComplete() {
-    if (mAnyDiscovered && mLoadingScreen->isReady()) {
+    if (mLoadingScreen->isReady()) {
         mLoadingScreen->setVisible(false);
         mLoadingScreen->cancelTimer();
     }

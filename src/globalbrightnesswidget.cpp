@@ -98,12 +98,12 @@ void GlobalBrightnessWidget::pushOut(const QPoint& point) {
 
 
 void GlobalBrightnessWidget::resizeEvent(QResizeEvent*) {
-    auto onOffWidth = mSize.width() * 0.6;
-    mOnOffSwitch->setGeometry(0, 0, onOffWidth, height() / 2);
+    auto onOffWidth = mSize.width();
+    mOnOffSwitch->setGeometry(0, 0, onOffWidth, height());
     mBrightnessSlider->setGeometry(onOffWidth + 5,
                                    0,
                                    width() - mOnOffSwitch->width() - 5,
-                                   height() / 2);
+                                   height());
 }
 
 

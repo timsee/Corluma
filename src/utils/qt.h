@@ -29,6 +29,9 @@ class ShareUtils;
 
 namespace cor {
 
+const QColor kHighlightColor = QColor(100, 99, 99);
+const QColor kBackgroundColor = QColor(33, 32, 32);
+
 //-------------
 // Qt Utils
 //-------------
@@ -131,20 +134,19 @@ inline void resizeIcon(QPushButton* button, QString iconPath, float sizeRatio = 
  */
 inline QColor computeHighlightColor(std::uint32_t checkedDeviceCount,
                                     uint32_t reachableDeviceCount) {
-    QColor pureBlue(61, 142, 201);
-    QColor pureBlack(32, 31, 31);
-    QColor difference(pureBlue.red() - pureBlack.red(),
-                      pureBlue.green() - pureBlack.green(),
-                      pureBlue.blue() - pureBlack.blue());
+    QColor selected = kHighlightColor;
+    QColor difference(selected.red() - kBackgroundColor.red(),
+                      selected.green() - kBackgroundColor.green(),
+                      selected.blue() - kBackgroundColor.blue());
 
 
     if (checkedDeviceCount == 0 || reachableDeviceCount == 0) {
-        return {32, 31, 31, 255};
+        return kBackgroundColor;
     }
     auto amountOfBlue = checkedDeviceCount / float(reachableDeviceCount);
-    return {int(amountOfBlue * difference.red() + pureBlack.red()),
-            int(amountOfBlue * difference.green() + pureBlack.green()),
-            int(amountOfBlue * difference.blue() + pureBlack.blue())};
+    return {int(amountOfBlue * difference.red() + kBackgroundColor.red()),
+            int(amountOfBlue * difference.green() + kBackgroundColor.green()),
+            int(amountOfBlue * difference.blue() + kBackgroundColor.blue())};
 }
 
 /// if a negative size is going to be used, a size of 50 is chosen instead.

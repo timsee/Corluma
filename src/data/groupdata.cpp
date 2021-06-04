@@ -67,7 +67,7 @@ void GroupData::updateGroupMetadata() {
 void GroupData::saveNewMood(const cor::Mood& mood) {
     QJsonObject groupObject = mood.toJson();
     if (!mJsonData.isNull()) {
-        if (mJsonData.isArray()) {
+        if (mJsonData.isObject()) {
             const auto& key = QString::number(mood.uniqueID()).toStdString();
 
             // check that it doesn't already exist, if it does, replace the old version
@@ -78,8 +78,7 @@ void GroupData::saveNewMood(const cor::Mood& mood) {
                 mMoodDict.insert(key, mood);
             }
 
-
-            mJsonData.setArray(makeGroupData());
+            updateJsonData();
             // save file
             saveJSON();
             updateGroupMetadata();
@@ -92,7 +91,7 @@ void GroupData::saveNewMood(const cor::Mood& mood) {
 void GroupData::saveNewGroup(const cor::Group& group) {
     auto groupObject = group.toJson();
     if (!mJsonData.isNull() && !group.lights().empty()) {
-        if (mJsonData.isArray()) {
+        if (mJsonData.isObject()) {
             // check that it doesn't already exist, if it does, replace the old version
             auto key = QString::number(group.uniqueID()).toStdString();
             auto dictResult = mGroupDict.item(key);
@@ -181,7 +180,7 @@ void GroupData::lightsDeleted(const std::vector<QString>& uniqueIDs) {
     bool anyUpdates = false;
     for (auto uniqueID : uniqueIDs) {
         if (!mJsonData.isNull()) {
-            if (mJsonData.isArray()) {
+            if (mJsonData.isObject()) {
                 // parse the moods, remove from dict if needed
                 for (const auto& mood : mMoodDict.items()) {
                     for (const auto& moodLight : mood.lights()) {
@@ -225,14 +224,14 @@ void GroupData::lightsDeleted(const std::vector<QString>& uniqueIDs) {
         }
     }
     if (anyUpdates) {
-        mJsonData.setArray(makeGroupData());
+        updateJsonData();
         saveJSON();
     }
 }
 
 bool GroupData::removeGroup(std::uint64_t groupID) {
     if (!mJsonData.isNull()) {
-        if (mJsonData.isArray()) {
+        if (mJsonData.isObject()) {
             auto anyUpdate = false;
             for (const auto& mood : mMoodDict.items()) {
                 if (mood.uniqueID() == groupID) {
@@ -253,7 +252,7 @@ bool GroupData::removeGroup(std::uint64_t groupID) {
 
             if (anyUpdate) {
                 updateGroupMetadata();
-                mJsonData.setArray(makeGroupData());
+                updateJsonData();
                 saveJSON();
                 return true;
             }
@@ -262,6 +261,13 @@ bool GroupData::removeGroup(std::uint64_t groupID) {
     return false;
 }
 
+void GroupData::updateJsonData() {
+    QJsonObject object;
+    object["groups"] = makeGroupData();
+    object["moods"] = makeMoodData();
+    object["version"] = "0.99";
+    mJsonData.setObject(object);
+}
 
 //-------------------
 // Parsing JSON
@@ -301,7 +307,7 @@ bool GroupData::loadExternalData(const QString& file,
     auto document = loadJsonFile(file);
     // check if contains a jsonarray
     if (!document.isNull()) {
-        if (document.isArray()) {
+        if (document.isObject()) {
             mJsonData = document;
             if (saveJSON()) {
                 if (loadJSON()) {
@@ -344,11 +350,11 @@ bool GroupData::loadExternalData(const QString& file,
 }
 
 bool GroupData::checkIfValidJSON(const QString& file) {
-    // TODO: check if its a valid Corluma JSON instead of just a JSON array
+    // TODO: check if its a valid Corluma JSON instead of just a JSON object
     auto document = loadJsonFile(file);
     // check if contains a jsonarray
     if (!document.isNull()) {
-        if (document.isArray()) {
+        if (document.isObject()) {
             return true;
         }
     }
@@ -362,16 +368,20 @@ bool GroupData::checkIfValidJSON(const QString& file) {
 
 bool GroupData::loadJSON() {
     if (!mJsonData.isNull()) {
-        if (mJsonData.isArray()) {
-            QJsonArray array = mJsonData.array();
-            for (auto value : array) {
+        if (mJsonData.isObject()) {
+            mVersion = mJsonData["version"].toString();
+            auto groupsArray = mJsonData["groups"].toArray();
+            for (auto value : groupsArray) {
                 QJsonObject object = value.toObject();
                 if (cor::Group::isValidJson(object)) {
-                    if (object["isMood"].toBool()) {
-                        parseMood(object);
-                    } else {
-                        parseGroup(object);
-                    }
+                    parseGroup(object);
+                }
+            }
+            auto moodsArray = mJsonData["moods"].toArray();
+            for (auto value : moodsArray) {
+                QJsonObject object = value.toObject();
+                if (cor::Group::isValidJson(object)) {
+                    parseMood(object);
                 }
             }
             return true;
@@ -390,6 +400,11 @@ QJsonArray GroupData::makeGroupData() {
             array.append(group.toJsonWitIgnoredLights(mIgnorableLightsForGroups));
         }
     }
+    return array;
+}
+
+QJsonArray GroupData::makeMoodData() {
+    QJsonArray array;
 
     // add all the moods
     for (const auto& mood : mMoodDict.items()) {

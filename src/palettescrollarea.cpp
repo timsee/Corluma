@@ -6,10 +6,11 @@
 
 #include "palettescrollarea.h"
 #include <QScroller>
-#include "cor/presetpalettes.h"
 #include "cor/stylesheets.h"
 
-PaletteScrollArea::PaletteScrollArea(QWidget* parent) : QScrollArea(parent) {
+PaletteScrollArea::PaletteScrollArea(QWidget* parent, PaletteData* palettes)
+    : QScrollArea(parent),
+      mPalettes{palettes} {
     mScrollWidget = new QWidget(this);
     setWidget(mScrollWidget);
     setStyleSheet(cor::kTransparentStylesheet);
@@ -29,15 +30,13 @@ PaletteScrollArea::PaletteScrollArea(QWidget* parent) : QScrollArea(parent) {
     std::uint32_t groupIndex = 0;
     int rowIndex = -1;
     int columnIndex = 0;
-    PresetPalettes palettes;
-    for (auto preset = int(EPalette::water); preset < int(EPalette::unknown); preset++) {
+    for (auto palette : mPalettes->palettes()) {
         if ((columnIndex % 3) == 0) {
             columnIndex = 0;
             rowIndex++;
         }
 
-        mPaletteWidgets[groupIndex] =
-            new StoredPaletteWidget(palettes.palette(EPalette(preset)), this);
+        mPaletteWidgets[groupIndex] = new StoredPaletteWidget(palette, this);
         mLayout->addWidget(mPaletteWidgets[groupIndex], rowIndex, columnIndex);
         connect(mPaletteWidgets[groupIndex],
                 SIGNAL(paletteButtonClicked(cor::Palette)),
@@ -63,7 +62,7 @@ void PaletteScrollArea::buttonClicked(cor::Palette palette) {
 }
 
 void PaletteScrollArea::resize() {
-    for (auto presetArduinoWidget : mPaletteWidgets) {
-        presetArduinoWidget->resize();
+    for (auto widget : mPaletteWidgets) {
+        widget->resize();
     }
 }

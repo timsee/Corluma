@@ -8,7 +8,6 @@
 
 #include <QPainter>
 #include <QStyleOption>
-#include "cor/presetpalettes.h"
 #include "cor/stylesheets.h"
 #include "utils/qt.h"
 
@@ -19,6 +18,7 @@ StoredPaletteWidget::StoredPaletteWidget(const cor::Palette& palette, QWidget* p
       mPalette{palette},
       mIsChecked{false} {
     mLabel->setWordWrap(true);
+    mLabel->setAlignment(Qt::AlignBottom);
     mLabel->setStyleSheet(cor::kTransparentStylesheet);
 
     mLightVector->showInSingleLine(true);
@@ -39,17 +39,17 @@ void StoredPaletteWidget::setChecked(cor::Palette palette) {
 
 void StoredPaletteWidget::resize() {
     auto yPos = 0u;
-    auto rowHeight = height() / 5;
-
-    mLabel->setGeometry(0, yPos, width(), rowHeight);
-    yPos += mLabel->height();
-
+    auto rowHeight = height() / 4;
     auto xSpacer = width() / 15;
     auto ySpacer = height() / 15;
+
+    mLabel->setGeometry(xSpacer, yPos, width() - xSpacer * 2, rowHeight);
+    yPos += mLabel->height();
+
     mLightVector->setGeometry(xSpacer,
                               yPos + ySpacer,
                               width() - xSpacer * 2,
-                              (rowHeight * 4) - ySpacer * 2);
+                              (rowHeight * 3) - ySpacer * 2);
     // yPos += mLightVector->height();
 }
 
@@ -61,8 +61,8 @@ void StoredPaletteWidget::paintEvent(QPaintEvent*) {
 
     // handle highlight
     if (mIsChecked) {
-        painter.fillRect(rect(), QBrush(QColor(61, 142, 201)));
+        painter.fillRect(rect(), QBrush(cor::kHighlightColor));
     } else {
-        painter.fillRect(rect(), QBrush(QColor(32, 31, 31)));
+        painter.fillRect(rect(), QBrush(cor::kBackgroundColor));
     }
 }

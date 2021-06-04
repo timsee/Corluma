@@ -7,6 +7,7 @@
 #include <QWidget>
 #include "cor/widgets/checkbox.h"
 #include "cor/widgets/palettewidget.h"
+#include "utils/painterutils.h"
 
 namespace cor {
 
@@ -48,6 +49,12 @@ public:
     /// set whether the button should show select all or deselect all
     void setSelectAll(bool shoudlSelect);
 
+    /// update the border rectangle
+    void changePaintRectOptions(EPaintRectOptions options) {
+        mRectOptions = options;
+        update();
+    }
+
     //-----------------
     // Open/Closed Arrow
     //-----------------
@@ -88,16 +95,8 @@ public:
         mHighlightByCountOfLights = shouldHighlight;
     }
 
-    /// true to programmatically highlight, false otherwise
-    void highlight(bool shouldHighlight) {
-        if (shouldHighlight != mShouldHighlight) {
-            mShouldHighlight = shouldHighlight;
-            update();
-        }
-    }
-
     /// getter for if the widget is highlighted or not.
-    bool isHighlighted() const noexcept { return mShouldHighlight; }
+    bool isHighlighted() const noexcept { return mCheckedCount != 0; }
 
     //-----------------
     // Highlighting
@@ -125,7 +124,7 @@ public:
         if (!mPaletteWidget->isShowingAnything()) {
             mTitle->setStyleSheet(cor::kTransparentAndBoldStylesheet);
         } else {
-            mTitle->setStyleSheet(cor::kGradientStylesheet);
+            mTitle->setStyleSheet(cor::kTransparentAndBoldStylesheet);
         }
     }
 
@@ -175,9 +174,6 @@ private:
     /// binary, its either highlighted, or not.
     bool mHighlightByCountOfLights;
 
-    /// true if the widget should be able to be highlighted, false otherwise.
-    bool mShouldHighlight;
-
     /// true to show the states, false otherwise.
     bool mShowStates;
 
@@ -209,6 +205,9 @@ private:
 
     /// label for checkbox
     QLabel* mTitle;
+
+    /// stores the border for the widget's options.
+    EPaintRectOptions mRectOptions;
 };
 
 } // namespace cor

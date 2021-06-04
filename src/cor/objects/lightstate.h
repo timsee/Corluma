@@ -29,7 +29,8 @@ public:
         : mIsOn{false},
           mRoutine{ERoutine::singleSolid},
           mColor(0, 0, 0),
-          mCustomPalette(paletteToString(EPalette::custom), cor::defaultCustomColors(), 50),
+          mCustomPalette(cor::CustomPalette(cor::defaultCustomColors())),
+          mPaletteBrightness{-1},
           mCustomCount{5},
           mEffect{"Default"},
           mSpeed{100},
@@ -65,6 +66,10 @@ public:
             }
         } else if (object["palette"].isObject()) {
             palette(Palette(object["palette"].toObject()));
+        }
+
+        if (object["paletteBrightness"].isDouble()) {
+            mPaletteBrightness = object["paletteBrightness"].toDouble() * 100.0;
         }
 
         //------------
@@ -113,7 +118,9 @@ public:
     void palette(const Palette& palette) { mPalette = palette; }
 
     /// setter for the palette's brightness
-    void paletteBrightness(std::uint32_t brightness) { mPalette.brightness(brightness); }
+    void paletteBrightness(int brightness) { mPaletteBrightness = brightness; }
+
+    int paletteBrightness() const noexcept { return mPaletteBrightness; }
 
     /// getter for the custom palette
     const Palette& customPalette() const noexcept { return mCustomPalette; }
@@ -174,7 +181,12 @@ public:
         if (routine() != rhs.routine()) {
             result = false;
         }
-        if (palette().JSON() != rhs.palette().JSON()) {
+
+        if (palette() != rhs.palette()) {
+            result = false;
+        }
+
+        if (paletteBrightness() != rhs.paletteBrightness()) {
             result = false;
         }
 
@@ -243,7 +255,8 @@ public:
                 object["sat"] = color().saturationF();
                 object["bri"] = color().valueF();
             } else {
-                object["palette"] = palette().JSON();
+                object["palette"] = palette().toJson(true);
+                object["paletteBrightness"] = mPaletteBrightness / 100.0;
             }
 
             if (routine() != ERoutine::singleSolid) {
@@ -281,6 +294,9 @@ private:
 
     /// palette for storing custom colors.
     Palette mCustomPalette;
+
+    /// integer for storing how bright to show the palette, 0 - 100
+    int mPaletteBrightness;
 
     /// slight hack for app memory, custom count of colors used by ArduCor are stored here.
     std::uint32_t mCustomCount;

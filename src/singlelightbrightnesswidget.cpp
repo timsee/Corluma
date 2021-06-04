@@ -74,11 +74,7 @@ void SingleLightBrightnessWidget::pushOut(const QPoint& point) {
 }
 
 void SingleLightBrightnessWidget::resizeEvent(QResizeEvent*) {
-    auto side = height() / 2;
-    mBrightnessSlider->setGeometry(height() * 0.15 + side,
-                                   0,
-                                   width() - int(mSize.width() * 0.6),
-                                   height() / 2);
+    mBrightnessSlider->setGeometry(mSize.width(), 0, width() - mSize.width(), height());
 }
 
 void SingleLightBrightnessWidget::brightnessSliderChanged(int newBrightness) {
@@ -96,7 +92,9 @@ void SingleLightBrightnessWidget::paintEvent(QPaintEvent*) {
     painter.setBrush(brush);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    auto side = height() / 2;
-    QRect rect(height() * 0.05, height() * 0.05, side, side);
+    auto side = std::min(mSize.width(), height()) * 0.8;
+    auto xSpacer = (mSize.width() - side) / 2;
+    auto ySpacer = (height() - side) / 2;
+    QRect rect(xSpacer, ySpacer, side, side);
     painter.drawEllipse(rect);
 }

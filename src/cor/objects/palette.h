@@ -14,6 +14,10 @@
 
 namespace cor {
 
+const QString kUnknownPaletteID = "UNKNOWN_UUID";
+const QString kCustomPaletteID = "CUSTOM_UUID";
+const QString kInvalidPaletteID = "INVALID_UUID";
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2020.
@@ -28,25 +32,20 @@ namespace cor {
 class Palette {
 public:
     /// json constructor
-    Palette(const QJsonObject& object) : mJSON(object) {
-        mName = object["name"].toString();
-        mBrightness = std::uint32_t(object["bri"].toDouble() * 100.0);
-        mEnum = stringToPalette(mName);
-
-        std::size_t count = std::size_t(object["count"].toDouble());
-        bool containsRGB = false;
-        mColors = std::vector<QColor>(count, QColor(0, 0, 0));
+    Palette(const QJsonObject& object)
+        : mUniqueID{object["uniqueID"].toString()},
+          mName{object["name"].toString()},
+          mColors{std::vector<QColor>(std::size_t(object["count"].toDouble()), QColor(0, 0, 0))} {
         auto array = object["colors"].toArray();
         for (auto color : qAsConst(array)) {
-            QJsonObject object = color.toObject();
-            uint32_t index = std::uint32_t(object["index"].toDouble());
+            auto object = color.toObject();
+            auto index = std::uint32_t(object["index"].toDouble());
 
             if (object["red"].isDouble()) {
                 int red = int(object["red"].toDouble());
                 int green = int(object["green"].toDouble());
                 int blue = int(object["blue"].toDouble());
                 mColors[index] = QColor(red, green, blue);
-                containsRGB = true;
             } else if (object["hue"].isDouble()) {
                 double hue = object["hue"].toDouble();
                 double sat = object["sat"].toDouble();
@@ -54,81 +53,39 @@ public:
                 QColor color;
                 color.setHsvF(hue, sat, bri);
                 mColors[index] = color;
+            } else {
+                qDebug() << "WARN: improperly formatted color json daata in a cor::Palette";
             }
         }
-
-        if (containsRGB) {
-            QJsonArray array;
-            int index = 0;
-            for (const auto& color : mColors) {
-                QJsonObject colorObject;
-                colorObject["index"] = index;
-                colorObject["hue"] = cor::roundToNDigits(color.hueF(), 4);
-                colorObject["sat"] = cor::roundToNDigits(color.saturationF(), 4);
-                colorObject["bri"] = cor::roundToNDigits(color.valueF(), 4);
-                array.append(colorObject);
-                ++index;
-            }
-            mJSON["colors"] = array;
-        }
-        GUARD_EXCEPTION(!mColors.empty(), "palette does not have any colors")
+        checkIfValid();
     }
 
     /// app data constructor
-    Palette(const QString& name, const std::vector<QColor>& colors, uint32_t brightness)
-        : mName(name),
-          mColors(colors),
-          mBrightness(brightness) {
-        mJSON["name"] = mName;
-        mJSON["bri"] = mBrightness / 100.0;
-        mEnum = stringToPalette(name);
-
-        QJsonArray array;
-        int index = 0;
-        for (const auto& color : mColors) {
-            QJsonObject colorObject;
-            colorObject["index"] = index;
-            colorObject["hue"] = color.hueF();
-            colorObject["sat"] = color.saturationF();
-            colorObject["bri"] = color.valueF();
-            array.append(colorObject);
-            ++index;
-        }
-        mJSON["colors"] = array;
-        mJSON["count"] = double(mColors.size());
-        GUARD_EXCEPTION(!mColors.empty(), "palette does not have any colors")
+    Palette(const QString& uniqueID, const QString& name, const std::vector<QColor>& colors)
+        : mUniqueID{uniqueID},
+          mName{name},
+          mColors{colors} {
+        checkIfValid();
     }
+
 
     /// default constructor
-    Palette() : Palette("", std::vector<QColor>(1, QColor(0, 0, 0)), 50) {}
-
-    /// setter for the brightness of the palette
-    void brightness(std::uint32_t brightness) {
-        mBrightness = brightness;
-        mJSON["bri"] = mBrightness / 100.0;
+    Palette()
+        : Palette(kInvalidPaletteID, "INVALID_PALETTE", std::vector<QColor>(1, QColor(0, 0, 0))) {
+        checkIfValid();
     }
 
-    /// getter for the palette's brightness
-    std::uint32_t brightness() const {
-        if (mBrightness == 0u) {
-            auto bright = 0.0f;
-            for (const auto& color : mColors) {
-                bright += color.value();
-            }
-            return static_cast<std::uint32_t>(bright / mColors.size());
-        } else {
-            return mBrightness;
-        }
-    }
+    /// getter for uniqueID
+    const QString& uniqueID() const noexcept { return mUniqueID; }
 
     /// getter for name of the palette
     const QString& name() const noexcept { return mName; }
 
-    /// getter for the JSON of the palette
-    const QJsonObject& JSON() const noexcept { return mJSON; }
-
     /// getter for the vector of colors
     const std::vector<QColor>& colors() const noexcept { return mColors; }
+
+    /// setter for colors
+    void colors(const std::vector<QColor>& colors) { mColors = colors; }
 
     /// averages all colors together for a palette to give a single color representation.
     QColor averageColor() const noexcept {
@@ -153,22 +110,17 @@ public:
         return false;
     }
 
-    /// getter for the enum of the palette
-    EPalette paletteEnum() const noexcept { return mEnum; }
-
     /// true if the palette has all the required values
-    bool isValid() const noexcept { return !mColors.empty(); }
+    bool isValid() const noexcept {
+        return !mColors.empty() || !mUniqueID.isEmpty() || !mName.isEmpty();
+    }
 
-    /// equal operator
     bool operator==(const Palette& rhs) const {
         bool result = true;
+        if (uniqueID() != rhs.uniqueID()) {
+            result = false;
+        }
         if (name() != rhs.name()) {
-            result = false;
-        }
-        if (brightness() != rhs.brightness()) {
-            result = false;
-        }
-        if (paletteEnum() != rhs.paletteEnum()) {
             result = false;
         }
         if (colors() != rhs.colors()) {
@@ -177,12 +129,13 @@ public:
         return result;
     }
 
+    bool operator!=(const Palette& rhs) const { return !(*this == rhs); }
+
+
     /// this allows the palette to be given to QString
     operator QString() const {
         std::stringstream tempString;
         tempString << "{ Palette Name: " << name().toStdString();
-        tempString << " brightness: " << brightness();
-        tempString << " Enum String: " << paletteToString(paletteEnum()).toStdString();
         uint32_t index = 0;
         for (auto color : colors()) {
             tempString << index << ". R:" << color.red() << " G:" << color.green()
@@ -198,22 +151,54 @@ public:
         return QString::fromStdString(tempString.str());
     }
 
+    /// converts palette to a json object.
+    QJsonObject toJson(bool useHSV) const noexcept {
+        QJsonObject object;
+        QJsonArray array;
+        int index = 0;
+        object["name"] = mName;
+        object["uniqueID"] = mUniqueID;
+        for (const auto& color : mColors) {
+            QJsonObject colorObject;
+            colorObject["index"] = index;
+            if (useHSV) {
+                colorObject["hue"] = color.hueF();
+                colorObject["sat"] = color.saturationF();
+                colorObject["bri"] = color.valueF();
+            } else {
+                colorObject["red"] = color.red();
+                colorObject["green"] = color.green();
+                colorObject["blue"] = color.blue();
+            }
+            array.append(colorObject);
+            ++index;
+        }
+        object["colors"] = array;
+        object["count"] = double(mColors.size());
+        return object;
+    }
+
 private:
-    /// enum for the palette
-    EPalette mEnum;
+    /// throws exception if palette is not valid.
+    void checkIfValid() {
+        GUARD_EXCEPTION(!mColors.empty(), "palette does not have any colors");
+        GUARD_EXCEPTION(!mName.isEmpty(), "name for palette is empty");
+        GUARD_EXCEPTION(!mUniqueID.isEmpty(), "uniqueID is empty");
+    }
+
+    /// UUID to track palette regardless of color and name changes.
+    QString mUniqueID;
 
     /// name for the palette
     QString mName;
 
-    /// json for the palette,
-    QJsonObject mJSON;
-
     /// vector for the colors
     std::vector<QColor> mColors;
-
-    /// brightness of the palette, between 0 - 100
-    std::uint32_t mBrightness;
 };
+
+static Palette CustomPalette(const std::vector<QColor>& colors) {
+    return cor::Palette(kCustomPaletteID, "*custom*", colors);
+}
 
 inline std::ostream& operator<<(std::ostream& out, const Palette& palette) {
     QString paletteString = palette;
@@ -222,5 +207,15 @@ inline std::ostream& operator<<(std::ostream& out, const Palette& palette) {
 }
 
 } // namespace cor
+
+
+namespace std {
+template <>
+struct hash<cor::Palette> {
+    size_t operator()(const cor::Palette& k) const {
+        return std::hash<std::string>{}(k.name().toStdString());
+    }
+};
+} // namespace std
 
 #endif // PALETTE_H

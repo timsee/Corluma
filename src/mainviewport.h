@@ -32,6 +32,7 @@ public:
                           CommLayer* comm,
                           cor::LightList* data,
                           GroupData* groups,
+                          PaletteData* palettes,
                           AppSettings* settings,
                           DataSyncTimeout* dataSyncTimeout);
 

@@ -1307,3 +1307,18 @@ _This is the first of a series of updates to address design issues in the `ListR
 - Added `PaletteDetailedWidget` to display more information on a palette.
 - Fixed a bug in the multi color picker.
 - Fixed miscellaneous bugs.
+
+### **v0.21.99**
+### The cor::Palette and Alpha UX Update
+_This update begins to address the alpha user's UX issues and also reworks how Palettes are handled in the backend. Json save data from previous versions will no longer work._
+- `cor::Palette` now contains a `uniqueID` and no longer contains an `EPalette` enum or a `brightess` value.
+- `cor::LightState` now contains a `paletteBrightness`.
+- Added a `PaletteData` class for palettes from json data.
+- Removed `PresetPalettes`.
+- Refactored the `save.json` file. Instead of being an array of values, its top level is now a Json object with a version string, a list for moods, and a list for groups.
+- Standardized repeated colors across the app. Highlights are now grey instead of light blue.
+- Fixed a bug in syncing Hue lights.
+- Added a `WidgetOutlineBox` class for widgets that need an always-on-top border (such as scrolling lists).
+- Fixed the whitespace on certain widgets.
+- Rearranged the `TopMenu` bar.
+- Simplified the `cor::PaletteWidget` display when showing the state.

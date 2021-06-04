@@ -24,7 +24,10 @@ enum class EChooseLightsMoodState { disabled, addLight, changeLightState, remove
 class ChooseMoodLightStatesWidget : public EditPageChildWidget {
     Q_OBJECT
 public:
-    explicit ChooseMoodLightStatesWidget(QWidget* parent, CommLayer* comm, GroupData* groups)
+    explicit ChooseMoodLightStatesWidget(QWidget* parent,
+                                         CommLayer* comm,
+                                         GroupData* groups,
+                                         PaletteData* palettes)
         : EditPageChildWidget(parent),
           mChooseLabel{new QLabel("Choose Lights:", this)},
           mSelectedLabel{new QLabel("Selected Lights:", this)},
@@ -34,7 +37,7 @@ public:
           mLeftButton{new QPushButton(this)},
           mRightButton{new QPushButton(this)},
           mLightWidget{new ListLightWidget({}, false, EListLightWidgetType::standard, this)},
-          mStateWidget{new ChooseStateWidget(this)},
+          mStateWidget{new ChooseStateWidget(this, palettes)},
           mRowHeight{10} {
         mBottomButtons->enableForward(false);
 

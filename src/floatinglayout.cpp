@@ -74,6 +74,7 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
         state.color(QColor(255, 0, 0));
         state.isOn(true);
 
+
         bool foundMatch = false;
         if (mNames[i] == "HSV" || mNames[i] == "Temperature" || mNames[i] == "Settings"
             || mNames[i] == "Group_Lights" || mNames[i] == "Group_Details"
@@ -87,8 +88,6 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             mButtons[i]->setMinimumSize(this->buttonSize());
         } else if (mNames[i] == "Off") {
             foundMatch = true;
-            state.routine(ERoutine::multiFade);
-            state.palette(mPalettes.palette(EPalette::poison));
             state.speed(100);
             state.paletteBrightness(0);
             state.isOn(false);
@@ -97,8 +96,20 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             Q_ASSERT(mButtons[i]);
         } else if (mNames[i] == "Preset") {
             foundMatch = true;
+            cor::Palette palette("fake_id",
+                                 "fake_name",
+                                 {QColor(80, 0, 180),
+                                  QColor(120, 0, 255),
+                                  QColor(0, 0, 0),
+                                  QColor(25, 0, 25),
+                                  QColor(60, 60, 60),
+                                  QColor(120, 0, 255),
+                                  QColor(80, 0, 180),
+                                  QColor(40, 0, 90),
+                                  QColor(80, 0, 180)});
+
             state.routine(ERoutine::multiFade);
-            state.palette(mPalettes.palette(EPalette::poison));
+            state.palette(palette);
             state.speed(100);
             auto lightsButton = new cor::Button(this, state);
             mButtons[i] = static_cast<QPushButton*>(lightsButton);

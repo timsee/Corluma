@@ -52,6 +52,7 @@ StandardLightsMenu::StandardLightsMenu(QWidget* parent,
           new MenuSubgroupContainer(mSubgroupScrollArea, mGroups, cor::EWidgetType::condensed)},
       mLightScrollArea{new QScrollArea(this)},
       mLightContainer{new MenuLightContainer(mLightScrollArea, true, name)},
+      mOutlineBox{new cor::WidgetOutlineBox(cor::EPaintRectOptions::allSides, this)},
       mButtonHeight{0u},
       mPositionY{0u},
       mSingleLightMode{false},
@@ -112,6 +113,9 @@ void StandardLightsMenu::updateMenu() {
         mParentGroupContainer->updateDataGroupInUI(group, uiGroups);
     }
 
+    if (uiGroups.size() != parentGroups.size()) {
+        resize(this->geometry(), mButtonHeight);
+    }
     updateLightStates();
 }
 
@@ -231,21 +235,39 @@ void StandardLightsMenu::resize(const QRect& inputRect, int buttonHeight) {
 
     QRect rect = QRect(0, offsetY, this->width(), this->height() - offsetY);
     int scrollAreaWidth = int(rect.width() * 1.2);
+    int outlineHeight = 0;
     if (mState == EState::parentGroups) {
         mParentScrollArea->setGeometry(rect.x(), rect.y(), scrollAreaWidth, rect.height());
-        mParentGroupContainer->setGeometry(0, 0, rect.width(), rect.height());
+        mParentGroupContainer->setFixedWidth(rect.width());
         mParentGroupContainer->resizeParentGroupWidgets(mButtonHeight);
+        outlineHeight = mParentGroupContainer->height();
     } else if (mState == EState::lights || mState == EState::noGroups) {
         mLightScrollArea->setGeometry(rect.x(), rect.y(), scrollAreaWidth, rect.height());
         mLightContainer->setFixedWidth(rect.width());
         mLightContainer->moveLightWidgets(QSize(this->width(), buttonHeight), QPoint(0, 0));
+        outlineHeight = mLightContainer->height();
     } else if (mState == EState::subgroups) {
         mSubgroupScrollArea->setGeometry(rect.x(), rect.y(), scrollAreaWidth, rect.height());
         mSubgroupContainer->setFixedWidth(rect.width());
         mSubgroupContainer->resizeSubgroupWidgets(buttonHeight);
+        outlineHeight = mSubgroupContainer->height();
     }
-}
 
+    if (outlineHeight > rect.height()) {
+        outlineHeight = rect.height();
+    }
+
+    if (mState == EState::parentGroups) {
+        mOutlineBox->changePaintRectOptions(cor::EPaintRectOptions::noBottom);
+    } else if (mState == EState::lights) {
+        mOutlineBox->changePaintRectOptions(cor::EPaintRectOptions::noTop);
+    } else if (mState == EState::noGroups) {
+        mOutlineBox->changePaintRectOptions(cor::EPaintRectOptions::allSides);
+    } else if (mState == EState::subgroups) {
+        mOutlineBox->changePaintRectOptions(cor::EPaintRectOptions::noTopOrBottom);
+    }
+    mOutlineBox->setGeometry(0, offsetY, this->width(), outlineHeight);
+}
 
 void StandardLightsMenu::highlightTopWidget() {
     // update the top parent widget

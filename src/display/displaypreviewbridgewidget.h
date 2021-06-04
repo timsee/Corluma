@@ -100,11 +100,6 @@ protected:
      */
     void resizeEvent(QResizeEvent*);
 
-    /*!
-     * \brief paintEvent used to draw the background of the widget.
-     */
-    void paintEvent(QPaintEvent*);
-
 private slots:
 
     /// handle when the checkbox is clicked

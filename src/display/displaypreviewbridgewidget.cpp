@@ -40,6 +40,7 @@ DisplayPreviewBridgeWidget::DisplayPreviewBridgeWidget(const hue::Bridge& bridge
             SIGNAL(clicked(ECheckboxState)),
             this,
             SLOT(checkBoxClicked(ECheckboxState)));
+    mCheckBox->setVisible(false);
 
     mMetadata->setWordWrap(true);
 
@@ -89,7 +90,7 @@ void DisplayPreviewBridgeWidget::handleBridgeState(EBridgeDiscoveryState state) 
                                                  Qt::KeepAspectRatio,
                                                  Qt::SmoothTransformation);
             mImage->setPixmap(mBridgePixmap);
-            mCheckBox->setVisible(true);
+            mCheckBox->setVisible(false); // NOTE: currently checkbox is always hidden
         } else if (state == EBridgeDiscoveryState::lookingForUsername) {
             mBridgePixmap = QPixmap(":images/hue_bridge_press.png");
             mBridgePixmap = mBridgePixmap.scaled(imageSize.width(),
@@ -132,15 +133,6 @@ void DisplayPreviewBridgeWidget::clickedLight(cor::Light light) {
     }
 }
 
-void DisplayPreviewBridgeWidget::paintEvent(QPaintEvent*) {
-    QStyleOption opt;
-    opt.initFrom(this);
-    QPainter painter(this);
-
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.fillRect(rect(), cor::computeHighlightColor(mSelectedCount, mReachableCount));
-}
-
 void DisplayPreviewBridgeWidget::manageButtonPressed(bool) {
     if (mState == EBridgeDiscoveryState::connected) {
         emit bridgeClicked(mBridge.id());
@@ -161,8 +153,8 @@ void DisplayPreviewBridgeWidget::resize() {
     handleBridgeState(mBridge.state());
     auto yPosFirstColumn = 0;
     auto yPosSecondColumn = 0;
-    auto xSpacer = width() * 0.00;
-    auto columnWidth = width() * 0.33;
+    auto xSpacer = width() * 0.03;
+    auto columnWidth = width() * 0.3;
     auto xSecondColumnStart = columnWidth + xSpacer * 2;
 
     auto rowHeight = height() / 8;
@@ -189,7 +181,7 @@ void DisplayPreviewBridgeWidget::resize() {
     if (mState == EBridgeDiscoveryState::connected) {
         QRect selectedLightsRect(xSecondColumnStart,
                                  yPosSecondColumn,
-                                 columnWidth * 2 - xSpacer,
+                                 columnWidth * 2 + xSpacer,
                                  rowHeight * 7);
         mLights->resize(selectedLightsRect, mRowHeight);
         yPosSecondColumn += mLights->height();

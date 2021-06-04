@@ -96,9 +96,9 @@ void GroupStateWidget::paintEvent(QPaintEvent*) {
 
     // handle highlight
     if (mIsChecked) {
-        painter.fillRect(rect(), QBrush(QColor(61, 142, 201)));
+        painter.fillRect(rect(), QBrush(cor::kHighlightColor));
     } else {
-        painter.fillRect(rect(), QBrush(QColor(32, 31, 31)));
+        painter.fillRect(rect(), QBrush(cor::kBackgroundColor));
     }
 
     QRect stateIconRect = stateIconRegion();

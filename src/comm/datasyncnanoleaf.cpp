@@ -209,9 +209,9 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
         auto brightnessInSync = true;
         std::uint32_t brightness = 0u;
         if (dataState.routine() > cor::ERoutineSingleColorEnd) {
-            brightnessInSync = checkIfInSyncByOne(commState.palette().brightness(),
-                                                  dataState.palette().brightness());
-            brightness = dataState.palette().brightness();
+            brightnessInSync =
+                checkIfInSyncByOne(commState.paletteBrightness(), dataState.paletteBrightness());
+            brightness = dataState.paletteBrightness();
         } else {
             brightnessInSync = checkIfInSyncByOne(commState.color().valueF() * 100.0,
                                                   dataState.color().valueF() * 100.0);

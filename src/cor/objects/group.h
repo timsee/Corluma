@@ -145,7 +145,6 @@ public:
     QJsonObject toJsonWitIgnoredLights(const std::set<QString>& ignoredLights) const {
         QJsonObject object;
         object["name"] = name();
-        object["isMood"] = false;
         if (type() == EGroupType::group) {
             object["isRoom"] = false;
         } else if (type() == EGroupType::room) {

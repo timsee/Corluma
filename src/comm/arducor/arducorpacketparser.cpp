@@ -13,7 +13,9 @@
 
 #define CUSTOM_COLOR_MAX 10
 
-ArduCorPacketParser::ArduCorPacketParser(QObject* parent) : QObject(parent) {}
+ArduCorPacketParser::ArduCorPacketParser(QObject* parent, PaletteData* palettes)
+    : QObject(parent),
+      mPalettes{palettes} {}
 
 
 QString ArduCorPacketParser::turnOnPacket(int index, bool turnOn) {
@@ -64,7 +66,7 @@ QString ArduCorPacketParser::routinePacket(int index, const QJsonObject& routine
         } else if (routineObject["palette"].isObject()) {
             QJsonObject object = routineObject["palette"].toObject();
             cor::Palette palette(object);
-            paletteEnum = palette.paletteEnum();
+            paletteEnum = mPalettes->paletteToEnum(palette);
             if (paletteEnum == EPalette::unknown) {
                 isValidJSON = false;
             }

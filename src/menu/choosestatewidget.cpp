@@ -7,10 +7,10 @@
 #include <QPainter>
 #include <QStyleOption>
 
-ChooseStateWidget::ChooseStateWidget(QWidget* parent)
+ChooseStateWidget::ChooseStateWidget(QWidget* parent, PaletteData* palettes)
     : QWidget(parent),
       mColorPicker{new SingleColorPicker(this)},
-      mPaletteScrollArea{new PaletteScrollArea(this)},
+      mPaletteScrollArea{new PaletteScrollArea(this, palettes)},
       mRoutinesWidget{new RoutineContainer(this, ERoutineGroup::all)},
       mTopFloatingLayout{new FloatingLayout(this)} {
     mTopFloatingLayout->setVisible(false);

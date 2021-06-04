@@ -37,30 +37,6 @@ public:
 
 protected:
     /*!
-     * \brief removeJSONObject remove the json object from the array with the given key and value
-     * \param key the key to check
-     * \param value the expected value for this key.
-     * \return true if an object is deleted, false otherwise
-     */
-    bool removeJSONObject(const QString& key, const QString& value);
-
-    /*!
-     * \brief removeJSONObject remove the json object from the array with the given key and value
-     * \param key the key to check
-     * \param value the expected value for this key.
-     * \return true if an object is deleted, false otherwise
-     */
-    bool removeJSONObject(const QString& key, double value);
-
-    /*!
-     * \brief removeJSONObject remove the json object from the array with the given key and value
-     * \param key the key to check
-     * \param value the expected value for this key.
-     * \return true if an object is deleted, false otherwise
-     */
-    bool removeJSONObject(const QString& key, bool value);
-
-    /*!
      * \brief loadJsonFile loads json data at given path and turns it into a JsonDocument
      *
      * \param file path to a json file

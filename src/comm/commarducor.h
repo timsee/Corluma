@@ -8,7 +8,7 @@
 #include "comm/arducor/arducormetadata.h"
 #include "comm/arducor/crccalculator.h"
 #include "comm/commtype.h"
-#include "cor/presetpalettes.h"
+#include "data/palettedata.h"
 
 class CommUDP;
 class CommHTTP;
@@ -31,7 +31,7 @@ class CommArduCor : public QObject {
     Q_OBJECT
 public:
     /// constructor
-    explicit CommArduCor(QObject* parent);
+    explicit CommArduCor(QObject* parent, PaletteData* palettes);
 
     /*!
      * \brief sendPacket sends a packet to the given controller
@@ -186,8 +186,8 @@ private:
     /// used to check CRC on incoming packets.
     CRCCalculator mCRC;
 
-    /// preset data for palettes from ArduCor
-    PresetPalettes mPresetPalettes;
+    /// pointer to global palette data
+    PaletteData* mPalettes;
 };
 
 #endif // COMMARDUCOR_H

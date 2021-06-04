@@ -31,6 +31,7 @@ public:
         mParentWidget->setVisible(false);
         mParentWidget->changeArrowState(cor::EArrowState::closed);
         mParentWidget->showSelectAllCheckbox(false);
+        mParentWidget->changePaintRectOptions(cor::EPaintRectOptions::noBottom);
         connect(mParentWidget,
                 SIGNAL(groupButtonPressed(QString)),
                 this,
@@ -39,6 +40,7 @@ public:
 
         setStyleSheet("border: none; background-color:rgb(33,32,32);");
 
+        mSubgroupButton->changePaintRectOptions(cor::EPaintRectOptions::noTopOrBottom);
         mSubgroupButton->setVisible(false);
         connect(mSubgroupButton,
                 SIGNAL(groupButtonPressed(QString)),

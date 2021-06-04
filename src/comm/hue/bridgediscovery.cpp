@@ -880,6 +880,33 @@ QString BridgeDiscovery::generateUniqueName() {
 }
 
 
+bool BridgeDiscovery::removeJSONObject(const QString& key, const QString& givenValue) {
+    int index = 0;
+    int foundIndex = 0;
+    bool foundMatch = false;
+    if (mJsonData.isArray()) {
+        QJsonArray array = mJsonData.array();
+        for (auto value : array) {
+            QJsonObject object = value.toObject();
+            if (object[key].isString()) {
+                QString jsonValue = object[key].toString();
+                if (jsonValue == givenValue) {
+                    foundMatch = true;
+                    foundIndex = index;
+                }
+            }
+            ++index;
+        }
+        if (foundMatch) {
+            array.removeAt(foundIndex);
+            mJsonData.setArray(array);
+            saveJSON();
+            return true;
+        }
+    }
+    return false;
+}
+
 // ----------------------------
 // Settings Keys
 // ----------------------------

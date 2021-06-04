@@ -145,9 +145,9 @@ protected:
 
         painter.setRenderHint(QPainter::Antialiasing);
         if (mIsHighlighted) {
-            painter.fillRect(rect(), QBrush(QColor(61, 142, 201)));
+            painter.fillRect(rect(), QBrush(cor::kHighlightColor));
         } else {
-            painter.fillRect(rect(), QBrush(QColor(32, 31, 31, 255)));
+            painter.fillRect(rect(), QBrush(cor::kBackgroundColor));
         }
 
         // draw line at bottom of widget

@@ -12,12 +12,15 @@
 #include "cor/protocols.h"
 #include "utils/color.h"
 
-DataSyncArduino::DataSyncArduino(cor::LightList* data, CommLayer* comm, AppSettings* appSettings) {
+DataSyncArduino::DataSyncArduino(cor::LightList* data,
+                                 CommLayer* comm,
+                                 PaletteData* palettes,
+                                 AppSettings* appSettings) {
     mData = data;
     mComm = comm;
     mAppSettings = appSettings;
     mType = EDataSyncType::arducor;
-    mParser = new ArduCorPacketParser();
+    mParser = new ArduCorPacketParser(this, palettes);
     mUpdateInterval = 100;
     connect(mComm,
             SIGNAL(packetReceived(EProtocolType)),
@@ -256,7 +259,10 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
             colorInSync = (cor::colorDifference(dataState.color(), commState.color()) <= 0.01f);
         }
         if (dataState.routine() > cor::ERoutineSingleColorEnd) {
-            colorInSync = (commState.palette().paletteEnum() == dataState.palette().paletteEnum());
+            colorInSync = (commState.palette().uniqueID() == dataState.palette().uniqueID());
+            //            qDebug() << " color in sync " << colorInSync << " for " <<
+            //            commState.palette() << " vs "
+            //                     << dataState.palette();
         }
 
         //-------------------
@@ -264,7 +270,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
         //-------------------
         bool brightnessInSync = true;
         if (dataState.routine() > cor::ERoutineSingleColorEnd) {
-            if (commState.palette().brightness() != dataState.palette().brightness()) {
+            if (commState.paletteBrightness() != dataState.paletteBrightness()) {
                 brightnessInSync = false;
             }
         }
@@ -283,7 +289,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
                 //                commState.palette().brightness() << "vs "
                 //                         << dataState.palette().brightness();
                 QString message =
-                    mParser->brightnessPacket(metadata.index(), dataState.palette().brightness());
+                    mParser->brightnessPacket(metadata.index(), dataState.paletteBrightness());
                 appendToPacket(packet, message, controller.maxPacketSize());
             } else {
                 QString message = mParser->routinePacket(metadata.index(), routineObject);
@@ -298,7 +304,7 @@ bool DataSyncArduino::sync(const cor::Light& inputDevice, const cor::Light& comm
     //-------------------
     // Custom Color Count Sync
     //-------------------
-    if (dataState.palette().paletteEnum() == EPalette::custom) {
+    if (dataState.palette().uniqueID() == cor::kCustomPaletteID) {
         if (commState.customCount() != dataState.palette().colors().size()) {
             //            qDebug() << "Custom color count not in sync" << commState.customCount() <<
             //            " vs "

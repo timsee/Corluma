@@ -44,7 +44,7 @@ void AddNewGroupButton::paintEvent(QPaintEvent*) {
     painter.setRenderHint(QPainter::Antialiasing);
     // paint background
     if (mIsHighlighted) {
-        painter.fillRect(rect(), QBrush(QColor(61, 142, 201)));
+        painter.fillRect(rect(), QBrush(cor::kHighlightColor));
     } else {
         painter.fillRect(rect(), QBrush(QColor(35, 34, 34)));
     }

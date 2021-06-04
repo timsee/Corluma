@@ -126,9 +126,6 @@ public:
     /// close the routine pages
     void closeRoutinesPage();
 
-    /// menu for Lights page
-    DiscoveryTopMenu* discoveryMenu();
-
 signals:
 
     /// sent out whenever a button is pressed. Keys are the names of the buttons, such as "settings"
@@ -181,6 +178,9 @@ private:
     /// y position where a floating menu can start.
     int mFloatingMenuStart;
 
+    /// y position when any menu can start (IE, below the globalstatewidget)
+    int mMenuStart;
+
     /// data layer, contains intended state for all devices.
     cor::LightList* mData;
 
@@ -230,8 +230,8 @@ private:
     /// helper that generates where the color state menus should put their top-left point
     QPoint colorStateStartPoint();
 
-    /// helper that generates where the brightness sldier should put its top left point.
-    QPoint brightnessSliderStartPoint();
+    /// helper that generates where the brightness slider should be.
+    QRect brightnessSliderRect();
 
     /// move the color state widgets.
     void moveColorStateWidgets();

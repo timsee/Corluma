@@ -39,6 +39,16 @@ RoutineContainer::RoutineContainer(QWidget* parent, ERoutineGroup routineGroup)
         mSingleRoutineWidgets.clear();
     }
 
+    // by default routine widgets do not draw borders on their bottom. override for the bottom most
+    // widget
+    if (routineGroup == ERoutineGroup::single) {
+        mSingleSolidRoutineWidget->rectOptions(cor::EPaintRectOptions::noRightOrBottom);
+        mSingleFadeRoutineWidget->rectOptions(cor::EPaintRectOptions::allSides);
+    }
+    if (routineGroup == ERoutineGroup::multi || routineGroup == ERoutineGroup::all) {
+        mMultiRandomRoutineWidget->rectOptions(cor::EPaintRectOptions::allSides);
+    }
+
     connect(mSpeedSlider, SIGNAL(valueChanged(int)), this, SLOT(speedSliderChanged(int)));
 
     mAllRoutineWidgets.insert(mAllRoutineWidgets.end(),
@@ -73,7 +83,9 @@ void RoutineContainer::initButtons() {
 
     // in the case where it it is not both types of buttons, use a different default
     if (mRoutineGroup == ERoutineGroup::multi) {
-        state.palette(cor::Palette(paletteToString(EPalette::custom), colors, 51));
+        auto palette = cor::CustomPalette(colors);
+        state.paletteBrightness(51);
+        state.palette(palette);
         state.routine(ERoutine::multiGlimmer);
         state.param(15);
         // make the default state the glimmer routine

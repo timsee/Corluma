@@ -11,6 +11,7 @@
 #include "menu/lefthandmenutoplightwidget.h"
 #include "menusubgroupcontainer.h"
 
+#include "cor/widgets/widgetoutlinebox.h"
 #include "menulightcontainer.h"
 #include "menuparentgroupcontainer.h"
 
@@ -195,6 +196,9 @@ private:
 
     /// shows the light widgets
     MenuLightContainer* mLightContainer;
+
+    /// applies an outline to the widget.
+    cor::WidgetOutlineBox* mOutlineBox;
 
     /// stores the button height. this is used as the height for most widgets.
     int mButtonHeight;

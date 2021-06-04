@@ -19,13 +19,14 @@
 
 namespace cor {
 
+const int kGroupButtonBorderWidth = 5;
+
 GroupButton::GroupButton(const QString& key, const QString& text, QWidget* parent)
     : QWidget(parent),
       mKey{key},
       mIsSelected{false},
       mShowSelectAll{true},
       mHighlightByCountOfLights{true},
-      mShouldHighlight{true},
       mShowStates{false},
       mArrowState{EArrowState::disabled},
       mReachableCount{0},
@@ -34,7 +35,8 @@ GroupButton::GroupButton(const QString& key, const QString& text, QWidget* paren
       mCheckBox{new cor::CheckBox(this)},
       mArrowIcon{new QLabel(this)},
       mPaletteWidget{new cor::PaletteWidget(this)},
-      mTitle{new QLabel(text, this)} {
+      mTitle{new QLabel(text, this)},
+      mRectOptions{EPaintRectOptions::onlyBottom} {
     mPaletteWidget->skipOffLightStates(true);
     mPaletteWidget->showInSingleLine(true);
     mPaletteWidget->shouldPreferPalettesOverRoutines(true);
@@ -87,10 +89,12 @@ void GroupButton::resize() {
         mCheckBox->setGeometry(xPos - size.width(), 0, size.width(), height());
         xPos -= mCheckBox->width();
     }
-
-    mPaletteWidget->setGeometry(0, 0, xPos, height());
-
     auto previewHeight = height() / 4;
+    mPaletteWidget->setGeometry(kGroupButtonBorderWidth,
+                                kGroupButtonBorderWidth,
+                                xPos,
+                                previewHeight);
+
     auto spaceWidth = (width() / 20);
     mTitle->setGeometry(spaceWidth, previewHeight, xPos - spaceWidth, height() - previewHeight);
 
@@ -142,11 +146,9 @@ void GroupButton::checkBoxClicked(ECheckboxState state) {
         if (mCheckedCount > 0) {
             mCheckBox->checkboxState(ECheckboxState::unchecked);
             mCheckedCount = 0;
-            mShouldHighlight = false;
         } else {
             mCheckedCount = mReachableCount;
             mCheckBox->checkboxState(ECheckboxState::checked);
-            mShouldHighlight = true;
         }
 
         emit groupSelectAllToggled(mTitle->text(),
@@ -176,21 +178,19 @@ void GroupButton::paintEvent(QPaintEvent*) {
     QStyleOption opt;
     opt.initFrom(this);
     QPainter painter(this);
-    QPen pen(Qt::white, 5);
+    QPen pen(Qt::white, kGroupButtonBorderWidth);
     painter.setPen(pen);
 
     QPainterPath path;
     path.addRect(rect());
 
-    if (mShouldHighlight) {
-        if (mHighlightByCountOfLights) {
-            painter.fillPath(path, QBrush(computeHighlightColor(mCheckedCount, mReachableCount)));
-        } else {
-            painter.fillPath(path, QBrush(QColor(61, 142, 201)));
-        }
+    if (mHighlightByCountOfLights) {
+        painter.fillPath(path, QBrush(computeHighlightColor(mCheckedCount, mReachableCount)));
     } else {
-        painter.fillPath(path, QBrush(QColor(32, 31, 31, 255)));
+        painter.fillPath(path, QBrush(QColor(150, 149, 149)));
     }
+
+    paintRect(painter, rect(), mRectOptions);
 }
 
 
@@ -204,7 +204,7 @@ void GroupButton::mouseReleaseEvent(QMouseEvent* event) {
 }
 
 QSize GroupButton::iconSize() {
-    return {int(height() * 0.75), int(height() * 0.75)};
+    return {int(height()), int(height())};
 }
 
 } // namespace cor

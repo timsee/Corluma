@@ -682,7 +682,7 @@ std::pair<cor::Light, HueMetadata> CommHue::updateHueLightState(const hue::Bridg
                     QColor color;
                     hueF = std::clamp(hueF, 0.0, 1.0);
                     satF = std::clamp(satF, 0.0, 1.0);
-                    briF = std::clamp(satF, 0.0, 1.0);
+                    briF = std::clamp(briF, 0.0, 1.0);
                     color.setHsvF(hueF, satF, briF);
                     state.color(color);
                     metadata.colorMode(EColorMode::HSV);

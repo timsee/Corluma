@@ -17,6 +17,7 @@
 #include "cor/objects/page.h"
 #include "cor/widgets/button.h"
 #include "cor/widgets/loadingscreen.h"
+#include "data/palettedata.h"
 #include "debugconnectionspoofer.h"
 #include "discoverywidget.h"
 #include "edit/chooseeditpage.h"
@@ -279,6 +280,9 @@ private:
 
     /// groups parser
     GroupData* mGroups;
+
+    /// stores the global palette data.
+    PaletteData* mPalettes;
 
     /*!
      * \brief communication pointer to communication object

@@ -3,6 +3,7 @@
 
 #include <QScrollArea>
 #include <QWidget>
+#include "cor/widgets/widgetoutlinebox.h"
 #include "menu/menulightcontainer.h"
 
 /*!
@@ -83,8 +84,16 @@ protected:
     /// shows the light widgets
     MenuLightContainer* mLightContainer;
 
+    /// applies an outline to the widget.
+    cor::WidgetOutlineBox* mOutlineBox;
+
     /// stores the unique IDs of all lights being displayed.
     std::vector<cor::Light> mLights;
+
+    /*!
+     * \brief paintEvent paints the background of the widget
+     */
+    void paintEvent(QPaintEvent* event);
 
 private:
     /// stores the height of each row in the scroll area.

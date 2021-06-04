@@ -14,9 +14,9 @@
 #include "cor/objects/group.h"
 #include "cor/objects/light.h"
 #include "cor/objects/mood.h"
-#include "cor/presetpalettes.h"
 #include "cor/protocols.h"
 #include "data/groupdata.h"
+#include "data/palettedata.h"
 
 class UPnPDiscovery;
 class CommArduCor;
@@ -54,7 +54,7 @@ public:
     /*!
      * \brief Constructor
      */
-    CommLayer(QObject* parent, GroupData* groups);
+    CommLayer(QObject* parent, GroupData* groups, PaletteData* palettes);
 
     /*!
      * \brief resetStateUpdates reset the state updates timeouts for specified commtypes. If it

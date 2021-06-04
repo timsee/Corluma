@@ -35,6 +35,7 @@ ListMoodPreviewWidget::ListMoodPreviewWidget(const cor::Mood& mood, QWidget* par
     mName->setText("<b>" + modifiedName + "</b>");
     mName->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
+    mName->setAlignment(Qt::AlignBottom);
     mName->setStyleSheet(backgroundStyleSheet);
 
     mPalette->skipOffLightStates(true);
@@ -82,18 +83,15 @@ void ListMoodPreviewWidget::paintEvent(QPaintEvent*) {
     QPen pen(Qt::white, 5);
     painter.setPen(pen);
 
-    QPainterPath path;
-    path.addRect(rect());
-
     painter.setRenderHint(QPainter::Antialiasing);
     if (mIsChecked) {
-        painter.fillRect(rect(), QBrush(QColor(61, 142, 201)));
+        painter.fillRect(rect(), QBrush(cor::kHighlightColor));
     } else {
-        painter.fillRect(rect(), QBrush(QColor(32, 31, 31)));
+        painter.fillRect(rect(), QBrush(cor::kBackgroundColor));
     }
 
     if (mIsSelected) {
-        painter.drawPath(path);
+        painter.fillRect(rect(), QBrush(cor::kHighlightColor));
     }
 }
 

@@ -44,7 +44,8 @@ public:
 
     /// update the color displayed by the widget
     void updatePaletteColors(const std::vector<QColor>& colors, std::uint32_t brightness) {
-        auto palette = cor::Palette(paletteToString(EPalette::custom), colors, brightness);
+        auto palette = cor::CustomPalette(colors);
+        mState.paletteBrightness(brightness);
         mState.palette(palette);
         mPercentSlider->setColor(palette.averageColor());
         updateState(mState);

@@ -39,6 +39,8 @@ int MenuParentGroupContainer::resizeParentGroupWidgets(int buttonHeight) {
         widget->setGeometry(0, yPos, this->width(), buttonHeight);
         yPos += widget->height();
     }
+
+    setFixedHeight(yPos);
     return yPos;
 }
 

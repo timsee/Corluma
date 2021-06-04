@@ -184,6 +184,14 @@ private slots:
     void startupTimerTimeout();
 
 private:
+    /*!
+     * \brief removeJSONObject remove the json object from the array with the given key and value
+     * \param key the key to check
+     * \param value the expected value for this key.
+     * \return true if an object is deleted, false otherwise
+     */
+    bool removeJSONObject(const QString& key, const QString& value);
+
     /// checks if an IP address is already known to the bridge discovery object
     bool doesIPExistInSearchingLists(const QString& ip);
 

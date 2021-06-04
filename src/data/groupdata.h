@@ -278,8 +278,17 @@ private:
     /// some group data can be ignored, since all of their data is stored externally.
     std::set<QString> mIgnorableLightsForGroups;
 
-    /// loops through all objects and generates a GroupData json representation.
+    /// string for what version the json data is.
+    QString mVersion;
+
+    /// updates the json data.
+    void updateJsonData();
+
+    /// lolops through all group objects and generates a json representation of them
     QJsonArray makeGroupData();
+
+    /// lolops through all mood objects and generates a json representation of them
+    QJsonArray makeMoodData();
 };
 
 #endif // GROUPS_DATA_H

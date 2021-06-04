@@ -9,9 +9,9 @@
 #include "palettescrollarea.h"
 #include "utils/qt.h"
 
-PalettePage::PalettePage(QWidget* parent)
+PalettePage::PalettePage(QWidget* parent, PaletteData* palettes)
     : QWidget(parent),
-      mPaletteScrollArea{new PaletteScrollArea(this)},
+      mPaletteScrollArea{new PaletteScrollArea(this, palettes)},
       mColorPicker{new MultiColorPicker(this)},
       mRoutineWidget{new RoutineContainer(this, ERoutineGroup::multi)},
       mDetailedWidget{new PaletteDetailedWidget(parentWidget())},
@@ -59,21 +59,19 @@ void PalettePage::updateBrightness(std::uint32_t brightness) {
         color.setHsvF(color.hueF(), color.saturationF(), color.valueF() / 100.0);
         colors[mColorPicker->selectedLight()] = color;
 
-        mPalette = cor::Palette(mPalette.name(), colors, 100);
+        mPalette.colors(colors);
         mColorPicker->updateBrightness(brightness);
     }
 }
 
 void PalettePage::update(std::size_t count, const std::vector<QColor>& colorScheme) {
-    if (colorScheme.empty()) {
+    if (!colorScheme.empty()) {
         if (count > 0) {
             mColorPicker->updateBrightness(colorScheme[0].valueF() * 100.0);
         } else {
             mColorPicker->updateBrightness(100);
         }
-    }
-    if (!colorScheme.empty()) {
-        mPalette = cor::Palette(mPalette.name(), colorScheme, 100);
+        mPalette.colors(colorScheme);
     }
     lightCountChanged(count);
     mColorPicker->updateColorStates(mPalette.colors());
@@ -102,10 +100,6 @@ void PalettePage::setMode(EGroupMode mode) {
         }
         mMode = mode;
     }
-}
-
-cor::Palette PalettePage::palette() {
-    return mPalette;
 }
 
 void PalettePage::resize() {

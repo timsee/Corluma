@@ -86,17 +86,25 @@ void PaletteWidget::paintEvent(QPaintEvent*) {
         }
     } else {
         auto brightness = calculateBrightness(mStates, mBrightnessMode);
+        std::vector<std::pair<QColor, int>> colorAndSizeVector;
         for (const auto& state : mStates) {
             auto renderRegion = generateRenderRegion(gridSize, i);
             renderRegion =
                 correctRenderRegionEdgeCases(renderRegion, geometry(), i, mStates.size());
 
             if (mPreferPalettesOverRoutines) {
-                drawPaletteOnlyLightState(painter, state, brightness, renderRegion);
+                auto results = convertStateColors(state, brightness, renderRegion);
+                colorAndSizeVector.insert(colorAndSizeVector.begin(),
+                                          results.begin(),
+                                          results.end());
             } else {
                 drawLightState(painter, state, brightness, renderRegion);
             }
             ++i;
+        }
+
+        if (mPreferPalettesOverRoutines) {
+            drawColorsFromStates(painter, colorAndSizeVector);
         }
     }
 }
@@ -112,7 +120,7 @@ QRect PaletteWidget::correctRenderRegionEdgeCases(QRect rect,
     return rect;
 }
 
-void PaletteWidget::changeEvent(QEvent* event) {
+void PaletteWidget::changeEvent(QEvent*) {
     // qDebug() << " event " << event->type();
 
     // TODO: this lags on mobile...
@@ -138,6 +146,41 @@ void PaletteWidget::drawSolidColor(QPainter& painter,
     painter.fillRect(renderRect, QBrush(colorCopy));
 }
 
+namespace {
+
+bool sortVectorByHue(const std::pair<QColor, int>& lhs, const std::pair<QColor, int>& rhs) {
+    if (lhs.first.hue() == rhs.first.hue()) {
+        if (lhs.first.saturation() == rhs.first.saturation()) {
+            return (lhs.first.saturationF() > rhs.first.saturationF());
+        } else {
+            return (lhs.first.valueF() > rhs.first.valueF());
+        }
+    } else {
+        return (lhs.first.hueF() < rhs.first.hueF());
+    }
+}
+
+} // namespace
+
+void PaletteWidget::drawColorsFromStates(QPainter& painter,
+                                         std::vector<std::pair<QColor, int>> inputVector) {
+    auto xPos = 0;
+    std::sort(inputVector.begin(), inputVector.end(), sortVectorByHue);
+    auto count = 0u;
+    for (const auto& colorAndSizePair : inputVector) {
+        painter.fillRect(QRect(xPos, 0, colorAndSizePair.second, height()),
+                         QBrush(colorAndSizePair.first));
+        xPos += colorAndSizePair.second;
+        ++count;
+        if (count == inputVector.size() - 1) {
+            if (xPos < width()) {
+                auto remainingArea = width() - xPos;
+                painter.fillRect(QRect(xPos, 0, remainingArea, height()),
+                                 QBrush(colorAndSizePair.first));
+            }
+        }
+    }
+}
 
 void PaletteWidget::drawLightState(QPainter& painter,
                                    const cor::LightState& state,
@@ -150,8 +193,7 @@ void PaletteWidget::drawLightState(QPainter& painter,
                 QColor::fromHsvF(state.color().hueF(), state.color().saturationF(), brightness));
         } else {
             auto paletteCopy = stateCopy.palette();
-            paletteCopy.brightness(brightness * 100.0f);
-            stateCopy.palette(paletteCopy);
+            stateCopy.paletteBrightness(brightness * 100.0f);
         }
     }
     IconData icon;
@@ -160,10 +202,9 @@ void PaletteWidget::drawLightState(QPainter& painter,
 }
 
 
-void PaletteWidget::drawPaletteOnlyLightState(QPainter& painter,
-                                              const cor::LightState& state,
-                                              float brightness,
-                                              const QRect& renderRect) {
+std::vector<std::pair<QColor, int>> PaletteWidget::convertStateColors(const cor::LightState& state,
+                                                                      float brightness,
+                                                                      const QRect& renderRect) {
     auto stateCopy = state;
     if (mBrightnessMode != EBrightnessMode::none) {
         if (state.routine() <= cor::ERoutineSingleColorEnd) {
@@ -171,29 +212,30 @@ void PaletteWidget::drawPaletteOnlyLightState(QPainter& painter,
                 QColor::fromHsvF(state.color().hueF(), state.color().saturationF(), brightness));
         } else {
             auto paletteCopy = stateCopy.palette();
-            paletteCopy.brightness(brightness * 100.0f);
-            stateCopy.palette(paletteCopy);
+            stateCopy.paletteBrightness(brightness * 100.0f);
         }
     }
 
     // TODO: should palette brightness be used here?
     if (!state.isOn()) {
-        painter.fillRect(renderRect, QColor(0, 0, 0));
+        return {std::make_pair(QColor(0, 0, 0), renderRect.width())};
     } else if (state.routine() <= cor::ERoutineSingleColorEnd) {
-        painter.fillRect(renderRect, stateCopy.color());
+        return {std::make_pair(stateCopy.color(), renderRect.width())};
     } else {
         auto colorCount = stateCopy.palette().colors().size();
         auto colorWidth = renderRect.width() / colorCount;
         std::uint32_t i = 0;
+        std::vector<std::pair<QColor, int>> colorAndSizeVector;
         for (auto color : stateCopy.palette().colors()) {
             QRect rect(renderRect.x() + i * colorWidth,
                        renderRect.y(),
                        colorWidth,
                        renderRect.height());
-            rect = correctRenderRegionEdgeCases(rect, renderRect, i, colorCount);
-            painter.fillRect(rect, color);
+            // rect = correctRenderRegionEdgeCases(rect, renderRect, i, colorCount);
+            colorAndSizeVector.push_back(std::make_pair(color, rect.width()));
             ++i;
         }
+        return colorAndSizeVector;
     }
 }
 
@@ -229,7 +271,7 @@ float PaletteWidget::calculateBrightness(const std::vector<cor::LightState>& sta
                 if (state.routine() <= cor::ERoutineSingleColorEnd) {
                     bright += state.color().valueF();
                 } else {
-                    bright += state.palette().brightness() / 100.0f;
+                    bright += state.paletteBrightness() / 100.0f;
                 }
             }
         }
@@ -246,8 +288,8 @@ float PaletteWidget::calculateBrightness(const std::vector<cor::LightState>& sta
                     bright = state.color().valueF();
                 }
             } else {
-                if (state.palette().brightness() > bright) {
-                    bright = state.palette().brightness() / 100.0f;
+                if (state.paletteBrightness() > bright) {
+                    bright = state.paletteBrightness() / 100.0f;
                 }
             }
         }

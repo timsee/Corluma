@@ -141,7 +141,6 @@ void DataSyncHue::endOfSync() {
         mCleanupStartTime = QElapsedTimer();
         mCleanupStartTime.start();
     }
-
     emit statusChanged(mType, true);
 
     // update schedules of hues to
@@ -175,7 +174,7 @@ bool DataSyncHue::sync(const cor::Light& dataDevice, const cor::Light& commDevic
             auto color = dataState.color();
 
             // add brightness into lights
-            if (cor::colorDifference(color, commState.color()) > 0.02f) {
+            if (cor::colorDifference(color, commState.color()) > 0.01f) {
                 QJsonObject routineObject;
                 routineObject["routine"] = routineToString(ERoutine::singleSolid);
                 routineObject["hue"] = dataState.color().hueF();

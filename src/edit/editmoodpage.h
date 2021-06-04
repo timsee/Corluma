@@ -22,13 +22,17 @@ namespace cor {
 class EditMoodPage : public cor::EditPage {
     Q_OBJECT
 public:
-    explicit EditMoodPage(QWidget* parent, CommLayer* comm, GroupData* groups, cor::LightList* data)
+    explicit EditMoodPage(QWidget* parent,
+                          CommLayer* comm,
+                          GroupData* groups,
+                          PaletteData* palettes,
+                          cor::LightList* data)
         : EditPage(parent, comm, groups, true),
           mComm{comm},
           mData{data},
           mMetadataWidget{new ChooseMetadataWidget(this, true)},
-          mLightsStateWidget{new ChooseMoodLightStatesWidget(this, comm, groups)},
-          mGroupsStateWidget{new ChooseMoodGroupStatesWidget(this, groups)},
+          mLightsStateWidget{new ChooseMoodLightStatesWidget(this, comm, groups, palettes)},
+          mGroupsStateWidget{new ChooseMoodGroupStatesWidget(this, groups, palettes)},
           mReviewPage{new ReviewMoodWidget(this, comm, groups)} {
         setupWidgets({mMetadataWidget, mLightsStateWidget, mGroupsStateWidget, mReviewPage});
 

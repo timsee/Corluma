@@ -12,7 +12,7 @@
 #include "comm/nanoleaf/leafschedule.h"
 #include "comm/upnpdiscovery.h"
 #include "commtype.h"
-#include "cor/presetpalettes.h"
+#include "data/palettedata.h"
 
 /*!
  * \copyright
@@ -29,7 +29,7 @@ class CommNanoleaf : public CommType {
     Q_OBJECT
 public:
     /// constructor
-    CommNanoleaf();
+    CommNanoleaf(PaletteData* palettes);
 
     /// destructor
     ~CommNanoleaf() = default;
@@ -233,8 +233,8 @@ private:
     /// pointer to the UPnPDiscovery object.
     UPnPDiscovery* mUPnP;
 
-    /// preset data for palettes from ArduCor
-    PresetPalettes mPresetPalettes;
+    /// pointer to global palette data
+    PaletteData* mPalettes;
 
     /// handles converting packets from Json from nanolefs to Corluma data types and vice versa
     nano::LeafPacketParser mPacketParser;

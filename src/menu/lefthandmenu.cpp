@@ -13,7 +13,6 @@
 #include <QStyleOption>
 
 #include "cor/objects/light.h"
-#include "cor/presetpalettes.h"
 #include "utils/qt.h"
 
 /// disables the light menu for debugging light menus in other places.
@@ -61,7 +60,7 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     //---------------
 
     mLightsButton =
-        new LeftHandButton("Lights", EPage::lightsPage, ":/images/lights_icon.png", this);
+        new LeftHandButton("Light Settings", EPage::lightsPage, ":/images/lights_icon.png", this);
     mLightsButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mLightsButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
     mLightsButton->shouldHightlght(true);
@@ -85,7 +84,7 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     connect(mMoodButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
     mSettingsButton =
-        new LeftHandButton("Settings", EPage::settingsPage, ":/images/settingsgear.png", this);
+        new LeftHandButton("App Settings", EPage::settingsPage, ":/images/settingsgear.png", this);
     mSettingsButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mSettingsButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
@@ -135,12 +134,9 @@ void LeftHandMenu::resize() {
 
     mStateWidget->setGeometry(0, 0, width, buttonHeight * 0.2);
 
-    auto yPos = mStateWidget->height() + int(height() * 0.02);
+    auto yPos = mStateWidget->height();
 
     mSpacer->setGeometry(0, 0, width, height());
-
-    mLightsButton->setGeometry(0, yPos, width, buttonHeight);
-    yPos += mLightsButton->height();
 
     mSingleColorButton->setGeometry(0, yPos, width, buttonHeight);
     yPos += mSingleColorButton->height();
@@ -155,6 +151,9 @@ void LeftHandMenu::resize() {
     mTimeoutButton->setGeometry(0, yPos, width, buttonHeight);
     yPos += mTimeoutButton->height();
 #endif
+
+    mLightsButton->setGeometry(0, yPos, width, buttonHeight);
+    yPos += mLightsButton->height();
 
     mSettingsButton->setGeometry(0, yPos, width, buttonHeight);
     yPos += mSettingsButton->height();

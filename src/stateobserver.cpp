@@ -276,14 +276,14 @@ void StateObserver::computeState() {
                 state.param(mPalettePage->routines()->state().param());
                 auto palette = mPalettePage->palette();
                 if (mPalettePage->colorPicker()->currentScheme() != EColorSchemeType::custom) {
-                    palette.brightness(mTopMenu->globalBrightness()->brightness());
+                    state.paletteBrightness(mTopMenu->globalBrightness()->brightness());
                 }
                 state.palette(palette);
             } else if (mPalettePage->mode() == EGroupMode::presets
                        || mPalettePage->mode() == EGroupMode::routines) {
                 state.param(mPalettePage->routines()->state().param());
                 auto palette = mPalettePage->palette();
-                palette.brightness(mTopMenu->globalBrightness()->brightness());
+                state.paletteBrightness(mTopMenu->globalBrightness()->brightness());
                 state.palette(palette);
             }
             mPalettePage->routines()->highlightRoutine(state.routine(), state.param());

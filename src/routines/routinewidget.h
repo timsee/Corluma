@@ -6,10 +6,12 @@
 #include "cor/stylesheets.h"
 #include "cor/widgets/checkbox.h"
 #include "icondata.h"
+#include "utils/painterutils.h"
 
 #include <QPainter>
 #include <QPainterPath>
 #include <QStyleOption>
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2021.
@@ -26,6 +28,7 @@ public:
         : QWidget(parent),
           mLeftWidgetSize{30, 10},
           mProtocol{EProtocolType::arduCor},
+          mRectOptions{cor::EPaintRectOptions::noBottom},
           mCheckBox{new cor::CheckBox(this)},
           mName{new QLabel(name, this)},
           mIcon{new QLabel(this)} {
@@ -51,6 +54,9 @@ public:
 
     /// getter for current routine
     ERoutine routine() { return mState.routine(); }
+
+    /// change the outline options for the widget.
+    void rectOptions(cor::EPaintRectOptions rectOptions) { mRectOptions = rectOptions; }
 
     /// handles whether the widget is selected or not based off of its routine.
     virtual void selectRoutine(ERoutine routine, int) {
@@ -86,11 +92,9 @@ protected:
         auto rect = QRect(0, 0, width(), height());
 
         painter.setRenderHint(QPainter::Antialiasing);
-        painter.fillRect(rect, cor::computeHighlightColor(0, 1));
+        painter.fillRect(rect, cor::kBackgroundColor);
 
-        QPainterPath path;
-        path.addRect(rect);
-        painter.drawPath(path);
+        cor::paintRect(painter, rect, mRectOptions);
     }
 
     /*!
@@ -155,6 +159,9 @@ protected:
 
     /// size for icon
     QSize mIconSize;
+
+    /// stores the outlien options for the widget.
+    cor::EPaintRectOptions mRectOptions;
 
     /// checkbox for selecting/deselecting a routine.
     cor::CheckBox* mCheckBox;

@@ -54,7 +54,7 @@ SettingsPage::SettingsPage(QWidget* parent,
               "Reset",
               "Copyright"},
       mButtons{mTitles.size()},
-      mCopyrightWidget{new cor::WebView("Copyright", ":/resources/Copyright.html", this)},
+      mCopyrightWidget{new cor::WebView("Copyright", ":/resources/Copyright.html", parentWidget())},
       mComm{comm},
       mGreyOut{new GreyOutOverlay(false, parentWidget())},
       mRowHeight{10u} {
@@ -92,7 +92,7 @@ SettingsPage::SettingsPage(QWidget* parent,
             mSectionLabels[sectionIndex] =
                 new QLabel(mSectionTitles[sectionIndex].c_str(), mScrollAreaWidget);
             mSectionLabels[sectionIndex]->setStyleSheet(
-                "font:bold; font-size:20pt; color:rgba(61, 142, 201,255);");
+                "font:bold; font-size:20pt; color:rgba(61, 142, 201, 255);");
             sectionIndex++;
         }
         mButtons[x] = new SettingsButton(QString(mTitles[x].c_str()), mScrollAreaWidget);
@@ -167,8 +167,9 @@ void SettingsPage::resize() {
 
     resizeScrollArea();
 
-    QRect shownWidget = geometry();
-    QRect hiddenWidget = QRect(0, geometry().height(), width(), height());
+    QRect shownWidget = QRect(0, 0, parentWidget()->width(), parentWidget()->height());
+    QRect hiddenWidget =
+        QRect(0, parentWidget()->height(), parentWidget()->width(), parentWidget()->height());
 
     switch (mCurrentWebView) {
         case ECorlumaWebView::copyright:
@@ -316,7 +317,7 @@ void SettingsPage::showWebView(ECorlumaWebView newWebView) {
                 return;
         }
 
-        cor::moveWidget(widget, QPoint(0, widget->height()), QPoint(0, 0));
+        cor::moveWidget(widget, QPoint(0, parentWidget()->height()), QPoint(0, 0));
 
         widget->raise();
     }

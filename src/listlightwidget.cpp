@@ -137,9 +137,9 @@ void ListLightWidget::paintEvent(QPaintEvent*) {
 
     // handle highlight
     if (mIsChecked && mShouldHighlight) {
-        painter.fillRect(rect(), QBrush(QColor(61, 142, 201)));
+        painter.fillRect(rect(), QBrush(cor::kHighlightColor));
     } else {
-        painter.fillRect(rect(), QBrush(QColor(32, 31, 31)));
+        painter.fillRect(rect(), QBrush(cor::kBackgroundColor));
     }
 
     QRect stateIconRect = stateIconRegion();
@@ -159,7 +159,7 @@ void ListLightWidget::paintEvent(QPaintEvent*) {
             // generate a brightness for the state
             double brightness = mState.color().valueF();
             if (mState.routine() > cor::ERoutineSingleColorEnd) {
-                brightness = mState.palette().brightness() / 100.0;
+                brightness = mState.paletteBrightness() / 100.0;
             }
 
             // scale down the width of the rect of the state icon, to show how bright it is

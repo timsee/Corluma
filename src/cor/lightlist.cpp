@@ -12,7 +12,6 @@
 #include <vector>
 
 #include "comm/nanoleaf/leafprotocols.h"
-#include "cor/presetpalettes.h"
 #include "utils/color.h"
 
 #define MAX_SPEED 200
@@ -51,7 +50,7 @@ void LightList::updateState(const cor::LightState& newState) {
                 // apply brightness
                 color.setHsvF(color.hueF(),
                               color.saturationF(),
-                              newState.palette().brightness() / 100.0);
+                              color.valueF() * newState.paletteBrightness() / 100.0);
                 stateCopy.color(color);
                 ++hueCount;
             }
@@ -112,7 +111,7 @@ void LightList::updateBrightness(std::uint32_t brightness) {
                 // apply brightness
                 color.setHsvF(color.hueF(),
                               color.saturationF(),
-                              state.palette().brightness() / 100.0);
+                              color.valueF() * state.paletteBrightness() / 100.0);
                 state.color(color);
                 ++huePaletteCount;
             }
@@ -130,7 +129,7 @@ std::uint32_t LightList::brightness() {
         if (state.routine() <= cor::ERoutineSingleColorEnd) {
             brightnessSum += std::uint32_t(state.color().valueF() * 100.0);
         } else {
-            brightnessSum += state.palette().brightness();
+            brightnessSum += state.paletteBrightness();
         }
     }
     if (!empty()) {
@@ -226,7 +225,9 @@ void LightList::updateColorScheme(std::vector<QColor> colors) {
         } else if (light.protocol() == EProtocolType::nanoleaf) {
             state.customCount(colors.size());
             state.isOn(true);
-            state.customPalette(Palette("*Custom*", colors, 100u));
+            auto palette = cor::CustomPalette(colors);
+            state.paletteBrightness(100u);
+            state.customPalette(palette);
             if (state.routine() <= cor::ERoutineSingleColorEnd) {
                 state.routine(ERoutine::multiGlimmer);
             }

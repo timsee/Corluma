@@ -7,6 +7,7 @@
 
 #include "comm/arducor/arducormetadata.h"
 #include "cor/protocols.h"
+#include "data/palettedata.h"
 
 /*!
  * \copyright
@@ -27,7 +28,7 @@ public:
     /*!
      * \brief ArduCorPacketParser constructor
      */
-    ArduCorPacketParser(QObject* parent = nullptr);
+    ArduCorPacketParser(QObject* parent, PaletteData* palettes);
 
     /*!
      * \brief parsePacket take a packet that is assumed to be a properly formatted command packet
@@ -137,6 +138,9 @@ signals:
 private:
     /// parses an int vector representation of a routine object.
     void routineChange(const std::vector<int>& intVector);
+
+    /// pointer to global palette data
+    PaletteData* mPalettes;
 };
 
 #endif // COMMPACKETPARSER_H

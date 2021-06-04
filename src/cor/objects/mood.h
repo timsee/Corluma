@@ -136,7 +136,6 @@ public:
     QJsonObject toJson() const noexcept {
         QJsonObject object;
         object["name"] = name();
-        object["isMood"] = true;
         object["uniqueID"] = double(uniqueID());
 
         // create string of jsondata to add to file

@@ -23,9 +23,10 @@
 //#define DEBUG_LEAF_TOUCHY
 
 
-CommNanoleaf::CommNanoleaf()
+CommNanoleaf::CommNanoleaf(PaletteData* palettes)
     : CommType(ECommType::nanoleaf),
       mUPnP{nullptr},
+      mPalettes{palettes},
       mPacketParser{},
       mScheduleTimer{new QTimer(this)},
       mEffectTimer{new QTimer(this)} {

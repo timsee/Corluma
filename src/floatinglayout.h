@@ -5,7 +5,6 @@
 #include <QPushButton>
 #include <QWidget>
 
-#include "cor/presetpalettes.h"
 #include "cor/widgets/button.h"
 
 /// size of buttons in widget
@@ -120,9 +119,6 @@ private slots:
     void handleButtonPressed(int);
 
 private:
-    /// preset data for palettes from ArduCor
-    PresetPalettes mPalettes;
-
     /*!
      * \brief isALightsButton true if button at index is a lights button, false if its not or if the
      * index is out of range \param index index of button that you want to check if its a

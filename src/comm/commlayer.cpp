@@ -23,10 +23,12 @@
 #include "comm/commudp.h"
 #include "comm/upnpdiscovery.h"
 
-CommLayer::CommLayer(QObject* parent, GroupData* parser) : QObject(parent), mGroups(parser) {
+CommLayer::CommLayer(QObject* parent, GroupData* parser, PaletteData* palettes)
+    : QObject(parent),
+      mGroups(parser) {
     mUPnP = new UPnPDiscovery(this);
 
-    mArduCor = new CommArduCor(this);
+    mArduCor = new CommArduCor(this, palettes);
     connect(mArduCor, SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
     connect(mArduCor,
             SIGNAL(newLightsFound(ECommType, std::vector<QString>)),
@@ -37,7 +39,7 @@ CommLayer::CommLayer(QObject* parent, GroupData* parser) : QObject(parent), mGro
             this,
             SLOT(deletedLights(ECommType, std::vector<QString>)));
 
-    mNanoleaf = new CommNanoleaf();
+    mNanoleaf = new CommNanoleaf(palettes);
     connect(mNanoleaf, SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
     connect(mNanoleaf,
             SIGNAL(newLightsFound(ECommType, std::vector<QString>)),

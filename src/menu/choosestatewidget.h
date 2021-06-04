@@ -9,7 +9,6 @@
 #include <QWidget>
 #include "colorpicker/singlecolorpicker.h"
 #include "cor/objects/lightstate.h"
-#include "cor/presetpalettes.h"
 #include "floatinglayout.h"
 #include "palettescrollarea.h"
 #include "routines/routinecontainer.h"
@@ -23,7 +22,7 @@
 class ChooseStateWidget : public QWidget {
     Q_OBJECT
 public:
-    explicit ChooseStateWidget(QWidget* parent);
+    explicit ChooseStateWidget(QWidget* parent, PaletteData* palettes);
 
     /// true if should be enabled, false if user cannot interact
     void enable(bool shouldEnable);
@@ -94,9 +93,6 @@ private:
 
     /// floating layout at the top of the widget
     FloatingLayout* mTopFloatingLayout;
-
-    /// stores preset palettes to switch from EPalette enum to Palette objects
-    PresetPalettes mPresetPalettes;
 
     /// protocol type, impacts what features are available
     EProtocolType mProtocol;

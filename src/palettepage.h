@@ -4,7 +4,7 @@
 
 #include "colorpicker/multicolorpicker.h"
 #include "cor/objects/page.h"
-#include "cor/presetpalettes.h"
+#include "data/palettedata.h"
 #include "greyoutoverlay.h"
 #include "palettedetailedwidget.h"
 #include "routines/routinecontainer.h"
@@ -44,7 +44,7 @@ public:
     /*!
      * \brief Constructor
      */
-    explicit PalettePage(QWidget* parent);
+    explicit PalettePage(QWidget* parent, PaletteData* palettes);
 
     /// called whenever the app's light data is updated in a way that would impact the PalettePage
     /// (IE the number of selected lights changed)
@@ -78,7 +78,7 @@ public:
     const std::vector<QColor>& colorScheme() const noexcept { return mPalette.colors(); }
 
     /// creates a palette based on the settings of its pages
-    cor::Palette palette();
+    cor::Palette palette() { return mPalette; }
 
     /// getter for the routine
     RoutineContainer* routines() { return mRoutineWidget; }
@@ -120,9 +120,6 @@ private:
 
     /// palette that is currently selected.
     cor::Palette mPalette;
-
-    /// preset data for palettes from ArduCor
-    PresetPalettes mPresetPalettes;
 
     /// scroll area that displays the palettes
     PaletteScrollArea* mPaletteScrollArea;

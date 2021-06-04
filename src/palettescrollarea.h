@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QScrollArea>
 
+#include "data/palettedata.h"
 #include "storedpalettewidget.h"
 
 /*!
@@ -19,7 +20,7 @@ class PaletteScrollArea : public QScrollArea {
     Q_OBJECT
 public:
     /// constructor
-    explicit PaletteScrollArea(QWidget* parent);
+    explicit PaletteScrollArea(QWidget* parent, PaletteData* palettes);
 
     /*!
      * \brief highlightRoutineButton highlights the button that implements
@@ -57,6 +58,9 @@ private:
      * \brief mPresetHueLayout layout of all hue preset widgets.
      */
     QGridLayout* mLayout;
+
+    /// applies an outline to the widget.
+    PaletteData* mPalettes;
 };
 
 #endif // PALETTESCROLLAREA_H

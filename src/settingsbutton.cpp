@@ -65,9 +65,17 @@ void SettingsButton::paintEvent(QPaintEvent*) {
 
     // paint background
     if (mIsHighlighted) {
-        painter.fillRect(rect(), QBrush(QColor(61, 142, 201, transparency)));
+        painter.fillRect(rect(),
+                         QBrush(QColor(cor::kHighlightColor.red(),
+                                       cor::kHighlightColor.green(),
+                                       cor::kHighlightColor.blue(),
+                                       transparency)));
     } else {
-        painter.fillRect(rect(), QBrush(QColor(32, 31, 31, transparency)));
+        painter.fillRect(rect(),
+                         QBrush(QColor(cor::kBackgroundColor.red(),
+                                       cor::kBackgroundColor.green(),
+                                       cor::kBackgroundColor.blue(),
+                                       transparency)));
     }
 
     // paint top line

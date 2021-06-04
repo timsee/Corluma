@@ -32,9 +32,9 @@ void SyncStatus::syncStatusChanged(EDataSyncType type, bool status) {
     //    qDebug() << " Hue: " << mHueInSync << " ArduCor: " << mArduCorInSync
     //             << " Nanoleaf: " << mNanoleafInSync << " Settings : " << mSettingsInSync;
     //    qDebug() << " was in sync " << wasInSync << " vs " << nowInSync;
-    if (wasInSync != nowInSync) {
-        emit statusChanged(nowInSync);
-    }
+    // if (wasInSync != nowInSync) {
+    emit statusChanged(nowInSync);
+    //  }
 }
 
 bool SyncStatus::inSync() {
