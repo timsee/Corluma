@@ -1,5 +1,5 @@
-#ifndef PARENTDATA_H
-#define PARENTDATA_H
+#ifndef GROUPPARENTDATA_H
+#define GROUPPARENTDATA_H
 /*!
  * \copyright
  * Copyright (C) 2015 - 2020.
@@ -20,12 +20,12 @@
  * in a bedroom, then it is not a parent group, since the bedroom encompasses all the lights for the
  * desk as well.
  */
-class ParentData {
+class GroupParentData {
 public:
-    ParentData() = default;
+    GroupParentData() = default;
 
     /// getter for all parents
-    const std::vector<std::uint64_t>& parents() const noexcept { return mParents; }
+    const std::vector<std::uint64_t>& keys() const noexcept { return mParents; }
 
     /**
      * @brief updateParentGroups looks at all groups, all rooms, and all subgroups, and determines
@@ -66,4 +66,4 @@ private:
 };
 
 
-#endif // PARENTDATA_H
+#endif // GROUPPARENTDATA_H

@@ -6,7 +6,6 @@
 #include <QTimer>
 
 #include "cor/lightlist.h"
-#include "data/groupdata.h"
 #include "datasync.h"
 
 /*!

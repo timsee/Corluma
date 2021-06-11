@@ -32,10 +32,10 @@ class MoodPage : public QWidget, public cor::Page {
     Q_OBJECT
 public:
     /// constructor
-    explicit MoodPage(QWidget* parent, GroupData* groups, CommLayer* comm);
+    explicit MoodPage(QWidget* parent, AppData* appData, CommLayer* comm);
 
     /// called when the widget is shown
-    void show(std::uint64_t currentMood);
+    void show(const QString& currentMood);
 
     /// update the moods.
     void updateMoods();
@@ -50,7 +50,7 @@ public:
     void resize();
 
     /// getter for current mood
-    const std::uint64_t& currentMood() { return mCurrentMood; }
+    const QString& currentMood() { return mCurrentMood; }
 
     /// used during complete reloads, this deletes all existing widgets
     void clearWidgets();
@@ -70,7 +70,7 @@ private slots:
      * \param collectionkey key for cllection of lights that the mood fits into
      * \param moodKey key for the mood
      */
-    void selectedMood(const QString& collectionkey, std::uint64_t moodKey);
+    void selectedMood(const QString& collectionkey, const QString& moodKey);
 
     /*!
      * \brief newMoodAdded handles whenever a new mood was created on the edit page.
@@ -84,10 +84,10 @@ private slots:
     void detailedClosePressed();
 
     /// called when a request for a detailed mood is sent
-    void detailedMoodDisplay(std::uint64_t key);
+    void detailedMoodDisplay(QString key);
 
     /// called when a mood is selected
-    void moodSelected(std::uint64_t);
+    void moodSelected(QString);
 
 protected:
     /*!
@@ -99,8 +99,8 @@ private:
     /// check if any moods exist and handle which widgets are showing based off of this information.
     void checkForMissingMoods();
 
-    /// groups parser
-    GroupData* mGroups;
+    /// saved mood data, persistent between reloading the app
+    MoodData* mMoodData;
 
     /// comm layer
     CommLayer* mComm;
@@ -120,7 +120,7 @@ private:
     GreyOutOverlay* mGreyOut;
 
     /// current mood based on the state of lights
-    std::uint64_t mCurrentMood;
+    QString mCurrentMood;
 };
 
 #endif // MOODPAGE_H

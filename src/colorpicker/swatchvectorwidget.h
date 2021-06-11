@@ -53,11 +53,6 @@ public:
 
 signals:
     /*!
-     * \brief multiColorCountChanged number of colors to use during multi color routines changed.
-     */
-    void multiColorCountChanged(int);
-
-    /*!
      * \brief selectedCountChanged a button was pressed so the selected count has changed. emits new
      * count.
      */

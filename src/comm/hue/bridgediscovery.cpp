@@ -11,19 +11,19 @@
 #include <QStandardPaths>
 
 #include "comm/commhue.h"
-#include "data/groupdata.h"
+#include "data/appdata.h"
 #include "utils/qt.h"
 
 //#define DEBUG_BRIDGE_DISCOVERY
 
 namespace hue {
 
-BridgeDiscovery::BridgeDiscovery(QObject* parent, UPnPDiscovery* UPnP, GroupData* groups)
+BridgeDiscovery::BridgeDiscovery(QObject* parent, UPnPDiscovery* UPnP, AppData* appData)
     : QObject(parent),
       cor::JSONSaveData("hue"),
       mUPnP{UPnP},
       mLastTime{0},
-      mGroups{groups},
+      mAppData{appData},
       mReceivedNUPnPTraffic{false} {
     mHue = qobject_cast<CommHue*>(parent);
     connect(UPnP,
@@ -152,15 +152,15 @@ void BridgeDiscovery::updateGroupsAndRooms(const hue::Bridge& bridge,
         auto foundBridge = bridgeResult.first;
         foundBridge.groupsWithIDs(groups);
         mFoundBridges.update(foundBridge.id().toStdString(), foundBridge);
-        mGroups->updateExternallyStoredGroups(foundBridge.groups(), foundBridge.lightIDs());
-        mGroups->updateExternallyStoredGroups(foundBridge.rooms(), foundBridge.lightIDs());
+        mAppData->updateExternallyStoredGroups(foundBridge.groups(), foundBridge.lightIDs());
+        mAppData->updateExternallyStoredGroups(foundBridge.rooms(), foundBridge.lightIDs());
     }
 }
 
 void BridgeDiscovery::reloadGroupData() {
     for (const auto& bridge : mFoundBridges.items()) {
-        mGroups->updateExternallyStoredGroups(bridge.groups(), bridge.lightIDs());
-        mGroups->updateExternallyStoredGroups(bridge.rooms(), bridge.lightIDs());
+        mAppData->updateExternallyStoredGroups(bridge.groups(), bridge.lightIDs());
+        mAppData->updateExternallyStoredGroups(bridge.rooms(), bridge.lightIDs());
     }
 }
 
@@ -812,7 +812,7 @@ bool BridgeDiscovery::deleteBridge(const hue::Bridge& bridge) {
 
 std::uint64_t BridgeDiscovery::keyFromGroupName(const QString& name) {
     // check for ID in GroupsParser in case they get merged
-    for (const auto& group : mGroups->groupDict().items()) {
+    for (const auto& group : mAppData->groups()->groupDict().items()) {
         if (group.name() == name) {
             return group.uniqueID();
         }

@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include "cor/widgets/groupbutton.h"
-#include "data/groupdata.h"
+#include "data/appdata.h"
 
 /*!
  * \copyright
@@ -17,7 +17,7 @@
 class MenuGroupContainer : public QWidget {
     Q_OBJECT
 public:
-    explicit MenuGroupContainer(QWidget* parent, GroupData* groups);
+    explicit MenuGroupContainer(QWidget* parent, GroupData* groupData);
 
     /// shows the groups with the names provided
     void showGroups(std::vector<std::uint64_t> groups, int buttonHeight);

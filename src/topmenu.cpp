@@ -17,7 +17,6 @@
 TopMenu::TopMenu(QWidget* parent,
                  cor::LightList* data,
                  CommLayer* comm,
-                 GroupData* groups,
                  AppSettings* appSettings,
                  MainWindow* mainWindow,
                  LightsPage* lightsPage,
@@ -30,7 +29,6 @@ TopMenu::TopMenu(QWidget* parent,
       mFloatingMenuStart{int(cor::applicationSize().height() * 0.1f)},
       mData(data),
       mComm(comm),
-      mGroups(groups),
       mAppSettings{appSettings},
       mMainWindow(mainWindow),
       mPalettePage(palettePage),
@@ -82,7 +80,9 @@ TopMenu::TopMenu(QWidget* parent,
             SIGNAL(buttonPressed(QString)),
             this,
             SLOT(floatingLayoutButtonPressed(QString)));
-    mPaletteFloatingLayout->setupButtons({QString("Preset"), QString("HSV")}, EButtonSize::small);
+    mPaletteFloatingLayout->setupButtons(
+        {QString("Preset"), QString("HSV"), QString("New_Palette")},
+        EButtonSize::small);
     mPaletteFloatingLayout->highlightButton("Preset");
 
     connect(mPaletteAndRoutineFloatingLayout,
@@ -90,7 +90,7 @@ TopMenu::TopMenu(QWidget* parent,
             this,
             SLOT(floatingLayoutButtonPressed(QString)));
     mPaletteAndRoutineFloatingLayout->setupButtons(
-        {QString("Preset"), QString("HSV"), QString("Routine")},
+        {QString("Preset"), QString("HSV"), QString("New_Palette"), QString("Routine")},
         EButtonSize::small);
     mPaletteAndRoutineFloatingLayout->highlightButton("Preset");
 
@@ -352,6 +352,8 @@ void TopMenu::floatingLayoutButtonPressed(const QString& button) {
     } else if (button.contains("Plus") || button.contains("Help")) {
         emit buttonPressed(button);
         mAddLightsFloatingLayout->highlightButton("");
+    } else if (button == "New_Palette") {
+        mPalettePage->pushInNewPalettePage();
     } else {
         qDebug() << "I don't recognize that button type..." << button;
     }

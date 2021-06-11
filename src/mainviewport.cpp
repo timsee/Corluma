@@ -12,22 +12,22 @@
 MainViewport::MainViewport(MainWindow* parent,
                            CommLayer* comm,
                            cor::LightList* data,
-                           GroupData* groups,
+                           AppData* appData,
                            PaletteData* palettes,
                            AppSettings* settings,
                            DataSyncTimeout* dataSyncTimeout)
     : QWidget(parent),
       mComm{comm},
       mData{data},
-      mGroups{groups},
+      mAppData{appData},
       mAppSettings{settings},
       mMainWindow{parent},
       mLightsPage{new LightsPage(parent, comm, data, settings)},
       mColorPage{new ColorPage(parent)},
       mPalettePage{new PalettePage(parent, palettes)},
-      mMoodPage{new MoodPage(parent, groups, comm)},
+      mMoodPage{new MoodPage(parent, appData, comm)},
       mTimeoutPage{new TimeoutPage(parent, comm, data, dataSyncTimeout)},
-      mSettingsPage{new SettingsPage(parent, mGroups, mComm, mAppSettings)} {
+      mSettingsPage{new SettingsPage(parent, mAppData, mComm, mAppSettings)} {
     // NOTE: this is mood page so that it doesn't default to light page on so when light page
     //      is turned on, we can use standard functions
     mPageIndex = EPage::moodPage;
@@ -200,7 +200,7 @@ void MainViewport::showMainPage(EPage page, bool skipTransition) {
 }
 
 void MainViewport::loadMoodPage() {
-    mMoodPage->show(mData->findCurrentMood(mGroups->moods()));
+    mMoodPage->show(mData->findCurrentMood(mAppData->moods()->moods()));
 }
 
 void MainViewport::hideMainPage(EPage page) {

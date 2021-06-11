@@ -1322,3 +1322,11 @@ _This update begins to address the alpha user's UX issues and also reworks how P
 - Fixed the whitespace on certain widgets.
 - Rearranged the `TopMenu` bar.
 - Simplified the `cor::PaletteWidget` display when showing the state.
+
+### **v0.22.00**
+### The Palette Update Part 2
+_Json save data from previous versions will no longer work._
+- Added UI elements to create and delete custom palettes.
+- Refactored `GroupData` to be `AppData`. Added `PaletteData` as a member of `AppData`.
+- Moods now use a UUID for their unique ID instead of an integer.
+- Added a `MenuPaletteContainer`.

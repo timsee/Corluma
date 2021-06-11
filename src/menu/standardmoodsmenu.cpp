@@ -22,16 +22,16 @@ void initScrollArea(QWidget* widget, QScrollArea* scrollArea) {
 } // namespace
 
 
-StandardMoodsMenu::StandardMoodsMenu(QWidget* widget, CommLayer* comm, GroupData* groups)
+StandardMoodsMenu::StandardMoodsMenu(QWidget* widget, CommLayer* comm, AppData* appData)
     : QWidget(widget),
       mComm{comm},
-      mGroups{groups},
+      mAppData{appData},
       mState{EState::noMoods},
       mCurrentParent{0u},
       mWidgetHeight{0u},
       mParentScrollArea{new QScrollArea(this)},
       mParentWidget{new cor::GroupButton("", "", this)},
-      mParentGroupContainer{new MenuParentGroupContainer(mParentScrollArea, groups)},
+      mParentGroupContainer{new MenuParentGroupContainer(mParentScrollArea, appData)},
       mMoodScrollArea{new QScrollArea(this)},
       mMoodContainer{new MenuMoodContainer(mMoodScrollArea)} {
     mParentWidget->setVisible(false);
@@ -49,10 +49,7 @@ StandardMoodsMenu::StandardMoodsMenu(QWidget* widget, CommLayer* comm, GroupData
             this,
             SLOT(parentGroupClicked(std::uint64_t)));
 
-    connect(mMoodContainer,
-            SIGNAL(moodSelected(std::uint64_t)),
-            this,
-            SLOT(selectMood(std::uint64_t)));
+    connect(mMoodContainer, SIGNAL(moodSelected(QString)), this, SLOT(selectMood(QString)));
 
     initScrollArea(mParentGroupContainer, mParentScrollArea);
     initScrollArea(mMoodContainer, mMoodScrollArea);
@@ -98,8 +95,8 @@ void StandardMoodsMenu::resizeEvent(QResizeEvent*) {
 
 void StandardMoodsMenu::updateState() {
     // find the state of the lights
-    if (mState == EState::noMoods && !mGroups->moodParents().empty()) {
-        if (mGroups->moodParents().size() > 1) {
+    if (mState == EState::noMoods && !mAppData->moodParents().empty()) {
+        if (mAppData->moodParents().roomMoodMap().size() > 1) {
             changeState(EState::parents);
         } else {
             changeState(EState::moods);
@@ -129,12 +126,12 @@ void StandardMoodsMenu::changeState(EState state) {
 void StandardMoodsMenu::changeStateToParents() {
     changeState(EState::parents);
     std::vector<cor::Group> parentGroups;
-    for (const auto& moodParent : mGroups->moodParents()) {
+    for (const auto& moodParent : mAppData->moodParents().roomMoodMap()) {
         // generate group name
         if (moodParent.first == 0u) {
-            parentGroups.push_back(mGroups->orphanGroup());
+            parentGroups.push_back(mAppData->lightOrphans().group());
         } else {
-            parentGroups.push_back(mGroups->groupFromID(moodParent.first));
+            parentGroups.push_back(mAppData->groups()->groupFromID(moodParent.first));
         }
     }
 
@@ -152,19 +149,19 @@ void StandardMoodsMenu::changeStateToMoods() {
     // use the current parent as default for the mood
     auto ID = mCurrentParent;
     // if theres only one parent, just show all moods.
-    if (mGroups->moodParents().size() == 1) {
-        for (const auto& keyValuePair : mGroups->moodParents()) {
+    if (mAppData->moodParents().roomMoodMap().size() == 1) {
+        for (const auto& keyValuePair : mAppData->moodParents().roomMoodMap()) {
             ID = keyValuePair.first;
         }
     }
     mMoodContainer->setFixedWidth(this->width());
 
-    auto moodResult = mGroups->moodParents().find(ID);
-    if (moodResult != mGroups->moodParents().end()) {
+    auto moodResult = mAppData->moodParents().roomMoodMap().find(ID);
+    if (moodResult != mAppData->moodParents().roomMoodMap().end()) {
         auto moodIDs = moodResult->second;
         std::vector<cor::Mood> moodVector;
         for (auto moodID : moodIDs) {
-            moodVector.push_back(mGroups->moodFromID(moodID));
+            moodVector.push_back(mAppData->moods()->moodFromID(moodID));
         }
         mMoodContainer->showMoods(moodVector, mWidgetHeight * 2);
     } else {
@@ -173,7 +170,7 @@ void StandardMoodsMenu::changeStateToMoods() {
     resize();
 }
 
-void StandardMoodsMenu::selectMood(std::uint64_t key) {
+void StandardMoodsMenu::selectMood(QString key) {
     emit moodClicked(key);
 }
 
@@ -182,7 +179,7 @@ void StandardMoodsMenu::parentGroupClicked(std::uint64_t key) {
     if (key == 0u) {
         parentName = "Miscellaneous";
     } else {
-        auto parentGroup = mGroups->groupFromID(key);
+        auto parentGroup = mAppData->groups()->groupFromID(key);
         parentName = parentGroup.name();
     }
     showParentWidget(parentName);

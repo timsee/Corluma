@@ -34,12 +34,11 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
       mWifiChecker{new QTimer(this)},
       mShareChecker{new QTimer(this)},
       mNoWifiWidget{new NoWifiWidget(this)},
-      mGroups{new GroupData(this)},
-      mPalettes{new PaletteData()},
-      mComm{new CommLayer(this, mGroups, mPalettes)},
+      mAppData{new AppData(this)},
+      mComm{new CommLayer(this, mAppData, mAppData->palettes())},
       mData{new cor::LightList(this)},
       mAppSettings{new AppSettings},
-      mDataSyncArduino{new DataSyncArduino(mData, mComm, mPalettes, mAppSettings)},
+      mDataSyncArduino{new DataSyncArduino(mData, mComm, mAppData->palettes(), mAppSettings)},
       mDataSyncHue{new DataSyncHue(mData, mComm, mAppSettings)},
       mDataSyncNanoLeaf{new DataSyncNanoLeaf(mData, mComm, mAppSettings)},
       mDataSyncTimeout{new DataSyncTimeout(mData, mComm, mAppSettings, this)},
@@ -48,22 +47,27 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
       mShareUtils{new ShareUtils(this)},
 #endif
       mDebugConnections{new DebugConnectionSpoofer(mComm)},
-      mMainViewport{
-          new MainViewport(this, mComm, mData, mGroups, mPalettes, mAppSettings, mDataSyncTimeout)},
+      mMainViewport{new MainViewport(this,
+                                     mComm,
+                                     mData,
+                                     mAppData,
+                                     mAppData->palettes(),
+                                     mAppSettings,
+                                     mDataSyncTimeout)},
       mLeftHandMenu{new LeftHandMenu(
           startingSize.width() / float(startingSize.height()) > 1.0f ? true : false,
           mData,
           mComm,
           mData,
-          mGroups,
+          mAppData,
           this)},
-      mEditGroupPage{new cor::EditGroupPage(this, mComm, mGroups)},
+      mEditGroupPage{new cor::EditGroupPage(this, mComm, mAppData)},
       mChooseEditPage{new ChooseEditPage(this)},
-      mChooseGroupWidget{new ChooseGroupWidget(this, mComm, mGroups)},
-      mChooseMoodWidget{new ChooseMoodWidget(this, mComm, mGroups)},
+      mChooseGroupWidget{new ChooseGroupWidget(this, mComm, mAppData)},
+      mChooseMoodWidget{new ChooseMoodWidget(this, mComm, mAppData)},
       mGreyOut{new GreyOutOverlay(!mLeftHandMenu->alwaysOpen(), this)},
       mLoadingScreen{new LoadingScreen(mComm, mAppSettings, this)} {
-    mGroups->loadJsonFromFile();
+    mAppData->loadJsonFromFile();
 
     // disable experimental features if not experimental features are not enabled
 #ifndef USE_EXPERIMENTAL_FEATURES
@@ -85,11 +89,10 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
     mTimeToLights.start();
 
     // uses floating layouts so these must be initialized after the app's size is set.
-    mEditMoodPage = new cor::EditMoodPage(this, mComm, mGroups, mPalettes, mData);
+    mEditMoodPage = new cor::EditMoodPage(this, mComm, mAppData, mAppData->palettes(), mData);
     mTopMenu = new TopMenu(this,
                            mData,
                            mComm,
-                           mGroups,
                            mAppSettings,
                            this,
                            mMainViewport->lightsPage(),
@@ -98,7 +101,7 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
 
     mStateObserver = new cor::StateObserver(mData,
                                             mComm,
-                                            mGroups,
+                                            mAppData,
                                             mAppSettings,
                                             this,
                                             mMainViewport->lightsPage(),
@@ -233,9 +236,9 @@ void MainWindow::loadPages() {
     connect(mEditMoodPage, SIGNAL(updateGroups()), this, SLOT(editPageUpdateGroups()));
 
     connect(mMainViewport->moodPage()->moodDetailedWidget(),
-            SIGNAL(editMood(std::uint64_t)),
+            SIGNAL(editMood(QString)),
             this,
-            SLOT(editMoodSelected(std::uint64_t)));
+            SLOT(editMoodSelected(QString)));
 
     mChooseEditPage->setVisible(false);
     mChooseEditPage->isOpen(false);
@@ -258,10 +261,7 @@ void MainWindow::loadPages() {
     mChooseMoodWidget->isOpen(false);
     connect(mChooseMoodWidget, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
     connect(mChooseMoodWidget, SIGNAL(updateMoods()), this, SLOT(editPageUpdateMoods()));
-    connect(mChooseMoodWidget,
-            SIGNAL(editMood(std::uint64_t)),
-            this,
-            SLOT(editMoodSelected(std::uint64_t)));
+    connect(mChooseMoodWidget, SIGNAL(editMood(QString)), this, SLOT(editMoodSelected(QString)));
 
     // --------------
     // Top Menu
@@ -330,9 +330,9 @@ void MainWindow::setupStateObserver() {
 
     // mood page
     connect(mMainViewport->moodPage()->moodDetailedWidget(),
-            SIGNAL(enableMood(std::uint64_t)),
+            SIGNAL(enableMood(QString)),
             mStateObserver,
-            SLOT(moodChanged(std::uint64_t)));
+            SLOT(moodChanged(QString)));
 
     // settings page
     connect(mMainViewport->settingsPage()->globalWidget(),
@@ -417,7 +417,7 @@ void MainWindow::shareChecker() {
             loadJSON(mSharePath);
             // check if external save data can be loaded
             // interact with mainwindow here?
-            if (!mGroups->loadExternalData(mSharePath, mComm->allLightIDs())) {
+            if (!mAppData->loadExternalData(mSharePath, mComm->allLightIDs())) {
                 qDebug() << "WARNING: loading external data failed at " << mSharePath;
             } else {
                 mComm->hue()->discovery()->reloadGroupData();
@@ -437,12 +437,12 @@ void MainWindow::shareChecker() {
 }
 
 void MainWindow::loadJSON(QString path) {
-    if (mGroups->checkIfValidJSON(path)) {
+    if (mAppData->checkIfValidJSON(path)) {
         mMainViewport->moodPage()->clearWidgets();
         mLeftHandMenu->clearWidgets();
         mData->clearLights();
-        mGroups->removeAppData();
-        if (!mGroups->loadExternalData(path, mComm->allLightIDs())) {
+        mAppData->removeAppData();
+        if (!mAppData->loadExternalData(path, mComm->allLightIDs())) {
             qDebug() << "WARNING: loading external data failed at " << path;
         } else {
             mComm->hue()->discovery()->reloadGroupData();
@@ -785,16 +785,16 @@ void MainWindow::pushInEditGroupPage(std::uint64_t key) {
         mEditGroupPage->pushIn(QPoint(width(), 0), QPoint(0u, 0u));
     }
     if (key != 0u) {
-        auto group = mGroups->groupFromID(key);
+        auto group = mAppData->groups()->groupFromID(key);
         mEditGroupPage->prefillGroup(group);
     } else {
         mEditGroupPage->clearGroup();
     }
 }
 
-void MainWindow::pushInEditMoodPage(std::uint64_t key) {
-    if (key != 0u) {
-        auto mood = mGroups->moods().item(std::to_string(key));
+void MainWindow::pushInEditMoodPage(const QString& key) {
+    if (!key.isEmpty()) {
+        auto mood = mAppData->moods()->moods().item(key.toStdString());
         mEditMoodPage->prefillMood(mood.first);
     } else {
         mEditMoodPage->clearGroup();
@@ -838,7 +838,8 @@ void MainWindow::pushOutChooseEditPage() {
 
 
 void MainWindow::pushInChooseGroupPage(cor::EGroupAction action) {
-    mChooseGroupWidget->showGroups(cor::groupVectorToIDs(mGroups->groupDict().items()), action);
+    mChooseGroupWidget->showGroups(cor::groupVectorToIDs(mAppData->groups()->groupDict().items()),
+                                   action);
     pushInFullPageWidget(mChooseGroupWidget);
     if (mLeftHandMenu->alwaysOpen()) {
         mChooseGroupWidget->pushIn(QPoint(width(), 0), QPoint(mLeftHandMenu->width(), 0));
@@ -904,7 +905,7 @@ void MainWindow::editGroupSelected(std::uint64_t key) {
     pushInEditGroupPage(key);
 }
 
-void MainWindow::editMoodSelected(std::uint64_t key) {
+void MainWindow::editMoodSelected(QString key) {
     pushInEditMoodPage(key);
 }
 

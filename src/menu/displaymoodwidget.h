@@ -24,14 +24,14 @@
 class DisplayMoodWidget : public QWidget {
     Q_OBJECT
 public:
-    explicit DisplayMoodWidget(QWidget* parent, CommLayer* comm, GroupData* groups)
+    explicit DisplayMoodWidget(QWidget* parent, CommLayer* comm, AppData* appData)
         : QWidget(parent),
           mComm{comm},
           mName{new QLabel(this)},
           mLightsLabel{new QLabel("Lights:", this)},
           mGroupsLabel{new QLabel("Groups:", this)},
           mDescription{new cor::ExpandingTextScrollArea(this)},
-          mMetadata{new DisplayMoodMetadata(this, comm, groups)},
+          mMetadata{new DisplayMoodMetadata(this, comm, appData)},
           mLights{new LightsListMenu(this, false)},
           mGroupDefaults{new GroupStateListMenu(this, false)},
           mRowHeight{10} {

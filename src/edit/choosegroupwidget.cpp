@@ -12,15 +12,15 @@
 #include <QtGui>
 #include "utils/qt.h"
 
-ChooseGroupWidget::ChooseGroupWidget(QWidget* parent, CommLayer* comm, GroupData* groups)
+ChooseGroupWidget::ChooseGroupWidget(QWidget* parent, CommLayer* comm, AppData* appData)
     : QWidget(parent),
-      mGroups{groups},
+      mGroups{appData->groups()},
       mComm{comm},
       mCloseButton{new QPushButton(this)},
       mHeader{new QLabel(this)},
       mGroupScrollArea{new QScrollArea(this)},
-      mGroupContainer{new MenuGroupContainer(mGroupScrollArea, groups)},
-      mDisplayGroup{new DisplayGroupWidget(this, comm, groups)},
+      mGroupContainer{new MenuGroupContainer(mGroupScrollArea, appData->groups())},
+      mDisplayGroup{new DisplayGroupWidget(this, comm, appData)},
       mConfirmationLabel{new QLabel(this)},
       mActionButton{new QPushButton(this)} {
     connect(mCloseButton, SIGNAL(clicked(bool)), this, SLOT(closePressed(bool)));

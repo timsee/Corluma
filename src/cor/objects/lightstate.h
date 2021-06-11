@@ -251,12 +251,12 @@ public:
 
             object["routine"] = routineToString(routine());
             if (routine() <= cor::ERoutineSingleColorEnd) {
-                object["hue"] = color().hueF();
-                object["sat"] = color().saturationF();
-                object["bri"] = color().valueF();
+                object["hue"] = cor::roundToNDigits(color().hueF(), 3);
+                object["sat"] = cor::roundToNDigits(color().saturationF(), 3);
+                object["bri"] = cor::roundToNDigits(color().valueF(), 3);
             } else {
                 object["palette"] = palette().toJson(true);
-                object["paletteBrightness"] = mPaletteBrightness / 100.0;
+                object["paletteBrightness"] = cor::roundToNDigits(mPaletteBrightness / 100.0, 3);
             }
 
             if (routine() != ERoutine::singleSolid) {

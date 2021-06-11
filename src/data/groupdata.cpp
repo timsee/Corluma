@@ -1,39 +1,90 @@
-/*!
- * \copyright
- * Copyright (C) 2015 - 2020.
- * Released under the GNU General Public License.
- */
+#include "groupdata.h"
 
-#include "data/groupdata.h"
+GroupData::GroupData(QObject* parent) : QObject(parent) {}
 
-#include <QDir>
-#include <QFileInfo>
-#include <QStandardPaths>
+void GroupData::saveNewGroup(const cor::Group& group) {
+    auto groupObject = group.toJson();
+    if (!group.lights().empty()) {
+        // check that it doesn't already exist, if it does, replace the old version
+        auto key = QString::number(group.uniqueID()).toStdString();
+        auto dictResult = mGroupDict.item(key);
+        if (dictResult.second) {
+            mGroupDict.update(key, group);
+        } else {
+            mGroupDict.insert(key, group);
+        }
 
-GroupData::GroupData(QObject* parent) : QObject(parent), cor::JSONSaveData("save") {
-    mSubgroups.updateGroupAndRoomData(mGroupDict.items());
+        emit groupAdded(group.name());
+    }
 }
 
-bool GroupData::removeAppData() {
-    QFile file(mSavePath);
-    mMoodDict = cor::Dictionary<cor::Mood>();
-    mGroupDict = cor::Dictionary<cor::Group>();
-    if (file.exists()) {
-        if (file.remove()) {
-            if (loadJSON()) {
-                qDebug() << "INFO: removed json save data";
-                return true;
-            } else {
-                qDebug() << " could not load invalid json";
-                return false;
+QString GroupData::nameFromID(std::uint64_t ID) {
+    auto group = groupFromID(ID);
+    return group.name();
+}
+
+std::vector<QString> GroupData::groupNamesFromIDs(std::vector<std::uint64_t> IDs) {
+    std::vector<QString> nameVector;
+    nameVector.reserve(IDs.size());
+    for (const auto& subGroupID : IDs) {
+        auto groupResult = mGroupDict.item(QString::number(subGroupID).toStdString());
+        // check if group is already in this list
+        if (groupResult.second) {
+            // check if its already in the sub group names
+            auto widgetResult =
+                std::find(nameVector.begin(), nameVector.end(), groupResult.first.name());
+            if (widgetResult == nameVector.end()) {
+                nameVector.emplace_back(groupResult.first.name());
             }
         }
-        qDebug() << "WARNING: could not remove json save data!";
     }
-    qDebug() << "WARNING: previous save data does not exist!";
-    return false;
+    return nameVector;
 }
 
+cor::Group GroupData::groupFromID(std::uint64_t ID) {
+    auto groupResult = mGroupDict.item(QString::number(ID).toStdString());
+    // check if group is already in this list
+    if (groupResult.second) {
+        return groupResult.first;
+    }
+    return {};
+}
+
+
+std::vector<cor::Group> GroupData::groupsFromIDs(std::vector<std::uint64_t> IDs) {
+    std::vector<cor::Group> retVector;
+    retVector.reserve(IDs.size());
+    for (const auto& subGroupID : IDs) {
+        auto groupResult = mGroupDict.item(QString::number(subGroupID).toStdString());
+        // check if group is already in this list
+        if (groupResult.second) {
+            retVector.emplace_back(groupResult.first);
+        }
+    }
+    return retVector;
+}
+
+
+std::uint64_t GroupData::groupNameToID(const QString name) {
+    for (const auto& group : mGroupDict.items()) {
+        if (name == group.name()) {
+            return group.uniqueID();
+        }
+    }
+
+    return std::numeric_limits<std::uint64_t>::max();
+}
+
+QString GroupData::removeGroup(std::uint64_t uniqueID) {
+    QString name;
+    for (const auto& group : mGroupDict.items()) {
+        if (group.uniqueID() == uniqueID) {
+            mGroupDict.remove(group);
+            name = group.name();
+        }
+    }
+    return name;
+}
 
 std::vector<QString> GroupData::groupNames() {
     auto groups = mGroupDict.items();
@@ -45,68 +96,38 @@ std::vector<QString> GroupData::groupNames() {
     return retVector;
 }
 
-void GroupData::updateGroupMetadata() {
-    auto groups = mGroupDict.items();
-    mSubgroups.updateGroupAndRoomData(mGroupDict.items());
-    mOrphans.generateOrphans(mGroupDict.items());
+bool GroupData::removeLightFromGroups(const QString& uniqueID) {
+    bool anyUpdates = false;
 
-    std::vector<std::uint64_t> groupIDs;
-    groupIDs.reserve(groups.size());
-    for (const auto& group : groups) {
-        groupIDs.emplace_back(group.uniqueID());
-    }
-    mParents.updateParentGroups(groupIDs, mSubgroups.subgroups());
-    mMoodParents.updateMoodParents(rooms(), moods());
-}
-
-//-------------------
-// Saving JSON
-//-------------------
-
-
-void GroupData::saveNewMood(const cor::Mood& mood) {
-    QJsonObject groupObject = mood.toJson();
-    if (!mJsonData.isNull()) {
-        if (mJsonData.isObject()) {
-            const auto& key = QString::number(mood.uniqueID()).toStdString();
-
-            // check that it doesn't already exist, if it does, replace the old version
-            auto dictResult = mMoodDict.item(key);
-            if (dictResult.second) {
-                mMoodDict.update(key, mood);
-            } else {
-                mMoodDict.insert(key, mood);
+    // parse the groups, remove from dict if needed
+    for (const auto& group : mGroupDict.items()) {
+        for (const auto& groupLight : group.lights()) {
+            if (group.lights().size() == 1 && (groupLight == uniqueID)) {
+                // edge case where the mood only exists for this one light, remove it
+                // entirely
+                mGroupDict.removeKey(QString::number(group.uniqueID()).toStdString());
+                anyUpdates = true;
+            } else if (groupLight == uniqueID) {
+                // standard case, make a new mood without the light
+                auto newGroup = group.removeLight(uniqueID);
+                mGroupDict.update(QString::number(group.uniqueID()).toStdString(), newGroup);
+                anyUpdates = true;
             }
-
-            updateJsonData();
-            // save file
-            saveJSON();
-            updateGroupMetadata();
-            emit newMoodAdded(mood.name());
         }
     }
+    return anyUpdates;
 }
 
 
-void GroupData::saveNewGroup(const cor::Group& group) {
-    auto groupObject = group.toJson();
-    if (!mJsonData.isNull() && !group.lights().empty()) {
-        if (mJsonData.isObject()) {
-            // check that it doesn't already exist, if it does, replace the old version
-            auto key = QString::number(group.uniqueID()).toStdString();
-            auto dictResult = mGroupDict.item(key);
-            if (dictResult.second) {
-                mGroupDict.update(key, group);
-            } else {
-                mGroupDict.insert(key, group);
-            }
-
-            mJsonData.setArray(makeGroupData());
-            // save file
-            saveJSON();
-            updateGroupMetadata();
+std::uint64_t GroupData::generateNewUniqueKey() {
+    std::uint64_t maxKey = 0u;
+    for (const auto& group : mGroupDict.items()) {
+        if (group.uniqueID() > maxKey
+            && (group.uniqueID() < std::numeric_limits<unsigned long>::max() / 2)) {
+            maxKey = group.uniqueID();
         }
     }
+    return maxKey + 1;
 }
 
 namespace {
@@ -127,8 +148,7 @@ void updateGroup(cor::Group& group, const cor::Group& externalGroup) {
 
 } // namespace
 
-void GroupData::updateExternallyStoredGroups(const std::vector<cor::Group>& externalGroups,
-                                             const std::vector<QString>& ignorableLights) {
+void GroupData::updateExternallyStoredGroups(const std::vector<cor::Group>& externalGroups) {
     // fill in subgroups for each room
     for (const auto& externalGroup : externalGroups) {
         const auto& key = QString::number(externalGroup.uniqueID()).toStdString();
@@ -158,401 +178,4 @@ void GroupData::updateExternallyStoredGroups(const std::vector<cor::Group>& exte
             }
         }
     }
-
-    for (const auto& light : ignorableLights) {
-        if (mIgnorableLightsForGroups.find(light) == mIgnorableLightsForGroups.end()) {
-            mIgnorableLightsForGroups.insert(light);
-        }
-    }
-    updateGroupMetadata();
-}
-
-std::vector<cor::Group> GroupData::parentGroups() {
-    std::vector<cor::Group> parentGroups = groupsFromIDs(parents());
-    if (!orphanLights().empty()) {
-        parentGroups.push_back(orphanGroup());
-    }
-    return parentGroups;
-}
-
-void GroupData::lightsDeleted(const std::vector<QString>& uniqueIDs) {
-    qDebug() << "INFO: lights: " << uniqueIDs << " deleted from group data.";
-    bool anyUpdates = false;
-    for (auto uniqueID : uniqueIDs) {
-        if (!mJsonData.isNull()) {
-            if (mJsonData.isObject()) {
-                // parse the moods, remove from dict if needed
-                for (const auto& mood : mMoodDict.items()) {
-                    for (const auto& moodLight : mood.lights()) {
-                        if (mood.lights().size() == 1 && (moodLight.uniqueID() == uniqueID)) {
-                            // edge case where the mood only exists for this one light, remove it
-                            // entirely
-                            mMoodDict.removeKey(QString::number(mood.uniqueID()).toStdString());
-                            anyUpdates = true;
-                        } else if (moodLight.uniqueID() == uniqueID) {
-                            // standard case, make a new mood without the light
-                            auto newMood = mood.removeLight(moodLight.uniqueID());
-                            mMoodDict.update(QString::number(mood.uniqueID()).toStdString(),
-                                             newMood);
-                            anyUpdates = true;
-                        }
-                    }
-                }
-
-                // parse the groups, remove from dict if needed
-                for (const auto& group : mGroupDict.items()) {
-                    for (const auto& groupLight : group.lights()) {
-                        if (group.lights().size() == 1 && (groupLight == uniqueID)) {
-                            // edge case where the mood only exists for this one light, remove it
-                            // entirely
-                            mGroupDict.removeKey(QString::number(group.uniqueID()).toStdString());
-                            anyUpdates = true;
-                        } else if (groupLight == uniqueID) {
-                            // standard case, make a new mood without the light
-                            auto newGroup = group.removeLight(uniqueID);
-                            mGroupDict.update(QString::number(group.uniqueID()).toStdString(),
-                                              newGroup);
-                            anyUpdates = true;
-                        }
-                    }
-                }
-
-                // update metadata
-                mOrphans.removeLight(uniqueID);
-                updateGroupMetadata();
-            }
-        }
-    }
-    if (anyUpdates) {
-        updateJsonData();
-        saveJSON();
-    }
-}
-
-bool GroupData::removeGroup(std::uint64_t groupID) {
-    if (!mJsonData.isNull()) {
-        if (mJsonData.isObject()) {
-            auto anyUpdate = false;
-            for (const auto& mood : mMoodDict.items()) {
-                if (mood.uniqueID() == groupID) {
-                    mMoodDict.remove(mood);
-                    emit groupDeleted(mood.name());
-                    updateGroupMetadata();
-                    anyUpdate = true;
-                }
-            }
-
-            for (const auto& group : mGroupDict.items()) {
-                if (group.uniqueID() == groupID) {
-                    mGroupDict.remove(group);
-                    emit groupDeleted(group.name());
-                    anyUpdate = true;
-                }
-            }
-
-            if (anyUpdate) {
-                updateGroupMetadata();
-                updateJsonData();
-                saveJSON();
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-void GroupData::updateJsonData() {
-    QJsonObject object;
-    object["groups"] = makeGroupData();
-    object["moods"] = makeMoodData();
-    object["version"] = "0.99";
-    mJsonData.setObject(object);
-}
-
-//-------------------
-// Parsing JSON
-//-------------------
-
-void GroupData::parseGroup(const QJsonObject& object) {
-    if (cor::Group::isValidJson(object)) {
-        cor::Group group(object);
-        mGroupDict.insert(QString::number(group.uniqueID()).toStdString(), group);
-    } else {
-        qDebug() << __func__ << " not recognized";
-    }
-}
-
-void GroupData::parseMood(const QJsonObject& object) {
-    if (cor::Mood::isValidJson(object)) {
-        cor::Mood mood(object);
-        mMoodDict.insert(QString::number(mood.uniqueID()).toStdString(), mood);
-    } else {
-        qDebug() << __func__ << " not recognized";
-    }
-}
-
-
-//-------------------
-// File Manipulation
-//-------------------
-
-bool GroupData::mergeExternalData(const QString& file, bool) {
-    loadJsonFile(file);
-    return true;
-}
-
-
-bool GroupData::loadExternalData(const QString& file,
-                                 const std::unordered_set<QString>& allLightIDs) {
-    auto document = loadJsonFile(file);
-    // check if contains a jsonarray
-    if (!document.isNull()) {
-        if (document.isObject()) {
-            mJsonData = document;
-            if (saveJSON()) {
-                if (loadJSON()) {
-                    // make a set of all known light IDs, both connected and unconnected
-
-                    // parse the group data and get all lights reflected in it
-                    auto representedLights = allRepresentedLights();
-
-                    // make a set of all lights NOT reflected in known lights, but in the group data
-                    std::unordered_set<QString> unknownLights;
-                    for (const auto& light : representedLights) {
-                        if (allLightIDs.find(light) == allLightIDs.end()) {
-                            unknownLights.insert(light);
-                        }
-                    }
-                    // remove all lights not found in the known lights
-                    std::vector<QString> unknownLightVector(unknownLights.begin(),
-                                                            unknownLights.end());
-
-                    if (!unknownLightVector.empty()) {
-                        qDebug() << " INFO: deleting these lights from app data: "
-                                 << unknownLightVector;
-                        lightsDeleted(unknownLightVector);
-                    } else {
-                        updateGroupMetadata();
-                    }
-                    qDebug() << " INFO: successfully loaded new app data";
-                    return true;
-                } else {
-                    qDebug() << " could not load JSON";
-                    return false;
-                }
-            } else {
-                qDebug() << "WARNING: Load External Data couldn't save file";
-                return false;
-            }
-        }
-    }
-    return false;
-}
-
-bool GroupData::checkIfValidJSON(const QString& file) {
-    // TODO: check if its a valid Corluma JSON instead of just a JSON object
-    auto document = loadJsonFile(file);
-    // check if contains a jsonarray
-    if (!document.isNull()) {
-        if (document.isObject()) {
-            return true;
-        }
-    }
-    return false;
-}
-
-
-//-------------------
-// Load JSON
-//-------------------
-
-bool GroupData::loadJSON() {
-    if (!mJsonData.isNull()) {
-        if (mJsonData.isObject()) {
-            mVersion = mJsonData["version"].toString();
-            auto groupsArray = mJsonData["groups"].toArray();
-            for (auto value : groupsArray) {
-                QJsonObject object = value.toObject();
-                if (cor::Group::isValidJson(object)) {
-                    parseGroup(object);
-                }
-            }
-            auto moodsArray = mJsonData["moods"].toArray();
-            for (auto value : moodsArray) {
-                QJsonObject object = value.toObject();
-                if (cor::Group::isValidJson(object)) {
-                    parseMood(object);
-                }
-            }
-            return true;
-        }
-    } else {
-        qDebug() << "json object is null!";
-    }
-    return false;
-}
-
-QJsonArray GroupData::makeGroupData() {
-    QJsonArray array;
-    // add all the groups, filtering out hues
-    for (const auto& group : mGroupDict.items()) {
-        if (!group.containsOnlyIgnoredLights(mIgnorableLightsForGroups)) {
-            array.append(group.toJsonWitIgnoredLights(mIgnorableLightsForGroups));
-        }
-    }
-    return array;
-}
-
-QJsonArray GroupData::makeMoodData() {
-    QJsonArray array;
-
-    // add all the moods
-    for (const auto& mood : mMoodDict.items()) {
-        array.append(mood.toJson());
-    }
-
-    return array;
-}
-
-
-bool GroupData::save(const QString& filePath) {
-    QFile file(filePath);
-    if (!file.open(QIODevice::ReadWrite | QIODevice::Text)) {
-        qDebug() << "WARNING: save file exists and couldn't be opened.";
-        return false;
-    }
-
-    if (mJsonData.isNull()) {
-        // qDebug() << "WARNING: json data is null!";
-        return false;
-    }
-    file.write(mJsonData.toJson());
-    file.close();
-    return true;
-}
-
-
-void GroupData::addLightsToGroups(const std::vector<QString>& uniqueIDs) {
-    for (auto uniqueID : uniqueIDs) {
-        // qDebug() << " add light to groups " << uniqueID;
-        mOrphans.addNewLight(uniqueID, mGroupDict.items());
-    }
-    updateGroupMetadata();
-}
-
-std::uint64_t GroupData::generateNewUniqueKey() {
-    std::uint64_t maxKey = 0u;
-    for (const auto& mood : mMoodDict.items()) {
-        if (mood.uniqueID() > maxKey) {
-            maxKey = mood.uniqueID();
-        }
-    }
-    for (const auto& group : mGroupDict.items()) {
-        if (group.uniqueID() > maxKey
-            && (group.uniqueID() < std::numeric_limits<unsigned long>::max() / 2)) {
-            maxKey = group.uniqueID();
-        }
-    }
-    return maxKey + 1;
-}
-
-QString GroupData::groupNameFromID(std::uint64_t ID) {
-    auto group = groupFromID(ID);
-    return group.name();
-}
-
-
-std::vector<QString> GroupData::groupNamesFromIDs(std::vector<std::uint64_t> IDs) {
-    std::vector<QString> nameVector;
-    nameVector.reserve(IDs.size());
-    for (const auto& subGroupID : IDs) {
-        auto groupResult = mGroupDict.item(QString::number(subGroupID).toStdString());
-        // check if group is already in this list
-        if (groupResult.second) {
-            // check if its already in the sub group names
-            auto widgetResult =
-                std::find(nameVector.begin(), nameVector.end(), groupResult.first.name());
-            if (widgetResult == nameVector.end()) {
-                nameVector.emplace_back(groupResult.first.name());
-            }
-        }
-    }
-    return nameVector;
-}
-
-cor::Group GroupData::groupFromID(std::uint64_t ID) {
-    auto groupResult = mGroupDict.item(QString::number(ID).toStdString());
-    // check if group is already in this list
-    if (groupResult.second) {
-        return groupResult.first;
-    }
-    return {};
-}
-
-cor::Mood GroupData::moodFromID(std::uint64_t ID) {
-    auto moodResult = mMoodDict.item(QString::number(ID).toStdString());
-    // check if group is already in this list
-    if (moodResult.second) {
-        return moodResult.first;
-    }
-    return {};
-}
-
-
-std::vector<cor::Group> GroupData::groupsFromIDs(std::vector<std::uint64_t> IDs) {
-    std::vector<cor::Group> retVector;
-    retVector.reserve(IDs.size());
-    for (const auto& subGroupID : IDs) {
-        auto groupResult = mGroupDict.item(QString::number(subGroupID).toStdString());
-        // check if group is already in this list
-        if (groupResult.second) {
-            retVector.emplace_back(groupResult.first);
-        }
-    }
-    return retVector;
-}
-
-QString GroupData::nameFromID(std::uint64_t ID) {
-    auto key = QString::number(ID).toStdString();
-    auto result = mGroupDict.item(key);
-    if (result.second) {
-        return result.first.name();
-    }
-
-    auto moodResult = mMoodDict.item(key);
-    if (result.second) {
-        return result.first.name();
-    }
-
-    return {};
-}
-
-std::uint64_t GroupData::groupNameToID(const QString name) {
-    for (const auto& group : mGroupDict.items()) {
-        if (name == group.name()) {
-            return group.uniqueID();
-        }
-    }
-
-    return std::numeric_limits<std::uint64_t>::max();
-}
-
-
-std::unordered_set<QString> GroupData::allRepresentedLights() {
-    std::unordered_set<QString> lightIDs;
-    for (const auto& mood : mMoodDict.items()) {
-        auto moodIDs = cor::lightVectorToIDs(mood.lights());
-        lightIDs.insert(moodIDs.begin(), moodIDs.end());
-    }
-
-    for (const auto& group : mGroupDict.items()) {
-        lightIDs.insert(group.lights().begin(), group.lights().end());
-    }
-
-    return lightIDs;
-}
-
-void GroupData::loadJsonFromFile() {
-    loadJSON();
-    updateGroupMetadata();
 }

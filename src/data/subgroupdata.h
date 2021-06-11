@@ -23,7 +23,7 @@ public:
     SubgroupData() = default;
 
     /// getter for the map of all subgroups
-    const SubgroupMap subgroups() const noexcept { return mSubgroupMap; }
+    const SubgroupMap map() const noexcept { return mSubgroupMap; }
 
     /// returns the subgroups for a specfic group.
     std::vector<std::uint64_t> subgroupIDsForGroup(std::uint64_t uniqueID) const {

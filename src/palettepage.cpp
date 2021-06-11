@@ -11,13 +11,18 @@
 
 PalettePage::PalettePage(QWidget* parent, PaletteData* palettes)
     : QWidget(parent),
-      mPaletteScrollArea{new PaletteScrollArea(this, palettes)},
+      mPaletteData{palettes},
+      mPaletteScrollArea{new PaletteScrollArea(this, palettes->palettes())},
       mColorPicker{new MultiColorPicker(this)},
       mRoutineWidget{new RoutineContainer(this, ERoutineGroup::multi)},
       mDetailedWidget{new PaletteDetailedWidget(parentWidget())},
+      mEditWidget{new EditPaletteWidget(parentWidget())},
       mGreyOut{new GreyOutOverlay(false, parentWidget())} {
     grabGesture(Qt::SwipeGesture);
     mRoutineWidget->setVisible(false);
+    mEditWidget->setVisible(false);
+
+    connect(mEditWidget, SIGNAL(savePalette(cor::Palette)), this, SLOT(paletteSaved(cor::Palette)));
 
     mDetailedWidget->setGeometry(0, -1 * height(), width(), height());
     mDetailedWidget->setVisible(false);
@@ -26,6 +31,10 @@ PalettePage::PalettePage(QWidget* parent, PaletteData* palettes)
             SIGNAL(syncPalette(cor::Palette)),
             this,
             SLOT(paletteSyncClicked(cor::Palette)));
+    connect(mDetailedWidget,
+            SIGNAL(deletePalette(cor::Palette)),
+            this,
+            SLOT(deletePaletteClicked(cor::Palette)));
 
     connect(mGreyOut, SIGNAL(clicked()), this, SLOT(greyoutClicked()));
 
@@ -74,6 +83,7 @@ void PalettePage::update(std::size_t count, const std::vector<QColor>& colorSche
         mPalette.colors(colorScheme);
     }
     lightCountChanged(count);
+    mPaletteScrollArea->addPalettes(mPaletteData->palettes());
     mColorPicker->updateColorStates(mPalette.colors());
 }
 
@@ -107,8 +117,8 @@ void PalettePage::resize() {
     auto xPos = int(width() * 0.03);
     QSize scrollAreaSize(int(width() - xPos * 2), int(height() - yPos * 2));
     QRect rect(xPos, yPos, scrollAreaSize.width(), scrollAreaSize.height());
+    mPaletteScrollArea->widgetHeight(this->height() / 5);
     mPaletteScrollArea->setGeometry(rect);
-    mPaletteScrollArea->resize();
 
     mColorPicker->setGeometry(rect);
     mColorPicker->resize();
@@ -117,6 +127,10 @@ void PalettePage::resize() {
 
     if (mDetailedWidget->isOpen()) {
         mDetailedWidget->resize();
+    }
+
+    if (mEditWidget->isOpen()) {
+        mEditWidget->resize();
     }
     mGreyOut->resize();
 }
@@ -141,6 +155,10 @@ void PalettePage::greyoutClicked() {
     if (mDetailedWidget->isOpen()) {
         detailedClosePressed();
     }
+
+    if (mEditWidget->isOpen()) {
+        mEditWidget->pushOut();
+    }
 }
 
 
@@ -153,12 +171,44 @@ void PalettePage::detailedClosePressed() {
 void PalettePage::detailedPaletteView(const cor::Palette& palette) {
     mGreyOut->greyOut(true);
 
-    //    const auto& moodResult = mGroups->moods().item(QString::number(key).toStdString());
-    //    if (moodResult.second) {
-    //        mMoodDetailedWidget->update(moodResult.first);
-    //    }
-
-
     mDetailedWidget->update(palette);
     mDetailedWidget->pushIn();
+}
+
+
+void PalettePage::pushInNewPalettePage() {
+    mGreyOut->greyOut(true);
+    cor::Palette newPalette(QUuid::createUuid().toString(QUuid::WithoutBraces),
+                            "New Palette",
+                            {QColor(255, 0, 0), QColor(0, 255, 0), QColor(0, 0, 255)});
+    mEditWidget->loadPalette(newPalette);
+    mEditWidget->pushIn();
+}
+
+void PalettePage::deletePaletteClicked(cor::Palette palette) {
+    auto results = mPaletteData->removePalette(palette);
+    if (results) {
+        qDebug() << "INFO: Deleting this palette:" << palette;
+        mPaletteScrollArea->addPalettes(mPaletteData->palettes());
+    } else {
+        QMessageBox reply;
+        reply.setText("Palette cannot be deleted.");
+        reply.exec();
+    }
+    mEditWidget->pushOut();
+    mGreyOut->greyOut(false);
+}
+
+void PalettePage::paletteSaved(cor::Palette palette) {
+    auto results = mPaletteData->addPalette(palette);
+    if (results) {
+        qDebug() << "INFO: saving new palette:" << palette;
+    } else {
+        QMessageBox reply;
+        reply.setText("Palette cannot be saved.");
+        reply.exec();
+    }
+    mPaletteScrollArea->addPalettes(mPaletteData->palettes());
+    mEditWidget->pushOut();
+    mGreyOut->greyOut(false);
 }

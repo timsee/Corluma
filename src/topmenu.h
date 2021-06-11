@@ -9,7 +9,6 @@
 #include "cor/lightlist.h"
 #include "cor/objects/page.h"
 #include "cor/widgets/button.h"
-#include "data/groupdata.h"
 #include "discovery/discoverytopmenu.h"
 #include "floatinglayout.h"
 #include "globalbrightnesswidget.h"
@@ -49,7 +48,6 @@ public:
     explicit TopMenu(QWidget* parent,
                      cor::LightList* data,
                      CommLayer* comm,
-                     GroupData* groups,
                      AppSettings* appSettings,
                      MainWindow* mainWindow,
                      LightsPage* lightsPage,
@@ -186,9 +184,6 @@ private:
 
     /// pointer to commlayer
     CommLayer* mComm;
-
-    /// pointer to group data
-    GroupData* mGroups;
 
     /// pointer to app settings.
     AppSettings* mAppSettings;

@@ -14,7 +14,7 @@ linux:!android {
     TARGET = corluma
 }
 TEMPLATE = app
-VERSION = 0.21.99
+VERSION = 0.22.00
 
 #----------
 # Build flags
@@ -248,6 +248,9 @@ SOURCES += main.cpp \
     cor/lightlist.cpp \
     cor/widgets/loadingscreen.cpp \
     cor/widgets/palettewidget.cpp \
+    data/appdata.cpp \
+    data/groupdata.cpp \
+    data/mooddata.cpp \
     data/palettedata.cpp \
     debugconnectionspoofer.cpp \
     discovery/discoveryhuewidget.cpp \
@@ -267,6 +270,7 @@ SOURCES += main.cpp \
     edit/choosegroupwidget.cpp \
     edit/choosemoodwidget.cpp \
     edit/editpage.cpp \
+    edit/editpalettewidget.cpp \
     edit/editprogresswidget.cpp \
     groupstatewidget.cpp \
     lightspage.cpp \
@@ -281,6 +285,7 @@ SOURCES += main.cpp \
     menu/menugroupstatecontainer.cpp \
     menu/menulightcontainer.cpp \
     menu/menumoodcontainer.cpp \
+    menu/menupalettecontainer.cpp \
     menu/menuparentgroupcontainer.cpp \
     menu/menusubgroupcontainer.cpp \
     menu/standardlightsmenu.cpp \
@@ -326,7 +331,6 @@ SOURCES += main.cpp \
     listsimplegroupwidget.cpp \
     nowifiwidget.cpp \
     listmoodpreviewwidget.cpp \
-    data/groupdata.cpp \
     menu/lefthandmenu.cpp \
     selectlightsbutton.cpp \
     mainviewport.cpp \
@@ -391,8 +395,14 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     cor/stylesheets.h \
     cor/widgets/expandingtextscrollarea.h \
     cor/widgets/loadingscreen.h \
+    cor/widgets/palettecolorpicker.h \
     cor/widgets/palettewidget.h \
     cor/widgets/widgetoutlinebox.h \
+    data/appdata.h \
+    data/groupdata.h \
+    data/groupparentdata.h \
+    data/lightorphandata.h \
+    data/mooddata.h \
     data/moodparentdata.h \
     data/palettedata.h \
     debugconnectionspoofer.h \
@@ -427,14 +437,13 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     edit/editmoodpage.h \
     edit/editpage.h \
     edit/editpagechildwidget.h \
+    edit/editpalettewidget.h \
     edit/editprogressstate.h \
     edit/editprogresswidget.h \
     edit/grouproomcheckboxwidget.h \
     edit/reviewgroupwidget.h \
     edit/reviewmoodwidget.h \
     globalbrightnesswidget.h \
-    data/orphandata.h \
-    data/parentdata.h \
     globalstatewidget.h \
     groupstatewidget.h \
     lightspage.h \
@@ -454,6 +463,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     menu/menugroupstatecontainer.h \
     menu/menulightcontainer.h \
     menu/menumoodcontainer.h \
+    menu/menupalettecontainer.h \
     menu/menuparentgroupcontainer.h \
     menu/menusubgroupcontainer.h \
     menu/standardlightsmenu.h \
@@ -516,7 +526,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     listsimplegroupwidget.h \
     nowifiwidget.h \
     listmoodpreviewwidget.h \
-    data/groupdata.h \
     utils/painterutils.h \
     utils/reachability.h \
     utils/color.h \

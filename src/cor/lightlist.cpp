@@ -579,13 +579,13 @@ std::uint32_t LightList::countNumberOfLights(const std::vector<QString>& lightID
     return selectedCount;
 }
 
-std::uint64_t LightList::findCurrentMood(const cor::Dictionary<cor::Mood>& moods) {
+QString LightList::findCurrentMood(const cor::Dictionary<cor::Mood>& moods) {
     for (const auto& mood : moods.items()) {
         if (mLights == mood.lights()) {
             return mood.uniqueID();
         }
     }
-    return 0u;
+    return {};
 }
 
 

@@ -14,10 +14,10 @@
 
 #include "utils/qt.h"
 
-MoodDetailedWidget::MoodDetailedWidget(QWidget* parent, GroupData* groups, CommLayer* comm)
+MoodDetailedWidget::MoodDetailedWidget(QWidget* parent, AppData* appData, CommLayer* comm)
     : QWidget(parent),
       mComm{comm},
-      mMoodWidget{new DisplayMoodWidget(this, mComm, groups)},
+      mMoodWidget{new DisplayMoodWidget(this, mComm, appData)},
       mMoodSyncWidget{new MoodSyncWidget(this, mComm)},
       mOnOffSwitch{new cor::Switch(this)},
       mFloatingMenu{new FloatingLayout(this)},

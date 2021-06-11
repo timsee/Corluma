@@ -25,7 +25,7 @@ public:
     Mood() : Mood(0u, "Error", {}) {}
 
     /// constructor
-    Mood(std::uint64_t uniqueID, const QString& name, const std::vector<Light>& lights)
+    Mood(const QString& uniqueID, const QString& name, const std::vector<Light>& lights)
         : mName{name},
           mUniqueID{uniqueID},
           mDefaults{},
@@ -33,7 +33,7 @@ public:
 
     /// json constructor
     Mood(const QJsonObject& object)
-        : Mood(std::uint64_t(object["uniqueID"].toDouble()), object["name"].toString(), {}) {
+        : Mood(QString(object["uniqueID"].toString()), object["name"].toString(), {}) {
         mAdditionalInfo = object["additionalInfo"].toString();
         // add optional description if it exists
         if (object["description"].isString()) {
@@ -67,7 +67,7 @@ public:
 
 
     /// getter for unique ID
-    std::uint64_t uniqueID() const noexcept { return mUniqueID; }
+    const QString& uniqueID() const noexcept { return mUniqueID; }
 
     /// getter for name
     const QString& name() const noexcept { return mName; }
@@ -104,7 +104,7 @@ public:
 
     /// true if json represents a valid mood, false otherwise
     static bool isValidJson(const QJsonObject& object) {
-        return object["name"].isString() && object["uniqueID"].isDouble()
+        return object["name"].isString() && object["uniqueID"].isString()
                && object["devices"].isArray();
     }
 
@@ -136,7 +136,7 @@ public:
     QJsonObject toJson() const noexcept {
         QJsonObject object;
         object["name"] = name();
-        object["uniqueID"] = double(uniqueID());
+        object["uniqueID"] = uniqueID();
 
         // create string of jsondata to add to file
         QJsonArray deviceArray;
@@ -167,7 +167,7 @@ private:
     QString mDescription;
 
     /// unique ID of the mood
-    std::uint64_t mUniqueID;
+    QString mUniqueID;
 
     /// default states of groups.
     std::vector<cor::GroupState> mDefaults;
@@ -186,7 +186,7 @@ namespace std {
 template <>
 struct hash<cor::Mood> {
     size_t operator()(const cor::Mood& k) const {
-        return std::hash<std::string>{}(QString::number(k.uniqueID()).toStdString());
+        return std::hash<std::string>{}(k.uniqueID().toStdString());
     }
 };
 } // namespace std

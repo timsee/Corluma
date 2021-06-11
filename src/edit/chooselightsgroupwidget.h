@@ -19,13 +19,13 @@
 class ChooseLightsGroupWidget : public EditPageChildWidget {
     Q_OBJECT
 public:
-    explicit ChooseLightsGroupWidget(QWidget* parent, CommLayer* comm, GroupData* groups)
+    explicit ChooseLightsGroupWidget(QWidget* parent, CommLayer* comm, AppData* appData)
         : EditPageChildWidget(parent),
           mChooseLabel{new QLabel("Choose Lights:", this)},
           mSelectedLabel{new QLabel("Selected Lights:", this)},
           mComm{comm},
-          mGroups{groups},
-          mLightsMenu{new StandardLightsMenu(this, comm, groups, "ChooseLightsGroupMenu")},
+          mAppData{appData},
+          mLightsMenu{new StandardLightsMenu(this, comm, appData, "ChooseLightsGroupMenu")},
           mRoomLights{new StatelessLightsListMenu(this, comm, true)},
           mSelectedLightsMenu{new StatelessLightsListMenu(this, comm, false)},
           mIsRoom{false} {
@@ -80,7 +80,9 @@ public:
         // start with the room lights
         auto lights = roomLights;
         // add in the orphan lights
-        lights.insert(lights.end(), mGroups->orphanLights().begin(), mGroups->orphanLights().end());
+        lights.insert(lights.end(),
+                      mAppData->lightOrphans().keys().begin(),
+                      mAppData->lightOrphans().keys().end());
         mRoomLights->addLights(lights);
         mRoomLights->highlightLights(roomLights);
 
@@ -136,7 +138,7 @@ private slots:
     /// teh selected list.
     void selectAllToggled(std::uint64_t ID, bool shouldSelect) {
         // convert the group ID to a group
-        auto groupResult = mGroups->groupDict().item(QString::number(ID).toStdString());
+        auto groupResult = mAppData->groups()->groupDict().item(QString::number(ID).toStdString());
         bool groupFound = groupResult.second;
         cor::Group group = groupResult.first;
         if (groupFound) {
@@ -214,7 +216,7 @@ private:
     CommLayer* mComm;
 
     /// pointer to group data
-    GroupData* mGroups;
+    AppData* mAppData;
 
     /// widget for showing all available lights.
     StandardLightsMenu* mLightsMenu;

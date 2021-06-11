@@ -31,11 +31,11 @@ const static char* kDebugSpoof = "DEBUG: Spoof Connection";
 #endif
 
 SettingsPage::SettingsPage(QWidget* parent,
-                           GroupData* parser,
+                           AppData* parser,
                            CommLayer* comm,
                            AppSettings* appSettings)
     : QWidget(parent),
-      mGroups(parser),
+      mAppData(parser),
       mScrollArea{new QScrollArea(this)},
       mScrollAreaWidget{new QWidget(this)},
       mGlobalWidget{new GlobalSettingsWidget(mScrollAreaWidget, appSettings)},
@@ -135,7 +135,7 @@ void SettingsPage::showWidget() {
     // add new group
     mButtons[0]->shouldEnable(anyDiscovered);
     // backup save data
-    mButtons[1]->shouldEnable(mGroups->saveExists());
+    mButtons[1]->shouldEnable(mAppData->saveExists());
 #ifndef MOBILE_BUILD
     // load backup
     mButtons[2]->shouldEnable(anyDiscovered);
@@ -230,7 +230,7 @@ void SettingsPage::saveButtonClicked() {
 #if defined(Q_OS_IOS) || defined(Q_OS_ANDROID)
 #ifdef USE_SHARE_UTILS
     int requestID = 7;
-    cor::shareUtils()->sendFile(mGroups->savePath(), "CorlumaSave", "application/json", requestID);
+    cor::shareUtils()->sendFile(mAppData->savePath(), "CorlumaSave", "application/json", requestID);
 #endif
 #else
     auto fileName = QFileDialog::getSaveFileName(this,
@@ -241,7 +241,7 @@ void SettingsPage::saveButtonClicked() {
         qDebug() << "WARNING: save file name empty";
         return;
     } else {
-        mGroups->save(fileName);
+        mAppData->save(fileName);
     }
 #endif
 }
@@ -263,9 +263,9 @@ void SettingsPage::resetToDefaults() {
 
     mGlobalWidget->timeoutCheckboxPressed(true);
 
-    mGroups->removeAppData();
+    mAppData->removeAppData();
     // load no data, deleting everything.
-    mGroups->loadExternalData("", mComm->allLightIDs());
+    mAppData->loadExternalData("", mComm->allLightIDs());
     AppSettings::setToDefaults();
 }
 

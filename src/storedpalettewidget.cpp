@@ -12,7 +12,7 @@
 #include "utils/qt.h"
 
 StoredPaletteWidget::StoredPaletteWidget(const cor::Palette& palette, QWidget* parent)
-    : QWidget(parent),
+    : cor::ListItemWidget(palette.uniqueID(), parent),
       mLightVector{new cor::PaletteWidget(this)},
       mLabel{new QLabel(palette.name(), this)},
       mPalette{palette},
@@ -51,6 +51,9 @@ void StoredPaletteWidget::resize() {
                               width() - xSpacer * 2,
                               (rowHeight * 3) - ySpacer * 2);
     // yPos += mLightVector->height();
+
+
+    mLightVector->setVisible(true);
 }
 
 

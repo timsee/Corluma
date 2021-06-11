@@ -196,7 +196,7 @@ public:
     cor::Group findCurrentGroup(const std::vector<cor::Group>& collections);
 
     /// compute the best candidate for a mood based on the current lights
-    std::uint64_t findCurrentMood(const cor::Dictionary<cor::Mood>& moods);
+    QString findCurrentMood(const cor::Dictionary<cor::Mood>& moods);
 
     /*!
      * \brief lightCount getter for count of LEDs associated with a single light. IE, a light cube

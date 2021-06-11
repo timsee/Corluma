@@ -9,6 +9,7 @@
 #include <QWidget>
 #include "colorpicker/singlecolorpicker.h"
 #include "cor/objects/lightstate.h"
+#include "data/palettedata.h"
 #include "floatinglayout.h"
 #include "palettescrollarea.h"
 #include "routines/routinecontainer.h"

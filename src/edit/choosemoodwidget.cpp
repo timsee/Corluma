@@ -12,22 +12,19 @@
 #include <QtGui>
 #include "utils/qt.h"
 
-ChooseMoodWidget::ChooseMoodWidget(QWidget* parent, CommLayer* comm, GroupData* groups)
+ChooseMoodWidget::ChooseMoodWidget(QWidget* parent, CommLayer* comm, AppData* appData)
     : QWidget(parent),
-      mGroups{groups},
+      mMoods{appData->moods()},
       mComm{comm},
       mCloseButton{new QPushButton(this)},
       mHeader{new QLabel(this)},
       mMoodScrollArea{new QScrollArea(this)},
       mMoodContainer{new MenuMoodContainer(mMoodScrollArea)},
-      mDisplayMood{new DisplayMoodWidget(this, comm, groups)},
+      mDisplayMood{new DisplayMoodWidget(this, comm, appData)},
       mConfirmationLabel{new QLabel(this)},
       mActionButton{new QPushButton(this)} {
     connect(mCloseButton, SIGNAL(clicked(bool)), this, SLOT(closePressed(bool)));
-    connect(mMoodContainer,
-            SIGNAL(moodSelected(std::uint64_t)),
-            this,
-            SLOT(clickedMood(std::uint64_t)));
+    connect(mMoodContainer, SIGNAL(moodSelected(QString)), this, SLOT(clickedMood(QString)));
     connect(mActionButton, SIGNAL(clicked(bool)), this, SLOT(actionPresed(bool)));
 
     mMoodScrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -40,7 +37,6 @@ ChooseMoodWidget::ChooseMoodWidget(QWidget* parent, CommLayer* comm, GroupData* 
 }
 
 void ChooseMoodWidget::showMoods(cor::EGroupAction action) {
-    mSelectedMood = 0u;
     mDesiredAction = action;
     mDisplayMood->reset();
     if (mDesiredAction == cor::EGroupAction::edit) {
@@ -49,12 +45,12 @@ void ChooseMoodWidget::showMoods(cor::EGroupAction action) {
         mHeader->setText("Choose a mood to remove:");
     }
     handleBottomState();
-    mMoodContainer->showMoods(mGroups->moods().items(), mTopHeight);
+    mMoodContainer->showMoods(mMoods->moods().items(), mTopHeight);
 }
 
 void ChooseMoodWidget::handleBottomState() {
     // only enable the button if a group is selected;
-    mActionButton->setEnabled(mSelectedMood != 0u);
+    mActionButton->setEnabled(!mSelectedMood.isEmpty());
     if (mDesiredAction == cor::EGroupAction::edit) {
         mActionButton->setText("Edit");
         mActionButton->setStyleSheet(cor::kEditButtonBackground);
@@ -64,10 +60,10 @@ void ChooseMoodWidget::handleBottomState() {
     }
 }
 
-void ChooseMoodWidget::clickedMood(std::uint64_t key) {
+void ChooseMoodWidget::clickedMood(QString key) {
     mSelectedMood = key;
     handleBottomState();
-    auto mood = mGroups->moodFromID(key);
+    auto mood = mMoods->moodFromID(key);
     mDisplayMood->updateMood(mood, true);
 }
 
@@ -151,7 +147,7 @@ void ChooseMoodWidget::closePressed(bool) {
 }
 
 void ChooseMoodWidget::actionPresed(bool) {
-    auto moodName = mGroups->moodFromID(mSelectedMood).name();
+    auto moodName = mMoods->moodFromID(mSelectedMood).name();
     if (mDesiredAction == cor::EGroupAction::edit) {
         emit editMood(mSelectedMood);
         qDebug() << "INFO: editing the mood " << moodName;
@@ -160,10 +156,16 @@ void ChooseMoodWidget::actionPresed(bool) {
         auto reply =
             QMessageBox::question(this, "Delete mood?", text, QMessageBox::Yes | QMessageBox::No);
         if (reply == QMessageBox::Yes) {
-            qDebug() << "INFO: deleting the mood " << moodName;
-            mGroups->removeGroup(mSelectedMood);
-            emit updateMoods();
-            emit pressedClose();
+            auto deletedMoodName = mMoods->removeMood(mSelectedMood);
+            if (deletedMoodName.isEmpty()) {
+                QMessageBox messageBox;
+                messageBox.setText("Could not delete mood: " + moodName);
+                messageBox.exec();
+            } else {
+                qDebug() << "INFO: deleting the mood " << deletedMoodName;
+                emit updateMoods();
+                emit pressedClose();
+            }
         }
     }
 }

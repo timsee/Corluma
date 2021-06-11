@@ -24,17 +24,17 @@ class EditMoodPage : public cor::EditPage {
 public:
     explicit EditMoodPage(QWidget* parent,
                           CommLayer* comm,
-                          GroupData* groups,
+                          AppData* appData,
                           PaletteData* palettes,
                           cor::LightList* data)
-        : EditPage(parent, comm, groups, true),
+        : EditPage(parent, comm, true),
           mComm{comm},
           mData{data},
           mMetadataWidget{new ChooseMetadataWidget(this, true)},
-          mLightsStateWidget{new ChooseMoodLightStatesWidget(this, comm, groups, palettes)},
-          mGroupsStateWidget{new ChooseMoodGroupStatesWidget(this, groups, palettes)},
-          mReviewPage{new ReviewMoodWidget(this, comm, groups)} {
-        setupWidgets({mMetadataWidget, mLightsStateWidget, mGroupsStateWidget, mReviewPage});
+          mLightsStateWidget{new ChooseMoodLightStatesWidget(this, comm, appData, palettes)},
+          mGroupStatesWidget{new ChooseMoodGroupStatesWidget(this, appData->groups(), palettes)},
+          mReviewPage{new ReviewMoodWidget(this, comm, appData)} {
+        setupWidgets({mMetadataWidget, mLightsStateWidget, mGroupStatesWidget, mReviewPage});
 
         connect(mPreviewButton, SIGNAL(clicked(bool)), this, SLOT(previewPressed(bool)));
     }
@@ -54,7 +54,7 @@ public:
         }
 
         mLightsStateWidget->prefill(lights);
-        mGroupsStateWidget->prefill(mood.defaults());
+        mGroupStatesWidget->prefill(mood.defaults());
         mReviewPage->editMode(true, mood.uniqueID());
     }
 
@@ -62,7 +62,7 @@ public:
     void clearGroup() override {
         mMetadataWidget->clear();
         mLightsStateWidget->clear();
-        mGroupsStateWidget->clear();
+        mGroupStatesWidget->clear();
         mReviewPage->editMode(false, 0u);
         reset();
     }
@@ -77,14 +77,14 @@ public:
                 break;
             }
             case 2: {
-                mGroupsStateWidget->addGroupsToLeftMenu();
+                mGroupStatesWidget->addGroupsToLeftMenu();
                 break;
             }
             case 3: {
                 mReviewPage->displayMood(mMetadataWidget->name(),
                                          mMetadataWidget->description(),
                                          mLightsStateWidget->lights(),
-                                         mGroupsStateWidget->defaults());
+                                         mGroupStatesWidget->defaults());
                 break;
             }
             default:
@@ -95,7 +95,7 @@ public:
     /// @copydoc EditPage::changeRowHeight(int)
     void changeRowHeight(int height) override {
         mLightsStateWidget->changeRowHeight(height);
-        mGroupsStateWidget->changeRowHeight(height);
+        mGroupStatesWidget->changeRowHeight(height);
         mReviewPage->changeRowHeight(height);
     }
 
@@ -105,7 +105,7 @@ private slots:
     void previewPressed(bool) {
         auto mood = mReviewPage->mood();
         mood.lights(mLightsStateWidget->lights());
-        mood.defaults(mGroupsStateWidget->defaults());
+        mood.defaults(mGroupStatesWidget->defaults());
         const auto& moodDict = mComm->makeMood(mood);
         mData->clearLights();
         mData->addLights(moodDict.items());
@@ -125,7 +125,7 @@ private:
     ChooseMoodLightStatesWidget* mLightsStateWidget;
 
     /// widget for choosing default states of groups in a mood
-    ChooseMoodGroupStatesWidget* mGroupsStateWidget;
+    ChooseMoodGroupStatesWidget* mGroupStatesWidget;
 
     /// widget for reviewing the final state of a group.
     ReviewMoodWidget* mReviewPage;

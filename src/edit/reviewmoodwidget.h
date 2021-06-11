@@ -3,6 +3,7 @@
 
 #include <QMessageBox>
 #include <QScrollBar>
+#include <QUuid>
 #include <QWidget>
 #include "cor/lightlist.h"
 #include "edit/editpagechildwidget.h"
@@ -22,11 +23,11 @@
 class ReviewMoodWidget : public EditPageChildWidget {
     Q_OBJECT
 public:
-    explicit ReviewMoodWidget(QWidget* parent, CommLayer* comm, GroupData* groups)
+    explicit ReviewMoodWidget(QWidget* parent, CommLayer* comm, AppData* appData)
         : EditPageChildWidget(parent),
-          mGroups{groups},
+          mMoods{appData->moods()},
           mTopLabel{new QLabel("Review:", this)},
-          mMoodWidget{new DisplayMoodWidget(this, comm, groups)},
+          mMoodWidget{new DisplayMoodWidget(this, comm, appData)},
           mCreateButton{new QPushButton("Create", this)} {
         mBottomButtons->hideForward(true);
         mCreateButton->setStyleSheet(cor::kLighterGreyBackground);
@@ -34,7 +35,7 @@ public:
     }
 
     /// set to true if editing an existing group, set to false if its a new group
-    void editMode(bool isEditMode, std::uint64_t uniqueID) {
+    void editMode(bool isEditMode, const QString& uniqueID) {
         mEditMode = isEditMode;
         if (mEditMode) {
             mCreateButton->setText("Edit");
@@ -57,9 +58,9 @@ public:
                      const std::vector<cor::GroupState>& defaultStates) {
         // generate a unique ID if and only if its a new group, otherwise, use the unique ID
         // provided when edit mode was turned on.
-        std::uint64_t key = mUniqueID;
+        auto key = mUniqueID;
         if (!mEditMode) {
-            key = mGroups->generateNewUniqueKey();
+            key = QUuid::createUuid().toString(QUuid::WithoutBraces);
         }
         cor::Mood mood(key, name, lights);
         mood.defaults(defaultStates);
@@ -116,10 +117,10 @@ private slots:
         auto reply = QMessageBox::question(this, title, text, QMessageBox::Yes | QMessageBox::No);
         if (reply == QMessageBox::Yes) {
             // remove mood if it exists
-            mGroups->removeGroup(mood.uniqueID());
+            mMoods->removeMood(mood.uniqueID());
 
             // make a new mood
-            mGroups->saveNewMood(mood);
+            mMoods->saveNewMood(mood);
             emit updateGroups();
             // close the page.
             emit forceClosePage();
@@ -128,7 +129,7 @@ private slots:
 
 private:
     /// pointer to group data
-    GroupData* mGroups;
+    MoodData* mMoods;
 
     /// label for top of widget
     QLabel* mTopLabel;
@@ -143,7 +144,7 @@ private:
     bool mEditMode;
 
     /// the unique ID of the group being either edited or created.
-    std::uint64_t mUniqueID;
+    QString mUniqueID;
 };
 
 #endif // EDITREVIEWMOODIDGET_H

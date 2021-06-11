@@ -2,12 +2,14 @@
 #define PALETTEDETAILEDWIDGET_H
 
 #include <QLabel>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QWidget>
 #include "cor/objects/page.h"
 #include "cor/objects/palette.h"
 #include "cor/widgets/palettewidget.h"
 #include "syncwidget.h"
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2021.
@@ -52,6 +54,9 @@ signals:
     /// emits whenever the palette syncs
     void syncPalette(cor::Palette);
 
+    /// emits when a palette should be deleted.
+    void deletePalette(cor::Palette);
+
 protected:
     /*!
      * \brief paintEvent used to draw the background of the widget.
@@ -71,6 +76,18 @@ private slots:
     /// handles when the sync button is pressed
     void syncButtonPressed(bool) { emit syncPalette(mPalette); }
 
+    /// handles when a delete button is pressed.
+    void deleteButtonPressed(bool) {
+        QMessageBox::StandardButton reply;
+        QString text = "Delete " + mPalette.name() + "? This will remove it from the app memory.";
+
+        reply = QMessageBox::question(this, "Delete?", text, QMessageBox::Yes | QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+            // signal to remove from app
+            emit deletePalette(mPalette);
+        }
+    }
+
 private:
     /// resizes icons on the top of the widget.
     void resizeIcons();
@@ -83,6 +100,9 @@ private:
 
     /// button to edit palette
     QPushButton* mEditButton;
+
+    /// button to delete palettes
+    QPushButton* mDeleteButton;
 
     /// name of palette
     QLabel* mName;

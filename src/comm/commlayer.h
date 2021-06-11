@@ -15,7 +15,7 @@
 #include "cor/objects/light.h"
 #include "cor/objects/mood.h"
 #include "cor/protocols.h"
-#include "data/groupdata.h"
+#include "data/appdata.h"
 #include "data/palettedata.h"
 
 class UPnPDiscovery;
@@ -54,7 +54,7 @@ public:
     /*!
      * \brief Constructor
      */
-    CommLayer(QObject* parent, GroupData* groups, PaletteData* palettes);
+    CommLayer(QObject* parent, AppData* appData, PaletteData* palettes);
 
     /*!
      * \brief resetStateUpdates reset the state updates timeouts for specified commtypes. If it
@@ -278,7 +278,7 @@ private:
     /// Handles discovery of devices over UPnP
     UPnPDiscovery* mUPnP;
 
-    /// groups parser
+    /// saved group data, persistent between reloading the app
     GroupData* mGroups;
 
     /*!

@@ -21,7 +21,7 @@
 class ChooseMoodWidget : public QWidget, public cor::Page {
     Q_OBJECT
 public:
-    explicit ChooseMoodWidget(QWidget* parent, CommLayer* comm, GroupData* groups);
+    explicit ChooseMoodWidget(QWidget* parent, CommLayer* comm, AppData* appData);
 
     /// shows a set of moods and updates the UI to reflect the EGroupAction provided
     void showMoods(cor::EGroupAction action);
@@ -44,7 +44,7 @@ signals:
     void updateMoods();
 
     /// signals the key of a group that has been selected for editing.
-    void editMood(std::uint64_t);
+    void editMood(QString);
 
 protected:
     /*!
@@ -60,7 +60,7 @@ protected:
 private slots:
 
     /// handles when a specific mood is clicked
-    void clickedMood(std::uint64_t key);
+    void clickedMood(QString key);
 
     /*!
      * \brief closePressed called when close button is pressed. Checks if changes were made, asks
@@ -83,7 +83,7 @@ private:
     int mTopHeight;
 
     /// pointer to group data
-    GroupData* mGroups;
+    MoodData* mMoods;
 
     /// pointer to comm layer
     CommLayer* mComm;
@@ -100,7 +100,7 @@ private:
     /// scroll area for displaying moods
     QScrollArea* mMoodScrollArea;
 
-    /// container that displays groups in the mGroupScrollArea.
+    /// container that displays groups in the mMoodScrollArea.
     MenuMoodContainer* mMoodContainer;
 
     /// display widget that displays the currently selected mood.
@@ -113,7 +113,7 @@ private:
     QPushButton* mActionButton;
 
     /// stored key for the currently selected mood.
-    std::uint64_t mSelectedMood;
+    QString mSelectedMood;
 };
 
 #endif // CHOOSEMOODWIDGET_H

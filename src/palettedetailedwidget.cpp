@@ -8,6 +8,7 @@ PaletteDetailedWidget::PaletteDetailedWidget(QWidget* parent)
       mCloseButton{new QPushButton(this)},
       mSyncButton{new QPushButton(this)},
       mEditButton{new QPushButton(this)},
+      mDeleteButton{new QPushButton("Delete", this)},
       mName{new QLabel(this)},
       mSyncWidget{new SyncWidget(this)},
       mPaletteWidget{new cor::PaletteWidget(this)},
@@ -16,6 +17,7 @@ PaletteDetailedWidget::PaletteDetailedWidget(QWidget* parent)
     mSyncButton->setText("Sync to lights");
     connect(mSyncButton, SIGNAL(clicked(bool)), this, SLOT(syncButtonPressed(bool)));
     connect(mCloseButton, SIGNAL(clicked(bool)), this, SLOT(closeButtonPressed(bool)));
+    connect(mDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteButtonPressed(bool)));
 }
 
 void PaletteDetailedWidget::update(const cor::Palette& palette) {
@@ -43,8 +45,9 @@ void PaletteDetailedWidget::resize() {
     auto yPos = 0;
 
 
-    auto syncButtonWidth = std::min(width() - rowHeight * 3, int(rowHeight * 2.5));
+    auto syncButtonWidth = std::min(width() - rowHeight * 4, int(rowHeight * 3));
     mCloseButton->setGeometry(0, yPos, rowHeight, rowHeight);
+    mDeleteButton->setGeometry(mCloseButton->width(), yPos, rowHeight * 2, rowHeight);
     mSyncWidget->setGeometry(width() - rowHeight * 2 - syncButtonWidth, yPos, rowHeight, rowHeight);
     mSyncButton->setGeometry(width() - rowHeight - syncButtonWidth,
                              yPos,
@@ -94,15 +97,8 @@ void PaletteDetailedWidget::pushIn() {
         QPoint(int(parentWidget()->width() * 0.125f), int(-1 * parentWidget()->height())),
         QPoint(int(parentWidget()->width() * 0.125f), int(parentWidget()->height() * 0.25f)));
 
-    //  auto widthPoint = int(parentWidget()->width() * 0.875f - topMenu()->width());
-    // QPoint finishPoint(widthPoint, int(parentWidget()->height() * 0.125f));
-    // cor::moveWidget(topMenu(), QPoint(widthPoint, int(-1 * parentWidget()->height())),
-    // finishPoint);
-
-    // mFloatingMenu->setVisible(true);
     raise();
     setVisible(true);
-    // mFloatingMenu->raise();
     resize();
 }
 
@@ -112,11 +108,6 @@ void PaletteDetailedWidget::pushOut() {
     moveWidget(this,
                QPoint(int(parentWidget()->width() * 0.125f), int(parentWidget()->height() * 0.25f)),
                QPoint(int(parentWidget()->width() * 0.125f), int(-1 * parentWidget()->height())));
-
-    // auto widthPoint = int(parentWidget()->width() * 0.875f - topMenu()->size().width());
-    // QPoint startPoint(widthPoint, int(parentWidget()->height() * 0.125f));
-    // cor::moveWidget(topMenu(), startPoint, QPoint(widthPoint, int(-1 *
-    // parentWidget()->height())));
 }
 
 void PaletteDetailedWidget::updateSyncStatus(ESyncState state) {

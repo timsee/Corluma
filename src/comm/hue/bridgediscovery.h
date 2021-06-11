@@ -17,7 +17,7 @@
 #include "huemetadata.h"
 
 class CommHue;
-class GroupData;
+class AppData;
 
 namespace hue {
 
@@ -43,7 +43,7 @@ public:
     /*!
      * \brief BridgeDiscovery Constructor
      */
-    explicit BridgeDiscovery(QObject* parent, UPnPDiscovery* UPnP, GroupData* groups);
+    explicit BridgeDiscovery(QObject* parent, UPnPDiscovery* UPnP, AppData* appData);
 
     /// destructor
     ~BridgeDiscovery();
@@ -293,7 +293,7 @@ private:
     CommHue* mHue;
 
     /// group data, used for generating keys
-    GroupData* mGroups;
+    AppData* mAppData;
 
     /// true if any NUPnP traffic has been received, false otherwise.
     bool mReceivedNUPnPTraffic;

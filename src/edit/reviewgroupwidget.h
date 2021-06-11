@@ -21,12 +21,12 @@
 class ReviewGroupWidget : public EditPageChildWidget {
     Q_OBJECT
 public:
-    explicit ReviewGroupWidget(QWidget* parent, CommLayer* comm, GroupData* groups)
+    explicit ReviewGroupWidget(QWidget* parent, CommLayer* comm, AppData* appData)
         : EditPageChildWidget(parent),
           mComm{comm},
-          mGroups{groups},
+          mGroups{appData->groups()},
           mTopLabel{new QLabel("Review:", this)},
-          mGroupWidget{new DisplayGroupWidget(this, comm, groups)},
+          mGroupWidget{new DisplayGroupWidget(this, comm, appData)},
           mCreateButton{new QPushButton("Create", this)} {
         mBottomButtons->hideForward(true);
         mCreateButton->setStyleSheet(cor::kLighterGreyBackground);
@@ -118,7 +118,7 @@ private slots:
         if (reply == QMessageBox::Yes) {
             if (mEditMode) {
                 // remove the existing group
-                // mGroups->removeGroup(mGroupWidget->group().uniqueID());
+                // mAppData->removeGroup(mGroupWidget->group().uniqueID());
                 qDebug() << "INFO: editing group" << group.toJson();
             } else {
                 qDebug() << "INFO: adding new group" << group.toJson();

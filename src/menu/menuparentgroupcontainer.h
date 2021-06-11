@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include "cor/objects/group.h"
 #include "cor/widgets/groupbutton.h"
-#include "data/groupdata.h"
+#include "data/appdata.h"
 
 using MenuParentGroupCounts =
     std::unordered_map<std::uint64_t, std::pair<std::uint32_t, std::uint32_t>>;
@@ -23,7 +23,7 @@ class MenuParentGroupContainer : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit MenuParentGroupContainer(QWidget* parent, GroupData* groups);
+    explicit MenuParentGroupContainer(QWidget* parent, AppData* appData);
 
     /*!
      * \brief updateDataGroupInUI using the new cor::LightGroup, update the UI assets with
@@ -79,7 +79,7 @@ private slots:
         if (parent == "Miscellaneous") {
             emit parentClicked(0u);
         } else {
-            emit parentClicked(mGroups->groupNameToID(parent));
+            emit parentClicked(mAppData->groups()->groupNameToID(parent));
         }
     }
 
@@ -88,7 +88,7 @@ private:
     int mButtonHeight;
 
     /// getter for group data
-    GroupData* mGroups;
+    AppData* mAppData;
 
     /// vector of parent group widgets
     std::vector<cor::GroupButton*> mParentGroupWidgets;

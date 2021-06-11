@@ -19,7 +19,7 @@ ListMoodPreviewWidget::ListMoodPreviewWidget(const cor::Mood& mood, QWidget* par
     mIsChecked = false;
     mIsSelected = false;
 
-    mKey = QString::number(mMood.uniqueID());
+    mKey = mMood.uniqueID();
 
     // setup icon
     QString backgroundStyleSheet = "background:rgba(0, 0, 0, 0%);";

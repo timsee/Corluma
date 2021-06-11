@@ -7,8 +7,7 @@
 
 #include "comm/commlayer.h"
 #include "cor/lightlist.h"
-#include "cor/widgets/lightvectorwidget.h"
-#include "data/groupdata.h"
+#include "data/appdata.h"
 #include "globalstatewidget.h"
 #include "lefthandbutton.h"
 #include "standardlightsmenu.h"
@@ -33,7 +32,7 @@ public:
                  cor::LightList* selectedLights,
                  CommLayer* comm,
                  cor::LightList* lights,
-                 GroupData* groups,
+                 AppData* appData,
                  QWidget* parent);
 
     /// change the height of each row
@@ -144,7 +143,7 @@ private:
     cor::LightList* mData;
 
     /// pointer to group data
-    GroupData* mGroups;
+    AppData* mAppData;
 
     /// lights button
     LeftHandButton* mLightsButton;

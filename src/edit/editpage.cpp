@@ -13,12 +13,11 @@
 
 namespace cor {
 
-EditPage::EditPage(QWidget* parent, CommLayer* comm, GroupData* groups, bool showPreviewButton)
+EditPage::EditPage(QWidget* parent, CommLayer* comm, bool showPreviewButton)
     : QWidget(parent),
       mPreviewButton{new QPushButton("Preview", this)},
       mPlaceholder{new QWidget(this)},
       mComm(comm),
-      mGroups(groups),
       mCloseButton{new QPushButton(this)},
       mUsePreviewButton{showPreviewButton} {
     connect(mCloseButton, SIGNAL(clicked(bool)), this, SLOT(closePressed(bool)));

@@ -12,7 +12,7 @@
 #include "cor/objects/group.h"
 #include "cor/objects/mood.h"
 
-using RoomMoodMap = std::unordered_map<std::uint64_t, std::vector<std::uint64_t>>;
+using RoomMoodMap = std::unordered_map<std::uint64_t, std::vector<QString>>;
 
 /**
  * @brief The MoodParentData class sorts all moods into a hash table where the key is the room that
@@ -24,10 +24,12 @@ public:
     MoodParentData() = default;
 
     /// getter for all parents
-    const RoomMoodMap& moodParents() const noexcept { return mParents; }
+    const RoomMoodMap& roomMoodMap() const noexcept { return mParents; }
+
+    bool empty() const noexcept { return mParents.empty(); }
 
     /// search for the parent of a given mood
-    std::uint64_t parentFromMoodID(std::uint64_t uniqueID) const {
+    std::uint64_t parentFromMoodID(const QString& uniqueID) const {
         for (const auto& parentMoods : mParents) {
             // find the unique ID in a parent
             auto moods = parentMoods.second;
@@ -78,9 +80,9 @@ private:
     /// takes a map, a roomID and a moodID. It first checks if the roomID exists, and if it does, it
     /// appends the moodID to the roomID's associated vector. If it does not exist, the roomID is
     /// added with a vector that contains the moodID
-    void insertMoodIntoMap(std::unordered_map<std::uint64_t, std::vector<std::uint64_t>>& map,
+    void insertMoodIntoMap(std::unordered_map<std::uint64_t, std::vector<QString>>& map,
                            std::uint64_t roomID,
-                           std::uint64_t moodID) {
+                           const QString& moodID) {
         // check if the room ID exists
         auto roomResult = map.find(roomID);
         // if room already exists in the map, add to the back of the vector of moodIDs

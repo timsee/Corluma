@@ -5,56 +5,52 @@
  */
 
 #include "palettescrollarea.h"
+#include <QScrollBar>
 #include <QScroller>
 #include "cor/stylesheets.h"
+#include "utils/qt.h"
 
-PaletteScrollArea::PaletteScrollArea(QWidget* parent, PaletteData* palettes)
-    : QScrollArea(parent),
-      mPalettes{palettes} {
-    mScrollWidget = new QWidget(this);
-    setWidget(mScrollWidget);
-    setStyleSheet(cor::kTransparentStylesheet);
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    QScroller::grabGesture(viewport(), QScroller::LeftMouseButtonGesture);
+namespace {
 
-    std::vector<QString> labels(std::size_t(EPalette::unknown) - 1);
-    for (std::size_t i = 0u; i < labels.size(); ++i) {
-        labels[i] = paletteToString(EPalette(i + 1));
-    }
+void initScrollArea(QWidget* widget, QScrollArea* scrollArea) {
+    QScroller::grabGesture(scrollArea->viewport(), QScroller::LeftMouseButtonGesture);
+    scrollArea->setWidget(widget);
+    scrollArea->setFrameStyle(QFrame::NoFrame);
+    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    scrollArea->horizontalScrollBar()->setEnabled(false);
+    scrollArea->horizontalScrollBar()->setVisible(false);
+}
 
-    mPaletteWidgets = std::vector<StoredPaletteWidget*>(labels.size(), nullptr);
-    mLayout = new QGridLayout;
-    mLayout->setSpacing(0);
-    mLayout->setContentsMargins(9, 0, 0, 0);
+} // namespace
 
-    std::uint32_t groupIndex = 0;
-    int rowIndex = -1;
-    int columnIndex = 0;
-    for (auto palette : mPalettes->palettes()) {
-        if ((columnIndex % 3) == 0) {
-            columnIndex = 0;
-            rowIndex++;
-        }
 
-        mPaletteWidgets[groupIndex] = new StoredPaletteWidget(palette, this);
-        mLayout->addWidget(mPaletteWidgets[groupIndex], rowIndex, columnIndex);
-        connect(mPaletteWidgets[groupIndex],
-                SIGNAL(paletteButtonClicked(cor::Palette)),
-                this,
-                SLOT(buttonClicked(cor::Palette)));
-        columnIndex++;
-        groupIndex++;
-    }
-
-    setWidgetResizable(true);
-    widget()->setLayout(mLayout);
+PaletteScrollArea::PaletteScrollArea(QWidget* parent, const std::vector<cor::Palette>& palettes)
+    : QWidget(parent),
+      mScrollArea{new QScrollArea(this)},
+      mPaletteContainer{new MenuPaletteContainer(mScrollArea)} {
+    addPalettes(palettes);
+    initScrollArea(mPaletteContainer, mScrollArea);
+    connect(mPaletteContainer,
+            SIGNAL(paletteSelected(cor::Palette)),
+            this,
+            SLOT(buttonClicked(cor::Palette)));
     setStyleSheet(cor::kDarkerGreyBackground);
 }
 
+
+
+void PaletteScrollArea::clear() {
+    mPaletteContainer->clear();
+}
+
+void PaletteScrollArea::addPalettes(std::vector<cor::Palette> palettes) {
+    mPaletteContainer->showPalettes(palettes);
+}
+
 void PaletteScrollArea::highlightButton(cor::Palette palette) {
-    for (auto widget : mPaletteWidgets) {
-        widget->setChecked(palette);
-    }
+    //    for (auto widget : mPaletteWidgets) {
+    //        widget->setChecked(palette);
+    //    }
 }
 
 void PaletteScrollArea::buttonClicked(cor::Palette palette) {
@@ -62,7 +58,9 @@ void PaletteScrollArea::buttonClicked(cor::Palette palette) {
 }
 
 void PaletteScrollArea::resize() {
-    for (auto widget : mPaletteWidgets) {
-        widget->resize();
-    }
+    int offsetY = 0u;
+    QRect rect = QRect(0, offsetY, this->width(), this->height() - offsetY);
+    int scrollAreaWidth = int(rect.width() * 1.2);
+    mScrollArea->setGeometry(0, 0, scrollAreaWidth, this->height());
+    mPaletteContainer->setFixedWidth(rect.width());
 }

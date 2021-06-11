@@ -24,12 +24,12 @@ namespace cor {
 class EditGroupPage : public cor::EditPage {
     Q_OBJECT
 public:
-    explicit EditGroupPage(QWidget* parent, CommLayer* comm, GroupData* groups)
-        : EditPage(parent, comm, groups, false),
+    explicit EditGroupPage(QWidget* parent, CommLayer* comm, AppData* appData)
+        : EditPage(parent, comm, false),
           mMetadataWidget{new ChooseMetadataWidget(this, false)},
-          mLightsWidget{new ChooseLightsGroupWidget(this, comm, groups)},
-          mReviewPage{new ReviewGroupWidget(this, comm, groups)},
-          mGroups{groups} {
+          mLightsWidget{new ChooseLightsGroupWidget(this, comm, appData)},
+          mReviewPage{new ReviewGroupWidget(this, comm, appData)},
+          mGroups{appData->groups()} {
         setupWidgets({mMetadataWidget, mLightsWidget, mReviewPage});
     }
 

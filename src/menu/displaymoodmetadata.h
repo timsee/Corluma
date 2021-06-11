@@ -10,7 +10,7 @@
 #include <sstream>
 #include "comm/commlayer.h"
 #include "cor/widgets/expandingtextscrollarea.h"
-#include "data/groupdata.h"
+#include "data/appdata.h"
 
 /*!
  * \brief The DisplayGroupMetadata class compares a mood to all other mood, and generates
@@ -19,7 +19,7 @@
 class DisplayMoodMetadata : public cor::ExpandingTextScrollArea {
     Q_OBJECT
 public:
-    explicit DisplayMoodMetadata(QWidget* parent, CommLayer* comm, GroupData* groups);
+    explicit DisplayMoodMetadata(QWidget* parent, CommLayer* comm, AppData* appData);
 
     /// true if errors that would prevent the mood from being valid exist, false if the mood can
     /// be or is a valid mood. Errors include identical moods being detected, or moods that share
@@ -42,7 +42,7 @@ private:
     CommLayer* mComm;
 
     /// pointer to group data
-    GroupData* mGroups;
+    AppData* mAppData;
 };
 
 #endif // DISPLAYMOODMETADATA_H

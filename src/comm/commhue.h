@@ -35,7 +35,7 @@ public:
     /*!
      * \brief CommHue Constructor
      */
-    CommHue(UPnPDiscovery* UPnP, GroupData* groups);
+    CommHue(UPnPDiscovery* UPnP, AppData* appData);
 
     /*!
      * \brief CommHue Destructor
@@ -394,7 +394,7 @@ private:
     std::vector<QString> mSearchingSerialNumbers;
 
     /// pointer to group data.
-    GroupData* mGroups;
+    AppData* mAppData;
 
     /// true if scanning for lights, false otherwise.
     bool mScanIsActive;

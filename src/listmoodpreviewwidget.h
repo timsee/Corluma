@@ -69,7 +69,7 @@ public:
 signals:
 
     /// called when mood is selected
-    void moodSelected(std::uint64_t);
+    void moodSelected(QString);
 
 protected:
     /*!

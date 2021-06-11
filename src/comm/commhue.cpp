@@ -11,7 +11,7 @@
 #include "comm/hue/bridge.h"
 #include "comm/hue/hueprotocols.h"
 #include "cor/objects/light.h"
-#include "data/groupdata.h"
+#include "data/appdata.h"
 #include "utils/color.h"
 #include "utils/cormath.h"
 #include "utils/exception.h"
@@ -24,9 +24,9 @@
  */
 
 
-CommHue::CommHue(UPnPDiscovery* UPnP, GroupData* groups)
+CommHue::CommHue(UPnPDiscovery* UPnP, AppData* appData)
     : CommType(ECommType::hue),
-      mGroups{groups},
+      mAppData{appData},
       mScanIsActive{false} {
     mStateUpdateInterval = 1000;
 
@@ -36,7 +36,7 @@ CommHue::CommHue(UPnPDiscovery* UPnP, GroupData* groups)
             this,
             SLOT(replyFinished(QNetworkReply*)));
 
-    mDiscovery = new hue::BridgeDiscovery(this, UPnP, groups);
+    mDiscovery = new hue::BridgeDiscovery(this, UPnP, appData);
     mDiscovery->loadJSON();
 
     // this avoids making a bunch of file writes when each light is found in the hue's save data.

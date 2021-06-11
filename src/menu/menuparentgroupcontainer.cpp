@@ -10,10 +10,10 @@
 
 const QString kMiscKey = "zzzzMiscellaneous";
 
-MenuParentGroupContainer::MenuParentGroupContainer(QWidget* parent, GroupData* groups)
+MenuParentGroupContainer::MenuParentGroupContainer(QWidget* parent, AppData* appData)
     : QWidget(parent),
       mButtonHeight{10},
-      mGroups{groups} {}
+      mAppData{appData} {}
 
 
 void MenuParentGroupContainer::removeParentGroupWidget(const QString& key) {
@@ -56,10 +56,10 @@ const std::vector<cor::Group> MenuParentGroupContainer::parentGroups() {
     std::vector<cor::Group> uiGroups;
     for (auto widget : mParentGroupWidgets) {
         if (widget->key() == kMiscKey) {
-            uiGroups.push_back(mGroups->orphanGroup());
+            uiGroups.push_back(mAppData->lightOrphans().group());
         } else {
-            auto ID = mGroups->groupNameToID(widget->key());
-            auto group = mGroups->groupFromID(ID);
+            auto ID = mAppData->groups()->groupNameToID(widget->key());
+            auto group = mAppData->groups()->groupFromID(ID);
             if (group.isValid()) {
                 uiGroups.push_back(group);
             } else {
@@ -80,7 +80,7 @@ void MenuParentGroupContainer::highlightParentGroups(
     const std::unordered_map<std::uint64_t, std::pair<std::uint32_t, std::uint32_t>>&
         parentCounts) {
     for (auto parentWidget : mParentGroupWidgets) {
-        auto ID = mGroups->groupNameToID(parentWidget->key());
+        auto ID = mAppData->groups()->groupNameToID(parentWidget->key());
         if (parentWidget->key() == kMiscKey) {
             ID = 0u;
         }

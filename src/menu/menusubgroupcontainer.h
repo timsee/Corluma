@@ -7,7 +7,7 @@
 #include "cor/dictionary.h"
 #include "cor/protocols.h"
 #include "cor/widgets/groupbutton.h"
-#include "data/groupdata.h"
+#include "data/appdata.h"
 
 /*!
  * \copyright
@@ -23,7 +23,7 @@ class MenuSubgroupContainer : public QWidget {
 
 public:
     /// constructor
-    explicit MenuSubgroupContainer(QWidget* parent, GroupData* groups, cor::EWidgetType type);
+    explicit MenuSubgroupContainer(QWidget* parent, AppData* appData, cor::EWidgetType type);
 
     /// shows the groups with the names provided
     void showGroups(std::vector<QString> groups, std::uint64_t parentID);
@@ -40,11 +40,11 @@ public:
         std::vector<cor::Group> groups;
         groups.reserve(mButtons.size());
         for (auto button : mButtons) {
-            auto ID = mGroups->subgroups().subgroupIDFromRenamedGroup(mParentID, button->key());
+            auto ID = mAppData->subgroups().subgroupIDFromRenamedGroup(mParentID, button->key());
             if (button->key() == "All") {
                 ID = mParentID;
             }
-            auto group = mGroups->groupFromID(ID);
+            auto group = mAppData->groups()->groupFromID(ID);
             // add a way to denote this is a parent group.
             if (button->key() == "All") {
                 group.name("All");
@@ -71,7 +71,7 @@ public:
 
     void showState(std::uint64_t groupID, const std::vector<cor::LightState> states) {
         for (auto button : mButtons) {
-            auto ID = mGroups->subgroups().subgroupIDFromRenamedGroup(mParentID, button->key());
+            auto ID = mAppData->subgroups().subgroupIDFromRenamedGroup(mParentID, button->key());
             if (button->key() == "All") {
                 ID = mParentID;
             }
@@ -87,7 +87,7 @@ public:
 
     void hideStates(std::uint64_t groupID) {
         for (auto button : mButtons) {
-            auto ID = mGroups->subgroups().subgroupIDFromRenamedGroup(mParentID, button->key());
+            auto ID = mAppData->subgroups().subgroupIDFromRenamedGroup(mParentID, button->key());
             if (button->key() == "All") {
                 ID = mParentID;
             }
@@ -145,7 +145,7 @@ private slots:
 
 private:
     /// stores the group data
-    GroupData* mGroups;
+    AppData* mAppData;
 
     /// add a group to a the list of supported groups
     void addGroup(const QString& group);

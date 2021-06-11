@@ -9,10 +9,10 @@
 #include <QDebug>
 
 MenuSubgroupContainer::MenuSubgroupContainer(QWidget* parent,
-                                             GroupData* groups,
+                                             AppData* appData,
                                              cor::EWidgetType type)
     : QWidget(parent),
-      mGroups{groups},
+      mAppData{appData},
       mType{type},
       mWidgetHeight{10} {
     if (mType == cor::EWidgetType::condensed) {
@@ -57,7 +57,7 @@ void MenuSubgroupContainer::addGroup(const QString& group) {
 
 
 void MenuSubgroupContainer::showSubgroups(std::uint64_t parentID, int buttonHeight) {
-    auto subgroupNames = mGroups->subgroups().subgroupNamesForGroup(parentID);
+    auto subgroupNames = mAppData->subgroups().subgroupNamesForGroup(parentID);
     showGroups(subgroupNames, parentID);
     resizeSubgroupWidgets(buttonHeight);
 }
@@ -71,7 +71,7 @@ void MenuSubgroupContainer::buttonPressed(const QString& key) {
     if (key == "All") {
         emit subgroupClicked(0u);
     } else {
-        auto groupID = mGroups->subgroups().subgroupIDFromRenamedGroup(mParentID, key);
+        auto groupID = mAppData->subgroups().subgroupIDFromRenamedGroup(mParentID, key);
         emit subgroupClicked(groupID);
     }
 }
@@ -81,7 +81,7 @@ void MenuSubgroupContainer::buttonToggled(QString key, bool selectAll) {
     if (key == "All") {
         emit groupSelectAllToggled(0u, selectAll);
     } else {
-        auto groupID = mGroups->subgroups().subgroupIDFromRenamedGroup(mParentID, key);
+        auto groupID = mAppData->subgroups().subgroupIDFromRenamedGroup(mParentID, key);
         emit groupSelectAllToggled(groupID, selectAll);
     }
 }
@@ -91,7 +91,7 @@ void MenuSubgroupContainer::highlightSubgroups(
     const std::unordered_map<std::uint64_t, std::pair<std::uint32_t, std::uint32_t>>&
         subgroupCounts) {
     for (auto button : mButtons) {
-        auto ID = mGroups->subgroups().subgroupIDFromRenamedGroup(mParentID, button->key());
+        auto ID = mAppData->subgroups().subgroupIDFromRenamedGroup(mParentID, button->key());
         if (button->key() == "All") {
             ID = mParentID;
         }

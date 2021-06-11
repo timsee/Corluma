@@ -25,7 +25,7 @@ public:
     enum class EState { noMoods, parents, moods };
 
     /// constructor
-    explicit StandardMoodsMenu(QWidget* parent, CommLayer* comm, GroupData* groups);
+    explicit StandardMoodsMenu(QWidget* parent, CommLayer* comm, AppData* appData);
 
     /// sets the height of a widget on the menu.
     void widgetHeight(int height) { mWidgetHeight = height; }
@@ -39,7 +39,7 @@ public:
 signals:
 
     /// emit when a mood is clicked
-    void moodClicked(std::uint64_t);
+    void moodClicked(QString);
 
 protected:
     /// called whenever it is resized
@@ -50,7 +50,7 @@ private slots:
     void shouldShowMoods(QString, bool);
 
     /// handles when a mood is selected
-    void selectMood(std::uint64_t);
+    void selectMood(QString);
 
     /// handles when a parent group is clicked
     void parentGroupClicked(std::uint64_t);
@@ -63,7 +63,7 @@ private:
     CommLayer* mComm;
 
     /// pointer to the group data.
-    GroupData* mGroups;
+    AppData* mAppData;
 
     /// current state of the menu
     EState mState;

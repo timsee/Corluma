@@ -5,10 +5,10 @@
  */
 #include "menugroupcontainer.h"
 
-MenuGroupContainer::MenuGroupContainer(QWidget* parent, GroupData* groups)
+MenuGroupContainer::MenuGroupContainer(QWidget* parent, GroupData* groupData)
     : QWidget(parent),
       mGroupCount{1},
-      mGroups{groups} {}
+      mGroups{groupData} {}
 
 
 void MenuGroupContainer::showGroups(std::vector<std::uint64_t> groups, int buttonHeight) {

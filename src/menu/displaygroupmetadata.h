@@ -9,7 +9,7 @@
 #include <QWidget>
 #include <sstream>
 #include "cor/widgets/expandingtextscrollarea.h"
-#include "data/groupdata.h"
+#include "data/appdata.h"
 
 /*!
  * \brief The DisplayGroupMetadata class compares a group to all other groups, and generates
@@ -19,7 +19,7 @@
 class DisplayGroupMetadata : public cor::ExpandingTextScrollArea {
     Q_OBJECT
 public:
-    explicit DisplayGroupMetadata(QWidget* parent, GroupData* groups);
+    explicit DisplayGroupMetadata(QWidget* parent, AppData* appData);
 
     /// true if errors that would prevent the group from being valid exist, false if the group can
     /// be or is a valid group. Errors include identical groups being detected, or groups that share
@@ -39,7 +39,7 @@ private:
     bool mErrorsExist;
 
     /// pointer to group data
-    GroupData* mGroups;
+    AppData* mAppData;
 };
 
 #endif // DISPLAYGROUPMETADATA_H

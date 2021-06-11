@@ -103,7 +103,7 @@ public slots:
     void pushInEditGroupPage(std::uint64_t key);
 
     /// displays the edit mood page
-    void pushInEditMoodPage(std::uint64_t key);
+    void pushInEditMoodPage(const QString& key);
 
     /// hides the edit page
     void pushOutEditPage();
@@ -114,7 +114,7 @@ public slots:
 
     /// edit teh mood with the given key. if a 0u is provided as a key, a new mood is created
     /// instead.
-    void editMoodSelected(std::uint64_t);
+    void editMoodSelected(QString);
 
     /// displays the edit page
     void pushInChooseEditPage();
@@ -278,11 +278,8 @@ private:
     // Backend Data
     //------------------
 
-    /// groups parser
-    GroupData* mGroups;
-
-    /// stores the global palette data.
-    PaletteData* mPalettes;
+    /// saved app data, persistent between reloading the app
+    AppData* mAppData;
 
     /*!
      * \brief communication pointer to communication object

@@ -9,7 +9,6 @@
 #include "appsettings.h"
 #include "cor/widgets/checkbox.h"
 #include "cor/widgets/slider.h"
-#include "data/groupdata.h"
 
 /*!
  * \copyright

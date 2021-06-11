@@ -14,19 +14,19 @@
 #include "listmoodwidget.h"
 #include "utils/qt.h"
 
-MoodPage::MoodPage(QWidget* parent, GroupData* groups, CommLayer* comm)
+MoodPage::MoodPage(QWidget* parent, AppData* appData, CommLayer* comm)
     : QWidget(parent),
-      mGroups(groups),
+      mMoodData{appData->moods()},
       mComm{comm},
-      mMoodMenu{new StandardMoodsMenu(this, comm, groups)},
+      mMoodMenu{new StandardMoodsMenu(this, comm, appData)},
       mPlaceholderWidget{new ListPlaceholderWidget(
           this,
           "There are no moods saved in the app. Click the + button to make your first mood.")},
       mGreyOut{new GreyOutOverlay(false, parentWidget())},
-      mCurrentMood{0} {
-    connect(mMoodMenu, SIGNAL(moodClicked(std::uint64_t)), this, SLOT(moodSelected(std::uint64_t)));
+      mCurrentMood{} {
+    connect(mMoodMenu, SIGNAL(moodClicked(QString)), this, SLOT(moodSelected(QString)));
 
-    mMoodDetailedWidget = new MoodDetailedWidget(parent, mGroups, mComm);
+    mMoodDetailedWidget = new MoodDetailedWidget(parent, appData, mComm);
     connect(mMoodDetailedWidget, SIGNAL(pressedClose()), this, SLOT(detailedClosePressed()));
 
     mMoodDetailedWidget->setGeometry(0, -1 * height(), width(), height());
@@ -34,7 +34,7 @@ MoodPage::MoodPage(QWidget* parent, GroupData* groups, CommLayer* comm)
 
     connect(mGreyOut, SIGNAL(clicked()), this, SLOT(greyoutClicked()));
 
-    connect(mGroups, SIGNAL(newMoodAdded(QString)), this, SLOT(newMoodAdded(QString)));
+    connect(appData, SIGNAL(newMoodAdded(QString)), this, SLOT(newMoodAdded(QString)));
 
     mMoodMenu->setVisible(false);
     mPlaceholderWidget->setVisible(false);
@@ -53,7 +53,7 @@ void MoodPage::updateMoods() {
 }
 
 
-void MoodPage::selectedMood(const QString&, std::uint64_t moodKey) {
+void MoodPage::selectedMood(const QString&, const QString& moodKey) {
     mCurrentMood = moodKey;
     moodSelected(moodKey);
 }
@@ -62,7 +62,7 @@ void MoodPage::resize() {
     auto mainWidgetHeight = height() * 0.9;
     auto xSpacer = width() * 0.03;
     auto mainRect = QRect(xSpacer, height() * 0.05, width() - xSpacer * 2, mainWidgetHeight);
-    if (mGroups->moods().empty()) {
+    if (mMoodData->moods().empty()) {
         mPlaceholderWidget->setGeometry(mainRect);
     } else {
         mMoodMenu->widgetHeight(this->height() / 8);
@@ -78,7 +78,7 @@ void MoodPage::resizeEvent(QResizeEvent*) {
     resize();
 }
 
-void MoodPage::show(std::uint64_t currentMood) {
+void MoodPage::show(const QString& currentMood) {
     checkForMissingMoods();
     mMoodMenu->setVisible(true);
     mCurrentMood = currentMood;
@@ -92,7 +92,7 @@ void MoodPage::hide() {
 
 
 void MoodPage::clearWidgets() {
-    mCurrentMood = 0;
+    mCurrentMood = QString();
 }
 
 void MoodPage::greyoutClicked() {
@@ -101,10 +101,10 @@ void MoodPage::greyoutClicked() {
     }
 }
 
-void MoodPage::detailedMoodDisplay(std::uint64_t key) {
+void MoodPage::detailedMoodDisplay(QString key) {
     mGreyOut->greyOut(true);
 
-    const auto& moodResult = mGroups->moods().item(QString::number(key).toStdString());
+    const auto& moodResult = mMoodData->moods().item(key.toStdString());
     if (moodResult.second) {
         mMoodDetailedWidget->update(moodResult.first);
     }
@@ -112,7 +112,7 @@ void MoodPage::detailedMoodDisplay(std::uint64_t key) {
     mMoodDetailedWidget->pushIn();
 }
 
-void MoodPage::moodSelected(std::uint64_t key) {
+void MoodPage::moodSelected(QString key) {
     detailedMoodDisplay(key);
 }
 
@@ -122,7 +122,7 @@ void MoodPage::detailedClosePressed() {
 }
 
 void MoodPage::checkForMissingMoods() {
-    if (mGroups->moods().empty()) {
+    if (mMoodData->moods().empty()) {
         mPlaceholderWidget->setVisible(true);
         mMoodMenu->setVisible(false);
     } else {

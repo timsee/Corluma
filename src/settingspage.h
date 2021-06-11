@@ -47,7 +47,7 @@ public:
      * \brief Constructor
      */
     explicit SettingsPage(QWidget* parent,
-                          GroupData* parser,
+                          AppData* parser,
                           CommLayer* comm,
                           AppSettings* appSettings);
 
@@ -135,8 +135,8 @@ private:
     /// resize the widgets in the scroll area
     void resizeScrollArea();
 
-    /// groups parser
-    GroupData* mGroups;
+    /// saved app data, persistent between reloading the app
+    AppData* mAppData;
 
     /// scroll area that contains all the information in the widget
     QScrollArea* mScrollArea;

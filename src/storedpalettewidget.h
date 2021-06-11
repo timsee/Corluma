@@ -7,6 +7,7 @@
 
 #include "cor/objects/light.h"
 #include "cor/widgets/button.h"
+#include "cor/widgets/listitemwidget.h"
 #include "cor/widgets/palettewidget.h"
 
 /*!
@@ -18,7 +19,7 @@
  * \brief The PaletteWidget is a widget used on the PalettePage to display the name and all the
  * colors for a palette.
  */
-class StoredPaletteWidget : public QWidget {
+class StoredPaletteWidget : public cor::ListItemWidget {
     Q_OBJECT
 public:
     explicit StoredPaletteWidget(const cor::Palette& palette, QWidget* parent);
@@ -35,9 +36,6 @@ public:
      */
     void setChecked(cor::Palette palette);
 
-    /// resize this widget and all subwidgets
-    void resize();
-
 signals:
 
     /*!
@@ -50,10 +48,15 @@ protected:
     /// handles when the mouse is released on a button. This acts as clicking a button.
     void mouseReleaseEvent(QMouseEvent*) { emit paletteButtonClicked(mPalette); }
 
+    void resizeEvent(QResizeEvent*) { resize(); }
+
     /// paint the widget
     void paintEvent(QPaintEvent*);
 
 private:
+    /// resize this widget and all subwidgets
+    void resize();
+
     /// vector that shows the colors in a palette
     cor::PaletteWidget* mLightVector;
 

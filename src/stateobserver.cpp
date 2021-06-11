@@ -12,7 +12,7 @@ namespace cor {
 
 StateObserver::StateObserver(cor::LightList* data,
                              CommLayer* comm,
-                             GroupData* groups,
+                             AppData* appData,
                              AppSettings* appSettings,
                              MainWindow* mainWindow,
                              LightsPage* lightsPage,
@@ -21,7 +21,7 @@ StateObserver::StateObserver(cor::LightList* data,
     : QObject(parent),
       mData{data},
       mComm{comm},
-      mGroups{groups},
+      mAppData{appData},
       mAppSettings{appSettings},
       mMainWindow{mainWindow},
       mLightsPage{lightsPage},
@@ -176,8 +176,8 @@ void StateObserver::protocolSettingsChanged(EProtocolType type, bool enabled) {
     }
 }
 
-void StateObserver::moodChanged(std::uint64_t moodID) {
-    const auto& result = mGroups->moods().item(QString::number(moodID).toStdString());
+void StateObserver::moodChanged(QString moodID) {
+    const auto& result = mAppData->moods()->moods().item(moodID.toStdString());
     if (result.second) {
         mData->clearLights();
         const auto& moodDict = mComm->makeMood(result.first);
@@ -318,7 +318,7 @@ void StateObserver::lightNameChange(const QString& uniqueID, const QString&) {
 
 void StateObserver::lightsAdded(std::vector<QString> keys) {
     qDebug() << "INFO: lights added " << keys;
-    mGroups->addLightsToGroups(keys);
+    mAppData->addLightsToGroups(keys);
     mMainWindow->leftHandMenu()->updateLights();
     if (!mMainWindow->anyDiscovered()) {
         mMainWindow->anyDiscovered(true);
@@ -329,7 +329,7 @@ void StateObserver::lightsDeleted(std::vector<QString> keys) {
     qDebug() << "INFO: lights deleted " << keys;
 
     mData->removeByIDs(keys);
-    mGroups->lightsDeleted(keys);
+    mAppData->lightsDeleted(keys);
     mLightsPage->handleDeletedLights(keys);
     mMainWindow->leftHandMenu()->clearWidgets();
     mMainWindow->leftHandMenu()->updateLights();

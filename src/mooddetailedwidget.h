@@ -26,7 +26,7 @@ class MoodDetailedWidget : public QWidget, public cor::Page {
     Q_OBJECT
 public:
     /// constructor
-    explicit MoodDetailedWidget(QWidget* parent, GroupData* groups, CommLayer* comm);
+    explicit MoodDetailedWidget(QWidget* parent, AppData* appData, CommLayer* comm);
 
     /// update the mood in the widget
     void update(const cor::Mood& group);
@@ -60,10 +60,10 @@ signals:
     void pressedClose();
 
     /// signals when the mood is going to be selected
-    void enableMood(std::uint64_t);
+    void enableMood(QString);
 
     /// edit mood clicked
-    void editMood(std::uint64_t);
+    void editMood(QString);
 
 protected:
     /*!

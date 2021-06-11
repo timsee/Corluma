@@ -48,12 +48,12 @@ public:
 
 signals:
     /// emits when a signal is selected.
-    void moodSelected(std::uint64_t key);
+    void moodSelected(QString key);
 
 private slots:
 
     /// called when a mood is clicked
-    void selectMood(std::uint64_t key);
+    void selectMood(QString key);
 
 
 private:

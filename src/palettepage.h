@@ -5,6 +5,7 @@
 #include "colorpicker/multicolorpicker.h"
 #include "cor/objects/page.h"
 #include "data/palettedata.h"
+#include "edit/editpalettewidget.h"
 #include "greyoutoverlay.h"
 #include "palettedetailedwidget.h"
 #include "routines/routinecontainer.h"
@@ -62,6 +63,9 @@ public:
     /// widget that shows the details of a palette.
     PaletteDetailedWidget* detailedWidget() { return mDetailedWidget; }
 
+    /// push in the new palette page.
+    void pushInNewPalettePage();
+
     /*!
      * show the preset greset group widgets, but show the version
      * with less features designed for selecting hue colors.
@@ -102,6 +106,12 @@ private slots:
     /// handles when a palette is asking to be synced.
     void paletteSyncClicked(cor::Palette);
 
+    /// handles when a palette is saved.
+    void paletteSaved(cor::Palette);
+
+    /// handles when a delete palette button is clicked.
+    void deletePaletteClicked(cor::Palette);
+
 protected:
     /*!
      * \brief resizeEvent called every time the main window is resized.
@@ -121,6 +131,9 @@ private:
     /// palette that is currently selected.
     cor::Palette mPalette;
 
+    /// pointer to the app's palette data.
+    PaletteData* mPaletteData;
+
     /// scroll area that displays the palettes
     PaletteScrollArea* mPaletteScrollArea;
 
@@ -133,6 +146,9 @@ private:
 
     /// widget that displays details about a selected palette.
     PaletteDetailedWidget* mDetailedWidget;
+
+    /// widget for editing palettes.
+    EditPaletteWidget* mEditWidget;
 
     /// greyout for mood detailed widget
     GreyOutOverlay* mGreyOut;

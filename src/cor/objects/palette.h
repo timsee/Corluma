@@ -18,6 +18,9 @@ const QString kUnknownPaletteID = "UNKNOWN_UUID";
 const QString kCustomPaletteID = "CUSTOM_UUID";
 const QString kInvalidPaletteID = "INVALID_UUID";
 
+const QString kInvalidPaletteName = "INVALID_PALETTE";
+const QString kCustomPaletteName = "*Custom*";
+
 /*!
  * \copyright
  * Copyright (C) 2015 - 2020.
@@ -71,7 +74,7 @@ public:
 
     /// default constructor
     Palette()
-        : Palette(kInvalidPaletteID, "INVALID_PALETTE", std::vector<QColor>(1, QColor(0, 0, 0))) {
+        : Palette(kInvalidPaletteID, kInvalidPaletteName, std::vector<QColor>(1, QColor(0, 0, 0))) {
         checkIfValid();
     }
 
@@ -136,6 +139,7 @@ public:
     operator QString() const {
         std::stringstream tempString;
         tempString << "{ Palette Name: " << name().toStdString();
+        tempString << " Palette UUID: " << uniqueID().toStdString();
         uint32_t index = 0;
         for (auto color : colors()) {
             tempString << index << ". R:" << color.red() << " G:" << color.green()
@@ -162,9 +166,9 @@ public:
             QJsonObject colorObject;
             colorObject["index"] = index;
             if (useHSV) {
-                colorObject["hue"] = color.hueF();
-                colorObject["sat"] = color.saturationF();
-                colorObject["bri"] = color.valueF();
+                colorObject["hue"] = cor::roundToNDigits(color.hueF(), 3);
+                colorObject["sat"] = cor::roundToNDigits(color.saturationF(), 3);
+                colorObject["bri"] = cor::roundToNDigits(color.valueF(), 3);
             } else {
                 colorObject["red"] = color.red();
                 colorObject["green"] = color.green();
@@ -197,7 +201,7 @@ private:
 };
 
 static Palette CustomPalette(const std::vector<QColor>& colors) {
-    return cor::Palette(kCustomPaletteID, "*custom*", colors);
+    return cor::Palette(kCustomPaletteID, kCustomPaletteName, colors);
 }
 
 inline std::ostream& operator<<(std::ostream& out, const Palette& palette) {

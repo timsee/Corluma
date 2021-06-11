@@ -39,17 +39,17 @@ std::vector<QString> generateLightsWithIgnoreList(const std::vector<QString>& ig
 
 StandardLightsMenu::StandardLightsMenu(QWidget* parent,
                                        CommLayer* comm,
-                                       GroupData* groups,
+                                       AppData* appData,
                                        const QString& name)
     : QWidget(parent),
       mComm{comm},
-      mGroups{groups},
+      mAppData{appData},
       mState{EState::noGroups},
       mParentScrollArea{new QScrollArea(this)},
-      mParentGroupContainer{new MenuParentGroupContainer(mParentScrollArea, mGroups)},
+      mParentGroupContainer{new MenuParentGroupContainer(mParentScrollArea, mAppData)},
       mSubgroupScrollArea{new QScrollArea(this)},
       mSubgroupContainer{
-          new MenuSubgroupContainer(mSubgroupScrollArea, mGroups, cor::EWidgetType::condensed)},
+          new MenuSubgroupContainer(mSubgroupScrollArea, mAppData, cor::EWidgetType::condensed)},
       mLightScrollArea{new QScrollArea(this)},
       mLightContainer{new MenuLightContainer(mLightScrollArea, true, name)},
       mOutlineBox{new cor::WidgetOutlineBox(cor::EPaintRectOptions::allSides, this)},
@@ -104,7 +104,7 @@ void StandardLightsMenu::updateMenu() {
     }
     mLightContainer->updateLights(mComm->allLights());
 
-    auto parentGroups = mGroups->parentGroups();
+    auto parentGroups = mAppData->parentGroups();
     overrideState(parentGroups);
 
     // update ui groups
@@ -122,7 +122,7 @@ void StandardLightsMenu::updateMenu() {
 void StandardLightsMenu::updateLightStates() {
     // update the parent groups
     if (mState == EState::parentGroups) {
-        for (const auto& group : mGroups->parentGroups()) {
+        for (const auto& group : mAppData->parentGroups()) {
             // fill a group with all of its light states
             auto states = cor::lightStatesFromLights(mComm->lightsByIDs(group.lights()), true);
             if (!states.empty()) {
@@ -147,11 +147,11 @@ void StandardLightsMenu::updateLightStates() {
 
     // update the parent group of the top widget
     if (mState == EState::subgroups || mState == EState::lights) {
-        auto parentGroup = mGroups->groupFromID(mScrollTopWidget->parentID());
+        auto parentGroup = mAppData->groups()->groupFromID(mScrollTopWidget->parentID());
         auto states = cor::lightStatesFromLights(mComm->lightsByIDs(parentGroup.lights()), true);
         mScrollTopWidget->showParentStates(states);
 
-        auto subgroup = mGroups->groupFromID(mScrollTopWidget->subgroupID());
+        auto subgroup = mAppData->groups()->groupFromID(mScrollTopWidget->subgroupID());
         if (subgroup.uniqueID() == parentGroup.uniqueID()) {
             // in this case, the subgroup is "all lights" of the parent group, so hide the states.
             mScrollTopWidget->subgroupWidget()->showStates(false);
@@ -274,11 +274,11 @@ void StandardLightsMenu::highlightTopWidget() {
     if (mScrollTopWidget->parentWidget()->isVisible()) {
         if (mScrollTopWidget->parentID() == 0u) {
             // miscellaneous group
-            auto parentGroup = mGroups->orphanGroup();
+            auto parentGroup = mAppData->lightOrphans().group();
             auto counts = groupSelectedAndReachableCount(parentGroup);
             mScrollTopWidget->parentWidget()->handleSelectAllCheckbox(counts.first, counts.second);
         } else {
-            auto parentGroup = mGroups->groupFromID(mScrollTopWidget->parentID());
+            auto parentGroup = mAppData->groups()->groupFromID(mScrollTopWidget->parentID());
             if (parentGroup.isValid()) {
                 auto counts = groupSelectedAndReachableCount(parentGroup);
                 mScrollTopWidget->parentWidget()->handleSelectAllCheckbox(counts.first,
@@ -291,7 +291,7 @@ void StandardLightsMenu::highlightTopWidget() {
 
     // update the top subgroup
     if (mScrollTopWidget->subgroupWidget()->isVisible()) {
-        auto subgroup = mGroups->groupFromID(mScrollTopWidget->subgroupID());
+        auto subgroup = mAppData->groups()->groupFromID(mScrollTopWidget->subgroupID());
         if (subgroup.isValid()) {
             auto counts = groupSelectedAndReachableCount(subgroup);
             mScrollTopWidget->subgroupWidget()->handleSelectAllCheckbox(counts.first,
@@ -379,7 +379,7 @@ void StandardLightsMenu::groupSelected(std::uint64_t ID, bool shouldSelect) {
 
 
 void StandardLightsMenu::parentGroupClicked(std::uint64_t ID) {
-    auto name = mGroups->nameFromID(ID);
+    auto name = mAppData->groups()->nameFromID(ID);
     if (ID == 0u) {
         name = "Miscellaneous";
     }
@@ -387,12 +387,12 @@ void StandardLightsMenu::parentGroupClicked(std::uint64_t ID) {
     mScrollTopWidget->subgroupWidget()->showSelectAllCheckbox(!mSingleLightMode);
 
     // check for subgroups
-    auto subgroups = mGroups->subgroups().subgroupIDsForGroup(ID);
+    auto subgroups = mAppData->subgroups().subgroupIDsForGroup(ID);
     // check if it should show lights or not
     if (ID == 0u) {
         // if its a miscellaneous group, show orphans
         changeState(EState::lights);
-        auto group = mGroups->orphanGroup();
+        auto group = mAppData->lightOrphans().group();
         mLightContainer->clear();
         mLightContainer->addLights(
             mComm->lightsByIDs(generateLightsWithIgnoreList(mIgnoredLights, group.lights())));
@@ -400,7 +400,7 @@ void StandardLightsMenu::parentGroupClicked(std::uint64_t ID) {
     } else if (subgroups.empty()) {
         // if its a group with no subgroups, show the lights for the group
         changeState(EState::lights);
-        auto result = mGroups->groupDict().item(QString::number(ID).toStdString());
+        auto result = mAppData->groups()->groupDict().item(QString::number(ID).toStdString());
         if (result.second) {
             mLightContainer->clear();
             mLightContainer->addLights(mComm->lightsByIDs(result.first.lights()));
@@ -426,14 +426,14 @@ void StandardLightsMenu::subgroupClicked(std::uint64_t ID) {
     changeState(EState::lights);
     // rename the group
     auto renamedGroup =
-        mGroups->subgroups().renamedSubgroupFromParentAndGroupID(mScrollTopWidget->parentID(), ID);
+        mAppData->subgroups().renamedSubgroupFromParentAndGroupID(mScrollTopWidget->parentID(), ID);
     if (ID == 0u) {
         renamedGroup = "All";
         // remap "ALL" to the parent's ID
         ID = mScrollTopWidget->parentID();
     }
     mScrollTopWidget->showSubgroup(renamedGroup, ID);
-    auto result = mGroups->groupDict().item(QString::number(ID).toStdString());
+    auto result = mAppData->groups()->groupDict().item(QString::number(ID).toStdString());
     if (result.second) {
         mLightContainer->clear();
         mLightContainer->addLights(mComm->lightsByIDs(

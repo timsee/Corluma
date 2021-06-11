@@ -10,7 +10,7 @@
 ChooseStateWidget::ChooseStateWidget(QWidget* parent, PaletteData* palettes)
     : QWidget(parent),
       mColorPicker{new SingleColorPicker(this)},
-      mPaletteScrollArea{new PaletteScrollArea(this, palettes)},
+      mPaletteScrollArea{new PaletteScrollArea(this, palettes->palettes())},
       mRoutinesWidget{new RoutineContainer(this, ERoutineGroup::all)},
       mTopFloatingLayout{new FloatingLayout(this)} {
     mTopFloatingLayout->setVisible(false);

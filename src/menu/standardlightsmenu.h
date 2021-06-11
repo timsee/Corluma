@@ -6,7 +6,7 @@
 #include "comm/commlayer.h"
 #include "cor/listlayout.h"
 #include "cor/objects/group.h"
-#include "data/groupdata.h"
+#include "data/appdata.h"
 #include "listlightwidget.h"
 #include "menu/lefthandmenutoplightwidget.h"
 #include "menusubgroupcontainer.h"
@@ -40,7 +40,7 @@ public:
     /// constructor
     explicit StandardLightsMenu(QWidget* parent,
                                 CommLayer* comm,
-                                GroupData* groups,
+                                AppData* appData,
                                 const QString& name);
 
     /// resizes programmatically
@@ -171,7 +171,7 @@ private:
     CommLayer* mComm;
 
     /// pointer to group data
-    GroupData* mGroups;
+    AppData* mAppData;
 
     /// top widget that shows the parent group and subgroup, if either is necessary
     LeftHandMenuTopLightWidget* mScrollTopWidget;

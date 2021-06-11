@@ -7,7 +7,7 @@
 #include "colorpage.h"
 #include "comm/commlayer.h"
 #include "cor/lightlist.h"
-#include "data/groupdata.h"
+#include "data/appdata.h"
 #include "lightspage.h"
 #include "moodpage.h"
 #include "palettepage.h"
@@ -31,7 +31,7 @@ public:
     explicit MainViewport(MainWindow* parent,
                           CommLayer* comm,
                           cor::LightList* data,
-                          GroupData* groups,
+                          AppData* appData,
                           PaletteData* palettes,
                           AppSettings* settings,
                           DataSyncTimeout* dataSyncTimeout);
@@ -104,8 +104,8 @@ private:
      */
     cor::LightList* mData;
 
-    /// groups parser
-    GroupData* mGroups;
+    /// saved app data, persistent between reloading the app
+    AppData* mAppData;
 
     /*!
      * \brief mAppSettings maintains which comnmtypes are currently enabled.

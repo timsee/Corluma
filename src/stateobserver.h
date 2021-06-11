@@ -39,7 +39,7 @@ public:
     /// constructor
     explicit StateObserver(cor::LightList* data,
                            CommLayer* comm,
-                           GroupData* groups,
+                           AppData* appData,
                            AppSettings* appSettings,
                            MainWindow* mainWindow,
                            LightsPage* lightsPage,
@@ -94,7 +94,7 @@ public slots:
     void colorSchemeTypeChanged(EColorSchemeType scheme);
 
     /// mood changed from moodpage
-    void moodChanged(std::uint64_t mood);
+    void moodChanged(QString mood);
 
     /// protocolsettings page changed from GlobalSettingsWidget
     void protocolSettingsChanged(EProtocolType, bool);
@@ -137,7 +137,7 @@ private:
     CommLayer* mComm;
 
     /// app group data
-    GroupData* mGroups;
+    AppData* mAppData;
 
     /// app settings
     AppSettings* mAppSettings;

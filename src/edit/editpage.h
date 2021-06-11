@@ -5,7 +5,7 @@
 #include <QWidget>
 #include "comm/commlayer.h"
 #include "cor/objects/page.h"
-#include "data/groupdata.h"
+#include "data/appdata.h"
 #include "edit/editpagechildwidget.h"
 #include "edit/editprogresswidget.h"
 
@@ -24,7 +24,7 @@ class EditPage : public QWidget, public cor::Page {
     Q_OBJECT
 public:
     /// constructor
-    explicit EditPage(QWidget* parent, CommLayer* layer, GroupData* parser, bool showPreviewButton);
+    explicit EditPage(QWidget* parent, CommLayer* layer, bool showPreviewButton);
 
     /// displays the discovery page
     void pushIn(const QPoint& startPoint, const QPoint& endPoint);
@@ -154,9 +154,6 @@ private:
      *        for sending comannds to the lights
      */
     CommLayer* mComm;
-
-    /// groups parser
-    GroupData* mGroups;
 
     /// button placed at left hand side of widget
     QPushButton* mCloseButton;

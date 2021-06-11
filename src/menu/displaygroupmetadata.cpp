@@ -12,10 +12,10 @@ namespace {
 /// looks at a new group within the scope of all groups and determines metadata such as the new
 /// groups parent, or if any egregious errors would exist with this group.
 struct GroupMetadataFlags {
-    GroupMetadataFlags(cor::Group group, GroupData* groups) {
+    GroupMetadataFlags(cor::Group group, AppData* appData) {
         hasIdenticalName = false;
         // loop through and look for parents, rooms, and identical groups
-        for (const auto& dataGroup : groups->groupDict().items()) {
+        for (const auto& dataGroup : appData->groups()->groupDict().items()) {
             if (SubgroupData::checkIfAisSubsetOfB(group.lights(), dataGroup.lights())) {
                 if (group.lights().size() == dataGroup.lights().size()) {
                     identicalGroups.push_back(dataGroup.name());
@@ -45,14 +45,15 @@ struct GroupMetadataFlags {
         }
 
         auto subgroupIDs =
-            groups->subgroups().findSubgroupsForNewGroup(group, groups->groupDict().items());
+            appData->subgroups().findSubgroupsForNewGroup(group,
+                                                          appData->groups()->groupDict().items());
         // catch if its an edit and its listing itself as a subgroup
         auto result = std::find(subgroupIDs.begin(), subgroupIDs.end(), group.uniqueID());
         if (result != subgroupIDs.end()) {
             subgroupIDs.erase(result);
         }
         // convert IDs to names
-        subgroups = groups->groupNamesFromIDs(subgroupIDs);
+        subgroups = appData->groups()->groupNamesFromIDs(subgroupIDs);
     }
 
     /// the parent "room" of a group. this is the proper parent, if one exists.
@@ -74,13 +75,13 @@ struct GroupMetadataFlags {
 } // namespace
 
 
-DisplayGroupMetadata::DisplayGroupMetadata(QWidget* parent, GroupData* groups)
+DisplayGroupMetadata::DisplayGroupMetadata(QWidget* parent, AppData* appData)
     : ExpandingTextScrollArea(parent),
-      mGroups{groups} {}
+      mAppData{appData} {}
 
 
 void DisplayGroupMetadata::update(const cor::Group& group, bool groupExistsAlready) {
-    GroupMetadataFlags groupMetadata(group, mGroups);
+    GroupMetadataFlags groupMetadata(group, mAppData);
     std::stringstream returnString;
     returnString << "<style>";
     returnString << "</style>";

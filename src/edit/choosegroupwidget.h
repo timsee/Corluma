@@ -23,7 +23,7 @@
 class ChooseGroupWidget : public QWidget, public cor::Page {
     Q_OBJECT
 public:
-    explicit ChooseGroupWidget(QWidget* parent, CommLayer* comm, GroupData* groups);
+    explicit ChooseGroupWidget(QWidget* parent, CommLayer* comm, AppData* appData);
 
     /// shows a set of groups and updates the UI to reflect the EGroupAction provided
     void showGroups(const std::vector<std::uint64_t>& groups, cor::EGroupAction action);

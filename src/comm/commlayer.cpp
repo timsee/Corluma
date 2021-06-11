@@ -23,9 +23,9 @@
 #include "comm/commudp.h"
 #include "comm/upnpdiscovery.h"
 
-CommLayer::CommLayer(QObject* parent, GroupData* parser, PaletteData* palettes)
+CommLayer::CommLayer(QObject* parent, AppData* parser, PaletteData* palettes)
     : QObject(parent),
-      mGroups(parser) {
+      mGroups(parser->groups()) {
     mUPnP = new UPnPDiscovery(this);
 
     mArduCor = new CommArduCor(this, palettes);
@@ -179,7 +179,7 @@ cor::Mood CommLayer::addMetadataToMood(const cor::Mood& originalMood) {
 
     auto groupStates = mood.defaults();
     for (auto&& group : groupStates) {
-        group.name(mGroups->groupNameFromID(group.uniqueID()));
+        group.name(mGroups->nameFromID(group.uniqueID()));
     }
     mood.defaults(groupStates);
     return mood;

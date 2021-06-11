@@ -22,11 +22,11 @@
 class DisplayGroupWidget : public QWidget {
     Q_OBJECT
 public:
-    explicit DisplayGroupWidget(QWidget* parent, CommLayer* comm, GroupData* groups)
+    explicit DisplayGroupWidget(QWidget* parent, CommLayer* comm, AppData* appData)
         : QWidget(parent),
           mName{new QLabel(this)},
           mDescription{new cor::ExpandingTextScrollArea(this)},
-          mMetadata{new DisplayGroupMetadata(this, groups)},
+          mMetadata{new DisplayGroupMetadata(this, appData)},
           mLights{new StatelessLightsListMenu(this, comm, false)},
           mRowHeight{10} {
         auto font = mName->font();

@@ -22,7 +22,7 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
                            cor::LightList* devices,
                            CommLayer* comm,
                            cor::LightList* lights,
-                           GroupData* groups,
+                           AppData* appData,
                            QWidget* parent)
     : QWidget(parent),
       mAlwaysOpen{alwaysOpen},
@@ -33,7 +33,7 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
       mSelectedLights{devices},
       mComm{comm},
       mData{lights},
-      mGroups{groups},
+      mAppData{appData},
       mLastRenderTime{QTime::currentTime()},
       mRowHeight{10} {
     auto width = int(parent->size().width() * 0.66f);
@@ -47,7 +47,7 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     mSpacer->setStyleSheet(cor::kDarkerGreyBackground);
 
 #ifndef DISABLE_LIGHTS_MENU
-    mLightMenu = new StandardLightsMenu(this, mComm, mGroups, "LeftHandMenu");
+    mLightMenu = new StandardLightsMenu(this, mComm, mAppData, "LeftHandMenu");
     connect(mLightMenu, SIGNAL(clickedLight(QString)), this, SLOT(lightClicked(QString)));
     connect(mLightMenu,
             SIGNAL(clickedGroupSelectAll(std::uint64_t, bool)),
@@ -285,7 +285,7 @@ void LeftHandMenu::lightClicked(const QString& lightKey) {
 
 void LeftHandMenu::selectAllToggled(std::uint64_t ID, bool shouldSelect) {
     // convert the group ID to a group
-    auto groupResult = mGroups->groupDict().item(QString::number(ID).toStdString());
+    auto groupResult = mAppData->groups()->groupDict().item(QString::number(ID).toStdString());
     bool groupFound = groupResult.second;
     cor::Group group = groupResult.first;
     if (groupFound) {

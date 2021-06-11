@@ -4,7 +4,8 @@
 #include <QObject>
 #include <QScrollArea>
 
-#include "data/palettedata.h"
+#include "cor/listlayout.h"
+#include "menu/menupalettecontainer.h"
 #include "storedpalettewidget.h"
 
 /*!
@@ -16,11 +17,11 @@
  * \brief The PaletteScrollArea class is a QScrollArea that contains a series of buttons that
  * can be used to signal for using either palettes, or palette+routine combintations.
  */
-class PaletteScrollArea : public QScrollArea {
+class PaletteScrollArea : public QWidget {
     Q_OBJECT
 public:
     /// constructor
-    explicit PaletteScrollArea(QWidget* parent, PaletteData* palettes);
+    explicit PaletteScrollArea(QWidget* parent, const std::vector<cor::Palette>& palettes);
 
     /*!
      * \brief highlightRoutineButton highlights the button that implements
@@ -31,8 +32,17 @@ public:
      */
     void highlightButton(cor::Palette palette);
 
+    /// sets the height of a widget on the menu.
+    void widgetHeight(int height) { mPaletteContainer->widgetHeight(height); }
+
     /// programmatically resize
     void resize();
+
+    /// clears all widgets in the scroll area
+    void clear();
+
+    /// adds palettes to scroll area.
+    void addPalettes(std::vector<cor::Palette> palettes);
 
 signals:
 
@@ -44,23 +54,16 @@ private slots:
     /// handles a button click and converts it to a signal.
     void buttonClicked(cor::Palette);
 
+protected:
+    /// called whenever it is resized
+    void resizeEvent(QResizeEvent*) { resize(); }
+
 private:
-    /// widget used as main widget of QScrollArea.
-    QWidget* mScrollWidget;
+    /// scroll area for the widget
+    QScrollArea* mScrollArea;
 
-    /*!
-     * \brief mPaletteWidgets vector of all palettes widgets getting displayed in the
-     * scroll area.
-     */
-    std::vector<StoredPaletteWidget*> mPaletteWidgets;
-
-    /*!
-     * \brief mPresetHueLayout layout of all hue preset widgets.
-     */
-    QGridLayout* mLayout;
-
-    /// applies an outline to the widget.
-    PaletteData* mPalettes;
+    /// container for all the known palettes.
+    MenuPaletteContainer* mPaletteContainer;
 };
 
 #endif // PALETTESCROLLAREA_H

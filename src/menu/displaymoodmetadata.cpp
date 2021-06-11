@@ -12,14 +12,14 @@ namespace {
 /// looks at a new group within the scope of all groups and determines metadata such as the new
 /// groups parent, or if any egregious errors would exist with this group.
 struct MoodMetadataFlags {
-    MoodMetadataFlags(cor::Mood mood, GroupData* groups) {
+    MoodMetadataFlags(cor::Mood mood, AppData* appData) {
         hasIdenticalName = false;
 
         // find parent group, if one exists
-        parentID = groups->parentFromMood(mood.uniqueID());
+        parentID = appData->moodParents().parentFromMoodID(mood.uniqueID());
 
         // check that no other group or mood has an identical name.
-        for (const auto& dataGroup : groups->groupDict().items()) {
+        for (const auto& dataGroup : appData->groups()->groupDict().items()) {
             if (mood.name() == dataGroup.name()) {
                 hasIdenticalName = true;
             }
@@ -36,14 +36,14 @@ struct MoodMetadataFlags {
 } // namespace
 
 
-DisplayMoodMetadata::DisplayMoodMetadata(QWidget* parent, CommLayer* comm, GroupData* groups)
+DisplayMoodMetadata::DisplayMoodMetadata(QWidget* parent, CommLayer* comm, AppData* appData)
     : ExpandingTextScrollArea(parent),
       mComm{comm},
-      mGroups{groups} {}
+      mAppData{appData} {}
 
 
 void DisplayMoodMetadata::update(const cor::Mood& mood, bool moodExistsAlready) {
-    MoodMetadataFlags moodMetadata(mood, mGroups);
+    MoodMetadataFlags moodMetadata(mood, mAppData);
     std::stringstream returnString;
     returnString << "<style>";
     returnString << "</style>";
@@ -63,7 +63,8 @@ void DisplayMoodMetadata::update(const cor::Mood& mood, bool moodExistsAlready) 
 
     if (moodMetadata.parentID != 0u) {
         returnString << "<b>Parent:</b> "
-                     << mGroups->groupNameFromID(moodMetadata.parentID).toStdString() << "<br>";
+                     << mAppData->groups()->nameFromID(moodMetadata.parentID).toStdString()
+                     << "<br>";
     }
 
     // verify if all lights are reachable
