@@ -6,6 +6,7 @@
 #include <sstream>
 #include <vector>
 
+#include "cor/objects/lightid.h"
 #include "cor/protocols.h"
 
 namespace cor {
@@ -82,6 +83,15 @@ public:
 
     /// names of hardware connected to this controller
     const std::vector<QString>& names() const noexcept { return mNames; }
+
+    /// lightIDs of all connected hardware.
+    std::vector<cor::LightID> lightIDs() const noexcept {
+        std::vector<cor::LightID> retVector;
+        for (const auto& light : mNames) {
+            retVector.push_back(cor::LightID(light));
+        }
+        return retVector;
+    }
 
     /// hardware types for the controller's lights
     const std::vector<ELightHardwareType>& hardwareTypes() const noexcept { return mHardwareTypes; }

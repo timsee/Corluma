@@ -127,7 +127,7 @@ void CommHue::changeColor(const hue::Bridge& bridge, int lightIndex, const QColo
         resetBackgroundTimers();
         putJson(bridge, "/lights/" + QString::number(lightIndex) + "/state", json);
     } else {
-        qDebug() << "ignoring RGB value to " << light.uniqueID();
+        qDebug() << "ignoring RGB value to " << light.uniqueID().toString();
     }
 }
 
@@ -206,7 +206,7 @@ void CommHue::bridgeDiscovered(const hue::Bridge& bridge,
     for (const auto& key : keys) {
         if (groupObject.value(key).isObject()) {
             auto object = groupObject.value(key).toObject();
-            const auto& jsonResult = jsonToGroup(object, groups);
+            const auto& jsonResult = jsonToGroup(object, key.toInt());
             if (jsonResult.second) {
                 groupVector.emplace_back(jsonResult.first, key.toDouble());
                 groups.emplace_back(jsonResult.first);
@@ -302,30 +302,6 @@ void CommHue::replyFinished(QNetworkReply* reply) {
     reply->deleteLater();
 }
 
-std::uint64_t CommHue::generateUniqueID(const std::vector<cor::Group>& groupList,
-                                        const QString& name) {
-    auto key = mDiscovery->keyFromGroupName(name);
-    // look up group ID, if it exists. will return 0 if it doesn't
-    if (key != 0) {
-        return key;
-    }
-    key = mDiscovery->generateNewUniqueKey();
-    // loop through existing group IDs, get value of max ID
-    auto minID = std::numeric_limits<std::uint64_t>::max();
-    for (const auto& group : groupList) {
-        // qDebug() << " group ID " << group.toJson();
-        if (group.uniqueID() < minID
-            && group.uniqueID() > (std::numeric_limits<std::uint64_t>::max() / 2)) {
-            minID = group.uniqueID();
-        }
-    }
-
-    if (key >= minID) {
-        key = minID - 1;
-    }
-    return key;
-}
-
 void CommHue::parseJSONObject(const hue::Bridge& bridge, const QJsonObject& object) {
     QStringList keys = object.keys();
     std::vector<hue::Schedule> scheduleList;
@@ -344,10 +320,12 @@ void CommHue::parseJSONObject(const hue::Bridge& bridge, const QJsonObject& obje
             } else if (updateType == EHueUpdates::scheduleUpdate) {
                 scheduleList.push_back(hue::Schedule(innerObject, int(key.toDouble())));
             } else if (updateType == EHueUpdates::groupUpdate) {
-                const auto& jsonResult = jsonToGroup(innerObject, groupList);
+                const auto& jsonResult = jsonToGroup(innerObject, key.toInt());
                 if (jsonResult.second) {
                     groupVector.emplace_back(jsonResult.first, key.toDouble());
                     groupList.emplace_back(jsonResult.first);
+                    qDebug() << " TODO: group " << jsonResult.first.name()
+                             << " not added with key: " << key;
                 } else {
                     qDebug() << " not a valid group";
                 }
@@ -542,16 +520,18 @@ void CommHue::handleLightDeleted(const hue::Bridge& bridge, const QString& delet
 
 
     // delete from bridge memory
-    auto removeFromBridgeResult = mDiscovery->deleteLight(bridge, metadata.uniqueID());
+    auto removeFromBridgeResult = mDiscovery->deleteLight(bridge, metadata.uniqueID().toString());
     if (!removeFromBridgeResult) {
-        qDebug() << "WARNING: could not delete light: " << metadata.uniqueID() << " from bridge.";
+        qDebug() << "WARNING: could not delete light: " << metadata.uniqueID().toString()
+                 << " from bridge.";
         return;
     }
 
     // delete from comm dict, which signals its deletion
     auto removeLightResult = removeLights({metadata.uniqueID()});
     if (!removeLightResult) {
-        qDebug() << "WARNING: could not delete light: " << metadata.uniqueID() << " from commDict.";
+        qDebug() << "WARNING: could not delete light: " << metadata.uniqueID().toString()
+                 << " from commDict.";
         return;
     }
 }
@@ -720,8 +700,7 @@ std::pair<cor::Light, HueMetadata> CommHue::updateHueLightState(const hue::Bridg
     return {};
 }
 
-std::pair<cor::Group, bool> CommHue::jsonToGroup(QJsonObject object,
-                                                 const std::vector<cor::Group>& groupList) {
+std::pair<cor::Group, bool> CommHue::jsonToGroup(QJsonObject object, std::uint32_t key) {
     if (object["name"].isString() && object["lights"].isArray() && object["type"].isString()
         && object["state"].isObject()) {
         const auto& name = object["name"].toString();
@@ -731,7 +710,7 @@ std::pair<cor::Group, bool> CommHue::jsonToGroup(QJsonObject object,
             type = cor::EGroupType::room;
         }
         QJsonArray lights = object["lights"].toArray();
-        std::vector<QString> lightsInGroup;
+        std::vector<cor::LightID> lightsInGroup;
         foreach (const QJsonValue& value, lights) {
             int index = value.toString().toInt();
             for (const auto& bridge : mDiscovery->bridges().items()) {
@@ -742,9 +721,8 @@ std::pair<cor::Group, bool> CommHue::jsonToGroup(QJsonObject object,
                 }
             }
         }
-        auto uniqueID = generateUniqueID(groupList, name);
-        cor::Group room(uniqueID, name, type, lightsInGroup);
-        return std::make_pair(room, true);
+        cor::Group group(cor::UUID(QString::number(key)), name, type, lightsInGroup);
+        return std::make_pair(group, true);
     }
     return std::make_pair(cor::Group{}, false);
 }

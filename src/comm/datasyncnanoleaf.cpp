@@ -87,7 +87,7 @@ void DataSyncNanoLeaf::syncData() {
             cor::Light commLayerDevice = device;
             if (mComm->fillLight(commLayerDevice)) {
                 if (device.protocol() == EProtocolType::nanoleaf) {
-                    if (checkThrottle(device.uniqueID(), device.commType())) {
+                    if (checkThrottle(device.uniqueID().toString(), device.commType())) {
                         if (!sync(device, commLayerDevice)) {
                             countOutOfSync++;
                         }
@@ -186,7 +186,7 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
 #endif
         // light should be turned on/off, skip all other logic, flip the light's on/off state
         mComm->nanoleaf()->onOffChange(metadata, dataState.isOn());
-        resetThrottle(dataDevice.uniqueID(), dataDevice.commType());
+        resetThrottle(dataDevice.uniqueID().toString(), dataDevice.commType());
         if (!dataState.isOn()) {
             return false;
         }
@@ -229,7 +229,7 @@ bool DataSyncNanoLeaf::sync(const cor::Light& dataDevice, const cor::Light& comm
     }
 
     if (!allInSync) {
-        resetThrottle(dataDevice.uniqueID(), dataDevice.commType());
+        resetThrottle(dataDevice.uniqueID().toString(), dataDevice.commType());
     }
 #ifdef DEBUG_DATA_SYNC_NANOLEAF
     if (allInSync) {

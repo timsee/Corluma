@@ -39,21 +39,19 @@ public:
 signals:
 
     /// emit when a mood is clicked
-    void moodClicked(QString);
+    void moodClicked(cor::UUID);
 
 protected:
     /// called whenever it is resized
     void resizeEvent(QResizeEvent*);
 
 private slots:
-    /// gives the key of a parent, and whether or not it should show its moods.
-    void shouldShowMoods(QString, bool);
 
     /// handles when a mood is selected
-    void selectMood(QString);
+    void selectMood(cor::Mood);
 
     /// handles when a parent group is clicked
-    void parentGroupClicked(std::uint64_t);
+    void parentGroupClicked(const cor::UUID&);
 
     /// handles when the parent group widget at the top of the menu is pressed
     void parentGroupWidgetPressed(QString);
@@ -69,7 +67,7 @@ private:
     EState mState;
 
     /// current parent selected in the menu
-    std::uint64_t mCurrentParent;
+    cor::UUID mCurrentParent;
 
     /// height of a widget.
     int mWidgetHeight;

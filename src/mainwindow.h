@@ -100,21 +100,21 @@ public slots:
     void switchToColorPage();
 
     /// displays the edit group page
-    void pushInEditGroupPage(std::uint64_t key);
+    void pushInEditGroupPage(const cor::UUID& key);
 
     /// displays the edit mood page
-    void pushInEditMoodPage(const QString& key);
+    void pushInEditMoodPage(const cor::Mood& key);
 
     /// hides the edit page
     void pushOutEditPage();
 
     /// edit the group with the given key. if a 0u is provided as a key, a new group is created
     /// instead.
-    void editGroupSelected(std::uint64_t);
+    void editGroupSelected(const cor::UUID&);
 
     /// edit teh mood with the given key. if a 0u is provided as a key, a new mood is created
     /// instead.
-    void editMoodSelected(QString);
+    void editMoodSelected(const cor::Mood&);
 
     /// displays the edit page
     void pushInChooseEditPage();

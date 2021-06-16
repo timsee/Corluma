@@ -16,6 +16,8 @@ AppData::AppData(QObject* parent)
       mGroups{new GroupData{this}},
       mMoods{new MoodData()},
       mPalettes{new PaletteData()} {
+    loadJsonFromFile();
+
     mSubgroups.updateGroupAndRoomData(mGroups->groupDict().items());
 
     connect(mGroups, SIGNAL(groupAdded(QString)), this, SLOT(dataUpdate(QString)));
@@ -56,7 +58,7 @@ void AppData::updateGroupMetadata() {
     mSubgroups.updateGroupAndRoomData(groups);
     mLightOrphans.generateOrphans(groups);
 
-    std::vector<std::uint64_t> groupIDs;
+    std::vector<cor::UUID> groupIDs;
     groupIDs.reserve(groups.size());
     for (const auto& group : groups) {
         groupIDs.emplace_back(group.uniqueID());
@@ -67,7 +69,7 @@ void AppData::updateGroupMetadata() {
 
 
 void AppData::updateExternallyStoredGroups(const std::vector<cor::Group>& externalGroups,
-                                           const std::vector<QString>& ignorableLights) {
+                                           const std::vector<cor::LightID>& ignorableLights) {
     mGroups->updateExternallyStoredGroups(externalGroups);
 
     for (const auto& light : ignorableLights) {
@@ -86,8 +88,9 @@ std::vector<cor::Group> AppData::parentGroups() {
     return parentGroups;
 }
 
-void AppData::lightsDeleted(const std::vector<QString>& uniqueIDs) {
-    qDebug() << "INFO: lights: " << uniqueIDs << " deleted from group data.";
+void AppData::lightsDeleted(const std::vector<cor::LightID>& uniqueIDs) {
+    qDebug() << "INFO: lights: " << cor::lightIDVectorToStringVector(uniqueIDs)
+             << " deleted from group data.";
     bool anyUpdates = false;
     for (auto uniqueID : uniqueIDs) {
         if (!mJsonData.isNull()) {
@@ -134,7 +137,7 @@ bool AppData::mergeExternalData(const QString& file, bool) {
 
 
 bool AppData::loadExternalData(const QString& file,
-                               const std::unordered_set<QString>& allLightIDs) {
+                               const std::unordered_set<cor::LightID>& allLightIDs) {
     auto document = loadJsonFile(file);
     // check if contains a jsonarray
     if (!document.isNull()) {
@@ -148,19 +151,21 @@ bool AppData::loadExternalData(const QString& file,
                     auto representedLights = allRepresentedLights();
 
                     // make a set of all lights NOT reflected in known lights, but in the group data
-                    std::unordered_set<QString> unknownLights;
+                    std::unordered_set<cor::LightID> unknownLights;
                     for (const auto& light : representedLights) {
                         if (allLightIDs.find(light) == allLightIDs.end()) {
                             unknownLights.insert(light);
                         }
                     }
                     // remove all lights not found in the known lights
-                    std::vector<QString> unknownLightVector(unknownLights.begin(),
-                                                            unknownLights.end());
+                    std::vector<cor::LightID> unknownLightVector(unknownLights.begin(),
+                                                                 unknownLights.end());
 
                     if (!unknownLightVector.empty()) {
-                        qDebug() << " INFO: deleting these lights from app data: "
-                                 << unknownLightVector;
+                        for (const auto& light : unknownLightVector) {
+                            qDebug()
+                                << " INFO: deleting lights from app data: " << light.toString();
+                        }
                         lightsDeleted(unknownLightVector);
                     } else {
                         updateGroupMetadata();
@@ -241,7 +246,7 @@ bool AppData::save(const QString& filePath) {
 }
 
 
-void AppData::addLightsToGroups(const std::vector<QString>& uniqueIDs) {
+void AppData::addLightsToGroups(const std::vector<cor::LightID>& uniqueIDs) {
     for (auto uniqueID : uniqueIDs) {
         // qDebug() << " add light to groups " << uniqueID;
         mLightOrphans.addNewLight(uniqueID, mGroups->groupDict().items());
@@ -249,8 +254,8 @@ void AppData::addLightsToGroups(const std::vector<QString>& uniqueIDs) {
     updateGroupMetadata();
 }
 
-std::unordered_set<QString> AppData::allRepresentedLights() {
-    std::unordered_set<QString> lightIDs;
+std::unordered_set<cor::LightID> AppData::allRepresentedLights() {
+    std::unordered_set<cor::LightID> lightIDs;
     for (const auto& mood : mMoods->moods().items()) {
         auto moodIDs = cor::lightVectorToIDs(mood.lights());
         lightIDs.insert(moodIDs.begin(), moodIDs.end());

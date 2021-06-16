@@ -63,7 +63,7 @@ public:
         mMetadataWidget->clear();
         mLightsStateWidget->clear();
         mGroupStatesWidget->clear();
-        mReviewPage->editMode(false, 0u);
+        mReviewPage->editMode(false, cor::UUID::makeNew());
         reset();
     }
 

@@ -22,9 +22,9 @@ LightInfoListWidget::LightInfoListWidget(QWidget* parent)
     setVisible(false);
 
     connect(mLightInfoScrollArea,
-            SIGNAL(lightClicked(const QString&, bool)),
+            SIGNAL(lightClicked(const cor::LightID&, bool)),
             this,
-            SLOT(lightInfoClicked(const QString&, bool)));
+            SLOT(lightInfoClicked(const cor::LightID&, bool)));
 
     mNewLightButton = new QPushButton("Find New Lights", this);
     mNewLightButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -51,9 +51,9 @@ void LightInfoListWidget::resize() {
     mLightInfoScrollArea->resize();
 }
 
-void LightInfoListWidget::updateLightName(QString uniqueID, QString newName) {
+void LightInfoListWidget::updateLightName(cor::LightID uniqueID, QString newName) {
     for (auto widget : mLightInfoScrollArea->hueWidgets()) {
-        if (widget->key() == uniqueID) {
+        if (widget->key() == uniqueID.toString()) {
             auto metadata = widget->metadata();
             metadata.name(newName);
             widget->updateLight(metadata);
@@ -61,7 +61,7 @@ void LightInfoListWidget::updateLightName(QString uniqueID, QString newName) {
     }
 }
 
-void LightInfoListWidget::deleteLightFromDisplay(QString uniqueID) {
+void LightInfoListWidget::deleteLightFromDisplay(cor::LightID uniqueID) {
     mLightInfoScrollArea->deleteLight(uniqueID);
 }
 
@@ -71,11 +71,11 @@ void LightInfoListWidget::changeRowHeight(int rowHeight) {
     }
 }
 
-void LightInfoListWidget::changeNamePressed(QString key, QString name) {
+void LightInfoListWidget::changeNamePressed(cor::LightID key, QString name) {
     emit changeLightName(key, name);
 }
 
-void LightInfoListWidget::deleteButtonPressed(QString key, QString) {
+void LightInfoListWidget::deleteButtonPressed(cor::LightID key, QString) {
     emit deleteLight(key);
 }
 
@@ -93,6 +93,6 @@ void LightInfoListWidget::paintEvent(QPaintEvent*) {
 }
 
 
-void LightInfoListWidget::lightInfoClicked(const QString&, bool) {
+void LightInfoListWidget::lightInfoClicked(const cor::LightID&, bool) {
     resize();
 }

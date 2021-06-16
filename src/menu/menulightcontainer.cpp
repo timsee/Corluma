@@ -10,7 +10,7 @@
 
 void MenuLightContainer::addLights(const std::vector<cor::Light>& lights) {
     for (const auto& light : lights) {
-        auto widgetResult = mLightLayout.widget(light.uniqueID());
+        auto widgetResult = mLightLayout.widget(light.uniqueID().toString());
         if (widgetResult.second) {
             auto existingWidget = qobject_cast<ListLightWidget*>(widgetResult.first);
             Q_ASSERT(existingWidget);
@@ -23,7 +23,10 @@ void MenuLightContainer::addLights(const std::vector<cor::Light>& lights) {
             if (!mDisplayState) {
                 widget->displayState(false);
             }
-            connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleLightClicked(QString)));
+            connect(widget,
+                    SIGNAL(clicked(cor::LightID)),
+                    this,
+                    SLOT(handleLightClicked(cor::LightID)));
             mLightLayout.insertWidget(widget);
         }
     }
@@ -35,7 +38,7 @@ void MenuLightContainer::addLights(const std::vector<cor::Light>& lights) {
 
 void MenuLightContainer::updateLights(const std::vector<cor::Light>& lights) {
     for (const auto& light : lights) {
-        auto widgetResult = mLightLayout.widget(light.uniqueID());
+        auto widgetResult = mLightLayout.widget(light.uniqueID().toString());
         if (widgetResult.second) {
             auto existingWidget = qobject_cast<ListLightWidget*>(widgetResult.first);
             Q_ASSERT(existingWidget);
@@ -58,8 +61,8 @@ void MenuLightContainer::moveLightWidgets(QSize size, QPoint offset) {
     }
 }
 
-std::vector<QString> MenuLightContainer::highlightedLights() {
-    std::vector<QString> lights;
+std::vector<cor::LightID> MenuLightContainer::highlightedLights() {
+    std::vector<cor::LightID> lights;
     for (const auto& existingWidget : mLightLayout.widgets()) {
         auto widget = qobject_cast<ListLightWidget*>(existingWidget);
         Q_ASSERT(widget);
@@ -74,17 +77,17 @@ void MenuLightContainer::clear() {
     mLightLayout.clear();
 }
 
-void MenuLightContainer::removeLight(QString lightID) {
-    mLightLayout.removeWidget(lightID);
+void MenuLightContainer::removeLight(cor::LightID lightID) {
+    mLightLayout.removeWidget(lightID.toString());
     setFixedHeight(mRowHeight * mLightLayout.count());
     moveLightWidgets(QSize(parentWidget()->width(), mRowHeight), QPoint(this->width() / 20, 0));
 }
 
-void MenuLightContainer::handleLightClicked(QString light) {
+void MenuLightContainer::handleLightClicked(cor::LightID light) {
     emit clickedLight(light);
 }
 
-void MenuLightContainer::highlightLights(const std::vector<QString>& selectedLights) {
+void MenuLightContainer::highlightLights(const std::vector<cor::LightID>& selectedLights) {
     for (const auto& existingWidget : mLightLayout.widgets()) {
         auto widget = qobject_cast<ListLightWidget*>(existingWidget);
         Q_ASSERT(widget);
@@ -110,12 +113,12 @@ void MenuLightContainer::showTimeouts(bool shouldShowTimeouts) {
 }
 
 void MenuLightContainer::updateTimeouts(
-    const std::vector<std::pair<QString, std::uint32_t>> keyTimeoutPairs) {
+    const std::vector<std::pair<cor::LightID, std::uint32_t>> keyTimeoutPairs) {
     for (const auto& existingWidget : mLightLayout.widgets()) {
         auto widget = qobject_cast<ListLightWidget*>(existingWidget);
         Q_ASSERT(widget);
         for (const auto& keyTimeoutPair : keyTimeoutPairs) {
-            if (keyTimeoutPair.first == widget->light().uniqueID()) {
+            if (keyTimeoutPair.first == widget->light().uniqueID().toString()) {
                 widget->updateTimeout(keyTimeoutPair.second);
             }
         }

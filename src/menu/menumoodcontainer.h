@@ -48,12 +48,12 @@ public:
 
 signals:
     /// emits when a signal is selected.
-    void moodSelected(QString key);
+    void moodSelected(cor::Mood mood);
 
 private slots:
 
     /// called when a mood is clicked
-    void selectMood(QString key);
+    void selectMood(cor::Mood mood);
 
 
 private:

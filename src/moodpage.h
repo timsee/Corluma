@@ -35,7 +35,7 @@ public:
     explicit MoodPage(QWidget* parent, AppData* appData, CommLayer* comm);
 
     /// called when the widget is shown
-    void show(const QString& currentMood);
+    void show(const cor::UUID& currentMood);
 
     /// update the moods.
     void updateMoods();
@@ -50,7 +50,7 @@ public:
     void resize();
 
     /// getter for current mood
-    const QString& currentMood() { return mCurrentMood; }
+    const cor::UUID& currentMood() { return mCurrentMood; }
 
     /// used during complete reloads, this deletes all existing widgets
     void clearWidgets();
@@ -84,10 +84,10 @@ private slots:
     void detailedClosePressed();
 
     /// called when a request for a detailed mood is sent
-    void detailedMoodDisplay(QString key);
+    void detailedMoodDisplay(cor::UUID key);
 
     /// called when a mood is selected
-    void moodSelected(QString);
+    void moodSelected(cor::UUID);
 
 protected:
     /*!
@@ -120,7 +120,7 @@ private:
     GreyOutOverlay* mGreyOut;
 
     /// current mood based on the state of lights
-    QString mCurrentMood;
+    cor::UUID mCurrentMood;
 };
 
 #endif // MOODPAGE_H

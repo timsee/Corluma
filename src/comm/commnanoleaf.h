@@ -52,7 +52,7 @@ public:
     void sendPacket(const nano::LeafMetadata& metadata, const cor::LightState& state);
 
     /// search for a nanoleaf light based off of serial number
-    std::pair<nano::LeafMetadata, bool> findNanoLeafLight(const QString& serialNumber);
+    std::pair<nano::LeafMetadata, bool> findNanoLeafLight(const cor::LightID& serialNumber);
 
     /// light from metadata
     std::pair<nano::LeafLight, bool> lightFromMetadata(const nano::LeafMetadata& metadata);
@@ -67,7 +67,7 @@ public:
     void connectUPnPDiscovery(UPnPDiscovery* UPnP);
 
     /// deletes the light from the save data and device table
-    bool deleteNanoleaf(const QString& serialNumber, const QString& IP);
+    bool deleteNanoleaf(const cor::LightID& serialNumber, const QString& IP);
 
     /// getter for the discovery state of the nanoleaf
     ENanoleafDiscoveryState discoveryState() { return mDiscovery->state(); }
@@ -88,7 +88,7 @@ public:
      * \brief findSchedules returns the schedule dictionary for the given light
      * \param light light to look for schedules from
      */
-    std::pair<cor::Dictionary<nano::LeafSchedule>, bool> findSchedules(const QString& serial);
+    std::pair<cor::Dictionary<nano::LeafSchedule>, bool> findSchedules(const cor::LightID& serial);
 
     /*!
      * \brief sendTimeout sends a timeout schedule to the provided light.
@@ -99,7 +99,7 @@ public:
 
     /// returns the number of seconds until a light times out, if a timeout exists. if no timeout
     /// exists, 0u is returned
-    std::uint32_t timeoutFromLight(const QString& light);
+    std::uint32_t timeoutFromLight(const cor::LightID& light);
 
     /*!
      * \brief brightnessChange connected to CommPacketParser, this changes the brightness of a
@@ -125,7 +125,7 @@ public:
 
     /// returns the timeout schedule, if one exists. The second flag is true if it does exist and
     /// false if it does not.
-    std::pair<nano::LeafSchedule, bool> timeoutSchedule(const QString& uniqueID);
+    std::pair<nano::LeafSchedule, bool> timeoutSchedule(const cor::LightID& uniqueID);
 
 private slots:
     /*!

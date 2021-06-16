@@ -96,7 +96,7 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             Q_ASSERT(mButtons[i]);
         } else if (mNames[i] == "Preset") {
             foundMatch = true;
-            cor::Palette palette("fake_id",
+            cor::Palette palette(cor::UUID::invalidID(),
                                  "fake_name",
                                  {QColor(80, 0, 180),
                                   QColor(120, 0, 255),

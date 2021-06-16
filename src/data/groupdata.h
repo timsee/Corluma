@@ -32,7 +32,7 @@ public:
             QJsonObject object = value.toObject();
             if (cor::Group::isValidJson(object)) {
                 cor::Group group(object);
-                mGroupDict.insert(QString::number(group.uniqueID()).toStdString(), group);
+                mGroupDict.insert(group.uniqueID().toStdString(), group);
             }
         }
     }
@@ -53,7 +53,7 @@ public:
      * \param ID of the group/mood
      * \return true if a group is removed, false if nothing happens.
      */
-    QString removeGroup(std::uint64_t uniqueID);
+    QString removeGroup(cor::UUID uniqueID);
 
     /// returns a vector of names for the groups.
     std::vector<QString> groupNames();
@@ -84,28 +84,25 @@ public:
 
 
     /// returns a vector of names for the group IDs that are provided
-    std::vector<QString> groupNamesFromIDs(std::vector<std::uint64_t> IDs);
+    std::vector<QString> groupNamesFromIDs(const std::vector<cor::UUID>& IDs);
 
     /// returns a group's name from its ID
-    QString nameFromID(std::uint64_t ID);
+    QString nameFromID(const cor::UUID& ID);
 
     /// returns a vector of groups from a vector of IDs
-    std::vector<cor::Group> groupsFromIDs(std::vector<std::uint64_t> IDs);
+    std::vector<cor::Group> groupsFromIDs(const std::vector<cor::UUID>& IDs);
 
     /// converts a group ID into a group, returning an invalid group if the ID is invalid.
-    cor::Group groupFromID(std::uint64_t ID);
+    cor::Group groupFromID(const cor::UUID& ID);
 
     /// converts a group name to a ID, WARNING: this is not fast.
-    std::uint64_t groupNameToID(const QString name);
+    cor::UUID groupNameToID(const QString name);
 
     /// clear all group data
     void clear() { mGroupDict = cor::Dictionary<cor::Group>(); }
 
-    /// generates unique key for a group or mood
-    std::uint64_t generateNewUniqueKey();
-
     /// remove a light from all groups, removing groups if they are no longer valid.
-    bool removeLightFromGroups(const QString& light);
+    bool removeLightFromGroups(const cor::LightID& light);
 
     /*!
      * \brief updateExternallyStoredGroups update the information stored from external sources, such

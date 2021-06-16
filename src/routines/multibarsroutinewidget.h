@@ -42,7 +42,7 @@ public:
 
     /// update the color displayed by the widget
     void updatePaletteColors(const std::vector<QColor>& colors, std::uint32_t brightness) {
-        auto palette = cor::CustomPalette(colors);
+        auto palette = cor::Palette::CustomPalette(colors);
         mState.paletteBrightness(brightness);
         mState.palette(palette);
         updateState(mState);

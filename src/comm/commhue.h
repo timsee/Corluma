@@ -308,8 +308,8 @@ signals:
     /// received
     void discoveryStateChanged(EHueDiscoveryState);
 
-    /// handle when the light name changes, emitting the uniqueID and the new name of the ligh
-    void lightNameChanged(QString, QString);
+    /// handle when the light name changes, emitting the uniqueID and the new name of the light
+    void lightNameChanged(cor::LightID, QString);
 
 private slots:
 
@@ -335,18 +335,6 @@ private slots:
     void getGroups();
 
 private:
-    /*!
-     * \brief generateUniqueID generate a Unique ID for a new group This uses the prexisting groups
-     * from a group update and the information from the app about existing groups to determine
-     * whether or not the group you are creating already sxists, or if it needs a new ID. If it
-     * already exists, the unique ID of the pre-existing group is returned. If it doesn't exist, a
-     * new unique ID is generated that is guaraneteed to not overlap with any other unique ID.
-     * \param groupList list of currently existing groups
-     * \param name name of new group
-     * \return  a unique ID for the group with the given name
-     */
-    std::uint64_t generateUniqueID(const std::vector<cor::Group>& groupList, const QString& name);
-
     /*!
      * \brief resetBackgroundTimers reset the background timers that sync things such as groups
      *        and schedules.
@@ -501,8 +489,7 @@ private:
      * \param object json representationof a group
      * \return true if successful, false if failed.
      */
-    std::pair<cor::Group, bool> jsonToGroup(QJsonObject object,
-                                            const std::vector<cor::Group>& groupList);
+    std::pair<cor::Group, bool> jsonToGroup(QJsonObject object, std::uint32_t key);
 
     /*!
      * \brief checkTypeOfUpdate checks the JSON object received from the hue bridge and figures out

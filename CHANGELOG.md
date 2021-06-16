@@ -1330,3 +1330,11 @@ _Json save data from previous versions will no longer work._
 - Refactored `GroupData` to be `AppData`. Added `PaletteData` as a member of `AppData`.
 - Moods now use a UUID for their unique ID instead of an integer.
 - Added a `MenuPaletteContainer`.
+
+### **v0.22.01**
+### The UUID Update
+_Json save data from previous versions will no longer work._
+- Added a `cor::UUID` class to strongly type the UUID used by groups, moods, and palettes.
+- Adjusted Groups to use `cor::UUID` instead of an integer for internally stored groups.
+- Added a `cor::LightID` class to strongly type the uniqueID used by lights.
+- Fixed miscellaneous bugs.

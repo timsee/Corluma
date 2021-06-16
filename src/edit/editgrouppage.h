@@ -45,7 +45,7 @@ public:
     void clearGroup() override {
         mMetadataWidget->clear();
         mLightsWidget->clear();
-        mReviewPage->editMode(false, 0u);
+        mReviewPage->editMode(false, kMiscGroupKey);
         reset();
     }
 

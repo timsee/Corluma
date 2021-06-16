@@ -83,7 +83,7 @@ void RoutineContainer::initButtons() {
 
     // in the case where it it is not both types of buttons, use a different default
     if (mRoutineGroup == ERoutineGroup::multi) {
-        auto palette = cor::CustomPalette(colors);
+        auto palette = cor::Palette::CustomPalette(colors);
         state.paletteBrightness(51);
         state.palette(palette);
         state.routine(ERoutine::multiGlimmer);

@@ -82,7 +82,7 @@ public:
     // ----------------------------
 
     /// remove lights by their IDs
-    bool removeLights(const std::vector<QString>& uniqueIDs);
+    bool removeLights(const std::vector<cor::LightID>& uniqueIDs);
 
     /*!
      * \brief addLights adds lights with specific unique IDs that have been previously discovered.
@@ -123,10 +123,10 @@ signals:
     void updateReceived(ECommType);
 
     /// signals when a new light is added
-    void newLightsFound(ECommType, std::vector<QString>);
+    void newLightsFound(ECommType, std::vector<cor::LightID>);
 
     /// signals when an existing light is deleted
-    void lightsDeleted(ECommType, std::vector<QString>);
+    void lightsDeleted(ECommType, std::vector<cor::LightID>);
 
 protected:
     /*!

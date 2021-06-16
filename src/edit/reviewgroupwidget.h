@@ -24,7 +24,6 @@ public:
     explicit ReviewGroupWidget(QWidget* parent, CommLayer* comm, AppData* appData)
         : EditPageChildWidget(parent),
           mComm{comm},
-          mGroups{appData->groups()},
           mTopLabel{new QLabel("Review:", this)},
           mGroupWidget{new DisplayGroupWidget(this, comm, appData)},
           mCreateButton{new QPushButton("Create", this)} {
@@ -34,7 +33,7 @@ public:
     }
 
     /// set to true if editing an existing group, set to false if its a new group
-    void editMode(bool isEditMode, std::uint64_t uniqueID) {
+    void editMode(bool isEditMode, const cor::UUID& uniqueID) {
         mEditMode = isEditMode;
         if (mEditMode) {
             mCreateButton->setText("Edit");
@@ -54,12 +53,12 @@ public:
     void displayGroup(const QString& name,
                       const cor::EGroupType& type,
                       const QString& description,
-                      const std::vector<QString>& lights) {
+                      const std::vector<cor::LightID>& lights) {
         // generate a unique ID if and only if its a new group, otherwise, use the unique ID
         // provided when edit mode was turned on.
-        std::uint64_t key = mUniqueID;
+        auto key = mUniqueID;
         if (!mEditMode) {
-            key = mGroups->generateNewUniqueKey();
+            key = cor::UUID::makeNew();
         }
         cor::Group group(key, name, type, lights);
         group.description(description);
@@ -70,7 +69,7 @@ public:
     EditBottomButtons* bottomButtons() { return mBottomButtons; }
 
     /// getter for unique ID of the group
-    std::uint64_t uniqueID() { return mUniqueID; }
+    const cor::UUID& uniqueID() const noexcept { return mUniqueID; }
 
     /// true if in edit mode, false if creating new group.
     bool isEditMode() { return mEditMode; }
@@ -136,9 +135,6 @@ private:
     /// pointer to comm layer
     CommLayer* mComm;
 
-    /// pointer to group data
-    GroupData* mGroups;
-
     /// label for top of widget
     QLabel* mTopLabel;
 
@@ -152,7 +148,7 @@ private:
     bool mEditMode;
 
     /// the unique ID of the group being either edited or created.
-    std::uint64_t mUniqueID;
+    cor::UUID mUniqueID;
 };
 
 #endif // EDITREVIEWGROUPWIDGET_H

@@ -14,7 +14,10 @@ LightsListMenu::LightsListMenu(QWidget* parent, bool allowInteraction)
       mRowHeight{10},
       mSingleLightMode{false} {
     mLightContainer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(mLightContainer, SIGNAL(clickedLight(QString)), this, SLOT(lightClicked(QString)));
+    connect(mLightContainer,
+            SIGNAL(clickedLight(cor::LightID)),
+            this,
+            SLOT(lightClicked(cor::LightID)));
 
     mScrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     QScroller::grabGesture(mScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
@@ -74,7 +77,7 @@ void LightsListMenu::removeLight(const cor::Light& light) {
     mLightContainer->addLights(mLights);
 }
 
-void LightsListMenu::removeLights(const std::vector<QString>& keys) {
+void LightsListMenu::removeLights(const std::vector<cor::LightID>& keys) {
     for (const auto& key : keys) {
         auto vectorLight = cor::findLightInVectorByID(mLights, key);
         auto result = std::find(mLights.begin(), mLights.end(), vectorLight);

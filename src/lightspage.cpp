@@ -23,13 +23,13 @@ LightsPage::LightsPage(QWidget* parent,
             SLOT(handleConnectionStateChanged(EProtocolType, EConnectionState)));
 
     connect(mDiscoveryWidget->hueWidget(),
-            SIGNAL(selectLight(QString)),
+            SIGNAL(selectLight(cor::LightID)),
             this,
-            SLOT(selectLight(QString)));
+            SLOT(selectLight(cor::LightID)));
     connect(mDiscoveryWidget->hueWidget(),
-            SIGNAL(deselectLight(QString)),
+            SIGNAL(deselectLight(cor::LightID)),
             this,
-            SLOT(deselectLight(QString)));
+            SLOT(deselectLight(cor::LightID)));
 
     connect(mDiscoveryWidget->hueWidget(),
             SIGNAL(selectControllerLights(QString, EProtocolType)),
@@ -49,41 +49,41 @@ LightsPage::LightsPage(QWidget* parent,
     mControllerWidget->setVisible(false);
     connect(mControllerWidget, SIGNAL(backButtonPressed()), this, SLOT(hideControllerWidget()));
     connect(mControllerWidget,
-            SIGNAL(deleteLight(QString)),
+            SIGNAL(deleteLight(cor::LightID)),
             this,
-            SLOT(handleDeleteLight(QString)));
+            SLOT(handleDeleteLight(cor::LightID)));
 
     // add light signals
     connect(mControllerWidget->arduCorWidget(),
-            SIGNAL(selectLight(QString)),
+            SIGNAL(selectLight(cor::LightID)),
             this,
-            SLOT(selectLight(QString)));
+            SLOT(selectLight(cor::LightID)));
     connect(mControllerWidget->arduCorWidget(),
-            SIGNAL(deselectLight(QString)),
+            SIGNAL(deselectLight(cor::LightID)),
             this,
-            SLOT(deselectLight(QString)));
+            SLOT(deselectLight(cor::LightID)));
 
     connect(mControllerWidget->nanoleafWidget(),
-            SIGNAL(selectLight(QString)),
+            SIGNAL(selectLight(cor::LightID)),
             this,
-            SLOT(selectLight(QString)));
+            SLOT(selectLight(cor::LightID)));
     connect(mControllerWidget->nanoleafWidget(),
-            SIGNAL(deselectLight(QString)),
+            SIGNAL(deselectLight(cor::LightID)),
             this,
-            SLOT(deselectLight(QString)));
+            SLOT(deselectLight(cor::LightID)));
     connect(mControllerWidget->nanoleafWidget(),
-            SIGNAL(selectEffect(QString, QString)),
+            SIGNAL(selectEffect(cor::LightID, QString)),
             this,
-            SLOT(selectEffect(QString, QString)));
+            SLOT(selectEffect(cor::LightID, QString)));
 
     connect(mControllerWidget->hueWidget(),
-            SIGNAL(selectLight(QString)),
+            SIGNAL(selectLight(cor::LightID)),
             this,
-            SLOT(selectLight(QString)));
+            SLOT(selectLight(cor::LightID)));
     connect(mControllerWidget->hueWidget(),
-            SIGNAL(deselectLight(QString)),
+            SIGNAL(deselectLight(cor::LightID)),
             this,
-            SLOT(deselectLight(QString)));
+            SLOT(deselectLight(cor::LightID)));
 
     // add controller signals
     connect(mControllerWidget->arduCorWidget(),
@@ -108,20 +108,20 @@ LightsPage::LightsPage(QWidget* parent,
             this,
             SLOT(handleControllerNameChanged(QString, QString)));
     connect(mControllerWidget->hueWidget(),
-            SIGNAL(lightNameChanged(QString, QString)),
+            SIGNAL(lightNameChanged(cor::LightID, QString)),
             this,
-            SLOT(handleLightNameChanged(QString, QString)));
+            SLOT(handleLightNameChanged(cor::LightID, QString)));
 
     connect(mControllerWidget,
-            SIGNAL(deleteLight(QString)),
+            SIGNAL(deleteLight(cor::LightID)),
             mDiscoveryWidget,
-            SLOT(deleteLight(QString)));
+            SLOT(deleteLight(cor::LightID)));
 
     // connect the comm layer when it finds new lights
     connect(mComm,
-            SIGNAL(lightsAdded(std::vector<QString>)),
+            SIGNAL(lightsAdded(std::vector<cor::LightID>)),
             this,
-            SLOT(handleNewLightsFound(std::vector<QString>)));
+            SLOT(handleNewLightsFound(std::vector<cor::LightID>)));
 }
 
 void LightsPage::setupTopMenu(TopMenu* topMenu) {
@@ -148,9 +148,9 @@ void LightsPage::resize() {
     }
 }
 
-void LightsPage::handleNewLightsFound(std::vector<QString> uniqueIDs) {
+void LightsPage::handleNewLightsFound(std::vector<cor::LightID> uniqueIDs) {
     auto lights = mComm->lightsByIDs(uniqueIDs);
-    std::vector<QString> hueLights;
+    std::vector<cor::LightID> hueLights;
     for (auto light : lights) {
         if (light.protocol() == EProtocolType::hue) {
             hueLights.push_back(light.uniqueID());
@@ -162,7 +162,7 @@ void LightsPage::handleNewLightsFound(std::vector<QString> uniqueIDs) {
     }
 }
 
-void LightsPage::deselectLight(QString lightKey) {
+void LightsPage::deselectLight(cor::LightID lightKey) {
     auto light = mComm->lightByID(lightKey);
     if (light.isReachable()) {
         mSelectedLights->removeLight(light);
@@ -170,7 +170,7 @@ void LightsPage::deselectLight(QString lightKey) {
     }
 }
 
-void LightsPage::selectLight(QString lightKey) {
+void LightsPage::selectLight(cor::LightID lightKey) {
     auto light = mComm->lightByID(lightKey);
     if (light.isReachable()) {
         mSelectedLights->addLight(light);
@@ -178,7 +178,7 @@ void LightsPage::selectLight(QString lightKey) {
     }
 }
 
-void LightsPage::selectEffect(QString lightKey, QString effectKey) {
+void LightsPage::selectEffect(cor::LightID lightKey, QString effectKey) {
     auto light = mComm->lightByID(lightKey);
     auto state = light.state();
     if (light.isReachable()) {
@@ -241,7 +241,7 @@ void LightsPage::handleControllerNameChanged(QString key, QString name) {
     mDiscoveryWidget->hueWidget()->handleBridgeNameUpdate(key, name);
 }
 
-void LightsPage::handleLightNameChanged(QString key, QString name) {
+void LightsPage::handleLightNameChanged(cor::LightID key, QString name) {
     auto light = mComm->lightByID(key);
     if (light.protocol() == EProtocolType::hue) {
         // get hue light from key
@@ -260,12 +260,13 @@ void LightsPage::handleLightNameChanged(QString key, QString name) {
             /// bridge will send a sucess packet, which will be handled by Commhue.
             mComm->hue()->renameLight(light, name);
         } else {
-            qDebug() << " could NOT change this key: " << key << " to this name " << name;
+            qDebug() << " could NOT change this key: " << key.toString() << " to this name "
+                     << name;
         }
     }
 }
 
-void LightsPage::handleDeleteLight(QString key) {
+void LightsPage::handleDeleteLight(cor::LightID key) {
     emit deleteLights({key});
 }
 
@@ -278,7 +279,7 @@ void LightsPage::updateLightNames(EProtocolType protocol) {
     mControllerWidget->updateLightNames(protocol);
 }
 
-void LightsPage::handleDeletedLights(const std::vector<QString>& keys) {
+void LightsPage::handleDeletedLights(const std::vector<cor::LightID>& keys) {
     mDiscoveryWidget->handleDeletedLights(keys);
     mControllerWidget->handleDeletedLights(keys);
 }

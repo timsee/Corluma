@@ -23,8 +23,8 @@ MoodPage::MoodPage(QWidget* parent, AppData* appData, CommLayer* comm)
           this,
           "There are no moods saved in the app. Click the + button to make your first mood.")},
       mGreyOut{new GreyOutOverlay(false, parentWidget())},
-      mCurrentMood{} {
-    connect(mMoodMenu, SIGNAL(moodClicked(QString)), this, SLOT(moodSelected(QString)));
+      mCurrentMood{cor::UUID::invalidID()} {
+    connect(mMoodMenu, SIGNAL(moodClicked(cor::UUID)), this, SLOT(moodSelected(cor::UUID)));
 
     mMoodDetailedWidget = new MoodDetailedWidget(parent, appData, mComm);
     connect(mMoodDetailedWidget, SIGNAL(pressedClose()), this, SLOT(detailedClosePressed()));
@@ -78,7 +78,7 @@ void MoodPage::resizeEvent(QResizeEvent*) {
     resize();
 }
 
-void MoodPage::show(const QString& currentMood) {
+void MoodPage::show(const cor::UUID& currentMood) {
     checkForMissingMoods();
     mMoodMenu->setVisible(true);
     mCurrentMood = currentMood;
@@ -101,7 +101,7 @@ void MoodPage::greyoutClicked() {
     }
 }
 
-void MoodPage::detailedMoodDisplay(QString key) {
+void MoodPage::detailedMoodDisplay(cor::UUID key) {
     mGreyOut->greyOut(true);
 
     const auto& moodResult = mMoodData->moods().item(key.toStdString());
@@ -112,7 +112,7 @@ void MoodPage::detailedMoodDisplay(QString key) {
     mMoodDetailedWidget->pushIn();
 }
 
-void MoodPage::moodSelected(QString key) {
+void MoodPage::moodSelected(cor::UUID key) {
     detailedMoodDisplay(key);
 }
 

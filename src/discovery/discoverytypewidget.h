@@ -61,7 +61,7 @@ public:
     virtual QString discoveryHelpHTML() = 0;
 
     /// delete a light from the discovery page.
-    virtual void deleteLight(const QString& light) = 0;
+    virtual void deleteLight(const cor::LightID& light) = 0;
 
     /// handles how to higlight lights.
     virtual void highlightLights() = 0;
@@ -101,10 +101,10 @@ signals:
     void deselectControllerLights(QString, EProtocolType);
 
     /// handles when a light should be selected
-    void selectLight(QString);
+    void selectLight(cor::LightID);
 
     /// handles when a light should be deselected
-    void deselectLight(QString);
+    void deselectLight(cor::LightID);
 
     /// handles when a controller should be deleted.
     void deleteController(QString, EProtocolType);

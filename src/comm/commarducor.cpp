@@ -26,13 +26,13 @@ CommArduCor::CommArduCor(QObject* parent, PaletteData* palettes)
             SLOT(parsePacket(QString, QString, ECommType)));
     connect(mUDP.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
     connect(mUDP.get(),
-            SIGNAL(newLightsFound(ECommType, std::vector<QString>)),
+            SIGNAL(newLightsFound(ECommType, std::vector<cor::LightID>)),
             this,
-            SLOT(lightsFound(ECommType, std::vector<QString>)));
+            SLOT(lightsFound(ECommType, std::vector<cor::LightID>)));
     connect(mUDP.get(),
-            SIGNAL(lightsDeleted(ECommType, std::vector<QString>)),
+            SIGNAL(lightsDeleted(ECommType, std::vector<cor::LightID>)),
             this,
-            SLOT(deletedLights(ECommType, std::vector<QString>)));
+            SLOT(deletedLights(ECommType, std::vector<cor::LightID>)));
 
     mHTTP = std::make_shared<CommHTTP>();
     connect(mHTTP.get(),
@@ -41,13 +41,13 @@ CommArduCor::CommArduCor(QObject* parent, PaletteData* palettes)
             SLOT(parsePacket(QString, QString, ECommType)));
     connect(mHTTP.get(), SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
     connect(mHTTP.get(),
-            SIGNAL(newLightsFound(ECommType, std::vector<QString>)),
+            SIGNAL(newLightsFound(ECommType, std::vector<cor::LightID>)),
             this,
-            SLOT(lightsFound(ECommType, std::vector<QString>)));
+            SLOT(lightsFound(ECommType, std::vector<cor::LightID>)));
     connect(mHTTP.get(),
-            SIGNAL(lightsDeleted(ECommType, std::vector<QString>)),
+            SIGNAL(lightsDeleted(ECommType, std::vector<cor::LightID>)),
             this,
-            SLOT(deletedLights(ECommType, std::vector<QString>)));
+            SLOT(deletedLights(ECommType, std::vector<cor::LightID>)));
 
 #ifdef USE_SERIAL
     mSerial = std::make_shared<CommSerial>();
@@ -60,13 +60,13 @@ CommArduCor::CommArduCor(QObject* parent, PaletteData* palettes)
             this,
             SLOT(receivedUpdate(ECommType)));
     connect(mSerial.get(),
-            SIGNAL(newLightsFound(ECommType, std::vector<QString>)),
+            SIGNAL(newLightsFound(ECommType, std::vector<cor::LightID>)),
             this,
-            SLOT(lightsFound(ECommType, std::vector<QString>)));
+            SLOT(lightsFound(ECommType, std::vector<cor::LightID>)));
     connect(mSerial.get(),
-            SIGNAL(lightsDeleted(ECommType, std::vector<QString>)),
+            SIGNAL(lightsDeleted(ECommType, std::vector<cor::LightID>)),
             this,
-            SLOT(deletedLights(ECommType, std::vector<QString>)));
+            SLOT(deletedLights(ECommType, std::vector<cor::LightID>)));
 #endif // MOBILE_BUILD
 
     mDiscovery = new ArduCorDiscovery(this,
@@ -225,7 +225,7 @@ bool CommArduCor::deleteController(const QString& controller) {
     auto result = mDiscovery->findControllerByControllerName(controller);
     if (result.second) {
         auto controller = result.first;
-        commByType(controller.type())->removeLights(controller.names());
+        commByType(controller.type())->removeLights(controller.lightIDs());
         // remove from JSON data
         return mDiscovery->removeController(controller.name());
     }
@@ -244,7 +244,7 @@ std::vector<cor::Light> CommArduCor::lightsFromNames(const std::vector<QString>&
     auto storedLights = lights();
     for (const auto& lightName : lightNames) {
         for (const auto& storedLight : storedLights) {
-            if (lightName == storedLight.uniqueID()) {
+            if (lightName == storedLight.uniqueID().toString()) {
                 retVector.emplace_back(storedLight);
             }
         }
@@ -405,7 +405,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                     }
 
 
-                                    auto palette = cor::CustomPalette(colors);
+                                    auto palette = cor::Palette::CustomPalette(colors);
                                     state.paletteBrightness(brightness);
 
                                     state.customPalette(palette);
@@ -548,7 +548,7 @@ void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECom
                                         }
                                         std::vector<QColor> colors = state.customPalette().colors();
                                         colors[index] = QColor(red, green, blue);
-                                        auto palette = cor::CustomPalette(colors);
+                                        auto palette = cor::Palette::CustomPalette(colors);
                                         state.customPalette(palette);
                                         light.state(state);
                                         light.isReachable(true);

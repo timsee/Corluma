@@ -67,7 +67,7 @@ public:
     void updateLightNames(EProtocolType type);
 
     /// handles the case where lights are deleted off of the LightsPage.
-    void handleDeletedLights(const std::vector<QString>& keys);
+    void handleDeletedLights(const std::vector<cor::LightID>& keys);
 
     /// called when the widget is shown
     void show();
@@ -101,7 +101,7 @@ signals:
 
 public slots:
     /// handle when a light is deleted.
-    void deleteLight(QString);
+    void deleteLight(cor::LightID);
 
 private slots:
 

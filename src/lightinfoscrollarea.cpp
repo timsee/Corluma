@@ -51,16 +51,16 @@ void LightInfoScrollArea::updateHues(std::vector<HueMetadata> lights) {
         if (widgetIndex == -1) {
             hue::HueInfoWidget* widget = new hue::HueInfoWidget(light, mScrollAreaWidget);
             widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-            connect(widget, SIGNAL(clicked(QString)), this, SLOT(clickedLight(QString)));
+            connect(widget, SIGNAL(clicked(cor::LightID)), this, SLOT(clickedLight(cor::LightID)));
             connect(widget,
-                    SIGNAL(clickedDelete(QString, QString)),
+                    SIGNAL(clickedDelete(cor::LightID, QString)),
                     parentWidget(),
-                    SLOT(deleteButtonPressed(QString, QString)));
+                    SLOT(deleteButtonPressed(cor::LightID, QString)));
 
             connect(widget,
-                    SIGNAL(clickedChangeName(QString, QString)),
+                    SIGNAL(clickedChangeName(cor::LightID, QString)),
                     parentWidget(),
-                    SLOT(changeNamePressed(QString, QString)));
+                    SLOT(changeNamePressed(cor::LightID, QString)));
 
             mHueWidgets.push_back(widget);
             mScrollLayout->addWidget(widget);
@@ -78,10 +78,10 @@ void LightInfoScrollArea::addLight(const HueMetadata& light) {
     updateHues(metadataVector);
 }
 
-void LightInfoScrollArea::deleteLight(const QString& lightID) {
+void LightInfoScrollArea::deleteLight(const cor::LightID& lightID) {
     hue::HueInfoWidget* widgetToDelete = nullptr;
     for (auto widget : mHueWidgets) {
-        if (widget->key() == lightID) {
+        if (widget->key() == lightID.toString()) {
             widgetToDelete = widget;
             break;
             mScrollLayout->removeWidget(widget);
@@ -103,7 +103,7 @@ void LightInfoScrollArea::deleteLight(const QString& lightID) {
 }
 
 
-void LightInfoScrollArea::clickedLight(const QString& key) {
+void LightInfoScrollArea::clickedLight(const cor::LightID& key) {
     bool shouldEnableDelete = true;
     for (auto widget : mHueWidgets) {
         if (widget->checked()) {
@@ -112,8 +112,8 @@ void LightInfoScrollArea::clickedLight(const QString& key) {
         }
     }
     for (auto widget : mHueWidgets) {
-        if (widget->key() == key) {
-            if (mLastHueKey == key) {
+        if (widget->key() == key.toString()) {
+            if (mLastHueKey == key.toString()) {
                 shouldEnableDelete = false;
                 widget->hideDetails(true);
                 widget->setChecked(false);
@@ -121,11 +121,11 @@ void LightInfoScrollArea::clickedLight(const QString& key) {
             } else {
                 widget->hideDetails(false);
                 widget->setChecked(true);
-                mLastHueKey = key;
+                mLastHueKey = key.toString();
             }
         }
     }
-    emit lightClicked(key, shouldEnableDelete);
+    emit lightClicked(cor::LightID(key), shouldEnableDelete);
 }
 
 

@@ -95,7 +95,7 @@ void DiscoveryNanoLeafWidget::handleNanoleaf(const nano::LeafMetadata& nanoleaf,
     int i = 0;
     for (const auto& widget : mListWidget->widgets()) {
         auto nanoleafWidget = dynamic_cast<DisplayPreviewNanoleafWidget*>(widget);
-        if (widget->key() == nanoleaf.serialNumber()) {
+        if (widget->key() == nanoleaf.serialNumber().toString()) {
             // standard case, theres a unique ID for this bridge
             widgetIndex = i;
             nanoleafWidget->updateNanoleaf(nanoleaf, state, status);
@@ -120,16 +120,16 @@ void DiscoveryNanoLeafWidget::removeDuplicatedNanoleafs() {
     std::vector<QString> widgetsToRemove;
     for (const auto& widget : mListWidget->widgets()) {
         auto nanoleafWidget = dynamic_cast<DisplayPreviewNanoleafWidget*>(widget);
-        if (nanoleafWidget->nanoleaf().serialNumber().contains("Unknown--")) {
+        if (nanoleafWidget->nanoleaf().serialNumber().toString().contains("Unknown--")) {
             // check if this unknown has been discovered
             // get its IP address
-            QStringList splitIP = nanoleafWidget->nanoleaf().serialNumber().split("//");
+            QStringList splitIP = nanoleafWidget->nanoleaf().serialNumber().toString().split("//");
             auto IP = splitIP[1];
             for (const auto& innerWidget : mListWidget->widgets()) {
                 auto innerNanoleafWidget = dynamic_cast<DisplayPreviewNanoleafWidget*>(innerWidget);
                 if (innerNanoleafWidget->status() == nano::ELeafDiscoveryState::connected
                     && innerNanoleafWidget->nanoleaf().IP().contains(IP)) {
-                    widgetsToRemove.push_back(nanoleafWidget->nanoleaf().serialNumber());
+                    widgetsToRemove.push_back(nanoleafWidget->nanoleaf().serialNumber().toString());
                 }
             }
         }
@@ -155,12 +155,12 @@ void DiscoveryNanoLeafWidget::checkIfIPExists(const QString& IP) {
     }
 }
 
-void DiscoveryNanoLeafWidget::deleteLight(const QString& light) {
+void DiscoveryNanoLeafWidget::deleteLight(const cor::LightID& light) {
     std::vector<QString> widgetsToRemove;
     for (const auto& widget : mListWidget->widgets()) {
         auto nanoleafWidget = dynamic_cast<DisplayPreviewNanoleafWidget*>(widget);
         if (nanoleafWidget->nanoleaf().serialNumber() == light) {
-            widgetsToRemove.emplace_back(nanoleafWidget->nanoleaf().serialNumber());
+            widgetsToRemove.emplace_back(nanoleafWidget->nanoleaf().serialNumber().toString());
         }
     }
     bool shouldResize = !widgetsToRemove.empty();

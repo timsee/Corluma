@@ -26,7 +26,7 @@ public:
                                           cor::LightState state,
                                           nano::ELeafDiscoveryState status,
                                           QWidget* parent)
-        : cor::ListItemWidget(leafMetadata.serialNumber(), parent),
+        : cor::ListItemWidget(leafMetadata.serialNumber().toString(), parent),
           mIsHighlighted{false},
           mName{new QLabel(leafMetadata.name(), this)},
           mSyncWidget{new SyncWidget(this)},

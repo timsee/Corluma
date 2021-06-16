@@ -187,7 +187,7 @@ void GroupButton::paintEvent(QPaintEvent*) {
     if (mHighlightByCountOfLights) {
         painter.fillPath(path, QBrush(computeHighlightColor(mCheckedCount, mReachableCount)));
     } else {
-        painter.fillPath(path, QBrush(QColor(150, 149, 149)));
+        painter.fillPath(path, QBrush(cor::kBackgroundColor));
     }
 
     paintRect(painter, rect(), mRectOptions);

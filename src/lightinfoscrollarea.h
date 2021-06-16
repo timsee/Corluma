@@ -31,7 +31,7 @@ public:
     void addLight(const HueMetadata& light);
 
     /// delete a light by its uniqueID
-    void deleteLight(const QString& lightID);
+    void deleteLight(const cor::LightID& lightID);
 
     /// getter for the hue widgets
     std::vector<hue::HueInfoWidget*> hueWidgets() { return mHueWidgets; }
@@ -51,12 +51,12 @@ public:
 signals:
 
     /// emits the key and whether or not a light is selected when a light is clicked
-    void lightClicked(const QString&, bool);
+    void lightClicked(const cor::LightID&, bool);
 
 private slots:
 
     /// handles when a light is clicked
-    void clickedLight(const QString&);
+    void clickedLight(const cor::LightID&);
 
 private:
     /// widget used for scroll area.

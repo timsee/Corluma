@@ -50,8 +50,14 @@ public:
                 this,
                 SLOT(moodLightClicked(cor::Light)));
 
-        connect(mLightsMenu, SIGNAL(clickedLight(QString)), this, SLOT(lightClicked(QString)));
-        connect(mLightsMenu, SIGNAL(unselectLight(QString)), this, SLOT(unselectLight(QString)));
+        connect(mLightsMenu,
+                SIGNAL(clickedLight(cor::LightID)),
+                this,
+                SLOT(lightClicked(cor::LightID)));
+        connect(mLightsMenu,
+                SIGNAL(unselectLight(cor::LightID)),
+                this,
+                SLOT(unselectLight(cor::LightID)));
 
         connect(mStateWidget,
                 SIGNAL(stateChanged(cor::LightState)),
@@ -127,7 +133,7 @@ private slots:
     }
 
     /// handles when a light is clicked from the lights menu.
-    void lightClicked(QString key) { lightClicked(mComm->lightByID(key)); }
+    void lightClicked(cor::LightID key) { lightClicked(mComm->lightByID(key)); }
 
     /// handles when the left top button is pressed. what this button does depends on the state of
     /// the widget.
@@ -184,7 +190,7 @@ private slots:
     }
 
     /// the standard lights menu deselected a light
-    void unselectLight(QString key) {
+    void unselectLight(cor::LightID key) {
         bool shouldRemove = (key == mLightWidget->light().uniqueID());
         handleState(EChooseLightsMoodState::disabled);
         if (shouldRemove) {

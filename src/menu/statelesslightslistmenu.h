@@ -27,16 +27,16 @@ public:
     void updateLights();
 
     /// add a light to display
-    void addLight(const QString&);
+    void addLight(const cor::LightID&);
 
     /// remove a light from display.
-    void removeLight(const QString&);
+    void removeLight(const cor::LightID&);
 
     /// shows a group of lights.
-    void addLights(const std::vector<QString>&);
+    void addLights(const std::vector<cor::LightID>&);
 
     /// highlight all the lights provided, removing the highlight from lights not in the list.
-    void highlightLights(const std::vector<QString>& lights) {
+    void highlightLights(const std::vector<cor::LightID>& lights) {
         mLightContainer->highlightLights(lights);
     }
 
@@ -44,16 +44,16 @@ public:
     void clear();
 
     /// getter for the lights that are displayed
-    const std::vector<QString>& lightIDs() const noexcept { return mLights; }
+    const std::vector<cor::LightID>& lightIDs() const noexcept { return mLights; }
 
 signals:
 
     /// emits when a light is clicked
-    void clickedLight(QString);
+    void clickedLight(cor::LightID);
 
 private slots:
     /// handles when a light is clicked
-    void lightClicked(QString light) { emit clickedLight(light); }
+    void lightClicked(cor::LightID light) { emit clickedLight(light); }
 
 private:
     /// pointer to comm layer
@@ -69,7 +69,7 @@ private:
     int mRowHeight;
 
     /// stores the unique IDs of all lights being displayed.
-    std::vector<QString> mLights;
+    std::vector<cor::LightID> mLights;
 };
 
 #endif // STATELESSLIGHTSLISTMENU_H

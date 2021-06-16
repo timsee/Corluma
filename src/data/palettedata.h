@@ -27,7 +27,7 @@ public:
     /// adds a new palette to the palette data.
     bool addPalette(const cor::Palette& palette) {
         // verify the UUID isn't in the reserved list
-        if (mReservedIDs.find(palette.uniqueID()) == mReservedIDs.end()) {
+        if (mReservedIDs.find(palette.uniqueID().toString()) == mReservedIDs.end()) {
             // verify the name isn't already in use
             auto paletteNames = paletteNameSet();
             if (paletteNames.find(palette.name()) == paletteNames.end()) {
@@ -47,7 +47,7 @@ public:
         } else {
             // palette UUID is invalid/already exists
             qDebug() << " INFO: palette's UUID already exists or is invalid: "
-                     << palette.uniqueID();
+                     << palette.uniqueID().toString();
             return false;
         }
     }
@@ -197,10 +197,10 @@ private:
     cor::Dictionary<cor::Palette> mPaletteDict;
 
     /// maps the legacy EPalette enum to the more recent UUIDs of palettes.
-    std::unordered_map<EPalette, QString> mEnumToIDMap;
+    std::unordered_map<EPalette, cor::UUID> mEnumToIDMap;
 
     /// a set of reserved unique IDs.
-    std::set<QString> mReservedIDs;
+    std::set<cor::UUID> mReservedIDs;
 };
 
 #endif // PALETTEDATA_H

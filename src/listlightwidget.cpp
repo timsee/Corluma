@@ -20,7 +20,7 @@ ListLightWidget::ListLightWidget(const cor::Light& light,
                                  bool setHighlightable,
                                  EListLightWidgetType type,
                                  QWidget* parent)
-    : cor::ListItemWidget(light.uniqueID(), parent),
+    : cor::ListItemWidget(light.uniqueID().toString(), parent),
       mNoConnectionPixmap(":/images/question_mark.png"),
       mType{type},
       mHardwareType{light.hardwareType()},
@@ -49,7 +49,7 @@ ListLightWidget::ListLightWidget(const cor::Light& light,
     mName->setAlignment(Qt::AlignVCenter);
     mName->setStyleSheet(cor::kTransparentStylesheet);
 
-    mKey = light.uniqueID();
+    mKey = light.uniqueID().toString();
     updateWidget(light);
 }
 
@@ -189,7 +189,7 @@ void ListLightWidget::mouseReleaseEvent(QMouseEvent* event) {
 
     if (cor::isMouseEventTouchUpInside(event, this, true)) {
         setHighlightChecked(!mIsChecked);
-        emit clicked(mKey);
+        emit clicked(mLight.uniqueID());
     }
     event->ignore();
 }

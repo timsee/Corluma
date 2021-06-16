@@ -162,14 +162,14 @@ void DiscoveryArduCorWidget::controllerClicked(QString controller) {
     }
 }
 
-void DiscoveryArduCorWidget::deleteLight(const QString& light) {
+void DiscoveryArduCorWidget::deleteLight(const cor::LightID& light) {
     std::vector<QString> widgetsToRemove;
     for (auto widget : mListWidget->widgets()) {
         auto arduCorWidget = dynamic_cast<DisplayPreviewArduCorWidget*>(widget);
-        if (arduCorWidget->controller().name() == light) {
+        if (arduCorWidget->controller().name() == light.toString()) {
             auto lightResult = std::find(mIgnoredLights.begin(), mIgnoredLights.end(), light);
             if (lightResult == mIgnoredLights.end()) {
-                mIgnoredLights.push_back(light);
+                mIgnoredLights.push_back(light.toString());
                 widgetsToRemove.emplace_back(arduCorWidget->key());
             }
         }

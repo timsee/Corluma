@@ -20,7 +20,7 @@ public:
     explicit MenuGroupContainer(QWidget* parent, GroupData* groupData);
 
     /// shows the groups with the names provided
-    void showGroups(std::vector<std::uint64_t> groups, int buttonHeight);
+    void showGroups(const std::vector<cor::UUID>& groups, int buttonHeight);
 
     //// resize the subgroups programmatically
     void resizeWidgets(int buttonHeight);
@@ -31,7 +31,7 @@ public:
 signals:
 
     /// emitted when a group button is pressed. This emits its group ID
-    void groupClicked(std::uint64_t key);
+    void groupClicked(cor::UUID key);
 
 protected:
     /// resizes interal widgets when a resize event is triggered

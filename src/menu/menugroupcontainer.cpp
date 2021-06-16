@@ -11,7 +11,7 @@ MenuGroupContainer::MenuGroupContainer(QWidget* parent, GroupData* groupData)
       mGroups{groupData} {}
 
 
-void MenuGroupContainer::showGroups(std::vector<std::uint64_t> groups, int buttonHeight) {
+void MenuGroupContainer::showGroups(const std::vector<cor::UUID>& groups, int buttonHeight) {
     // remove any existing groups
     for (auto widget : mButtons) {
         delete widget;

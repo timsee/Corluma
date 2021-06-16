@@ -44,7 +44,7 @@ signals:
     void updateMoods();
 
     /// signals the key of a group that has been selected for editing.
-    void editMood(QString);
+    void editMood(cor::Mood);
 
 protected:
     /*!
@@ -60,7 +60,7 @@ protected:
 private slots:
 
     /// handles when a specific mood is clicked
-    void clickedMood(QString key);
+    void clickedMood(cor::Mood mood);
 
     /*!
      * \brief closePressed called when close button is pressed. Checks if changes were made, asks
@@ -113,7 +113,7 @@ private:
     QPushButton* mActionButton;
 
     /// stored key for the currently selected mood.
-    QString mSelectedMood;
+    cor::Mood mSelectedMood;
 };
 
 #endif // CHOOSEMOODWIDGET_H

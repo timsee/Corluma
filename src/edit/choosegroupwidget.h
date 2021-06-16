@@ -26,7 +26,7 @@ public:
     explicit ChooseGroupWidget(QWidget* parent, CommLayer* comm, AppData* appData);
 
     /// shows a set of groups and updates the UI to reflect the EGroupAction provided
-    void showGroups(const std::vector<std::uint64_t>& groups, cor::EGroupAction action);
+    void showGroups(const std::vector<cor::UUID>& groups, cor::EGroupAction action);
 
     /// displays the page
     void pushIn(const QPoint& startPoint, const QPoint& endPoint);
@@ -46,7 +46,7 @@ signals:
     void updateGroups();
 
     /// signals the key of a group that has been selected for editing.
-    void editGroup(std::uint64_t);
+    void editGroup(cor::UUID);
 
 protected:
     /*!
@@ -62,7 +62,7 @@ protected:
 private slots:
 
     /// handles when a specific group is clicked
-    void clickedGroup(std::uint64_t key);
+    void clickedGroup(const cor::UUID& key);
 
     /*!
      * \brief closePressed called when close button is pressed. Checks if changes were made, asks
@@ -115,7 +115,7 @@ private:
     QPushButton* mActionButton;
 
     /// stored key for the currently selected group.
-    std::uint64_t mSelectedGroup;
+    cor::UUID mSelectedGroup;
 };
 
 #endif // CHOOSEGROUPWIDGET_H

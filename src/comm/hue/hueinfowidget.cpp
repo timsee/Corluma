@@ -19,7 +19,7 @@ namespace hue {
 
 HueInfoWidget::HueInfoWidget(HueMetadata light, QWidget* parent)
     : QWidget(parent),
-      mKey{light.uniqueID()},
+      mKey{light.uniqueID().toString()},
       mIsChecked{false},
       mHideDetails{false},
       mRowHeight{10},
@@ -28,7 +28,7 @@ HueInfoWidget::HueInfoWidget(HueMetadata light, QWidget* parent)
       mModelID{new QLabel("<b>Model:</b>  " + light.modelID(), this)},
       mSoftwareVersion{new QLabel("<b>Software:</b>  " + light.softwareVersion(), this)},
       mType{new QLabel(hardwareTypeToString(hue::modelToHardwareType(light.modelID())), this)},
-      mUniqueID{new QLabel("<b>ID:</b>  " + light.uniqueID(), this)},
+      mUniqueID{new QLabel("<b>ID:</b>  " + light.uniqueID().toString(), this)},
       mChangeNameButton{new QPushButton("Change Name", this)},
       mDeleteButton{new QPushButton("Delete Light", this)},
       mLight(light),

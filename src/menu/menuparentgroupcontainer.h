@@ -8,7 +8,7 @@
 #include "data/appdata.h"
 
 using MenuParentGroupCounts =
-    std::unordered_map<std::uint64_t, std::pair<std::uint32_t, std::uint32_t>>;
+    std::unordered_map<cor::UUID, std::pair<std::uint32_t, std::uint32_t>>;
 
 /*!
  * \copyright
@@ -70,14 +70,14 @@ public:
 signals:
 
     /// signals the group ID of the parent that was clicked
-    void parentClicked(std::uint64_t);
+    void parentClicked(cor::UUID);
 
 private slots:
 
     /// handles when a parent is pressed
     void parentPressed(QString parent) {
         if (parent == "Miscellaneous") {
-            emit parentClicked(0u);
+            emit parentClicked(cor::kMiscGroupKey);
         } else {
             emit parentClicked(mAppData->groups()->groupNameToID(parent));
         }

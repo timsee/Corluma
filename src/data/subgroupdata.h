@@ -10,9 +10,8 @@
 #include <unordered_map>
 #include "cor/objects/group.h"
 
-using SubgroupMap = std::unordered_map<std::uint64_t, std::vector<std::uint64_t>>;
-using SubgroupNameMap =
-    std::unordered_map<std::uint64_t, std::vector<std::pair<QString, std::uint64_t>>>;
+using SubgroupMap = std::unordered_map<cor::UUID, std::vector<cor::UUID>>;
+using SubgroupNameMap = std::unordered_map<cor::UUID, std::vector<std::pair<QString, cor::UUID>>>;
 /**
  * @brief The SubgroupData class stores the relationship between groups. Group A is a subgroup of
  * Group B if all lights within A are also within B. It contains an unordered_map which utilizes
@@ -26,7 +25,7 @@ public:
     const SubgroupMap map() const noexcept { return mSubgroupMap; }
 
     /// returns the subgroups for a specfic group.
-    std::vector<std::uint64_t> subgroupIDsForGroup(std::uint64_t uniqueID) const {
+    std::vector<cor::UUID> subgroupIDsForGroup(const cor::UUID& uniqueID) const {
         const auto result = mSubgroupMap.find(uniqueID);
         if (result != mSubgroupMap.end()) {
             return result->second;
@@ -36,7 +35,7 @@ public:
     }
 
     /// returns a vector of all alternative names for the subgroups of a parent group.
-    std::vector<QString> subgroupNamesForGroup(std::uint64_t uniqueID) const {
+    std::vector<QString> subgroupNamesForGroup(const cor::UUID& uniqueID) const {
         const auto result = mSubgroupNameMap.find(uniqueID);
         if (result != mSubgroupNameMap.end()) {
             std::vector<QString> names;
@@ -51,8 +50,8 @@ public:
     }
 
     /// returns the subgroup ID when provided a parent group ID and the renamed group.
-    std::uint64_t subgroupIDFromRenamedGroup(std::uint64_t parentGroup,
-                                             const QString& renamedName) const {
+    cor::UUID subgroupIDFromRenamedGroup(const cor::UUID& parentGroup,
+                                         const QString& renamedName) const {
         const auto result = mSubgroupNameMap.find(parentGroup);
         if (result != mSubgroupNameMap.end()) {
             for (const auto& namePair : result->second) {
@@ -61,14 +60,14 @@ public:
                 }
             }
         }
-        return std::numeric_limits<std::uint64_t>::max();
+        return cor::UUID::invalidID();
     }
 
     /// queries a parent group and subgroup pair for its alternative name for the subgroup. Returns
     /// the subgroup's actual name if no alternative name exists, and returns an empty string if the
     /// parent group ID/subgroup ID pair is invalid.
-    QString renamedSubgroupFromParentAndGroupID(std::uint64_t parentGroupID,
-                                                std::uint64_t subgroupID) const {
+    QString renamedSubgroupFromParentAndGroupID(const cor::UUID& parentGroupID,
+                                                const cor::UUID& subgroupID) const {
         const auto result = mSubgroupNameMap.find(parentGroupID);
         if (result != mSubgroupNameMap.end()) {
             for (const auto& namePair : result->second) {
@@ -82,9 +81,8 @@ public:
 
     /// tests a theoretical group against all other groups. Returns the potential subgroups for that
     /// group.
-    std::vector<std::uint64_t> findSubgroupsForNewGroup(
-        const cor::Group& group,
-        const std::vector<cor::Group>& allGroups) const;
+    std::vector<cor::UUID> findSubgroupsForNewGroup(const cor::Group& group,
+                                                    const std::vector<cor::Group>& allGroups) const;
 
     /// updates the data for subgroups by parsing all groups and rooms
     void updateGroupAndRoomData(const std::vector<cor::Group>& groups);
@@ -96,7 +94,8 @@ public:
      * \param b a vector of strings
      * \return true if all strings in A can be found in B, false otherwise.
      */
-    static bool checkIfAisSubsetOfB(const std::vector<QString>& a, const std::vector<QString>& b);
+    static bool checkIfAisSubsetOfB(const std::vector<cor::LightID>& a,
+                                    const std::vector<cor::LightID>& b);
 
 private:
     /// stores all subgroup data

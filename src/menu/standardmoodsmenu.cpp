@@ -45,23 +45,14 @@ StandardMoodsMenu::StandardMoodsMenu(QWidget* widget, CommLayer* comm, AppData* 
 
     mParentGroupContainer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mParentGroupContainer,
-            SIGNAL(parentClicked(std::uint64_t)),
+            SIGNAL(parentClicked(cor::UUID)),
             this,
-            SLOT(parentGroupClicked(std::uint64_t)));
+            SLOT(parentGroupClicked(cor::UUID)));
 
-    connect(mMoodContainer, SIGNAL(moodSelected(QString)), this, SLOT(selectMood(QString)));
+    connect(mMoodContainer, SIGNAL(moodSelected(cor::Mood)), this, SLOT(selectMood(cor::Mood)));
 
     initScrollArea(mParentGroupContainer, mParentScrollArea);
     initScrollArea(mMoodContainer, mMoodScrollArea);
-}
-
-void StandardMoodsMenu::shouldShowMoods(QString key, bool isShowing) {
-    mCurrentParent = key.toInt();
-    if (isShowing) {
-        changeState(EState::moods);
-    } else {
-        changeState(EState::parents);
-    }
 }
 
 void StandardMoodsMenu::updateData() {
@@ -128,7 +119,7 @@ void StandardMoodsMenu::changeStateToParents() {
     std::vector<cor::Group> parentGroups;
     for (const auto& moodParent : mAppData->moodParents().roomMoodMap()) {
         // generate group name
-        if (moodParent.first == 0u) {
+        if (moodParent.first == cor::kMiscGroupKey) {
             parentGroups.push_back(mAppData->lightOrphans().group());
         } else {
             parentGroups.push_back(mAppData->groups()->groupFromID(moodParent.first));
@@ -170,13 +161,13 @@ void StandardMoodsMenu::changeStateToMoods() {
     resize();
 }
 
-void StandardMoodsMenu::selectMood(QString key) {
-    emit moodClicked(key);
+void StandardMoodsMenu::selectMood(cor::Mood mood) {
+    emit moodClicked(mood.uniqueID());
 }
 
-void StandardMoodsMenu::parentGroupClicked(std::uint64_t key) {
+void StandardMoodsMenu::parentGroupClicked(const cor::UUID& key) {
     QString parentName;
-    if (key == 0u) {
+    if (key == cor::kMiscGroupKey) {
         parentName = "Miscellaneous";
     } else {
         auto parentGroup = mAppData->groups()->groupFromID(key);
@@ -188,7 +179,8 @@ void StandardMoodsMenu::parentGroupClicked(std::uint64_t key) {
 }
 
 void StandardMoodsMenu::parentGroupWidgetPressed(QString) {
-    mCurrentParent = 0;
+    /// TODO: is this broken?
+    mCurrentParent = mParentWidget->key();
     mParentWidget->setVisible(false);
     changeStateToParents();
 }

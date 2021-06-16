@@ -39,7 +39,7 @@ public:
     void displayState(bool displayState) { mDisplayState = displayState; }
 
     /// highlights the states based off of their keys
-    void highlightStates(const std::vector<QString>& selectedStates);
+    void highlightStates(const std::vector<cor::UUID>& selectedStates);
 
     /// moves the widgets into place
     void moveWidgets(QSize size, QPoint offset);
@@ -53,11 +53,11 @@ public:
 signals:
 
     /// emits when a group is clicked
-    void clickedState(QString);
+    void clickedState(cor::UUID);
 
 private slots:
     /// handles when a state is clicked
-    void handleStateClicked(QString state);
+    void handleStateClicked(cor::UUID state);
 
 private:
     /// stores StateWidgets, which show states

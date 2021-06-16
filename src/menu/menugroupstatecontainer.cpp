@@ -15,7 +15,7 @@ void MenuGroupStateContainer::showStates(const std::vector<cor::GroupState>& sta
 
 void MenuGroupStateContainer::updateStates(const std::vector<cor::GroupState>& groupStateVector) {
     for (const auto& groupState : groupStateVector) {
-        auto widgetResult = mLayout.widget(groupState.stringUniqueID());
+        auto widgetResult = mLayout.widget(groupState.uniqueID().toString());
         if (widgetResult.second) {
             auto existingWidget = qobject_cast<GroupStateWidget*>(widgetResult.first);
             Q_ASSERT(existingWidget);
@@ -28,7 +28,7 @@ void MenuGroupStateContainer::updateStates(const std::vector<cor::GroupState>& g
             if (!mDisplayState) {
                 widget->displayState(false);
             }
-            connect(widget, SIGNAL(clicked(QString)), this, SLOT(handleStateClicked(QString)));
+            connect(widget, SIGNAL(clicked(cor::UUID)), this, SLOT(handleStateClicked(cor::UUID)));
             mLayout.insertWidget(widget);
         }
     }
@@ -67,16 +67,16 @@ void MenuGroupStateContainer::clear() {
     mLayout.clear();
 }
 
-void MenuGroupStateContainer::handleStateClicked(QString state) {
+void MenuGroupStateContainer::handleStateClicked(cor::UUID state) {
     emit clickedState(state);
 }
 
-void MenuGroupStateContainer::highlightStates(const std::vector<QString>& selectedLights) {
+void MenuGroupStateContainer::highlightStates(const std::vector<cor::UUID>& selectedStates) {
     for (const auto& existingWidget : mLayout.widgets()) {
         auto widget = qobject_cast<GroupStateWidget*>(existingWidget);
         Q_ASSERT(widget);
         bool found = false;
-        for (const auto& ID : selectedLights) {
+        for (const auto& ID : selectedStates) {
             if (ID == widget->key()) {
                 found = true;
                 widget->setChecked(true);

@@ -1,6 +1,7 @@
 #ifndef COR_LIGHT_H
 #define COR_LIGHT_H
 
+#include "cor/objects/lightid.h"
 #include "cor/objects/lightstate.h"
 #include "cor/objects/palette.h"
 #include "cor/protocols.h"
@@ -29,12 +30,12 @@ namespace cor {
 class Light {
 public:
     /// default constructor
-    Light() : Light(QString("NOT_VALID"), ECommType::MAX) {}
+    Light() : Light(LightID("NOT_VALID"), ECommType::MAX) {}
 
     /*!
      * \brief Light Constructor
      */
-    Light(const QString& uniqueID, ECommType commType)
+    Light(const LightID& uniqueID, ECommType commType)
         : mHardwareType{ELightHardwareType::singleLED},
           mUniqueID(uniqueID),
           mCommType(commType),
@@ -53,8 +54,17 @@ public:
         mState = cor::LightState(object);
     }
 
+    /// getter for unique ID
+    const LightID& uniqueID() const { return mUniqueID; }
+
+    /// getter for light state
+    const LightState& state() const noexcept { return mState; }
+
+    /// setter for light state
+    void state(LightState state) { mState = std::move(state); }
+
     /// true if valid light, false if not
-    bool isValid() const { return uniqueID() != cor::Light().uniqueID(); }
+    bool isValid() const { return uniqueID() != cor::LightID::invalidID(); }
 
     /// sets the name of the light
     void name(const QString& name) { mName = name; }
@@ -77,18 +87,11 @@ public:
         mHardwareType = metadata.hardwareType();
     }
 
-    /// getter for light state
-    const LightState& state() const noexcept { return mState; }
-
-    /// setter for light state
-    void state(LightState state) { mState = std::move(state); }
-
     /// true if reachable, false if can't be reached
     bool isReachable() const noexcept { return mIsReachable; }
 
     /// setter for isReachable
     void isReachable(bool reachable) { mIsReachable = reachable; }
-
 
     /// getter for major API version
     std::uint32_t majorAPI() const noexcept { return mMajorAPI; }
@@ -105,9 +108,6 @@ public:
     //-----------------------
     // Connection Info
     //-----------------------
-
-    /// getter for unique ID
-    const QString& uniqueID() const { return mUniqueID; }
 
     /// getter for type
     ECommType commType() const { return mCommType; }
@@ -163,7 +163,7 @@ public:
     /// represents the light as a json object
     QJsonObject toJson() const noexcept {
         QJsonObject object = state().toJson();
-        object["uniqueID"] = uniqueID();
+        object["uniqueID"] = uniqueID().toString();
         object["type"] = commTypeToString(commType());
 
         object["majorAPI"] = double(majorAPI());
@@ -184,7 +184,7 @@ private:
     /*!
      * \brief mUniqueID a unique identifier of that particular light.
      */
-    QString mUniqueID;
+    LightID mUniqueID;
 
     /*!
      * \brief mCommType determines whether the connection is based off of a hue, UDP, HTTP, etc.
@@ -211,8 +211,8 @@ private:
 
 
 /// converts a vector of lights to a vector of IDs that represent the lights
-inline std::vector<QString> lightVectorToIDs(const std::vector<cor::Light>& lightVector) {
-    std::vector<QString> retVector;
+inline std::vector<cor::LightID> lightVectorToIDs(const std::vector<cor::Light>& lightVector) {
+    std::vector<cor::LightID> retVector;
     retVector.reserve(lightVector.size());
     for (const auto& light : lightVector) {
         retVector.emplace_back(light.uniqueID());
@@ -226,7 +226,7 @@ inline std::vector<QString> lightVectorToIDs(const std::vector<cor::Light>& ligh
 /// between being added to a vector and the current time of searching. An invalid light is returned
 /// if the light cannot be found in the vector.
 inline cor::Light findLightInVectorByID(const std::vector<cor::Light>& lights,
-                                        const QString& uniqueID) {
+                                        const cor::LightID& uniqueID) {
     cor::Light returnLight;
     for (const auto& storedLight : lights) {
         if (storedLight.uniqueID() == uniqueID) {

@@ -67,7 +67,6 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
       mChooseMoodWidget{new ChooseMoodWidget(this, mComm, mAppData)},
       mGreyOut{new GreyOutOverlay(!mLeftHandMenu->alwaysOpen(), this)},
       mLoadingScreen{new LoadingScreen(mComm, mAppSettings, this)} {
-    mAppData->loadJsonFromFile();
 
     // disable experimental features if not experimental features are not enabled
 #ifndef USE_EXPERIMENTAL_FEATURES
@@ -236,9 +235,9 @@ void MainWindow::loadPages() {
     connect(mEditMoodPage, SIGNAL(updateGroups()), this, SLOT(editPageUpdateGroups()));
 
     connect(mMainViewport->moodPage()->moodDetailedWidget(),
-            SIGNAL(editMood(QString)),
+            SIGNAL(editMood(cor::Mood)),
             this,
-            SLOT(editMoodSelected(QString)));
+            SLOT(editMoodSelected(cor::Mood)));
 
     mChooseEditPage->setVisible(false);
     mChooseEditPage->isOpen(false);
@@ -253,15 +252,18 @@ void MainWindow::loadPages() {
     connect(mChooseGroupWidget, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
     connect(mChooseGroupWidget, SIGNAL(updateGroups()), this, SLOT(editPageUpdateGroups()));
     connect(mChooseGroupWidget,
-            SIGNAL(editGroup(std::uint64_t)),
+            SIGNAL(editGroup(cor::UUID)),
             this,
-            SLOT(editGroupSelected(std::uint64_t)));
+            SLOT(editGroupSelected(cor::UUID)));
 
     mChooseMoodWidget->setVisible(false);
     mChooseMoodWidget->isOpen(false);
     connect(mChooseMoodWidget, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
     connect(mChooseMoodWidget, SIGNAL(updateMoods()), this, SLOT(editPageUpdateMoods()));
-    connect(mChooseMoodWidget, SIGNAL(editMood(QString)), this, SLOT(editMoodSelected(QString)));
+    connect(mChooseMoodWidget,
+            SIGNAL(editMood(cor::Mood)),
+            this,
+            SLOT(editMoodSelected(cor::Mood)));
 
     // --------------
     // Top Menu
@@ -330,9 +332,9 @@ void MainWindow::setupStateObserver() {
 
     // mood page
     connect(mMainViewport->moodPage()->moodDetailedWidget(),
-            SIGNAL(enableMood(QString)),
+            SIGNAL(enableMood(cor::Mood)),
             mStateObserver,
-            SLOT(moodChanged(QString)));
+            SLOT(moodChanged(cor::Mood)));
 
     // settings page
     connect(mMainViewport->settingsPage()->globalWidget(),
@@ -358,14 +360,14 @@ void MainWindow::setupStateObserver() {
 
     // setup deleting lights
     connect(mMainViewport->lightsPage(),
-            SIGNAL(selectLights(std::vector<QString>)),
+            SIGNAL(selectLights(std::vector<cor::LightID>)),
             mStateObserver,
-            SLOT(lightCountChangedFromLightsPage(std::vector<QString>)));
+            SLOT(lightCountChangedFromLightsPage(std::vector<cor::LightID>)));
 
     connect(mMainViewport->lightsPage(),
-            SIGNAL(deselectLights(std::vector<QString>)),
+            SIGNAL(deselectLights(std::vector<cor::LightID>)),
             mStateObserver,
-            SLOT(lightCountChangedFromLightsPage(std::vector<QString>)));
+            SLOT(lightCountChangedFromLightsPage(std::vector<cor::LightID>)));
 
     // set up changes to connection state
     connect(mMainViewport->lightsPage(),
@@ -375,30 +377,30 @@ void MainWindow::setupStateObserver() {
 
     // light info widget
     connect(mMainViewport->lightsPage(),
-            SIGNAL(lightNameChanged(QString, QString)),
+            SIGNAL(lightNameChanged(cor::LightID, QString)),
             mStateObserver,
-            SLOT(lightNameChange(QString, QString)));
+            SLOT(lightNameChange(cor::LightID, QString)));
 
     connect(mMainViewport->lightsPage(),
-            SIGNAL(deleteLights(std::vector<QString>)),
+            SIGNAL(deleteLights(std::vector<cor::LightID>)),
             mStateObserver,
-            SLOT(lightsDeleted(std::vector<QString>)));
+            SLOT(lightsDeleted(std::vector<cor::LightID>)));
 
     // comm layer setup
     connect(mComm,
-            SIGNAL(lightNameChanged(QString, QString)),
+            SIGNAL(lightNameChanged(cor::LightID, QString)),
             mStateObserver,
-            SLOT(lightNameChange(QString, QString)));
+            SLOT(lightNameChange(cor::LightID, QString)));
 
     connect(mComm,
-            SIGNAL(lightsAdded(std::vector<QString>)),
+            SIGNAL(lightsAdded(std::vector<cor::LightID>)),
             mStateObserver,
-            SLOT(lightsAdded(std::vector<QString>)));
+            SLOT(lightsAdded(std::vector<cor::LightID>)));
 
     connect(mComm,
-            SIGNAL(lightsDeleted(std::vector<QString>)),
+            SIGNAL(lightsDeleted(std::vector<cor::LightID>)),
             mStateObserver,
-            SLOT(lightsDeleted(std::vector<QString>)));
+            SLOT(lightsDeleted(std::vector<cor::LightID>)));
 }
 
 void MainWindow::shareChecker() {
@@ -777,14 +779,14 @@ void MainWindow::pushInTapToSelectLights() {
     }
 }
 
-void MainWindow::pushInEditGroupPage(std::uint64_t key) {
+void MainWindow::pushInEditGroupPage(const cor::UUID& key) {
     pushInFullPageWidget(mEditGroupPage);
     if (mLeftHandMenu->alwaysOpen()) {
         mEditGroupPage->pushIn(QPoint(width(), 0), QPoint(mLeftHandMenu->width(), 0));
     } else {
         mEditGroupPage->pushIn(QPoint(width(), 0), QPoint(0u, 0u));
     }
-    if (key != 0u) {
+    if (key.isValid()) {
         auto group = mAppData->groups()->groupFromID(key);
         mEditGroupPage->prefillGroup(group);
     } else {
@@ -792,10 +794,12 @@ void MainWindow::pushInEditGroupPage(std::uint64_t key) {
     }
 }
 
-void MainWindow::pushInEditMoodPage(const QString& key) {
-    if (!key.isEmpty()) {
-        auto mood = mAppData->moods()->moods().item(key.toStdString());
-        mEditMoodPage->prefillMood(mood.first);
+void MainWindow::pushInEditMoodPage(const cor::Mood& mood) {
+    if (mood.uniqueID().isValid()) {
+        // refresh the mood with updated info
+        /// TODO: is this needed?
+        cor::Mood updatedMood = mAppData->moods()->moodFromID(mood.uniqueID());
+        mEditMoodPage->prefillMood(updatedMood);
     } else {
         mEditMoodPage->clearGroup();
     }
@@ -877,7 +881,7 @@ void MainWindow::selectedEditMode(EChosenEditMode mode) {
     if (mIsMoodEdit) {
         switch (mode) {
             case EChosenEditMode::add:
-                pushInEditMoodPage(0u);
+                pushInEditMoodPage(cor::Mood());
                 break;
             case EChosenEditMode::edit:
                 pushInChooseMoodPage(cor::EGroupAction::edit);
@@ -889,7 +893,7 @@ void MainWindow::selectedEditMode(EChosenEditMode mode) {
     } else {
         switch (mode) {
             case EChosenEditMode::add:
-                pushInEditGroupPage(0u);
+                pushInEditGroupPage({});
                 break;
             case EChosenEditMode::edit:
                 pushInChooseGroupPage(cor::EGroupAction::edit);
@@ -901,12 +905,12 @@ void MainWindow::selectedEditMode(EChosenEditMode mode) {
     }
 }
 
-void MainWindow::editGroupSelected(std::uint64_t key) {
+void MainWindow::editGroupSelected(const cor::UUID& key) {
     pushInEditGroupPage(key);
 }
 
-void MainWindow::editMoodSelected(QString key) {
-    pushInEditMoodPage(key);
+void MainWindow::editMoodSelected(const cor::Mood& mood) {
+    pushInEditMoodPage(mood);
 }
 
 void MainWindow::editPageUpdateGroups() {

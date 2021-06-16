@@ -24,10 +24,7 @@ ChooseGroupWidget::ChooseGroupWidget(QWidget* parent, CommLayer* comm, AppData* 
       mConfirmationLabel{new QLabel(this)},
       mActionButton{new QPushButton(this)} {
     connect(mCloseButton, SIGNAL(clicked(bool)), this, SLOT(closePressed(bool)));
-    connect(mGroupContainer,
-            SIGNAL(groupClicked(std::uint64_t)),
-            this,
-            SLOT(clickedGroup(std::uint64_t)));
+    connect(mGroupContainer, SIGNAL(groupClicked(cor::UUID)), this, SLOT(clickedGroup(cor::UUID)));
     connect(mActionButton, SIGNAL(clicked(bool)), this, SLOT(actionPresed(bool)));
 
     mGroupScrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -39,9 +36,8 @@ ChooseGroupWidget::ChooseGroupWidget(QWidget* parent, CommLayer* comm, AppData* 
     mGroupScrollArea->horizontalScrollBar()->setVisible(false);
 }
 
-void ChooseGroupWidget::showGroups(const std::vector<std::uint64_t>& groups,
-                                   cor::EGroupAction action) {
-    mSelectedGroup = 0u;
+void ChooseGroupWidget::showGroups(const std::vector<cor::UUID>& groups, cor::EGroupAction action) {
+    mSelectedGroup = cor::UUID::invalidID();
     mDesiredAction = action;
     mDisplayGroup->reset();
     if (mDesiredAction == cor::EGroupAction::edit) {
@@ -55,7 +51,7 @@ void ChooseGroupWidget::showGroups(const std::vector<std::uint64_t>& groups,
 
 void ChooseGroupWidget::handleBottomState() {
     // only enable the button if a group is selected;
-    mActionButton->setEnabled(mSelectedGroup != 0u);
+    mActionButton->setEnabled(mSelectedGroup != cor::kMiscGroupKey);
     if (mDesiredAction == cor::EGroupAction::edit) {
         mActionButton->setText("Edit");
         mActionButton->setStyleSheet(cor::kEditButtonBackground);
@@ -65,7 +61,7 @@ void ChooseGroupWidget::handleBottomState() {
     }
 }
 
-void ChooseGroupWidget::clickedGroup(std::uint64_t key) {
+void ChooseGroupWidget::clickedGroup(const cor::UUID& key) {
     mSelectedGroup = key;
     handleBottomState();
     auto group = mGroups->groupFromID(key);

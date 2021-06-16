@@ -80,7 +80,7 @@ public:
     void highlightLights() {
         auto lights = mComm->arducor()->lightsFromNames(mController.names());
         // highlight relevant lights
-        std::vector<QString> lightsToHighlight;
+        std::vector<cor::LightID> lightsToHighlight;
         for (const auto& light : lights) {
             if (mSelectedLights->doesLightExist(light)) {
                 lightsToHighlight.push_back(light.uniqueID());
@@ -208,10 +208,10 @@ public:
 
 signals:
     /// emits when a light should be selected
-    void selectLight(QString);
+    void selectLight(cor::LightID);
 
     /// emits when a light should be deselected
-    void deselectLight(QString);
+    void deselectLight(cor::LightID);
 
     /// handle when the controller is clicked
     void selectControllerLights(QString, EProtocolType);
@@ -256,7 +256,7 @@ private slots:
         } else {
             mCheckBox->checkboxState(ECheckboxState::checked);
             emit selectControllerLights(mController.name(), EProtocolType::arduCor);
-            mLights->highlightLights(mController.names());
+            mLights->highlightLights(mController.lightIDs());
         }
     }
 

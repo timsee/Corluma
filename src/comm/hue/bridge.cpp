@@ -60,7 +60,7 @@ QJsonObject Bridge::toJson() const {
     QJsonArray lightArray;
     for (const auto& light : lights().items()) {
         QJsonObject jsonObject;
-        jsonObject["uniqueid"] = light.uniqueID();
+        jsonObject["uniqueid"] = light.uniqueID().toString();
         jsonObject["index"] = light.index();
         jsonObject["name"] = light.name();
         jsonObject["swversion"] = light.softwareVersion();

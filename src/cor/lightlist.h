@@ -107,7 +107,7 @@ public:
      * \param light device to search for
      * \return true if the device exists, false otherwise.
      */
-    bool doesLightExist(const QString& uniqueID);
+    bool doesLightExist(const cor::LightID& uniqueID);
 
     /// returns a count of how many lights from the input vector are contained in the light list.
     std::uint32_t countNumberOfLights(const std::vector<QString>& lightIDs);
@@ -152,7 +152,7 @@ public:
     bool removeLight(const cor::Light& light);
 
     /// removes all lights that match the provided uniqueIDs.
-    bool removeByIDs(const std::vector<QString>& lightIDs);
+    bool removeByIDs(const std::vector<cor::LightID>& lightIDs);
 
     /*!
      * \brief removeLightsOfType if they exist, removes lights from list list that match
@@ -196,7 +196,7 @@ public:
     cor::Group findCurrentGroup(const std::vector<cor::Group>& collections);
 
     /// compute the best candidate for a mood based on the current lights
-    QString findCurrentMood(const cor::Dictionary<cor::Mood>& moods);
+    cor::UUID findCurrentMood(const cor::Dictionary<cor::Mood>& moods);
 
     /*!
      * \brief lightCount getter for count of LEDs associated with a single light. IE, a light cube

@@ -96,9 +96,9 @@ public:
         mChangeNameInput->setVisible(false);
 
         connect(mLightInfoWidget,
-                SIGNAL(deleteLight(QString)),
+                SIGNAL(deleteLight(cor::LightID)),
                 this,
-                SLOT(deleteLightFromBridge(QString)));
+                SLOT(deleteLightFromBridge(cor::LightID)));
 
         connect(mGreyout, SIGNAL(clicked()), this, SLOT(greyOutClicked()));
         mGreyout->greyOut(false);
@@ -116,9 +116,9 @@ public:
         mLightInfoWidget->isOpen(false);
         mLightInfoWidget->setVisible(false);
         connect(mLightInfoWidget,
-                SIGNAL(changeLightName(QString, QString)),
+                SIGNAL(changeLightName(cor::LightID, QString)),
                 this,
-                SLOT(handleChangeNamePressed(QString, QString)));
+                SLOT(handleChangeNamePressed(cor::LightID, QString)));
         connect(mLightInfoWidget,
                 SIGNAL(findNewLightClicked()),
                 this,
@@ -268,10 +268,10 @@ public:
     }
 
     /// remove lights by their keys from the list.
-    void removeLights(const std::vector<QString>& keys) { mLights->removeLights(keys); }
+    void removeLights(const std::vector<cor::LightID>& keys) { mLights->removeLights(keys); }
 
     /// handles when the hue discovery finds a light.
-    void newHuesFound(const std::vector<QString>& uniqueIDs) {
+    void newHuesFound(const std::vector<cor::LightID>& uniqueIDs) {
         auto lights = mComm->lightsByIDs(uniqueIDs);
         for (auto light : lights) {
             if (light.isValid()) {
@@ -294,10 +294,10 @@ public:
 
 signals:
     /// emits when a light should be selected
-    void selectLight(QString);
+    void selectLight(cor::LightID);
 
     /// emits when a light should be deselected
-    void deselectLight(QString);
+    void deselectLight(cor::LightID);
 
     /// handle when a full controller should be selected
     void selectControllerLights(QString, EProtocolType);
@@ -309,13 +309,13 @@ signals:
     void deleteController(QString, EProtocolType);
 
     /// signals that specific light should be deleted.
-    void deleteLight(QString);
+    void deleteLight(cor::LightID);
 
     /// emits when a bridge name is changed.
     void controllerNameChanged(QString bridgeID, QString name);
 
     /// signals when a light name is changed, signaling the lights unique ID and its current name.
-    void lightNameChanged(QString uniqueID, QString name);
+    void lightNameChanged(cor::LightID uniqueID, QString name);
 
 protected:
     /*!
@@ -343,7 +343,7 @@ private slots:
             mCheckBox->checkboxState(ECheckboxState::checked);
             emit selectControllerLights(mBridge.id(), EProtocolType::hue);
             // filter out IDs that are not reachables
-            std::vector<QString> reachableIDs;
+            std::vector<cor::LightID> reachableIDs;
             for (auto lightID : mBridge.lightIDs()) {
                 if (mComm->lightByID(lightID).isReachable()) {
                     reachableIDs.push_back(lightID);
@@ -376,7 +376,7 @@ private slots:
     }
 
     /// signals when a light should be deleted from the bridge
-    void deleteLightFromBridge(QString lightID) {
+    void deleteLightFromBridge(cor::LightID lightID) {
         auto light = mComm->lightByID(lightID);
         QMessageBox::StandardButton reply;
         QString text = "Delete " + light.name() + "? This will remove it from the Hue Bridge.";
@@ -427,7 +427,7 @@ private slots:
     }
 
     /// handle when the name change is pressed.
-    void handleChangeNamePressed(QString uniqueID, QString name) {
+    void handleChangeNamePressed(cor::LightID uniqueID, QString name) {
         mLightToChangeName = uniqueID;
         mChangeBridgeName = false;
         mGreyout->greyOut(true);
@@ -620,7 +620,7 @@ private:
     bool mChangeBridgeName;
 
     /// name of light to change
-    QString mLightToChangeName;
+    cor::LightID mLightToChangeName;
 
     /// state of the widget
     EDisplayHueBridgeState mState;

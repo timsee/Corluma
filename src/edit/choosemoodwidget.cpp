@@ -22,9 +22,10 @@ ChooseMoodWidget::ChooseMoodWidget(QWidget* parent, CommLayer* comm, AppData* ap
       mMoodContainer{new MenuMoodContainer(mMoodScrollArea)},
       mDisplayMood{new DisplayMoodWidget(this, comm, appData)},
       mConfirmationLabel{new QLabel(this)},
-      mActionButton{new QPushButton(this)} {
+      mActionButton{new QPushButton(this)},
+      mSelectedMood{} {
     connect(mCloseButton, SIGNAL(clicked(bool)), this, SLOT(closePressed(bool)));
-    connect(mMoodContainer, SIGNAL(moodSelected(QString)), this, SLOT(clickedMood(QString)));
+    connect(mMoodContainer, SIGNAL(moodSelected(cor::Mood)), this, SLOT(clickedMood(cor::Mood)));
     connect(mActionButton, SIGNAL(clicked(bool)), this, SLOT(actionPresed(bool)));
 
     mMoodScrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -34,9 +35,20 @@ ChooseMoodWidget::ChooseMoodWidget(QWidget* parent, CommLayer* comm, AppData* ap
     mMoodScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     mMoodScrollArea->horizontalScrollBar()->setEnabled(false);
     mMoodScrollArea->horizontalScrollBar()->setVisible(false);
+
+#ifdef MOBILE_BUILD
+    mTopHeight = cor::applicationSize().height() * 0.075;
+#else
+    mTopHeight = int(cor::applicationSize().height() * 0.1);
+#endif
 }
 
 void ChooseMoodWidget::showMoods(cor::EGroupAction action) {
+#ifdef MOBILE_BUILD
+    mTopHeight = cor::applicationSize().height() * 0.075;
+#else
+    mTopHeight = int(cor::applicationSize().height() * 0.1);
+#endif
     mDesiredAction = action;
     mDisplayMood->reset();
     if (mDesiredAction == cor::EGroupAction::edit) {
@@ -50,7 +62,7 @@ void ChooseMoodWidget::showMoods(cor::EGroupAction action) {
 
 void ChooseMoodWidget::handleBottomState() {
     // only enable the button if a group is selected;
-    mActionButton->setEnabled(!mSelectedMood.isEmpty());
+    mActionButton->setEnabled(mSelectedMood.uniqueID().isValid());
     if (mDesiredAction == cor::EGroupAction::edit) {
         mActionButton->setText("Edit");
         mActionButton->setStyleSheet(cor::kEditButtonBackground);
@@ -60,19 +72,16 @@ void ChooseMoodWidget::handleBottomState() {
     }
 }
 
-void ChooseMoodWidget::clickedMood(QString key) {
-    mSelectedMood = key;
+void ChooseMoodWidget::clickedMood(cor::Mood mood) {
+    mSelectedMood = mood;
     handleBottomState();
-    auto mood = mMoods->moodFromID(key);
+    // query app data for any updates on this mood
+    /// TODO: is this necesscary?
+    auto updatedMood = mMoods->moodFromID(mood.uniqueID());
     mDisplayMood->updateMood(mood, true);
 }
 
 void ChooseMoodWidget::resizeCloseButton() {
-#ifdef MOBILE_BUILD
-    mTopHeight = cor::applicationSize().height() * 0.075;
-#else
-    mTopHeight = int(cor::applicationSize().height() * 0.1);
-#endif
     QPixmap pixmap(":images/closeX.png");
     int closeSize = int(mTopHeight * 0.8);
     int finalSize = int(mTopHeight * 0.5);
@@ -147,7 +156,7 @@ void ChooseMoodWidget::closePressed(bool) {
 }
 
 void ChooseMoodWidget::actionPresed(bool) {
-    auto moodName = mMoods->moodFromID(mSelectedMood).name();
+    auto moodName = mSelectedMood.name();
     if (mDesiredAction == cor::EGroupAction::edit) {
         emit editMood(mSelectedMood);
         qDebug() << "INFO: editing the mood " << moodName;
@@ -156,7 +165,7 @@ void ChooseMoodWidget::actionPresed(bool) {
         auto reply =
             QMessageBox::question(this, "Delete mood?", text, QMessageBox::Yes | QMessageBox::No);
         if (reply == QMessageBox::Yes) {
-            auto deletedMoodName = mMoods->removeMood(mSelectedMood);
+            auto deletedMoodName = mMoods->removeMood(mSelectedMood.uniqueID());
             if (deletedMoodName.isEmpty()) {
                 QMessageBox messageBox;
                 messageBox.setText("Could not delete mood: " + moodName);

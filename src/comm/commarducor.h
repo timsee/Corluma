@@ -107,10 +107,10 @@ signals:
     void updateReceived(ECommType);
 
     /// signals when a new light is found
-    void newLightsFound(ECommType, std::vector<QString>);
+    void newLightsFound(ECommType, std::vector<cor::LightID>);
 
     /// signals when an existing light is deleted
-    void lightsDeleted(ECommType, std::vector<QString>);
+    void lightsDeleted(ECommType, std::vector<cor::LightID>);
 
 public slots:
 
@@ -126,12 +126,12 @@ private slots:
     void receivedUpdate(ECommType type) { emit updateReceived(type); }
 
     /// emits a signal when a light is found from any commtype
-    void lightsFound(ECommType type, std::vector<QString> uniqueIDs) {
+    void lightsFound(ECommType type, std::vector<cor::LightID> uniqueIDs) {
         emit newLightsFound(type, uniqueIDs);
     }
 
     /// emits a signal when a ligh tis deleted from any commtype
-    void deletedLights(ECommType type, std::vector<QString> uniqueIDs) {
+    void deletedLights(ECommType type, std::vector<cor::LightID> uniqueIDs) {
         emit lightsDeleted(type, uniqueIDs);
     }
 

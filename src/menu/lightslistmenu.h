@@ -33,18 +33,18 @@ public:
     void removeLight(const cor::Light&);
 
     /// remove lights by key.
-    void removeLights(const std::vector<QString>&);
+    void removeLights(const std::vector<cor::LightID>&);
 
     /// shows a group of lights.
     void addLights(const std::vector<cor::Light>&);
 
     /// highlight the lights listed, removing highlights from all others.
-    void highlightLights(const std::vector<QString>& lights) {
+    void highlightLights(const std::vector<cor::LightID>& lights) {
         mLightContainer->highlightLights(lights);
     }
 
     /// vector of highlighted lights
-    std::vector<QString> highlightedLights() { return mLightContainer->highlightedLights(); }
+    std::vector<cor::LightID> highlightedLights() { return mLightContainer->highlightedLights(); }
 
     /// clears all data from the widget, so it is no longer showing any lights.
     void clear();
@@ -63,7 +63,7 @@ signals:
 
 private slots:
     /// handles when a light is clicked, emits the full cor::Light
-    void lightClicked(QString light) {
+    void lightClicked(cor::LightID light) {
         // highlight only the light that was clicked
         if (mSingleLightMode) {
             mLightContainer->highlightLights({light});

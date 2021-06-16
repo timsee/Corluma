@@ -64,7 +64,7 @@ public:
 
     /// getter for a lights name based off of its serial number
     /// TODO: remove the need for this?
-    std::pair<QString, bool> nameFromSerial(const QString& serialNumber);
+    std::pair<QString, bool> nameFromSerial(const cor::LightID& serialNumber);
 
     /// removes the nanoleaf from the save data and discovered data
     bool removeNanoleaf(const nano::LeafMetadata& light);
@@ -76,7 +76,8 @@ public:
      * \return true if the serial number exists and a proper light was returned, false if the lookup
      * was unsucessful
      */
-    std::pair<nano::LeafMetadata, bool> findDiscoveredLightBySerial(const QString& serialNumber);
+    std::pair<nano::LeafMetadata, bool> findDiscoveredLightBySerial(
+        const cor::LightID& serialNumber);
 
     /*!
      * \brief findLightBySerial looks for the LeafMetadata of a light based off of its
@@ -85,7 +86,7 @@ public:
      * \return true if the serial number exists and a proper light was returned, false if the lookup
      * was unsucessful
      */
-    std::pair<nano::LeafMetadata, bool> findLightBySerialOrIP(const QString& serialNumber,
+    std::pair<nano::LeafMetadata, bool> findLightBySerialOrIP(const cor::LightID& serialNumber,
                                                               const QString& IP);
 
     /*!

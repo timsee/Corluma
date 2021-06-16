@@ -48,11 +48,11 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
 
 #ifndef DISABLE_LIGHTS_MENU
     mLightMenu = new StandardLightsMenu(this, mComm, mAppData, "LeftHandMenu");
-    connect(mLightMenu, SIGNAL(clickedLight(QString)), this, SLOT(lightClicked(QString)));
+    connect(mLightMenu, SIGNAL(clickedLight(cor::LightID)), this, SLOT(lightClicked(cor::LightID)));
     connect(mLightMenu,
-            SIGNAL(clickedGroupSelectAll(std::uint64_t, bool)),
+            SIGNAL(clickedGroupSelectAll(cor::UUID, bool)),
             this,
-            SLOT(selectAllToggled(std::uint64_t, bool)));
+            SLOT(selectAllToggled(cor::UUID, bool)));
 #endif
 
     //---------------
@@ -266,7 +266,7 @@ void LeftHandMenu::buttonPressed(EPage page) {
 }
 
 
-void LeftHandMenu::lightClicked(const QString& lightKey) {
+void LeftHandMenu::lightClicked(const cor::LightID& lightKey) {
     auto light = mComm->lightByID(lightKey);
     auto state = light.state();
     if (light.isReachable()) {
@@ -283,9 +283,9 @@ void LeftHandMenu::lightClicked(const QString& lightKey) {
 }
 
 
-void LeftHandMenu::selectAllToggled(std::uint64_t ID, bool shouldSelect) {
+void LeftHandMenu::selectAllToggled(const cor::UUID& ID, bool shouldSelect) {
     // convert the group ID to a group
-    auto groupResult = mAppData->groups()->groupDict().item(QString::number(ID).toStdString());
+    auto groupResult = mAppData->groups()->groupDict().item(ID.toStdString());
     bool groupFound = groupResult.second;
     cor::Group group = groupResult.first;
     if (groupFound) {
@@ -300,7 +300,7 @@ void LeftHandMenu::selectAllToggled(std::uint64_t ID, bool shouldSelect) {
         updateLights();
         emit changedLightCount();
     } else {
-        qDebug() << " group not found " << ID;
+        qDebug() << " group not found " << ID.toString();
     }
 }
 

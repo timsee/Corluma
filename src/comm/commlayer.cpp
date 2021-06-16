@@ -31,42 +31,42 @@ CommLayer::CommLayer(QObject* parent, AppData* parser, PaletteData* palettes)
     mArduCor = new CommArduCor(this, palettes);
     connect(mArduCor, SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
     connect(mArduCor,
-            SIGNAL(newLightsFound(ECommType, std::vector<QString>)),
+            SIGNAL(newLightsFound(ECommType, std::vector<cor::LightID>)),
             this,
-            SLOT(lightsFound(ECommType, std::vector<QString>)));
+            SLOT(lightsFound(ECommType, std::vector<cor::LightID>)));
     connect(mArduCor,
-            SIGNAL(lightsDeleted(ECommType, std::vector<QString>)),
+            SIGNAL(lightsDeleted(ECommType, std::vector<cor::LightID>)),
             this,
-            SLOT(deletedLights(ECommType, std::vector<QString>)));
+            SLOT(deletedLights(ECommType, std::vector<cor::LightID>)));
 
     mNanoleaf = new CommNanoleaf(palettes);
     connect(mNanoleaf, SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
     connect(mNanoleaf,
-            SIGNAL(newLightsFound(ECommType, std::vector<QString>)),
+            SIGNAL(newLightsFound(ECommType, std::vector<cor::LightID>)),
             this,
-            SLOT(lightsFound(ECommType, std::vector<QString>)));
+            SLOT(lightsFound(ECommType, std::vector<cor::LightID>)));
     connect(mNanoleaf,
-            SIGNAL(lightsDeleted(ECommType, std::vector<QString>)),
+            SIGNAL(lightsDeleted(ECommType, std::vector<cor::LightID>)),
             this,
-            SLOT(deletedLights(ECommType, std::vector<QString>)));
+            SLOT(deletedLights(ECommType, std::vector<cor::LightID>)));
 
     mNanoleaf->discovery()->connectUPnP(mUPnP);
 
     mHue = new CommHue(mUPnP, parser);
     connect(mHue, SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
     connect(mHue,
-            SIGNAL(newLightsFound(ECommType, std::vector<QString>)),
+            SIGNAL(newLightsFound(ECommType, std::vector<cor::LightID>)),
             this,
-            SLOT(lightsFound(ECommType, std::vector<QString>)));
+            SLOT(lightsFound(ECommType, std::vector<cor::LightID>)));
     connect(mHue,
-            SIGNAL(lightsDeleted(ECommType, std::vector<QString>)),
+            SIGNAL(lightsDeleted(ECommType, std::vector<cor::LightID>)),
             this,
-            SLOT(deletedLights(ECommType, std::vector<QString>)));
+            SLOT(deletedLights(ECommType, std::vector<cor::LightID>)));
 
     connect(mHue,
-            SIGNAL(lightNameChanged(QString, QString)),
+            SIGNAL(lightNameChanged(cor::LightID, QString)),
             this,
-            SLOT(handleLightNameChanged(QString, QString)));
+            SLOT(handleLightNameChanged(cor::LightID, QString)));
 }
 
 bool CommLayer::discoveryErrorsExist(EProtocolType type) {
@@ -84,15 +84,15 @@ bool CommLayer::discoveryErrorsExist(EProtocolType type) {
     return true;
 }
 
-void CommLayer::lightsFound(ECommType, std::vector<QString> uniqueIDs) {
+void CommLayer::lightsFound(ECommType, std::vector<cor::LightID> uniqueIDs) {
     emit lightsAdded(uniqueIDs);
 }
 
-void CommLayer::deletedLights(ECommType, std::vector<QString> uniqueIDs) {
+void CommLayer::deletedLights(ECommType, std::vector<cor::LightID> uniqueIDs) {
     emit lightsDeleted(uniqueIDs);
 }
 
-void CommLayer::handleLightNameChanged(QString uniqueID, QString newName) {
+void CommLayer::handleLightNameChanged(cor::LightID uniqueID, QString newName) {
     emit lightNameChanged(uniqueID, newName);
 }
 
@@ -207,7 +207,7 @@ std::vector<cor::Light> CommLayer::lightListFromGroup(const cor::Group& group) {
 
 bool CommLayer::saveNewGroup(const cor::Group& group) {
     // split hues from non-hues, since hues get stored on a bridge.
-    std::vector<QString> nonHueLightIDs;
+    std::vector<cor::LightID> nonHueLightIDs;
     std::vector<HueMetadata> hueLights;
     for (const auto& uniqueID : group.lights()) {
         auto light = lightByID(uniqueID);
@@ -362,7 +362,7 @@ std::vector<cor::Light> CommLayer::hueLightsToDevices(std::vector<HueMetadata> h
     return list;
 }
 
-cor::Light CommLayer::lightByID(const QString& ID) const {
+cor::Light CommLayer::lightByID(const cor::LightID& ID) const {
     const auto& stringID = ID.toStdString();
     for (auto i = 0; i < int(ECommType::MAX); ++i) {
         const auto& result = lightDict(ECommType(i)).item(stringID);
@@ -373,7 +373,7 @@ cor::Light CommLayer::lightByID(const QString& ID) const {
     return {};
 }
 
-std::uint32_t CommLayer::secondsUntilTimeout(const QString& key) {
+std::uint32_t CommLayer::secondsUntilTimeout(const cor::LightID& key) {
     auto light = lightByID(key);
     if (light.protocol() == EProtocolType::arduCor) {
         auto metadata = mArduCor->metadataFromLight(light);
@@ -387,7 +387,7 @@ std::uint32_t CommLayer::secondsUntilTimeout(const QString& key) {
     }
 }
 
-std::vector<std::uint32_t> CommLayer::secondsUntilTimeout(const std::vector<QString>& IDs) {
+std::vector<std::uint32_t> CommLayer::secondsUntilTimeout(const std::vector<cor::LightID>& IDs) {
     // get all the timeouts for all the lights
     std::vector<std::uint32_t> timeoutLeft;
     timeoutLeft.reserve(IDs.size());
@@ -497,8 +497,8 @@ void CommLayer::stopDiscovery(EProtocolType type) {
     }
 }
 
-std::unordered_set<QString> CommLayer::allDiscoveredLightIDs() {
-    std::unordered_set<QString> lightIDs;
+std::unordered_set<cor::LightID> CommLayer::allDiscoveredLightIDs() {
+    std::unordered_set<cor::LightID> lightIDs;
     auto arduCorIDs = cor::lightVectorToIDs(mArduCor->lights());
     lightIDs.insert(arduCorIDs.begin(), arduCorIDs.end());
 
@@ -511,8 +511,8 @@ std::unordered_set<QString> CommLayer::allDiscoveredLightIDs() {
     return lightIDs;
 }
 
-std::unordered_set<QString> CommLayer::allUndiscoveredLightIDs() {
-    std::unordered_set<QString> lightIDs;
+std::unordered_set<cor::LightID> CommLayer::allUndiscoveredLightIDs() {
+    std::unordered_set<cor::LightID> lightIDs;
     for (const auto& controller : mArduCor->discovery()->undiscoveredControllers()) {
         lightIDs.insert(controller.names().begin(), controller.names().end());
     }
@@ -528,7 +528,7 @@ std::unordered_set<QString> CommLayer::allUndiscoveredLightIDs() {
     return lightIDs;
 }
 
-std::unordered_set<QString> CommLayer::allLightIDs() {
+std::unordered_set<cor::LightID> CommLayer::allLightIDs() {
     auto lightIDs = allDiscoveredLightIDs();
     auto undiscoveredLightIDs = allUndiscoveredLightIDs();
     lightIDs.insert(undiscoveredLightIDs.begin(), undiscoveredLightIDs.end());

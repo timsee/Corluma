@@ -27,7 +27,7 @@ struct MoodMetadataFlags {
     }
 
     /// the parent "room" of a mood.
-    std::uint64_t parentID;
+    cor::UUID parentID;
 
     /// true if a group with an identical name is detected, false otherwise.
     bool hasIdenticalName;
@@ -61,7 +61,7 @@ void DisplayMoodMetadata::update(const cor::Mood& mood, bool moodExistsAlready) 
         }
     }
 
-    if (moodMetadata.parentID != 0u) {
+    if (moodMetadata.parentID != cor::kMiscGroupKey) {
         returnString << "<b>Parent:</b> "
                      << mAppData->groups()->nameFromID(moodMetadata.parentID).toStdString()
                      << "<br>";

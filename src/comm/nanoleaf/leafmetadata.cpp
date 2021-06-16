@@ -29,7 +29,7 @@ QJsonObject leafControllerToJson(const LeafMetadata& controller) {
     QJsonObject object;
     object["IP"] = controller.IP();
     object["name"] = controller.name();
-    object["serial"] = controller.serialNumber();
+    object["serial"] = controller.serialNumber().toString();
     object["hardwareName"] = controller.hardwareName();
     object["auth"] = controller.authToken();
     object["port"] = controller.port();

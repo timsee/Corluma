@@ -19,7 +19,7 @@ ListMoodPreviewWidget::ListMoodPreviewWidget(const cor::Mood& mood, QWidget* par
     mIsChecked = false;
     mIsSelected = false;
 
-    mKey = mMood.uniqueID();
+    mKey = mMood.uniqueID().toString();
 
     // setup icon
     QString backgroundStyleSheet = "background:rgba(0, 0, 0, 0%);";
@@ -98,7 +98,7 @@ void ListMoodPreviewWidget::paintEvent(QPaintEvent*) {
 
 void ListMoodPreviewWidget::mouseReleaseEvent(QMouseEvent* event) {
     if (cor::isMouseEventTouchUpInside(event, this, true)) {
-        emit moodSelected(mMood.uniqueID());
+        emit moodSelected(mMood);
         event->accept();
     } else {
         event->ignore();

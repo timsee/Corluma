@@ -60,7 +60,7 @@ public:
     }
 
     /// handle lights deleted from other places in the app.
-    void handleDeletedLights(const std::vector<QString>& keys);
+    void handleDeletedLights(const std::vector<cor::LightID>& keys);
 
     /// update the light names across the LightsPage for the given protocol.
     void updateLightNames(EProtocolType type);
@@ -74,16 +74,16 @@ public:
 signals:
 
     /// signals when one or more lights should be selected
-    void selectLights(std::vector<QString>);
+    void selectLights(std::vector<cor::LightID>);
 
     /// signals when one or more lights should be deselected
-    void deselectLights(std::vector<QString>);
+    void deselectLights(std::vector<cor::LightID>);
 
     /// delete lights from app memory
-    void deleteLights(std::vector<QString>);
+    void deleteLights(std::vector<cor::LightID>);
 
     /// emits the key and new name for light
-    void lightNameChanged(QString, QString);
+    void lightNameChanged(cor::LightID, QString);
 
     /// a connection state has changed for a widget.
     void connectionStateChanged(EProtocolType type, EConnectionState newState);
@@ -102,14 +102,14 @@ private slots:
     void hideControllerWidget();
 
     /// handles when a light is selected
-    void selectLight(QString);
+    void selectLight(cor::LightID);
 
     /// handles when a light is deselected
-    void deselectLight(QString);
+    void deselectLight(cor::LightID);
 
     /// handles when an effect is selected for a light that supports them. First key is light's key,
     /// second key is effect's key.
-    void selectEffect(QString, QString);
+    void selectEffect(cor::LightID, QString);
 
     /// handles when all lights for a controller should be selected
     void selectAllControllerLights(QString, EProtocolType);
@@ -124,10 +124,10 @@ private slots:
     void handleControllerNameChanged(QString key, QString name);
 
     /// handles when a light name is changed.
-    void handleLightNameChanged(QString key, QString name);
+    void handleLightNameChanged(cor::LightID key, QString name);
 
     /// handles when the commlayer finds a new light
-    void handleNewLightsFound(std::vector<QString>);
+    void handleNewLightsFound(std::vector<cor::LightID>);
 
     /*!
      * \brief widgetConnectionStateChanged handles whenever a connection status changes for any
@@ -140,7 +140,7 @@ private slots:
     void handleConnectionStateChanged(EProtocolType type, EConnectionState connectionState);
 
     /// delete clicked from a controller page
-    void handleDeleteLight(QString);
+    void handleDeleteLight(cor::LightID);
 
 private:
     /// programmatically resize

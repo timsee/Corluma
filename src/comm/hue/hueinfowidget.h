@@ -80,14 +80,14 @@ signals:
     /*!
      * \brief clicked emits the key of the widget whenever it is clicked.
      */
-    void clicked(QString);
+    void clicked(cor::LightID);
 
     /// emits when the delete button is pressed, emits the uniqueID of the light and its name
-    void clickedDelete(QString key, QString name);
+    void clickedDelete(cor::LightID key, QString name);
 
     /// emits when the change name button is presed, emits the unique ID fo the light and its
     /// current name.
-    void clickedChangeName(QString key, QString name);
+    void clickedChangeName(cor::LightID key, QString name);
 
     /*!
      * \brief changedName emits its key and the new name given by the
@@ -96,7 +96,7 @@ signals:
      * \param key key for the widget
      * \param name new name for the widget.
      */
-    void changedName(QString key, QString name);
+    void changedName(cor::LightID key, QString name);
 
 private slots:
 

@@ -64,7 +64,7 @@ public:
     LightInfoListWidget* lightInfoWidget() { return mHueBridgeWidget->lightInfoWidget(); }
 
     /// handle lights deleted from the commlayer
-    void handleDeletedLights(const std::vector<QString>&);
+    void handleDeletedLights(const std::vector<cor::LightID>&);
 
 public slots:
 
@@ -77,10 +77,10 @@ signals:
     void backButtonPressed();
 
     /// delete clicked from a controller page
-    void deleteLight(QString);
+    void deleteLight(cor::LightID);
 
     /// a light is slected from the controller page, true if seleceted, false if deselected.
-    void lightClicked(QString);
+    void lightClicked(cor::LightID);
 
     /// select lights for a controller by controller key and its protocol
     void selectControllerLights(QString, EProtocolType);
@@ -105,10 +105,10 @@ private slots:
     void handleBackButtonPressed(bool);
 
     /// handle when a light is deleted.
-    void handleDeleteHueLight(QString);
+    void handleDeleteHueLight(cor::LightID);
 
     /// handle when a nanoleaf is deleted.
-    void handleDeleteNanoleaf(QString, QString);
+    void handleDeleteNanoleaf(cor::LightID, QString);
 
     /// renders and UI that needs explicit updates.
     void renderUI();

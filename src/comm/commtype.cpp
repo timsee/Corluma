@@ -20,7 +20,7 @@ CommType::CommType(ECommType type) : mStateUpdateInterval{1000}, mType(type) {
 }
 
 void CommType::addLights(const std::vector<cor::Light>& lights) {
-    std::vector<QString> uniqueIDs;
+    std::vector<cor::LightID> uniqueIDs;
     for (const auto& light : lights) {
         uniqueIDs.push_back(light.uniqueID());
         mLightDict.insert(light.uniqueID().toStdString(), light);
@@ -32,8 +32,8 @@ void CommType::addLights(const std::vector<cor::Light>& lights) {
     emit newLightsFound(mType, uniqueIDs);
 }
 
-bool CommType::removeLights(const std::vector<QString>& uniqueIDs) {
-    std::vector<QString> removedLights;
+bool CommType::removeLights(const std::vector<cor::LightID>& uniqueIDs) {
+    std::vector<cor::LightID> removedLights;
     for (const auto& uniqueID : uniqueIDs) {
         auto result = mLightDict.removeKey(uniqueID.toStdString());
         if (result) {

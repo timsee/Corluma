@@ -20,13 +20,13 @@ class CommLayer;
 class HueMessage {
 public:
     /// constructor
-    HueMessage(const QString& id, const QString& bridgeID, QJsonObject object)
+    HueMessage(const cor::LightID& id, const QString& bridgeID, QJsonObject object)
         : mID{id},
           mBridgeID{bridgeID},
           mObject{object} {}
 
     /// getter for hue IDs
-    QString ID() const noexcept { return mID; }
+    cor::LightID ID() const noexcept { return mID; }
 
     /// getter for bridge ID
     const QString& bridgeID() const noexcept { return mBridgeID; }
@@ -36,7 +36,7 @@ public:
 
 private:
     /// ID of hue
-    QString mID;
+    cor::LightID mID;
 
     /// ID of bridge
     QString mBridgeID;

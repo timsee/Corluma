@@ -225,7 +225,7 @@ void LightList::updateColorScheme(std::vector<QColor> colors) {
         } else if (light.protocol() == EProtocolType::nanoleaf) {
             state.customCount(colors.size());
             state.isOn(true);
-            auto palette = cor::CustomPalette(colors);
+            auto palette = cor::Palette::CustomPalette(colors);
             state.paletteBrightness(100u);
             state.customPalette(palette);
             if (state.routine() <= cor::ERoutineSingleColorEnd) {
@@ -410,7 +410,7 @@ bool LightList::removeLights(const std::vector<cor::Light>& list) {
     return true;
 }
 
-bool LightList::removeByIDs(const std::vector<QString>& lightIDs) {
+bool LightList::removeByIDs(const std::vector<cor::LightID>& lightIDs) {
     std::vector<cor::Light> lightsToRemove;
     for (const auto& lightID : lightIDs) {
         for (const auto& storedLight : mLights) {
@@ -444,7 +444,7 @@ int LightList::removeLightOfType(EProtocolType type) {
     return int(mLights.size());
 }
 
-bool LightList::doesLightExist(const QString& uniqueID) {
+bool LightList::doesLightExist(const cor::LightID& uniqueID) {
     for (const auto& storedLight : mLights) {
         if (uniqueID == storedLight.uniqueID()) {
             return true;
@@ -579,13 +579,13 @@ std::uint32_t LightList::countNumberOfLights(const std::vector<QString>& lightID
     return selectedCount;
 }
 
-QString LightList::findCurrentMood(const cor::Dictionary<cor::Mood>& moods) {
+cor::UUID LightList::findCurrentMood(const cor::Dictionary<cor::Mood>& moods) {
     for (const auto& mood : moods.items()) {
         if (mLights == mood.lights()) {
             return mood.uniqueID();
         }
     }
-    return {};
+    return cor::UUID::invalidID();
 }
 
 

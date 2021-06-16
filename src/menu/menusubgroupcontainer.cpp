@@ -22,7 +22,7 @@ MenuSubgroupContainer::MenuSubgroupContainer(QWidget* parent,
     }
 }
 
-void MenuSubgroupContainer::showGroups(std::vector<QString> groups, std::uint64_t parentID) {
+void MenuSubgroupContainer::showGroups(std::vector<QString> groups, const cor::UUID& parentID) {
     clear();
     mParentID = parentID;
     addGroup("All");
@@ -56,7 +56,7 @@ void MenuSubgroupContainer::addGroup(const QString& group) {
 }
 
 
-void MenuSubgroupContainer::showSubgroups(std::uint64_t parentID, int buttonHeight) {
+void MenuSubgroupContainer::showSubgroups(const cor::UUID& parentID, int buttonHeight) {
     auto subgroupNames = mAppData->subgroups().subgroupNamesForGroup(parentID);
     showGroups(subgroupNames, parentID);
     resizeSubgroupWidgets(buttonHeight);
@@ -69,7 +69,7 @@ void MenuSubgroupContainer::buttonPressed(const QString& key) {
     }
 
     if (key == "All") {
-        emit subgroupClicked(0u);
+        emit subgroupClicked(mParentID);
     } else {
         auto groupID = mAppData->subgroups().subgroupIDFromRenamedGroup(mParentID, key);
         emit subgroupClicked(groupID);
@@ -79,7 +79,7 @@ void MenuSubgroupContainer::buttonPressed(const QString& key) {
 
 void MenuSubgroupContainer::buttonToggled(QString key, bool selectAll) {
     if (key == "All") {
-        emit groupSelectAllToggled(0u, selectAll);
+        emit groupSelectAllToggled(mParentID, selectAll);
     } else {
         auto groupID = mAppData->subgroups().subgroupIDFromRenamedGroup(mParentID, key);
         emit groupSelectAllToggled(groupID, selectAll);
@@ -88,14 +88,13 @@ void MenuSubgroupContainer::buttonToggled(QString key, bool selectAll) {
 
 
 void MenuSubgroupContainer::highlightSubgroups(
-    const std::unordered_map<std::uint64_t, std::pair<std::uint32_t, std::uint32_t>>&
-        subgroupCounts) {
+    const std::unordered_map<cor::UUID, std::pair<std::uint32_t, std::uint32_t>>& subgroupCounts) {
     for (auto button : mButtons) {
         auto ID = mAppData->subgroups().subgroupIDFromRenamedGroup(mParentID, button->key());
         if (button->key() == "All") {
             ID = mParentID;
         }
-        if (ID != std::numeric_limits<std::uint64_t>::max()) {
+        if (ID.isValid()) {
             auto countResults = subgroupCounts.find(ID);
             if (countResults != subgroupCounts.end()) {
                 button->handleSelectAllCheckbox(countResults->second.first,

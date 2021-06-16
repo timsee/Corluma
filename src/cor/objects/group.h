@@ -8,9 +8,14 @@
 #include <set>
 #include <vector>
 
+#include "cor/objects/uuid.h"
+#include "cor/objects/lightid.h"
 #include "utils/exception.h"
 
 namespace cor {
+
+
+const cor::UUID kMiscGroupKey = cor::UUID("zzzzzMiscellaneous");
 
 /// type of group
 enum class EGroupType { group, room, mood };
@@ -37,21 +42,21 @@ inline EGroupType jsonToGroupType(const QJsonObject object) {
 class Group {
 public:
     /// default constructor
-    Group() : mName{"Error"}, mUniqueID(0u), mType{EGroupType::group} {}
+    Group() : mUniqueID{cor::UUID::invalidID()}, mName{"Error"}, mType{EGroupType::group} {}
 
     /// contructor
-    Group(std::uint64_t uniqueID,
+    Group(const cor::UUID& uniqueID,
           const QString& name,
           EGroupType type,
-          const std::vector<QString>& lights)
-        : mName{name},
-          mUniqueID{uniqueID},
+          const std::vector<cor::LightID>& lights)
+        : mUniqueID{uniqueID},
+          mName{name},
           mType{type},
           mLights{lights} {}
 
     /// json constructor
     Group(const QJsonObject& object)
-        : Group(std::uint64_t(object["uniqueID"].toDouble()),
+        : Group(cor::UUID(object["uniqueID"].toString()),
                 object["name"].toString(),
                 jsonToGroupType(object),
                 {}) {
@@ -72,7 +77,7 @@ public:
     }
 
     /// getter for unique ID
-    std::uint64_t uniqueID() const noexcept { return mUniqueID; }
+    cor::UUID uniqueID() const noexcept { return mUniqueID; }
 
     /// getter for name
     const QString& name() const noexcept { return mName; }
@@ -90,16 +95,16 @@ public:
     const QString& description() const noexcept { return mDescription; }
 
     /// true if group is valid, false otherwise
-    bool isValid() const noexcept { return mName != "Error" && mUniqueID != 0u; }
+    bool isValid() const noexcept { return mName != "Error" && mUniqueID.isValid(); }
 
     /// list of lights
-    const std::vector<QString>& lights() const noexcept { return mLights; }
+    const std::vector<cor::LightID>& lights() const noexcept { return mLights; }
 
     /// setter for lights
-    void lights(const std::vector<QString>& lights) { mLights = lights; }
+    void lights(const std::vector<cor::LightID>& lights) { mLights = lights; }
 
     /// creates a new group with the light removed.
-    cor::Group removeLight(const QString& lightID) const {
+    cor::Group removeLight(const cor::LightID& lightID) const {
         auto lights = mLights;
         auto findLight = std::find(lights.begin(), lights.end(), lightID);
         if (findLight != lights.end()) {
@@ -114,7 +119,7 @@ public:
     /// true if JSON creates a valid group, false otherwise
     static bool isValidJson(const QJsonObject& object) {
         // check top level
-        if (!(object["name"].isString() && object["uniqueID"].isDouble()
+        if (!(object["name"].isString() && object["uniqueID"].isString()
               && object["devices"].isArray())) {
             return false;
         }
@@ -129,7 +134,7 @@ public:
         return true;
     }
 
-    bool containsOnlyIgnoredLights(const std::set<QString>& ignoredLights) const {
+    bool containsOnlyIgnoredLights(const std::set<cor::LightID>& ignoredLights) const {
         for (const auto& lightID : lights()) {
             // if a light cannot be found in ignoredLights, return false.
             if (ignoredLights.find(lightID) == ignoredLights.end()) {
@@ -142,7 +147,7 @@ public:
     /// represents group as json
     QJsonObject toJson() const noexcept { return toJsonWitIgnoredLights({}); }
 
-    QJsonObject toJsonWitIgnoredLights(const std::set<QString>& ignoredLights) const {
+    QJsonObject toJsonWitIgnoredLights(const std::set<cor::LightID>& ignoredLights) const {
         QJsonObject object;
         object["name"] = name();
         if (type() == EGroupType::group) {
@@ -150,7 +155,7 @@ public:
         } else if (type() == EGroupType::room) {
             object["isRoom"] = true;
         }
-        object["uniqueID"] = double(uniqueID());
+        object["uniqueID"] = uniqueID().toString();
 
         // only add a description field if one exists, since
         // this field is optional.
@@ -163,7 +168,7 @@ public:
         for (const auto& lightID : lights()) {
             if (ignoredLights.find(lightID) == ignoredLights.end()) {
                 QJsonObject object;
-                object["uniqueID"] = lightID;
+                object["uniqueID"] = lightID.toString();
                 lightArray.append(object);
             }
         }
@@ -210,25 +215,25 @@ public:
     }
 
 private:
+    /// unique ID
+    cor::UUID mUniqueID;
+
     /// name of group
     QString mName;
 
     /// description of group
     QString mDescription;
 
-    /// unique ID
-    std::uint64_t mUniqueID;
-
     /// type of group (currently, is it a room or not)
     EGroupType mType;
 
     /// storage of uniqueIDs of lights in the group
-    std::vector<QString> mLights;
+    std::vector<cor::LightID> mLights;
 };
 
-/// converts a vector of groups to a vector of IDs that represent the lights
-inline std::vector<std::uint64_t> groupVectorToIDs(const std::vector<cor::Group>& groupVector) {
-    std::vector<std::uint64_t> retVector;
+/// converts a vector of groups to a vector of IDs that represent the groups
+inline std::vector<cor::UUID> groupVectorToIDs(const std::vector<cor::Group>& groupVector) {
+    std::vector<cor::UUID> retVector;
     retVector.reserve(groupVector.size());
     for (const auto& group : groupVector) {
         retVector.emplace_back(group.uniqueID());
@@ -243,7 +248,7 @@ namespace std {
 template <>
 struct hash<cor::Group> {
     size_t operator()(const cor::Group& k) const {
-        return std::hash<std::string>{}(QString::number(k.uniqueID()).toStdString());
+        return std::hash<std::string>{}(k.uniqueID().toStdString());
     }
 };
 } // namespace std

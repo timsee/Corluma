@@ -28,7 +28,7 @@ GroupStateListMenu::GroupStateListMenu(QWidget* parent, bool allowInteraction)
       mRowHeight{10},
       mSingleStateMode{false} {
     mStateContainer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(mStateContainer, SIGNAL(clickedState(QString)), this, SLOT(stateClicked(QString)));
+    connect(mStateContainer, SIGNAL(clickedState(cor::UUID)), this, SLOT(stateClicked(cor::UUID)));
 
     mScrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     QScroller::grabGesture(mScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
@@ -79,7 +79,8 @@ void GroupStateListMenu::removeState(const cor::GroupState& stateArgs) {
     if (result != mStates.end()) {
         mStates.erase(result);
     } else {
-        qDebug() << "ERROR: state not found, shouldn't get here " << stateArgs.uniqueID();
+        qDebug() << "ERROR: state not found, shouldn't get here "
+                 << stateArgs.uniqueID().toString();
     }
     mStateContainer->showStates(mStates, mRowHeight);
 }

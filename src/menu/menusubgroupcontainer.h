@@ -26,11 +26,11 @@ public:
     explicit MenuSubgroupContainer(QWidget* parent, AppData* appData, cor::EWidgetType type);
 
     /// shows the groups with the names provided
-    void showGroups(std::vector<QString> groups, std::uint64_t parentID);
+    void showGroups(std::vector<QString> groups, const cor::UUID& parentID);
 
     /// changes the group of subgroups displayed by the MenuSubgroupContainer. The parent ID is
     /// provided as a parameter, which is used to look up the names of each subgroup.
-    void showSubgroups(std::uint64_t parentID, int buttonHeight);
+    void showSubgroups(const cor::UUID& parentID, int buttonHeight);
 
     /// getter for group buttons
     const std::vector<cor::GroupButton*> groupButtons() { return mButtons; }
@@ -65,40 +65,40 @@ public:
 
     /// highlights specific subgroups
     void highlightSubgroups(
-        const std::unordered_map<std::uint64_t, std::pair<std::uint32_t, std::uint32_t>>&
+        const std::unordered_map<cor::UUID, std::pair<std::uint32_t, std::uint32_t>>&
             subgroupCounts);
 
 
-    void showState(std::uint64_t groupID, const std::vector<cor::LightState> states) {
+    void showState(const cor::UUID& groupID, const std::vector<cor::LightState> states) {
         for (auto button : mButtons) {
             auto ID = mAppData->subgroups().subgroupIDFromRenamedGroup(mParentID, button->key());
             if (button->key() == "All") {
                 ID = mParentID;
             }
-            if (ID != std::numeric_limits<std::uint64_t>::max()) {
+            if (ID.isValid()) {
                 if (ID == groupID) {
                     button->updateStates(states);
                     return;
                 }
             }
         }
-        qDebug() << " group not found for update" << groupID;
+        qDebug() << " group not found for update" << groupID.toString();
     }
 
-    void hideStates(std::uint64_t groupID) {
+    void hideStates(const cor::UUID& groupID) {
         for (auto button : mButtons) {
             auto ID = mAppData->subgroups().subgroupIDFromRenamedGroup(mParentID, button->key());
             if (button->key() == "All") {
                 ID = mParentID;
             }
-            if (ID != std::numeric_limits<std::uint64_t>::max()) {
+            if (ID.isValid()) {
                 if (ID == groupID) {
                     button->showStates(false);
                     return;
                 }
             }
         }
-        qDebug() << " group not found for hiding" << groupID;
+        qDebug() << " group not found for hiding" << groupID.toString();
     }
 
     /// true if empty, false if theres at least one button
@@ -125,11 +125,11 @@ public:
 signals:
 
     /// emitted when a group button is pressed. This emits its unique ID
-    void subgroupClicked(std::uint64_t key);
+    void subgroupClicked(cor::UUID key);
 
     /// emitted when a group's toggle button is pressed. This emits its actual group name,
     /// instead of its displayed group name.
-    void groupSelectAllToggled(std::uint64_t key, bool selectAll);
+    void groupSelectAllToggled(cor::UUID key, bool selectAll);
 
 protected:
     /// resizes interal widgets when a resize event is triggered
@@ -166,7 +166,7 @@ private:
     int mWidgetHeight;
 
     /// ID for the parent group that is currnetly selected, stored for subgroup oeprations
-    std::uint64_t mParentID;
+    cor::UUID mParentID;
 };
 
 #endif // LISTGROUPTOPWIDGET_H

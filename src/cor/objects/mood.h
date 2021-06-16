@@ -1,6 +1,7 @@
 #ifndef COR_MOOD_H
 #define COR_MOOD_H
 
+#include "cor/objects/uuid.h"
 #include "cor/objects/groupstate.h"
 #include "cor/objects/light.h"
 
@@ -22,10 +23,10 @@ namespace cor {
 class Mood {
 public:
     /// Default Constructor
-    Mood() : Mood(0u, "Error", {}) {}
+    Mood() : Mood(cor::UUID::invalidID(), "Error", {}) {}
 
     /// constructor
-    Mood(const QString& uniqueID, const QString& name, const std::vector<Light>& lights)
+    Mood(const cor::UUID& uniqueID, const QString& name, const std::vector<Light>& lights)
         : mName{name},
           mUniqueID{uniqueID},
           mDefaults{},
@@ -55,10 +56,10 @@ public:
         const auto& defaultStateArray = object["defaultStates"].toArray();
         for (auto value : defaultStateArray) {
             const auto& stateJson = value.toObject();
-            if (cor::LightState::isValidJson(stateJson) && stateJson["group"].isDouble()) {
+            if (cor::LightState::isValidJson(stateJson) && stateJson["group"].isString()) {
                 auto state = cor::LightState(stateJson);
-                const auto& groupID = stateJson["group"].toDouble();
-                mDefaults.emplace_back(groupID, state);
+                const auto& groupID = stateJson["group"].toString();
+                mDefaults.emplace_back(cor::UUID(groupID), state);
             } else {
                 THROW_EXCEPTION("default state broken");
             }
@@ -67,7 +68,7 @@ public:
 
 
     /// getter for unique ID
-    const QString& uniqueID() const noexcept { return mUniqueID; }
+    const cor::UUID& uniqueID() const noexcept { return mUniqueID; }
 
     /// getter for name
     const QString& name() const noexcept { return mName; }
@@ -109,7 +110,7 @@ public:
     }
 
     /// creates a new mood with the light removed.
-    cor::Mood removeLight(const QString& lightID) const {
+    cor::Mood removeLight(const cor::LightID& lightID) const {
         auto lights = mLights;
         auto lightToRemove = cor::Light{};
         // look for the light ID in the lights
@@ -136,13 +137,13 @@ public:
     QJsonObject toJson() const noexcept {
         QJsonObject object;
         object["name"] = name();
-        object["uniqueID"] = uniqueID();
+        object["uniqueID"] = uniqueID().toString();
 
         // create string of jsondata to add to file
         QJsonArray deviceArray;
         for (const auto& device : lights()) {
             auto object = device.state().toJson();
-            object["uniqueID"] = device.uniqueID();
+            object["uniqueID"] = device.uniqueID().toString();
             object["type"] = commTypeToString(device.commType());
             deviceArray.append(object);
         }
@@ -151,7 +152,7 @@ public:
         QJsonArray defaultStateArray;
         for (const auto& defaultState : defaults()) {
             auto object = defaultState.state().toJson();
-            object["group"] = double(defaultState.uniqueID());
+            object["group"] = defaultState.uniqueID().toString();
             defaultStateArray.append(object);
         }
         object["defaultStates"] = defaultStateArray;
@@ -167,7 +168,7 @@ private:
     QString mDescription;
 
     /// unique ID of the mood
-    QString mUniqueID;
+    cor::UUID mUniqueID;
 
     /// default states of groups.
     std::vector<cor::GroupState> mDefaults;

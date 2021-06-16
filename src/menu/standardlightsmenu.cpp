@@ -20,9 +20,9 @@ void initScrollArea(QWidget* widget, QScrollArea* scrollArea) {
     scrollArea->horizontalScrollBar()->setVisible(false);
 }
 
-std::vector<QString> generateLightsWithIgnoreList(const std::vector<QString>& ignored,
-                                                  const std::vector<QString>& input) {
-    std::set<QString> set;
+std::vector<cor::LightID> generateLightsWithIgnoreList(const std::vector<cor::LightID>& ignored,
+                                                       const std::vector<cor::LightID>& input) {
+    std::set<cor::LightID> set;
     for (const auto& inputValue : input) {
         set.insert(inputValue);
     }
@@ -32,7 +32,7 @@ std::vector<QString> generateLightsWithIgnoreList(const std::vector<QString>& ig
             set.erase(result);
         }
     }
-    return std::vector<QString>(set.begin(), set.end());
+    return std::vector<cor::LightID>(set.begin(), set.end());
 }
 
 } // namespace
@@ -65,27 +65,30 @@ StandardLightsMenu::StandardLightsMenu(QWidget* parent,
             SLOT(changeStateToParentGroups()));
     connect(mScrollTopWidget, SIGNAL(changeToSubgroups()), this, SLOT(changeStateToSubgroups()));
     connect(mScrollTopWidget,
-            SIGNAL(toggleSelectAll(std::uint64_t, bool)),
+            SIGNAL(toggleSelectAll(cor::UUID, bool)),
             this,
-            SLOT(groupSelected(std::uint64_t, bool)));
+            SLOT(groupSelected(cor::UUID, bool)));
 
     mLightContainer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(mLightContainer, SIGNAL(clickedLight(QString)), this, SLOT(lightClicked(QString)));
+    connect(mLightContainer,
+            SIGNAL(clickedLight(cor::LightID)),
+            this,
+            SLOT(lightClicked(cor::LightID)));
 
     mParentGroupContainer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mParentGroupContainer,
-            SIGNAL(parentClicked(std::uint64_t)),
+            SIGNAL(parentClicked(cor::UUID)),
             this,
-            SLOT(parentGroupClicked(std::uint64_t)));
+            SLOT(parentGroupClicked(cor::UUID)));
 
     connect(mSubgroupContainer,
-            SIGNAL(subgroupClicked(std::uint64_t)),
+            SIGNAL(subgroupClicked(cor::UUID)),
             this,
-            SLOT(subgroupClicked(std::uint64_t)));
+            SLOT(subgroupClicked(cor::UUID)));
     connect(mSubgroupContainer,
-            SIGNAL(groupSelectAllToggled(std::uint64_t, bool)),
+            SIGNAL(groupSelectAllToggled(cor::UUID, bool)),
             this,
-            SLOT(groupSelected(std::uint64_t, bool)));
+            SLOT(groupSelected(cor::UUID, bool)));
 
     initScrollArea(mParentGroupContainer, mParentScrollArea);
     initScrollArea(mSubgroupContainer, mSubgroupScrollArea);
@@ -93,7 +96,7 @@ StandardLightsMenu::StandardLightsMenu(QWidget* parent,
     setStyleSheet(cor::kDarkerGreyBackground);
 }
 
-void StandardLightsMenu::highlightLight(QString lightID) {
+void StandardLightsMenu::highlightLight(cor::LightID lightID) {
     selectLights({lightID});
 }
 
@@ -163,7 +166,7 @@ void StandardLightsMenu::updateLightStates() {
     }
 }
 
-void StandardLightsMenu::selectLights(const std::vector<QString>& lightIDs) {
+void StandardLightsMenu::selectLights(const std::vector<cor::LightID>& lightIDs) {
     mSelectedLights = lightIDs;
     mLightContainer->highlightLights(mSelectedLights);
 
@@ -272,7 +275,7 @@ void StandardLightsMenu::resize(const QRect& inputRect, int buttonHeight) {
 void StandardLightsMenu::highlightTopWidget() {
     // update the top parent widget
     if (mScrollTopWidget->parentWidget()->isVisible()) {
-        if (mScrollTopWidget->parentID() == 0u) {
+        if (mScrollTopWidget->parentID() == cor::kMiscGroupKey) {
             // miscellaneous group
             auto parentGroup = mAppData->lightOrphans().group();
             auto counts = groupSelectedAndReachableCount(parentGroup);
@@ -366,10 +369,10 @@ void StandardLightsMenu::changeStateToNoGroups() {
     }
 }
 
-void StandardLightsMenu::groupSelected(std::uint64_t ID, bool shouldSelect) {
-    if (ID == 0u) {
-        ID = mScrollTopWidget->parentID();
-    }
+void StandardLightsMenu::groupSelected(const cor::UUID& ID, bool shouldSelect) {
+    //    if (ID == 0u) {
+    //        ID = mScrollTopWidget->parentID();
+    //    }
     emit clickedGroupSelectAll(ID, shouldSelect);
     if (!mSingleLightMode) {
         highlightScrollArea();
@@ -378,18 +381,18 @@ void StandardLightsMenu::groupSelected(std::uint64_t ID, bool shouldSelect) {
 }
 
 
-void StandardLightsMenu::parentGroupClicked(std::uint64_t ID) {
+void StandardLightsMenu::parentGroupClicked(const cor::UUID& ID) {
     auto name = mAppData->groups()->nameFromID(ID);
-    if (ID == 0u) {
-        name = "Miscellaneous";
-    }
+    //    if (ID == 0u) {
+    //        name = "Miscellaneous";
+    //    }
     mScrollTopWidget->showParentWidget(name, ID);
     mScrollTopWidget->subgroupWidget()->showSelectAllCheckbox(!mSingleLightMode);
 
     // check for subgroups
     auto subgroups = mAppData->subgroups().subgroupIDsForGroup(ID);
     // check if it should show lights or not
-    if (ID == 0u) {
+    if (ID == cor::kMiscGroupKey) {
         // if its a miscellaneous group, show orphans
         changeState(EState::lights);
         auto group = mAppData->lightOrphans().group();
@@ -400,7 +403,7 @@ void StandardLightsMenu::parentGroupClicked(std::uint64_t ID) {
     } else if (subgroups.empty()) {
         // if its a group with no subgroups, show the lights for the group
         changeState(EState::lights);
-        auto result = mAppData->groups()->groupDict().item(QString::number(ID).toStdString());
+        auto result = mAppData->groups()->groupDict().item(ID.toStdString());
         if (result.second) {
             mLightContainer->clear();
             mLightContainer->addLights(mComm->lightsByIDs(result.first.lights()));
@@ -422,18 +425,17 @@ void StandardLightsMenu::parentGroupClicked(std::uint64_t ID) {
     }
 }
 
-void StandardLightsMenu::subgroupClicked(std::uint64_t ID) {
+void StandardLightsMenu::subgroupClicked(const cor::UUID& ID) {
     changeState(EState::lights);
     // rename the group
     auto renamedGroup =
         mAppData->subgroups().renamedSubgroupFromParentAndGroupID(mScrollTopWidget->parentID(), ID);
-    if (ID == 0u) {
+    if (ID == mScrollTopWidget->parentID()) {
         renamedGroup = "All";
         // remap "ALL" to the parent's ID
-        ID = mScrollTopWidget->parentID();
     }
     mScrollTopWidget->showSubgroup(renamedGroup, ID);
-    auto result = mAppData->groups()->groupDict().item(QString::number(ID).toStdString());
+    auto result = mAppData->groups()->groupDict().item(ID.toStdString());
     if (result.second) {
         mLightContainer->clear();
         mLightContainer->addLights(mComm->lightsByIDs(
@@ -474,7 +476,7 @@ void StandardLightsMenu::clearSelection() {
     mLightContainer->highlightLights({});
 }
 
-void StandardLightsMenu::ignoreLights(std::vector<QString> lights) {
+void StandardLightsMenu::ignoreLights(std::vector<cor::LightID> lights) {
     mIgnoredLights = lights;
     if (mState == EState::lights) {
         subgroupClicked(mScrollTopWidget->subgroupID());

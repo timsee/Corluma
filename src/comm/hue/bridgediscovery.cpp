@@ -151,7 +151,6 @@ void BridgeDiscovery::updateGroupsAndRooms(const hue::Bridge& bridge,
     if (bridgeResult.second) {
         auto foundBridge = bridgeResult.first;
         foundBridge.groupsWithIDs(groups);
-        mFoundBridges.update(foundBridge.id().toStdString(), foundBridge);
         mAppData->updateExternallyStoredGroups(foundBridge.groups(), foundBridge.lightIDs());
         mAppData->updateExternallyStoredGroups(foundBridge.rooms(), foundBridge.lightIDs());
     }
@@ -810,7 +809,7 @@ bool BridgeDiscovery::deleteBridge(const hue::Bridge& bridge) {
 }
 
 
-std::uint64_t BridgeDiscovery::keyFromGroupName(const QString& name) {
+cor::UUID BridgeDiscovery::keyFromGroupName(const QString& name) {
     // check for ID in GroupsParser in case they get merged
     for (const auto& group : mAppData->groups()->groupDict().items()) {
         if (group.name() == name) {
@@ -826,20 +825,7 @@ std::uint64_t BridgeDiscovery::keyFromGroupName(const QString& name) {
             }
         }
     }
-    return 0u;
-}
-
-
-std::uint64_t BridgeDiscovery::generateNewUniqueKey() {
-    auto minID = std::numeric_limits<std::uint64_t>::max();
-    for (const auto& bridge : mFoundBridges.items()) {
-        for (const auto& group : bridge.groups()) {
-            if (group.uniqueID() < minID) {
-                minID = group.uniqueID();
-            }
-        }
-    }
-    return minID - 1;
+    return cor::UUID::invalidID();
 }
 
 QString BridgeDiscovery::generateUniqueName() {

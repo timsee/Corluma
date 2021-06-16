@@ -17,7 +17,7 @@
 
 
 GroupStateWidget::GroupStateWidget(const cor::GroupState& groupState, QWidget* parent)
-    : cor::ListItemWidget(groupState.stringUniqueID(), parent),
+    : cor::ListItemWidget(groupState.uniqueID().toString(), parent),
       mGroupState{groupState},
       mIsChecked{false},
       mAllowInteraction{true},
@@ -30,7 +30,7 @@ GroupStateWidget::GroupStateWidget(const cor::GroupState& groupState, QWidget* p
     mName->setAlignment(Qt::AlignVCenter);
     mName->setStyleSheet(cor::kTransparentStylesheet);
 
-    mKey = mGroupState.stringUniqueID();
+    mKey = mGroupState.uniqueID().toString();
     updateState(mGroupState);
 }
 

@@ -93,10 +93,10 @@ public slots:
 private slots:
 
     /// select all lights is toggled from a group
-    void selectAllToggled(std::uint64_t, bool);
+    void selectAllToggled(const cor::UUID&, bool);
 
     /// a light is clicked from the LeftHandMenuScrollArea
-    void lightClicked(const QString& lightID);
+    void lightClicked(const cor::LightID& lightID);
 
     /// used to render UI updates
     void renderUI();

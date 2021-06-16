@@ -3,7 +3,7 @@
 
 MoodData::MoodData() : QObject() {}
 
-cor::Mood MoodData::moodFromID(const QString& ID) {
+cor::Mood MoodData::moodFromID(const cor::UUID& ID) {
     auto moodResult = mMoodDict.item(ID.toStdString());
     // check if group is already in this list
     if (moodResult.second) {
@@ -12,7 +12,7 @@ cor::Mood MoodData::moodFromID(const QString& ID) {
     return {};
 }
 
-QString MoodData::nameFromID(const QString& ID) {
+QString MoodData::nameFromID(const cor::UUID& ID) {
     auto mood = moodFromID(ID);
     return mood.name();
 }
@@ -30,7 +30,7 @@ void MoodData::saveNewMood(const cor::Mood& mood) {
     emit moodAdded(mood.name());
 }
 
-bool MoodData::removeLightFromMoods(QString uniqueID) {
+bool MoodData::removeLightFromMoods(const cor::LightID& uniqueID) {
     bool anyUpdates = false;
     // parse the moods, remove from dict if needed
     for (const auto& mood : mMoodDict.items()) {
@@ -52,7 +52,7 @@ bool MoodData::removeLightFromMoods(QString uniqueID) {
 }
 
 
-QString MoodData::removeMood(const QString& uniqueID) {
+QString MoodData::removeMood(const cor::UUID& uniqueID) {
     QString name;
     for (const auto& mood : mMoodDict.items()) {
         if (mood.uniqueID() == uniqueID) {

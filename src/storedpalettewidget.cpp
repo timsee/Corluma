@@ -12,7 +12,7 @@
 #include "utils/qt.h"
 
 StoredPaletteWidget::StoredPaletteWidget(const cor::Palette& palette, QWidget* parent)
-    : cor::ListItemWidget(palette.uniqueID(), parent),
+    : cor::ListItemWidget(palette.uniqueID().toString(), parent),
       mLightVector{new cor::PaletteWidget(this)},
       mLabel{new QLabel(palette.name(), this)},
       mPalette{palette},

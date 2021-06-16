@@ -47,7 +47,7 @@ public:
     QString IPWidgetDefaultValue() override { return "192.168.0.101"; }
 
     /// delete a light from the discovery page.
-    void deleteLight(const QString&) override;
+    void deleteLight(const cor::LightID&) override;
 
     /// handles how to higlight lights.
     void highlightLights() override;
@@ -103,7 +103,7 @@ private:
 
     /// lights that should be ignored on future updates (IE, they have been removed once, so they
     /// shouldn't be shown again.
-    std::vector<QString> mIgnoredLights;
+    std::vector<cor::LightID> mIgnoredLights;
 };
 
 #endif // DISCOVERYARDUCORWIDGET_H

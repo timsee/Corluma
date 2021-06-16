@@ -58,7 +58,7 @@ public:
     const QString& bridgeID() const noexcept { return mBridgeID; }
 
     /// getter for unique ID
-    const QString& uniqueID() const noexcept { return mUniqueID; }
+    const cor::LightID& uniqueID() const noexcept { return mUniqueID; }
 
     /// getter for hardware type
     ELightHardwareType hardwareType() const noexcept { return mHardwareType; }
@@ -152,12 +152,12 @@ private:
     QString mBridgeID;
 
     /// unique ID for hue metadata
-    QString mUniqueID;
+    cor::LightID mUniqueID;
 };
 
 /// converts a vector of lights to a vector of IDs that represent the lights
-inline std::vector<QString> hueVectorToIDs(const std::vector<HueMetadata>& lightVector) {
-    std::vector<QString> retVector;
+inline std::vector<cor::LightID> hueVectorToIDs(const std::vector<HueMetadata>& lightVector) {
+    std::vector<cor::LightID> retVector;
     retVector.reserve(lightVector.size());
     for (const auto& light : lightVector) {
         retVector.emplace_back(light.uniqueID());

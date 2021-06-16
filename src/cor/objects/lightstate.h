@@ -29,7 +29,7 @@ public:
         : mIsOn{false},
           mRoutine{ERoutine::singleSolid},
           mColor(0, 0, 0),
-          mCustomPalette(cor::CustomPalette(cor::defaultCustomColors())),
+          mCustomPalette(cor::Palette::CustomPalette(cor::defaultCustomColors())),
           mPaletteBrightness{-1},
           mCustomCount{5},
           mEffect{"Default"},

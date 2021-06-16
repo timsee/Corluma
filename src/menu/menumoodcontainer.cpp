@@ -19,7 +19,7 @@ void MenuMoodContainer::showMoods(const std::vector<cor::Mood>& moods, int heigh
     std::sort(sortedMoods.begin(), sortedMoods.end(), lambda);
     for (const auto& mood : sortedMoods) {
         auto widget = new ListMoodPreviewWidget(mood, this);
-        connect(widget, SIGNAL(moodSelected(QString)), this, SLOT(selectMood(QString)));
+        connect(widget, SIGNAL(moodSelected(cor::Mood)), this, SLOT(selectMood(cor::Mood)));
         mListLayout.insertWidget(widget);
     }
 
@@ -49,15 +49,15 @@ void MenuMoodContainer::clear() {
     mListLayout.clear();
 }
 
-void MenuMoodContainer::selectMood(QString key) {
+void MenuMoodContainer::selectMood(cor::Mood mood) {
     for (const auto& existingWidget : mListLayout.widgets()) {
         auto widget = qobject_cast<ListMoodPreviewWidget*>(existingWidget);
         Q_ASSERT(widget);
-        if (widget->key() == key) {
+        if (widget->key() == mood.uniqueID().toString()) {
             widget->setSelected(true);
         } else {
             widget->setSelected(false);
         }
     }
-    emit moodSelected(key);
+    emit moodSelected(mood);
 }

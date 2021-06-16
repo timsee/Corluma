@@ -149,7 +149,7 @@ signals:
     void closePressed();
 
     /// signals when an effect is selected, signals the light's serial number and the effect's name.
-    void selectEffect(QString, QString);
+    void selectEffect(cor::LightID, QString);
 
 private slots:
 

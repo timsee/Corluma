@@ -25,7 +25,7 @@ public:
     GroupParentData() = default;
 
     /// getter for all parents
-    const std::vector<std::uint64_t>& keys() const noexcept { return mParents; }
+    const std::vector<cor::UUID>& keys() const noexcept { return mParents; }
 
     /**
      * @brief updateParentGroups looks at all groups, all rooms, and all subgroups, and determines
@@ -34,9 +34,9 @@ public:
      * @param subgroups an unorded_map of all groups and their associated subgroups.
      */
     void updateParentGroups(
-        const std::vector<std::uint64_t>& groups,
-        const std::unordered_map<std::uint64_t, std::vector<std::uint64_t>>& subgroups) {
-        std::vector<std::uint64_t> parentGroups;
+        const std::vector<cor::UUID>& groups,
+        const std::unordered_map<cor::UUID, std::vector<cor::UUID>>& subgroups) {
+        std::vector<cor::UUID> parentGroups;
 
         // loop through groups, and check every subgroup map entry. if any entry marks this
         // group as a subgroup, then it has a parent and is not parentless.
@@ -62,7 +62,7 @@ public:
 
 private:
     /// all groups that are either a room, or are not a subgroup of any other group.
-    std::vector<std::uint64_t> mParents;
+    std::vector<cor::UUID> mParents;
 };
 
 

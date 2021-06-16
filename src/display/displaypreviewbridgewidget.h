@@ -70,7 +70,7 @@ public:
     void addLight(const cor::Light& light);
 
     /// remove lights by keys from the light list.
-    void removeLights(const std::vector<QString>& keys);
+    void removeLights(const std::vector<cor::LightID>& keys);
 
 signals:
 
@@ -80,10 +80,10 @@ signals:
     void bridgeClicked(QString);
 
     /// emits when a light should be selected
-    void selectLight(QString);
+    void selectLight(cor::LightID);
 
     /// emits when a light should be deselected
-    void deselectLight(QString);
+    void deselectLight(cor::LightID);
 
     /// emits when the checkbox is clicked which selects all of the lights for the bridge.
     void selectAllClicked(QString, EProtocolType);

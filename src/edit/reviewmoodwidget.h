@@ -28,14 +28,15 @@ public:
           mMoods{appData->moods()},
           mTopLabel{new QLabel("Review:", this)},
           mMoodWidget{new DisplayMoodWidget(this, comm, appData)},
-          mCreateButton{new QPushButton("Create", this)} {
+          mCreateButton{new QPushButton("Create", this)},
+          mUniqueID{cor::UUID::invalidID()} {
         mBottomButtons->hideForward(true);
         mCreateButton->setStyleSheet(cor::kLighterGreyBackground);
         connect(mCreateButton, SIGNAL(clicked(bool)), this, SLOT(createMood(bool)));
     }
 
     /// set to true if editing an existing group, set to false if its a new group
-    void editMode(bool isEditMode, const QString& uniqueID) {
+    void editMode(bool isEditMode, const cor::UUID& uniqueID) {
         mEditMode = isEditMode;
         if (mEditMode) {
             mCreateButton->setText("Edit");
@@ -60,7 +61,7 @@ public:
         // provided when edit mode was turned on.
         auto key = mUniqueID;
         if (!mEditMode) {
-            key = QUuid::createUuid().toString(QUuid::WithoutBraces);
+            key = cor::UUID::makeNew();
         }
         cor::Mood mood(key, name, lights);
         mood.defaults(defaultStates);
@@ -144,7 +145,7 @@ private:
     bool mEditMode;
 
     /// the unique ID of the group being either edited or created.
-    QString mUniqueID;
+    cor::UUID mUniqueID;
 };
 
 #endif // EDITREVIEWMOODIDGET_H

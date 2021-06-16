@@ -149,10 +149,7 @@ public:
     bool deleteBridge(const hue::Bridge& bridge);
 
     /// returns the key of a group based off of the given name
-    std::uint64_t keyFromGroupName(const QString& name);
-
-    /// generates a new unique key.
-    std::uint64_t generateNewUniqueKey();
+    cor::UUID keyFromGroupName(const QString& name);
 
     /// true if any NUPnP traffic has been received, false otherwise.
     bool receivedNUPnPTraffic() { return mReceivedNUPnPTraffic; }

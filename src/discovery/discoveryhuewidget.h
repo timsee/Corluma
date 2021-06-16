@@ -58,10 +58,10 @@ public:
     void updateLightNames();
 
     /// handle when lights are deleted.
-    void handleDeletedLights(const std::vector<QString>&);
+    void handleDeletedLights(const std::vector<cor::LightID>&);
 
     /// a new light (not a bridge) is found, update the bridge that contains it
-    void newHuesFound(const std::vector<QString>& IDs);
+    void newHuesFound(const std::vector<cor::LightID>& IDs);
 
     /// See DiscoveryWidget.h
     void handleDiscovery(bool isActive) override;
@@ -84,7 +84,7 @@ public:
     QString IPWidgetDefaultValue() override { return "192.168.0.100"; }
 
     /// delete a light from the discovery page.
-    void deleteLight(const QString&) override;
+    void deleteLight(const cor::LightID&) override;
 
     /// handles how to higlight lights.
     void highlightLights() override;
@@ -103,10 +103,10 @@ private slots:
     void textInputAddedIP(const QString& IP);
 
     /// handles when a light is clicked
-    void lightSelected(QString key);
+    void lightSelected(cor::LightID key);
 
     /// handles when a light is deselected.
-    void lightDeselected(QString key);
+    void lightDeselected(cor::LightID key);
 
     /// handles when select all is clicked
     void clickedSelectAll(QString key, EProtocolType protocol);

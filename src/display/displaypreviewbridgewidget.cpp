@@ -203,7 +203,7 @@ void DisplayPreviewBridgeWidget::checkBoxClicked(ECheckboxState state) {
         mCheckBox->checkboxState(ECheckboxState::checked);
         emit selectAllClicked(mBridge.id(), EProtocolType::hue);
         // filter out IDs that are not reachables
-        std::vector<QString> reachableIDs;
+        std::vector<cor::LightID> reachableIDs;
         for (auto lightID : mBridge.lightIDs()) {
             if (mComm->lightByID(lightID).isReachable()) {
                 reachableIDs.push_back(lightID);
@@ -231,7 +231,7 @@ void DisplayPreviewBridgeWidget::updateMetadata(const hue::Bridge& bridge) {
 void DisplayPreviewBridgeWidget::highlightLights() {
     mReachableCount = 0u;
     mSelectedCount = 0u;
-    std::vector<QString> lightsToHighlight;
+    std::vector<cor::LightID> lightsToHighlight;
     for (auto light : mComm->hue()->lightsFromMetadata(mBridge.lights().items())) {
         if (light.isReachable()) {
             mReachableCount++;
@@ -247,7 +247,7 @@ void DisplayPreviewBridgeWidget::highlightLights() {
     update();
 }
 
-void DisplayPreviewBridgeWidget::removeLights(const std::vector<QString>& keys) {
+void DisplayPreviewBridgeWidget::removeLights(const std::vector<cor::LightID>& keys) {
     mLights->removeLights(keys);
 }
 

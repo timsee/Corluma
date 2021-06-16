@@ -98,12 +98,12 @@ void DiscoveryHueWidget::checkIfIPExists(const QString& IP) {
     }
 }
 
-void DiscoveryHueWidget::deleteLight(const QString& id) {
+void DiscoveryHueWidget::deleteLight(const cor::LightID& id) {
     int index = -1;
     auto storedIndex = mBridgeIndex;
     for (auto i = 0u; i < mBridgeWidgets.size(); ++i) {
         if (mBridgeWidgets[i] != nullptr) {
-            if (mBridgeWidgets[i]->bridge().id() == id) {
+            if (mBridgeWidgets[i]->bridge().id() == id.toString()) {
                 index = i;
                 delete mBridgeWidgets[i];
                 mBridgeWidgets[i] = nullptr;
@@ -195,11 +195,14 @@ void DiscoveryHueWidget::updateBridgeGUI() {
                                                                   this);
                 widget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
                 connect(widget, SIGNAL(bridgeClicked(QString)), this, SLOT(bridgePressed(QString)));
-                connect(widget, SIGNAL(selectLight(QString)), this, SLOT(lightSelected(QString)));
                 connect(widget,
-                        SIGNAL(deselectLight(QString)),
+                        SIGNAL(selectLight(cor::LightID)),
                         this,
-                        SLOT(lightDeselected(QString)));
+                        SLOT(lightSelected(cor::LightID)));
+                connect(widget,
+                        SIGNAL(deselectLight(cor::LightID)),
+                        this,
+                        SLOT(lightDeselected(cor::LightID)));
                 connect(widget,
                         SIGNAL(selectAllClicked(QString, EProtocolType)),
                         this,
@@ -253,7 +256,7 @@ void DiscoveryHueWidget::greyOutClicked() {
     }
 }
 
-void DiscoveryHueWidget::handleDeletedLights(const std::vector<QString>& keys) {
+void DiscoveryHueWidget::handleDeletedLights(const std::vector<cor::LightID>& keys) {
     for (const auto& widget : mBridgeWidgets) {
         if (widget != nullptr) {
             widget->removeLights(keys);
@@ -280,11 +283,11 @@ void DiscoveryHueWidget::bridgePressed(const QString& key) {
 }
 
 
-void DiscoveryHueWidget::lightSelected(QString key) {
+void DiscoveryHueWidget::lightSelected(cor::LightID key) {
     emit selectLight(key);
 }
 
-void DiscoveryHueWidget::lightDeselected(QString key) {
+void DiscoveryHueWidget::lightDeselected(cor::LightID key) {
     emit deselectLight(key);
 }
 
@@ -411,7 +414,7 @@ void DiscoveryHueWidget::resizeEvent(QResizeEvent*) {
     resize();
 }
 
-void DiscoveryHueWidget::newHuesFound(const std::vector<QString>& IDs) {
+void DiscoveryHueWidget::newHuesFound(const std::vector<cor::LightID>& IDs) {
     auto lights = mComm->lightsByIDs(IDs);
     for (auto light : lights) {
         auto bridge = mComm->hue()->bridgeFromLight(light);

@@ -34,13 +34,13 @@ public:
     explicit LightInfoListWidget(QWidget* parent);
 
     /// update a light name
-    void updateLightName(QString, QString);
+    void updateLightName(cor::LightID, QString);
 
     /// add a light to the info widget.
     void addLight(const HueMetadata& light) { mLightInfoScrollArea->addLight(light); }
 
     /// delete a light from the display.
-    void deleteLightFromDisplay(QString);
+    void deleteLightFromDisplay(cor::LightID);
 
     /// getter for scroll area
     LightInfoScrollArea* scrollArea() { return mLightInfoScrollArea; }
@@ -55,11 +55,11 @@ public:
 
 signals:
     /// emits the unique ID of the light that will be deleted.
-    void deleteLight(QString);
+    void deleteLight(cor::LightID);
 
     /// signals when any widget in the list sends a changeName signal. Sends the uniqueID of the
     /// light and the name of the light.
-    void changeLightName(QString key, QString name);
+    void changeLightName(cor::LightID key, QString name);
 
     /// handles when the find new light button is clicked.
     void findNewLightClicked();
@@ -74,7 +74,7 @@ private slots:
      * \brief lightClicked an individual widget has been clicked and has sent out
      * its key.
      */
-    void lightInfoClicked(const QString&, bool);
+    void lightInfoClicked(const cor::LightID&, bool);
 
     /*!
      * \brief deleteButtonPressed delete button pressed, which triggers deleting a hue
@@ -83,10 +83,10 @@ private slots:
     void findNewLightButtonPressed(bool);
 
     /// delete button is pressed from any widget in the list
-    void deleteButtonPressed(QString uniqueID, QString name);
+    void deleteButtonPressed(cor::LightID uniqueID, QString name);
 
     /// change name button is pressed from any widget in the list
-    void changeNamePressed(QString uniqueID, QString name);
+    void changeNamePressed(cor::LightID uniqueID, QString name);
 
 private:
     /// scroll area that contains the information about the lights

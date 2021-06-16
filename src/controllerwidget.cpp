@@ -15,9 +15,9 @@ ControllerWidget::ControllerWidget(QWidget* parent, CommLayer* comm, cor::LightL
     connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(handleBackButtonPressed(bool)));
 
     connect(mNanoleafWidget,
-            SIGNAL(deleteNanoleaf(QString, QString)),
+            SIGNAL(deleteNanoleaf(cor::LightID, QString)),
             this,
-            SLOT(handleDeleteNanoleaf(QString, QString)));
+            SLOT(handleDeleteNanoleaf(cor::LightID, QString)));
 
     connect(mArduCorWidget,
             SIGNAL(deleteController(QString, EProtocolType)),
@@ -30,9 +30,9 @@ ControllerWidget::ControllerWidget(QWidget* parent, CommLayer* comm, cor::LightL
             SLOT(handleDeleteController(QString, EProtocolType)));
 
     connect(mHueBridgeWidget,
-            SIGNAL(deleteLight(QString)),
+            SIGNAL(deleteLight(cor::LightID)),
             this,
-            SLOT(handleDeleteHueLight(QString)));
+            SLOT(handleDeleteHueLight(cor::LightID)));
 
     connect(mRenderTimer, SIGNAL(timeout()), this, SLOT(renderUI()));
     mRenderTimer->start(333);
@@ -113,21 +113,21 @@ void ControllerWidget::updateLightNames(EProtocolType) {
     // qDebug() << "TODO: update the light names for ControllerWidget";
 }
 
-void ControllerWidget::handleDeleteHueLight(QString uniqueID) {
-    qDebug() << " TODO: delete hue " << uniqueID;
+void ControllerWidget::handleDeleteHueLight(cor::LightID uniqueID) {
+    qDebug() << " TODO: delete hue " << uniqueID.toString();
     auto light = mComm->lightByID(uniqueID);
     if (light.isValid()) {
         mComm->hue()->deleteLight(light);
     } else {
-        qDebug() << "requested to delete an unknown hue: " << uniqueID;
+        qDebug() << "requested to delete an unknown hue: " << uniqueID.toString();
     }
 }
 
-void ControllerWidget::handleDeleteNanoleaf(QString serialNumber, QString IP) {
+void ControllerWidget::handleDeleteNanoleaf(cor::LightID serialNumber, QString IP) {
     // delete the light from the comm layer, which signals to delete it from groups
     bool result = mComm->nanoleaf()->deleteNanoleaf(serialNumber, IP);
     if (!result) {
-        qDebug() << "WARNING: error deleting " << serialNumber << " IP: " << IP;
+        qDebug() << "WARNING: error deleting " << serialNumber.toString() << " IP: " << IP;
     } else {
         // delete the light
         emit deleteLight(serialNumber);
@@ -183,7 +183,7 @@ void ControllerWidget::highlightLights() {
     }
 }
 
-void ControllerWidget::handleDeletedLights(const std::vector<QString>& keys) {
+void ControllerWidget::handleDeletedLights(const std::vector<cor::LightID>& keys) {
     mHueBridgeWidget->removeLights(keys);
 }
 

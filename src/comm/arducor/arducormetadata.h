@@ -15,7 +15,7 @@
  */
 class ArduCorMetadata {
 public:
-    ArduCorMetadata(const QString& uniqueID,
+    ArduCorMetadata(const cor::LightID& uniqueID,
                     const cor::Controller& controller,
                     int lightIndex,
                     ELightHardwareType hardwareType)
@@ -30,10 +30,11 @@ public:
         mHardwareType = hardwareType;
     }
 
-    ArduCorMetadata() : ArduCorMetadata("ERROR_ID", {}, 1, ELightHardwareType::singleLED) {}
+    ArduCorMetadata()
+        : ArduCorMetadata(cor::LightID::invalidID(), {}, 1, ELightHardwareType::singleLED) {}
 
     /// getter for unique ID
-    const QString& uniqueID() const noexcept { return mUniqueID; }
+    const cor::LightID& uniqueID() const noexcept { return mUniqueID; }
 
     /// getter for controller
     const QString& controller() const noexcept { return mController; }
@@ -114,7 +115,7 @@ private:
     int mTimeout;
 
     /// unique ID of light
-    QString mUniqueID;
+    cor::LightID mUniqueID;
 
     /// name of controller of light
     QString mController;
@@ -138,7 +139,7 @@ public:
     ArduCorLight(const ArduCorMetadata& metadata)
         : cor::Light(metadata.uniqueID(), metadata.commType()) {
         mHardwareType = metadata.hardwareType();
-        mName = metadata.uniqueID();
+        mName = metadata.uniqueID().toString();
     }
 };
 

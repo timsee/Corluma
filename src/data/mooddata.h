@@ -35,10 +35,10 @@ public:
     void loadFromJson(const QJsonArray& array);
 
     /// converts a mood ID into a mood, returning an invalid mood if the ID is invalid.
-    cor::Mood moodFromID(const QString& ID);
+    cor::Mood moodFromID(const cor::UUID& ID);
 
     /// returns a group's name from its ID
-    QString nameFromID(const QString& ID);
+    QString nameFromID(const cor::UUID& ID);
 
     /*!
      * \brief saveNewMood save a new mood
@@ -46,7 +46,7 @@ public:
     void saveNewMood(const cor::Mood& mood);
 
     /// remove a move by uniqueID
-    QString removeMood(const QString& uniqueID);
+    QString removeMood(const cor::UUID& uniqueID);
 
     /// clear all moods
     void clear() { mMoodDict = cor::Dictionary<cor::Mood>(); }
@@ -55,7 +55,7 @@ public:
     QJsonArray toJsonArray();
 
     /// remove light from all moods.
-    bool removeLightFromMoods(QString);
+    bool removeLightFromMoods(const cor::LightID&);
 
 signals:
     /// signals when a mood is added

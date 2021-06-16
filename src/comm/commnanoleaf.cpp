@@ -131,7 +131,7 @@ void CommNanoleaf::updateSchedule(const nano::LeafMetadata& light,
 }
 
 std::pair<cor::Dictionary<nano::LeafSchedule>, bool> CommNanoleaf::findSchedules(
-    const QString& serial) {
+    const cor::LightID& serial) {
     auto result = mSchedules.find(serial.toStdString());
     if (result != mSchedules.end()) {
         return std::make_pair(result->second, true);
@@ -172,7 +172,7 @@ void CommNanoleaf::sendTimeout(const nano::LeafMetadata& light, int minutes) {
     sendSchedule(light, createTimeoutSchedule(minutes));
 }
 
-std::uint32_t CommNanoleaf::timeoutFromLight(const QString& light) {
+std::uint32_t CommNanoleaf::timeoutFromLight(const cor::LightID& light) {
     auto timeoutScheduleResult = timeoutSchedule(light);
     if (timeoutScheduleResult.second) {
         // found an existing timeout
@@ -185,7 +185,7 @@ std::uint32_t CommNanoleaf::timeoutFromLight(const QString& light) {
     return 0u;
 }
 
-std::pair<nano::LeafSchedule, bool> CommNanoleaf::timeoutSchedule(const QString& uniqueID) {
+std::pair<nano::LeafSchedule, bool> CommNanoleaf::timeoutSchedule(const cor::LightID& uniqueID) {
     auto result = findSchedules(uniqueID);
     if (result.second) {
         auto schedules = result.first;
@@ -364,14 +364,15 @@ void CommNanoleaf::sendPacket(const nano::LeafMetadata& metadata, const cor::Lig
             routineChange(metadata, state);
             resetBackgroundTimers();
         } else {
-            qDebug() << " did not find light:" << metadata.serialNumber();
+            qDebug() << " did not find light:" << metadata.serialNumber().toString();
         }
     } else {
         qDebug() << " not sending packet! " << metadata;
     }
 }
 
-std::pair<nano::LeafMetadata, bool> CommNanoleaf::findNanoLeafLight(const QString& serialNumber) {
+std::pair<nano::LeafMetadata, bool> CommNanoleaf::findNanoLeafLight(
+    const cor::LightID& serialNumber) {
     return mDiscovery->findDiscoveredLightBySerial(serialNumber);
 }
 
@@ -695,7 +696,7 @@ void CommNanoleaf::brightnessChange(const nano::LeafMetadata& leafLight, int bri
     putJSON(request, json);
 }
 
-bool CommNanoleaf::deleteNanoleaf(const QString& serialNumber, const QString& IP) {
+bool CommNanoleaf::deleteNanoleaf(const cor::LightID& serialNumber, const QString& IP) {
     auto leafMetadataResult = mDiscovery->findLightBySerialOrIP(serialNumber, IP);
     auto leafMetadata = leafMetadataResult.first;
 

@@ -56,6 +56,8 @@ public:
      */
     bool checked() const noexcept { return mIsChecked; }
 
+    const cor::Mood& mood() const noexcept { return mMood; }
+
     /*!
      * \brief moodName getter for name
      *
@@ -69,7 +71,7 @@ public:
 signals:
 
     /// called when mood is selected
-    void moodSelected(QString);
+    void moodSelected(cor::Mood);
 
 protected:
     /*!

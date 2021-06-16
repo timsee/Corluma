@@ -46,13 +46,13 @@ public:
     void addLights(const std::vector<cor::Light>& lights);
 
     /// remove a light from the container.
-    void removeLight(QString lightID);
+    void removeLight(cor::LightID lightID);
 
     /// updates the state of the light widgets, but will not add new lights if they don't exist
     void updateLights(const std::vector<cor::Light>& lights);
 
     /// highlights the lights based off of the currently selected lights
-    void highlightLights(const std::vector<QString>& selectedLights);
+    void highlightLights(const std::vector<cor::LightID>& selectedLights);
 
     /// moves the light widgets into place
     void moveLightWidgets(QSize size, QPoint offset);
@@ -61,22 +61,22 @@ public:
     void clear();
 
     /// getter for currently highlighted lights.
-    std::vector<QString> highlightedLights();
+    std::vector<cor::LightID> highlightedLights();
 
     /// true to show timeouts, false to hide them.
     void showTimeouts(bool shouldShowTimeouts);
 
     /// update the timeout values.
-    void updateTimeouts(const std::vector<std::pair<QString, std::uint32_t>> keyTimeoutPairs);
+    void updateTimeouts(const std::vector<std::pair<cor::LightID, std::uint32_t>> keyTimeoutPairs);
 
 signals:
 
     /// emits when a light is clicked
-    void clickedLight(QString);
+    void clickedLight(cor::LightID);
 
 private slots:
     /// handles when a light is clicked
-    void handleLightClicked(QString light);
+    void handleLightClicked(cor::LightID light);
 
 private:
     /// stores ListLightWidgets, which show lights

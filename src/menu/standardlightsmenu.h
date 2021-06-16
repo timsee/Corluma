@@ -50,7 +50,7 @@ public:
     void updateMenu();
 
     /// selects the lights with their current states
-    void selectLights(const std::vector<QString>& lightIDs);
+    void selectLights(const std::vector<cor::LightID>& lightIDs);
 
     /// clears all the info in the widget, and reset the widget to an empty state. Then it calls
     /// updateLights() and refills with new data. used to remove data or recover from a broken
@@ -58,7 +58,7 @@ public:
     void reset();
 
     /// highlight a single light and switch into single light mode
-    void highlightLight(QString lightID);
+    void highlightLight(cor::LightID lightID);
 
     /// turns on/off single light mode. In single light mode, only one light can be chosen at a
     /// time. the top of the widget does not highlight, and the select all/none buttons are hidden.
@@ -70,18 +70,18 @@ public:
 
     /// provides a list of lights that should be ignored when displaying lights. If a group/room
     /// only contains ignored lights, it still displays, just empty.
-    void ignoreLights(std::vector<QString> lights);
+    void ignoreLights(std::vector<cor::LightID> lights);
 
 signals:
 
     /// signals when all of a group should be either selected or deselected
-    void clickedGroupSelectAll(std::uint64_t groupID, bool shouldSelect);
+    void clickedGroupSelectAll(const cor::UUID& groupID, bool shouldSelect);
 
     /// signals when a light has been clicked.
-    void clickedLight(QString);
+    void clickedLight(cor::LightID);
 
     /// emits when a light is unselected.
-    void unselectLight(QString);
+    void unselectLight(cor::LightID);
 
 private slots:
     /// changes the state of the LeftHandLightMenu to showing parent groups
@@ -95,16 +95,16 @@ private slots:
     void changeStateToNoGroups();
 
     /// called when a group is selected or deselected
-    void groupSelected(std::uint64_t key, bool shouldSelect);
+    void groupSelected(const cor::UUID& key, bool shouldSelect);
 
     /// called when a parent group is changed
-    void parentGroupClicked(std::uint64_t ID);
+    void parentGroupClicked(const cor::UUID& ID);
 
     /// transition from the subgroups to the lights, by showing the lights for a specific group
-    void subgroupClicked(std::uint64_t);
+    void subgroupClicked(const cor::UUID&);
 
     /// handles when a light is clicked
-    void lightClicked(QString key) {
+    void lightClicked(cor::LightID key) {
         auto result = std::find(mSelectedLights.begin(), mSelectedLights.end(), key);
         if (result != mSelectedLights.end()) {
             mSelectedLights.erase(result);
@@ -146,9 +146,9 @@ private:
 
     /// counts the number of selected lights and the number of reachable lights for a vector of
     /// groups
-    std::unordered_map<std::uint64_t, std::pair<std::uint32_t, std::uint32_t>>
+    std::unordered_map<cor::UUID, std::pair<std::uint32_t, std::uint32_t>>
     multiGroupSelectedAndReachableCount(const std::vector<cor::Group>& groups) {
-        std::unordered_map<std::uint64_t, std::pair<std::uint32_t, std::uint32_t>> counts;
+        std::unordered_map<cor::UUID, std::pair<std::uint32_t, std::uint32_t>> counts;
         for (const auto& group : groups) {
             counts.insert({group.uniqueID(), groupSelectedAndReachableCount(group)});
         }
@@ -207,13 +207,13 @@ private:
     int mPositionY;
 
     /// stores the selected lights for displaying highlights properly
-    std::vector<QString> mSelectedLights;
+    std::vector<cor::LightID> mSelectedLights;
 
     /// if true, in single light mode, otherwise, in standard, multi-selection mode
     bool mSingleLightMode;
 
     /// list of lights to not display.
-    std::vector<QString> mIgnoredLights;
+    std::vector<cor::LightID> mIgnoredLights;
 
     /// name of menu, used for debugging.
     QString mName;

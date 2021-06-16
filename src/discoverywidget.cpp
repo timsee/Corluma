@@ -104,7 +104,7 @@ void DiscoveryWidget::updateLightNames(EProtocolType type) {
     }
 }
 
-void DiscoveryWidget::handleDeletedLights(const std::vector<QString>& keys) {
+void DiscoveryWidget::handleDeletedLights(const std::vector<cor::LightID>& keys) {
     mHueWidget->handleDeletedLights(keys);
 }
 
@@ -235,7 +235,7 @@ void DiscoveryWidget::changeRowHeight(int rowHeight) {
     mHueWidget->changeRowHeight(rowHeight);
 }
 
-void DiscoveryWidget::deleteLight(QString light) {
+void DiscoveryWidget::deleteLight(cor::LightID light) {
     mArduCorWidget->deleteLight(light);
     mHueWidget->deleteLight(light);
     mNanoLeafWidget->deleteLight(light);

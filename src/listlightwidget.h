@@ -94,7 +94,7 @@ signals:
     /*!
      * \brief clicked emited whenever a mouse press is released anywhere on the widget
      */
-    void clicked(QString);
+    void clicked(cor::LightID);
 
     /// emits the key and the state of the on/off switch when its clicked
     void switchToggled(QString, bool);

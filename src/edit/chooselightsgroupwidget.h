@@ -30,13 +30,19 @@ public:
           mSelectedLightsMenu{new StatelessLightsListMenu(this, comm, false)},
           mIsRoom{false} {
         mBottomButtons->enableForward(false);
-        connect(mRoomLights, SIGNAL(clickedLight(QString)), this, SLOT(lightClicked(QString)));
-
-        connect(mLightsMenu, SIGNAL(clickedLight(QString)), this, SLOT(lightClicked(QString)));
-        connect(mLightsMenu,
-                SIGNAL(clickedGroupSelectAll(std::uint64_t, bool)),
+        connect(mRoomLights,
+                SIGNAL(clickedLight(cor::LightID)),
                 this,
-                SLOT(selectAllToggled(std::uint64_t, bool)));
+                SLOT(lightClicked(cor::LightID)));
+
+        connect(mLightsMenu,
+                SIGNAL(clickedLight(cor::LightID)),
+                this,
+                SLOT(lightClicked(cor::LightID)));
+        connect(mLightsMenu,
+                SIGNAL(clickedGroupSelectAll(cor::UUID, bool)),
+                this,
+                SLOT(selectAllToggled(cor::UUID, bool)));
     }
 
     /// programmatically changes the height of rows in scrolling menus
@@ -47,7 +53,7 @@ public:
 
     /// prefill the lights widget with lights already selected, so that the user can edit that
     /// preexisting selection
-    void prefill(const std::vector<QString>& keys) {
+    void prefill(const std::vector<cor::LightID>& keys) {
         clear();
         mOriginalKeys = keys;
         for (const auto& key : keys) {
@@ -73,7 +79,7 @@ public:
 
     /// setup the the page as choosing for rooms, showing only lights that exist either in the
     /// current room or no room.
-    void setupAsRoom(const std::vector<QString>& roomLights) {
+    void setupAsRoom(const std::vector<cor::LightID>& roomLights) {
         mIsRoom = true;
 
         resize();
@@ -111,7 +117,7 @@ public:
     }
 
     /// getter for all selected lights.
-    const std::vector<QString>& lightIDs() { return mSelectedLightsMenu->lightIDs(); }
+    const std::vector<cor::LightID>& lightIDs() { return mSelectedLightsMenu->lightIDs(); }
 
 protected:
     /*!
@@ -122,7 +128,7 @@ protected:
 private slots:
 
     /// handles when a light is clicked. it will either add or remove lights from the selected list.
-    void lightClicked(QString key) {
+    void lightClicked(cor::LightID key) {
         auto lights = mSelectedLightsMenu->lightIDs();
         auto result = std::find(lights.begin(), lights.end(), key);
         if (result != lights.end()) {
@@ -136,9 +142,9 @@ private slots:
 
     /// handles when select all is toggled for a group. it will either add or remove all lights from
     /// teh selected list.
-    void selectAllToggled(std::uint64_t ID, bool shouldSelect) {
+    void selectAllToggled(const cor::UUID& ID, bool shouldSelect) {
         // convert the group ID to a group
-        auto groupResult = mAppData->groups()->groupDict().item(QString::number(ID).toStdString());
+        auto groupResult = mAppData->groups()->groupDict().item(ID.toStdString());
         bool groupFound = groupResult.second;
         cor::Group group = groupResult.first;
         if (groupFound) {
@@ -157,7 +163,7 @@ private slots:
             updateLights();
             conditionsMet();
         } else {
-            qDebug() << " group not found " << ID;
+            qDebug() << " group not found " << ID.toString();
         }
     }
 
@@ -228,7 +234,7 @@ private:
     StatelessLightsListMenu* mSelectedLightsMenu;
 
     /// original keys when the page was initialized, used to check for changes.
-    std::vector<QString> mOriginalKeys;
+    std::vector<cor::LightID> mOriginalKeys;
 
     /// true if room, false if group
     bool mIsRoom;

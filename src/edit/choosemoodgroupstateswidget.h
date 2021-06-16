@@ -46,14 +46,14 @@ public:
         mStateWidget->enable(true);
 
         connect(mGroupsWidget,
-                SIGNAL(clickedState(QString, cor::LightState)),
+                SIGNAL(clickedState(cor::UUID, cor::LightState)),
                 this,
-                SLOT(groupClicked(QString, cor::LightState)));
+                SLOT(groupClicked(cor::UUID, cor::LightState)));
 
         connect(mGroupStates,
-                SIGNAL(clickedState(QString, cor::LightState)),
+                SIGNAL(clickedState(cor::UUID, cor::LightState)),
                 this,
-                SLOT(stateClicked(QString, cor::LightState)));
+                SLOT(stateClicked(cor::UUID, cor::LightState)));
 
         connect(mStateWidget,
                 SIGNAL(stateChanged(cor::LightState)),
@@ -141,7 +141,7 @@ private slots:
             mTopStateWidget->updateState(groupState);
             mGroupStates->addState(groupState);
             mGroupsWidget->highlightStates({});
-            mGroupStates->highlightStates({groupState.stringUniqueID()});
+            mGroupStates->highlightStates({groupState.uniqueID().toString()});
             addGroupsToLeftMenu();
             handleState(EChooseMoodGroupsState::removeGroup);
         } else if (mState == EChooseMoodGroupsState::removeGroup) {
@@ -175,30 +175,30 @@ private slots:
 
     // a mood light is clicked, this either deselects the light, or selects the light for
     // editing/removing
-    void stateClicked(QString uniqueID, cor::LightState state) {
+    void stateClicked(const cor::UUID& uniqueID, cor::LightState state) {
         bool shouldRemove = (uniqueID == mTopStateWidget->uniqueID());
         if (shouldRemove) {
             hideState();
             mGroupStates->highlightStates({});
         } else {
             handleState(EChooseMoodGroupsState::removeGroup);
-            auto group = mGroups->groupFromID(uniqueID.toULong());
-            cor::GroupState groupState(uniqueID.toULong(), state);
+            auto group = mGroups->groupFromID(uniqueID);
+            cor::GroupState groupState(uniqueID, state);
             groupState.name(group.name());
             showState(groupState);
             mGroupsWidget->highlightStates({});
         }
     }
 
-    void groupClicked(QString uniqueID, cor::LightState state) {
+    void groupClicked(const cor::UUID& uniqueID, cor::LightState state) {
         bool shouldRemove = (uniqueID == mTopStateWidget->uniqueID());
         if (shouldRemove) {
             hideState();
             mGroupsWidget->highlightStates({});
         } else {
             handleState(EChooseMoodGroupsState::addGroup);
-            auto group = mGroups->groupFromID(uniqueID.toULong());
-            cor::GroupState groupState(uniqueID.toULong(), state);
+            auto group = mGroups->groupFromID(uniqueID);
+            cor::GroupState groupState(uniqueID, state);
             groupState.name(group.name());
             showState(groupState);
             mGroupStates->highlightStates({});
@@ -207,7 +207,7 @@ private slots:
 
 
     /// the standard lights menu deselected a light
-    void unselectLight(QString key) {
+    void unselectLight(const cor::UUID& key) {
         bool shouldRemove = (key == mTopStateWidget->uniqueID());
         handleState(EChooseMoodGroupsState::disabled);
         if (shouldRemove) {
@@ -217,7 +217,7 @@ private slots:
 
     /// state is updated from the state widget
     void stateUpdated(cor::LightState state) {
-        cor::GroupState groupState(mTopStateWidget->uniqueID().toULong(), state);
+        cor::GroupState groupState(mTopStateWidget->uniqueID(), state);
         groupState.name(mTopStateWidget->name());
         mTopStateWidget->updateState(groupState);
     }

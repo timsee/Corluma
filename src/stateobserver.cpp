@@ -176,8 +176,8 @@ void StateObserver::protocolSettingsChanged(EProtocolType type, bool enabled) {
     }
 }
 
-void StateObserver::moodChanged(QString moodID) {
-    const auto& result = mAppData->moods()->moods().item(moodID.toStdString());
+void StateObserver::moodChanged(cor::Mood mood) {
+    const auto& result = mAppData->moods()->moods().item(mood.uniqueID().toStdString());
     if (result.second) {
         mData->clearLights();
         const auto& moodDict = mComm->makeMood(result.first);
@@ -307,7 +307,7 @@ void StateObserver::updateTime() {
     mTimeObserver->updateTime();
 }
 
-void StateObserver::lightNameChange(const QString& uniqueID, const QString&) {
+void StateObserver::lightNameChange(const cor::LightID& uniqueID, const QString&) {
     // qDebug() << " TODO: light name changed in StateObserver: " << key << " to " << name;
     // get light by uniqueID
     auto light = mComm->lightByID(uniqueID);
@@ -316,8 +316,8 @@ void StateObserver::lightNameChange(const QString& uniqueID, const QString&) {
     }
 }
 
-void StateObserver::lightsAdded(std::vector<QString> keys) {
-    qDebug() << "INFO: lights added " << keys;
+void StateObserver::lightsAdded(std::vector<cor::LightID> keys) {
+    qDebug() << "INFO: lights added " << cor::lightIDVectorToStringVector(keys);
     mAppData->addLightsToGroups(keys);
     mMainWindow->leftHandMenu()->updateLights();
     if (!mMainWindow->anyDiscovered()) {
@@ -325,8 +325,8 @@ void StateObserver::lightsAdded(std::vector<QString> keys) {
     }
 }
 
-void StateObserver::lightsDeleted(std::vector<QString> keys) {
-    qDebug() << "INFO: lights deleted " << keys;
+void StateObserver::lightsDeleted(std::vector<cor::LightID> keys) {
+    qDebug() << "INFO: lights deleted " << cor::lightIDVectorToStringVector(keys);
 
     mData->removeByIDs(keys);
     mAppData->lightsDeleted(keys);
@@ -336,7 +336,7 @@ void StateObserver::lightsDeleted(std::vector<QString> keys) {
     lightCountChanged();
 }
 
-void StateObserver::lightCountChangedFromLightsPage(std::vector<QString>) {
+void StateObserver::lightCountChangedFromLightsPage(std::vector<cor::LightID>) {
     mMainWindow->leftHandMenu()->updateLights();
     lightCountChanged();
 }

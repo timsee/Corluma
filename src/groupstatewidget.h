@@ -41,7 +41,7 @@ public:
     /// getter for name of light
     QString name() const noexcept { return mName->text(); }
 
-    QString uniqueID() const noexcept { return mGroupState.stringUniqueID(); }
+    cor::UUID uniqueID() const noexcept { return mGroupState.uniqueID(); }
 
     const cor::GroupState& groupState() { return mGroupState; }
 
@@ -58,7 +58,7 @@ signals:
     /*!
      * \brief clicked emited whenever a mouse press is released anywhere on the widget
      */
-    void clicked(QString);
+    void clicked(cor::UUID);
 
 protected:
     /*!

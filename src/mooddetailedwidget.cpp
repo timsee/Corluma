@@ -79,14 +79,14 @@ void MoodDetailedWidget::paintEvent(QPaintEvent*) {
 void MoodDetailedWidget::floatingLayoutButtonPressed(const QString& key) {
     if (key == "Group_Edit") {
         emit pressedClose();
-        emit editMood(mMoodWidget->mood().uniqueID());
+        emit editMood(mMoodWidget->mood());
     }
     mFloatingMenu->highlightButton("");
 }
 
 void MoodDetailedWidget::changedSwitchState(bool isOn) {
     if (isOn) {
-        emit enableMood(mMoodWidget->mood().uniqueID());
+        emit enableMood(mMoodWidget->mood());
         updateSyncStatus(ESyncState::notSynced);
     }
 }

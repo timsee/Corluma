@@ -94,7 +94,7 @@ public slots:
     void colorSchemeTypeChanged(EColorSchemeType scheme);
 
     /// mood changed from moodpage
-    void moodChanged(QString mood);
+    void moodChanged(cor::Mood mood);
 
     /// protocolsettings page changed from GlobalSettingsWidget
     void protocolSettingsChanged(EProtocolType, bool);
@@ -111,16 +111,16 @@ public slots:
      * \param key the key for the light
      * \param name the new name for the light.
      */
-    void lightNameChange(const QString& key, const QString& name);
+    void lightNameChange(const cor::LightID& key, const QString& name);
 
     /// handles when a light is added, updates the UI
-    void lightsAdded(std::vector<QString>);
+    void lightsAdded(std::vector<cor::LightID>);
 
     /// handles when a light is deleted, updates the UI
-    void lightsDeleted(std::vector<QString>);
+    void lightsDeleted(std::vector<cor::LightID>);
 
     /// light count changed from lights page.
-    void lightCountChangedFromLightsPage(std::vector<QString>);
+    void lightCountChangedFromLightsPage(std::vector<cor::LightID>);
 
 private:
     /// computes the state based off of the various states of the widget

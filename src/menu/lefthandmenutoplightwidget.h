@@ -67,7 +67,7 @@ public:
     cor::GroupButton* parentWidget() { return mParentWidget; }
 
     /// sets the parent group to show
-    void showParentWidget(const QString& parentGroupName, std::uint64_t parentID) {
+    void showParentWidget(const QString& parentGroupName, const cor::UUID& parentID) {
         mIsParent = true;
         mSubgroupButton->setVisible(false);
         mParentID = parentID;
@@ -78,13 +78,13 @@ public:
     }
 
     /// unique ID for the parent group
-    std::uint64_t parentID() { return mParentID; }
+    cor::UUID parentID() { return mParentID; }
 
     /// getter for the SubgroupWidget, shown when the light menu is open
     cor::GroupButton* subgroupWidget() { return mSubgroupButton; }
 
     /// sets the subgroup to show
-    void showSubgroup(const QString& subgroupName, std::uint64_t subgroupID) {
+    void showSubgroup(const QString& subgroupName, cor::UUID subgroupID) {
         mIsParent = false;
         mSubgroupID = subgroupID;
         mSubgroupButton->changeText(subgroupName);
@@ -93,13 +93,13 @@ public:
     }
 
     /// unique ID for the subgroup
-    std::uint64_t subgroupID() {
+    cor::UUID subgroupID() {
         // if the subgroup ID is 0u, its "all", so its essentially the parent ID
-        if (mSubgroupID == 0u) {
-            return mParentID;
-        } else {
-            return mSubgroupID;
-        }
+        //        if (mSubgroupID == mParentID) {
+        //            return mParentID;
+        //        } else {
+        return mSubgroupID;
+        //      }
     }
 
 signals:
@@ -111,7 +111,7 @@ signals:
 
     /// signals that the top widget's subgroup wants to either select or deselect all lights from
     /// its subgroup
-    void toggleSelectAll(std::uint64_t, bool);
+    void toggleSelectAll(cor::UUID, bool);
 
 protected:
     /*!
@@ -156,10 +156,10 @@ private:
     cor::GroupButton* mSubgroupButton;
 
     /// unique ID for the parent group
-    std::uint64_t mParentID;
+    cor::UUID mParentID;
 
     /// unique ID for the subgroup
-    std::uint64_t mSubgroupID;
+    cor::UUID mSubgroupID;
 
     /// true if parent, false otherwise.
     bool mIsParent;

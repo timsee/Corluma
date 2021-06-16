@@ -114,13 +114,21 @@ public:
     /// mac address for the bridge
     const QString& macaddress() const noexcept { return mMacaddress; }
 
+    std::unordered_map<QString, std::uint32_t> groupNameToIndexMap() {
+        return mGroupNameToIndexMap;
+    }
+
+    void groupNameToIndexMap(const std::unordered_map<QString, std::uint32_t>& map) {
+        mGroupNameToIndexMap = map;
+    }
+
     void lights(const cor::Dictionary<HueMetadata>& lightsDict) { mLights = lightsDict; }
 
     /// dictionary of light metadata
     const cor::Dictionary<HueMetadata>& lights() const noexcept { return mLights; }
 
     /// returns a vector of all the uniqueIDs of each light associated with the bridge.
-    std::vector<QString> lightIDs() const noexcept { return hueVectorToIDs(mLights.items()); }
+    std::vector<cor::LightID> lightIDs() const noexcept { return hueVectorToIDs(mLights.items()); }
 
     /// takes a list of lights as input, and returns a list of all lights from the original list
     /// contained in this bridge.
@@ -178,7 +186,7 @@ public:
         std::vector<std::pair<std::string, cor::Group>> entrySet = mGroups.keysAndItems();
         for (const auto& entry : entrySet) {
             if (entry.second.type() == cor::EGroupType::group) {
-                retVector.emplace_back(entry.second, QString(entry.first.c_str()).toInt());
+                retVector.emplace_back(entry.second, groupID(entry.second));
             }
         }
         return retVector;
@@ -189,7 +197,7 @@ public:
         BridgeGroupVector retVector;
         std::vector<std::pair<std::string, cor::Group>> entrySet = mGroups.keysAndItems();
         for (const auto& entry : entrySet) {
-            retVector.emplace_back(entry.second, QString(entry.first.c_str()).toInt());
+            retVector.emplace_back(entry.second, groupID(entry.second));
         }
         return retVector;
     }
@@ -200,7 +208,7 @@ public:
         std::vector<std::pair<std::string, cor::Group>> entrySet = mGroups.keysAndItems();
         for (const auto& entry : entrySet) {
             if (entry.second.type() == cor::EGroupType::room) {
-                retVector.emplace_back(entry.second, QString(entry.first.c_str()).toInt());
+                retVector.emplace_back(entry.second, groupID(entry.second));
             }
         }
         return retVector;
@@ -209,18 +217,19 @@ public:
     /// setter for groups and their IDs
     void groupsWithIDs(const BridgeGroupVector& groups) {
         mGroups = cor::Dictionary<cor::Group>();
+        mGroupNameToIndexMap = std::unordered_map<QString, std::uint32_t>();
         for (const auto& group : groups) {
             mGroups.insert(QString::number(group.second).toStdString(), group.first);
+            mGroupNameToIndexMap.insert(std::make_pair(group.first.name(), group.second));
         }
     }
 
     /// getter for group ID, regardless of if its a room or group
     std::uint32_t groupID(const cor::Group& group) const noexcept {
         if (group.isValid()) {
-            for (const auto& storedGroup : mGroups.items()) {
-                if (group.uniqueID() == storedGroup.uniqueID()) {
-                    return QString(mGroups.key(storedGroup).first.c_str()).toInt();
-                }
+            auto result = mGroupNameToIndexMap.find(group.name());
+            if (result != mGroupNameToIndexMap.end()) {
+                return result->second;
             }
         }
         return std::numeric_limits<std::uint32_t>::max();
@@ -296,6 +305,9 @@ private:
 
     /// dictionary of groups
     cor::Dictionary<cor::Group> mGroups;
+
+    /// group name->index map
+    std::unordered_map<QString, std::uint32_t> mGroupNameToIndexMap;
 
     /// current state of the bridge during discovery
     EBridgeDiscoveryState mState;

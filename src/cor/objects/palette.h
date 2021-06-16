@@ -7,6 +7,7 @@
 #include <sstream>
 #include <vector>
 
+#include "cor/objects/uuid.h"
 #include "cor/protocols.h"
 #include "utils/color.h"
 #include "utils/cormath.h"
@@ -16,7 +17,6 @@ namespace cor {
 
 const QString kUnknownPaletteID = "UNKNOWN_UUID";
 const QString kCustomPaletteID = "CUSTOM_UUID";
-const QString kInvalidPaletteID = "INVALID_UUID";
 
 const QString kInvalidPaletteName = "INVALID_PALETTE";
 const QString kCustomPaletteName = "*Custom*";
@@ -64,7 +64,7 @@ public:
     }
 
     /// app data constructor
-    Palette(const QString& uniqueID, const QString& name, const std::vector<QColor>& colors)
+    Palette(const cor::UUID& uniqueID, const QString& name, const std::vector<QColor>& colors)
         : mUniqueID{uniqueID},
           mName{name},
           mColors{colors} {
@@ -74,12 +74,14 @@ public:
 
     /// default constructor
     Palette()
-        : Palette(kInvalidPaletteID, kInvalidPaletteName, std::vector<QColor>(1, QColor(0, 0, 0))) {
+        : Palette(cor::UUID::invalidID(),
+                  kInvalidPaletteName,
+                  std::vector<QColor>(1, QColor(0, 0, 0))) {
         checkIfValid();
     }
 
     /// getter for uniqueID
-    const QString& uniqueID() const noexcept { return mUniqueID; }
+    const cor::UUID& uniqueID() const noexcept { return mUniqueID; }
 
     /// getter for name of the palette
     const QString& name() const noexcept { return mName; }
@@ -115,7 +117,7 @@ public:
 
     /// true if the palette has all the required values
     bool isValid() const noexcept {
-        return !mColors.empty() || !mUniqueID.isEmpty() || !mName.isEmpty();
+        return !mColors.empty() || !mUniqueID.isValid() || !mName.isEmpty();
     }
 
     bool operator==(const Palette& rhs) const {
@@ -161,7 +163,7 @@ public:
         QJsonArray array;
         int index = 0;
         object["name"] = mName;
-        object["uniqueID"] = mUniqueID;
+        object["uniqueID"] = mUniqueID.toString();
         for (const auto& color : mColors) {
             QJsonObject colorObject;
             colorObject["index"] = index;
@@ -182,16 +184,19 @@ public:
         return object;
     }
 
+    static Palette CustomPalette(const std::vector<QColor>& colors) {
+        return cor::Palette(kCustomPaletteID, kCustomPaletteName, colors);
+    }
+
 private:
     /// throws exception if palette is not valid.
     void checkIfValid() {
         GUARD_EXCEPTION(!mColors.empty(), "palette does not have any colors");
         GUARD_EXCEPTION(!mName.isEmpty(), "name for palette is empty");
-        GUARD_EXCEPTION(!mUniqueID.isEmpty(), "uniqueID is empty");
     }
 
     /// UUID to track palette regardless of color and name changes.
-    QString mUniqueID;
+    cor::UUID mUniqueID;
 
     /// name for the palette
     QString mName;
@@ -200,9 +205,6 @@ private:
     std::vector<QColor> mColors;
 };
 
-static Palette CustomPalette(const std::vector<QColor>& colors) {
-    return cor::Palette(kCustomPaletteID, kCustomPaletteName, colors);
-}
 
 inline std::ostream& operator<<(std::ostream& out, const Palette& palette) {
     QString paletteString = palette;
@@ -217,7 +219,7 @@ namespace std {
 template <>
 struct hash<cor::Palette> {
     size_t operator()(const cor::Palette& k) const {
-        return std::hash<std::string>{}(k.name().toStdString());
+        return std::hash<std::string>{}(k.uniqueID().toStdString());
     }
 };
 } // namespace std

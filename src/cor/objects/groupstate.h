@@ -17,17 +17,14 @@ namespace cor {
  */
 class GroupState {
 public:
-    GroupState() : mUniqueID{0u}, mState{}, mName{"NOT_VALID"} {}
+    GroupState() : mUniqueID{cor::UUID::invalidID()}, mState{}, mName{"NOT_VALID"} {}
 
-    GroupState(std::uint64_t uniqueID, cor::LightState state)
+    GroupState(const cor::UUID& uniqueID, cor::LightState state)
         : mUniqueID{uniqueID},
           mState{state} {}
 
-    /// string representation of the unique ID
-    QString stringUniqueID() const { return QString::number(mUniqueID); }
-
     /// getter for unique ID
-    const std::uint64_t& uniqueID() const { return mUniqueID; }
+    const cor::UUID& uniqueID() const { return mUniqueID; }
 
     /// getter for name
     const QString& name() const noexcept { return mName; }
@@ -54,7 +51,7 @@ public:
 
 private:
     /// unique ID for the group this represents
-    std::uint64_t mUniqueID;
+    cor::UUID mUniqueID;
 
     /// state of the mood
     cor::LightState mState;

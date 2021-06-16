@@ -392,6 +392,8 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     controllerwidget.h \
     cor/lightlist.h \
     cor/objects/groupstate.h \
+    cor/objects/lightid.h \
+    cor/objects/uuid.h \
     cor/stylesheets.h \
     cor/widgets/expandingtextscrollarea.h \
     cor/widgets/loadingscreen.h \

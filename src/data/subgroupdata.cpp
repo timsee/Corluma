@@ -7,8 +7,8 @@ namespace {
 /// subgroups with an additional entry.
 void insertIntoSubgroupMaps(SubgroupMap& map,
                             SubgroupNameMap& nameMap,
-                            std::uint64_t parentGroup,
-                            std::uint64_t subgroup,
+                            const cor::UUID& parentGroup,
+                            const cor::UUID& subgroup,
                             QString name) {
     // check if value exists
     auto result = map.find(parentGroup);
@@ -64,8 +64,8 @@ void checkAgainstAllGroupsAndRooms(SubgroupMap& map,
 
 } // namespace
 
-bool SubgroupData::checkIfAisSubsetOfB(const std::vector<QString>& a,
-                                       const std::vector<QString>& b) {
+bool SubgroupData::checkIfAisSubsetOfB(const std::vector<cor::LightID>& a,
+                                       const std::vector<cor::LightID>& b) {
     if (b.empty() || a.empty()) {
         return false;
     }
@@ -77,10 +77,10 @@ bool SubgroupData::checkIfAisSubsetOfB(const std::vector<QString>& a,
     return true;
 }
 
-std::vector<std::uint64_t> SubgroupData::findSubgroupsForNewGroup(
+std::vector<cor::UUID> SubgroupData::findSubgroupsForNewGroup(
     const cor::Group& newGroup,
     const std::vector<cor::Group>& allGroups) const {
-    std::vector<std::uint64_t> subgroups;
+    std::vector<cor::UUID> subgroups;
     for (const auto& group : allGroups) {
         if (SubgroupData::checkIfAisSubsetOfB(group.lights(), newGroup.lights())) {
             // if the lights are identically sized, don't count as a subgroup in this case

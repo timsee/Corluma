@@ -77,12 +77,11 @@ void MenuParentGroupContainer::hideParentGroups() {
 }
 
 void MenuParentGroupContainer::highlightParentGroups(
-    const std::unordered_map<std::uint64_t, std::pair<std::uint32_t, std::uint32_t>>&
-        parentCounts) {
+    const std::unordered_map<cor::UUID, std::pair<std::uint32_t, std::uint32_t>>& parentCounts) {
     for (auto parentWidget : mParentGroupWidgets) {
         auto ID = mAppData->groups()->groupNameToID(parentWidget->key());
         if (parentWidget->key() == kMiscKey) {
-            ID = 0u;
+            ID = cor::kMiscGroupKey;
         }
         auto countResults = parentCounts.find(ID);
         if (countResults != parentCounts.end()) {

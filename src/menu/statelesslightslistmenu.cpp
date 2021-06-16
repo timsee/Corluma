@@ -13,7 +13,10 @@ StatelessLightsListMenu::StatelessLightsListMenu(QWidget* parent,
       mRowHeight{10} {
     mLightContainer->displayState(false);
     mLightContainer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    connect(mLightContainer, SIGNAL(clickedLight(QString)), this, SLOT(lightClicked(QString)));
+    connect(mLightContainer,
+            SIGNAL(clickedLight(cor::LightID)),
+            this,
+            SLOT(lightClicked(cor::LightID)));
 
     mScrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     QScroller::grabGesture(mScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
@@ -48,7 +51,7 @@ void StatelessLightsListMenu::updateLights() {
     mLightContainer->updateLights(mComm->lightsByIDs(mLights));
 }
 
-void StatelessLightsListMenu::addLight(const QString& ID) {
+void StatelessLightsListMenu::addLight(const cor::LightID& ID) {
     // check if light exists
     auto result = std::find(mLights.begin(), mLights.end(), ID);
     if (result == mLights.end()) {
@@ -57,7 +60,7 @@ void StatelessLightsListMenu::addLight(const QString& ID) {
     mLightContainer->addLights(mComm->lightsByIDs(mLights));
 }
 
-void StatelessLightsListMenu::removeLight(const QString& ID) {
+void StatelessLightsListMenu::removeLight(const cor::LightID& ID) {
     auto result = std::find(mLights.begin(), mLights.end(), ID);
     if (result != mLights.end()) {
         mLights.erase(result);
@@ -66,7 +69,7 @@ void StatelessLightsListMenu::removeLight(const QString& ID) {
     mLightContainer->addLights(mComm->lightsByIDs(mLights));
 }
 
-void StatelessLightsListMenu::addLights(const std::vector<QString>& IDs) {
+void StatelessLightsListMenu::addLights(const std::vector<cor::LightID>& IDs) {
     mLights = IDs;
     mLightContainer->addLights(mComm->lightsByIDs(mLights));
 }

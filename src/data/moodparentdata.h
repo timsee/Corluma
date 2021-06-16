@@ -12,7 +12,7 @@
 #include "cor/objects/group.h"
 #include "cor/objects/mood.h"
 
-using RoomMoodMap = std::unordered_map<std::uint64_t, std::vector<QString>>;
+using RoomMoodMap = std::unordered_map<cor::UUID, std::vector<cor::UUID>>;
 
 /**
  * @brief The MoodParentData class sorts all moods into a hash table where the key is the room that
@@ -29,7 +29,7 @@ public:
     bool empty() const noexcept { return mParents.empty(); }
 
     /// search for the parent of a given mood
-    std::uint64_t parentFromMoodID(const QString& uniqueID) const {
+    cor::UUID parentFromMoodID(const cor::UUID& uniqueID) const {
         for (const auto& parentMoods : mParents) {
             // find the unique ID in a parent
             auto moods = parentMoods.second;
@@ -38,7 +38,7 @@ public:
                 return parentMoods.first;
             }
         }
-        return 0u;
+        return cor::UUID::invalidID();
     }
 
     /// takes a vector of all rooms and a dictionary of all moods and converts them into an
@@ -69,7 +69,7 @@ public:
             }
             // if room is not found in any rooms, add to the miscellaneous group
             if (!foundRoom) {
-                insertMoodIntoMap(roomMoodMap, 0u, mood.uniqueID());
+                insertMoodIntoMap(roomMoodMap, cor::kMiscGroupKey, mood.uniqueID());
             }
         }
         mParents = roomMoodMap;
@@ -80,9 +80,7 @@ private:
     /// takes a map, a roomID and a moodID. It first checks if the roomID exists, and if it does, it
     /// appends the moodID to the roomID's associated vector. If it does not exist, the roomID is
     /// added with a vector that contains the moodID
-    void insertMoodIntoMap(std::unordered_map<std::uint64_t, std::vector<QString>>& map,
-                           std::uint64_t roomID,
-                           const QString& moodID) {
+    void insertMoodIntoMap(RoomMoodMap& map, const cor::UUID& roomID, const cor::UUID& moodID) {
         // check if the room ID exists
         auto roomResult = map.find(roomID);
         // if room already exists in the map, add to the back of the vector of moodIDs

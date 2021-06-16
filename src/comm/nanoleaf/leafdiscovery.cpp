@@ -420,12 +420,12 @@ nano::LeafMetadata LeafDiscovery::findLightByIP(const QString& IP) {
 }
 
 std::pair<nano::LeafMetadata, bool> LeafDiscovery::findDiscoveredLightBySerial(
-    const QString& serialNumber) {
+    const cor::LightID& serialNumber) {
     return mFoundLights.item(serialNumber.toStdString());
 }
 
 std::pair<nano::LeafMetadata, bool> LeafDiscovery::findLightBySerialOrIP(
-    const QString& serialNumber,
+    const cor::LightID& serialNumber,
     const QString& IP) {
     // first look in found lights.
     auto foundResult = mFoundLights.item(serialNumber.toStdString());
@@ -482,7 +482,7 @@ void LeafDiscovery::updateStoredEffects(const nano::LeafMetadata& light,
     }
 }
 
-std::pair<QString, bool> LeafDiscovery::nameFromSerial(const QString& serialNumber) {
+std::pair<QString, bool> LeafDiscovery::nameFromSerial(const cor::LightID& serialNumber) {
     auto result = mFoundLights.item(serialNumber.toStdString());
     if (result.second) {
         return std::make_pair(result.first.name(), true);

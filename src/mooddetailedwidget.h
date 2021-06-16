@@ -60,10 +60,10 @@ signals:
     void pressedClose();
 
     /// signals when the mood is going to be selected
-    void enableMood(QString);
+    void enableMood(cor::Mood);
 
     /// edit mood clicked
-    void editMood(QString);
+    void editMood(cor::Mood);
 
 protected:
     /*!

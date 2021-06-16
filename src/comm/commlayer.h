@@ -123,10 +123,10 @@ public:
     }
 
     /// looks up a light by its unique ID and returns its metadata and current state
-    cor::Light lightByID(const QString& ID) const;
+    cor::Light lightByID(const cor::LightID& ID) const;
 
     /// converts a vector of unique IDs to a vector cor::Lights
-    std::vector<cor::Light> lightsByIDs(const std::vector<QString> IDs) const {
+    std::vector<cor::Light> lightsByIDs(const std::vector<cor::LightID>& IDs) const {
         std::vector<cor::Light> lights;
         for (const auto& ID : IDs) {
             lights.push_back(lightByID(ID));
@@ -169,13 +169,13 @@ public:
     CommHue* hue() { return mHue; }
 
     /// creates a set of all discovered light IDs
-    std::unordered_set<QString> allDiscoveredLightIDs();
+    std::unordered_set<cor::LightID> allDiscoveredLightIDs();
 
     /// creates a set of all undiscovered light IDs
-    std::unordered_set<QString> allUndiscoveredLightIDs();
+    std::unordered_set<cor::LightID> allUndiscoveredLightIDs();
 
     /// creates a set of both undiscovered and discovered light IDs
-    std::unordered_set<QString> allLightIDs();
+    std::unordered_set<cor::LightID> allLightIDs();
 
     /*!
      * \brief hueLightsToDevices helper to convert a list of hue lights into a list of
@@ -204,10 +204,10 @@ public:
     cor::Mood addMetadataToMood(const cor::Mood& mood);
 
     /// seconds until a specific light times out
-    std::uint32_t secondsUntilTimeout(const QString& lights);
+    std::uint32_t secondsUntilTimeout(const cor::LightID& lights);
 
     /// seconds until a group of lights timeout
-    std::vector<std::uint32_t> secondsUntilTimeout(const std::vector<QString>& lights);
+    std::vector<std::uint32_t> secondsUntilTimeout(const std::vector<cor::LightID>& lights);
 
     /// getter for UPnP object
     UPnPDiscovery* UPnP() { return mUPnP; }
@@ -225,13 +225,13 @@ signals:
     void updateReceived(ECommType);
 
     /// emits when one or more lights are added from the commlayer
-    void lightsAdded(std::vector<QString>);
+    void lightsAdded(std::vector<cor::LightID>);
 
     /// emits when one or more lights delete from the commlayer
-    void lightsDeleted(std::vector<QString>);
+    void lightsDeleted(std::vector<cor::LightID>);
 
     /// emits when a light changes its name
-    void lightNameChanged(QString, QString);
+    void lightNameChanged(cor::LightID, QString);
 
 private slots:
 
@@ -251,13 +251,13 @@ private slots:
     void hueStateChanged() { emit packetReceived(EProtocolType::hue); }
 
     /// handles when a light name changes
-    void handleLightNameChanged(QString, QString);
+    void handleLightNameChanged(cor::LightID, QString);
 
     /// handles when new light is found
-    void lightsFound(ECommType, std::vector<QString>);
+    void lightsFound(ECommType, std::vector<cor::LightID>);
 
     /// handles when existing light is deleted
-    void deletedLights(ECommType, std::vector<QString>);
+    void deletedLights(ECommType, std::vector<cor::LightID>);
 
 private:
     /*!

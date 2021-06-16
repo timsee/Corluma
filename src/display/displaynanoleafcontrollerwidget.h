@@ -89,9 +89,9 @@ public:
 
         connect(mEffectsPage, SIGNAL(closePressed()), this, SLOT(closeEffectsPressed()));
         connect(mEffectsPage,
-                SIGNAL(selectEffect(QString, QString)),
+                SIGNAL(selectEffect(cor::LightID, QString)),
                 this,
-                SLOT(effectSelected(QString, QString)));
+                SLOT(effectSelected(cor::LightID, QString)));
         mEffectsPage->setVisible(false);
 
         connect(mGreyout, SIGNAL(clicked()), this, SLOT(greyOutClicked()));
@@ -304,16 +304,16 @@ public:
 signals:
 
     /// emit when a light is deleted
-    void deleteNanoleaf(QString, QString);
+    void deleteNanoleaf(cor::LightID, QString);
 
     /// emits when a light should be selected
-    void selectLight(QString);
+    void selectLight(cor::LightID);
 
     /// emits when a light should be deselected
-    void deselectLight(QString);
+    void deselectLight(cor::LightID);
 
     /// emits when an effect is selected. Signals the light's serial number and the desired effect.
-    void selectEffect(QString, QString);
+    void selectEffect(cor::LightID, QString);
 
 protected:
     /*!
@@ -365,7 +365,7 @@ private slots:
         mEffectsPage->raise();
     }
 
-    void effectSelected(QString light, QString effect) { emit selectEffect(light, effect); }
+    void effectSelected(cor::LightID light, QString effect) { emit selectEffect(light, effect); }
 
     /// handles when the speed button is pressed
     void handleSpeedPressed() {

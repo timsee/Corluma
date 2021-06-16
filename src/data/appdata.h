@@ -82,7 +82,7 @@ public:
      * \param externalGroups groups that are stored in an external location
      */
     void updateExternallyStoredGroups(const std::vector<cor::Group>& externalGroups,
-                                      const std::vector<QString>& ignorableLights);
+                                      const std::vector<cor::LightID>& ignorableLights);
 
 
     /// checks if a file can be read by GroupDate::loadExternalData(const QString&)
@@ -93,7 +93,7 @@ public:
      * \param file path to JSON file
      * \return true if loaded successfully, false otherwise.
      */
-    bool loadExternalData(const QString& file, const std::unordered_set<QString>& allLightIDs);
+    bool loadExternalData(const QString& file, const std::unordered_set<cor::LightID>& allLightIDs);
 
     /*!
      * \brief mergeExternalData merges JSON data into existing app data. When the same groups exists
@@ -116,7 +116,7 @@ public:
     bool removeAppData();
 
     /// adds a light to group metadata
-    void addLightsToGroups(const std::vector<QString>& uniqueIDs);
+    void addLightsToGroups(const std::vector<cor::LightID>& uniqueIDs);
 
     /*!
      * \brief lightDeleted removes a light from all moods and collections based off of its unique
@@ -124,7 +124,7 @@ public:
      *
      * \param uniqueID the unique ID of a light
      */
-    void lightsDeleted(const std::vector<QString>& uniqueIDs);
+    void lightsDeleted(const std::vector<cor::LightID>& uniqueIDs);
 
 signals:
 
@@ -167,7 +167,7 @@ private:
     void updateGroupMetadata();
 
     /// creates a set of all lights represented by the group data.
-    std::unordered_set<QString> allRepresentedLights();
+    std::unordered_set<cor::LightID> allRepresentedLights();
 
     /// generates knowledge of relationships between groups by storing all subgroups
     SubgroupData mSubgroups;
@@ -183,7 +183,7 @@ private:
     MoodParentData mMoodParents;
 
     /// some group data can be ignored, since all of their data is stored externally.
-    std::set<QString> mIgnorableLightsForGroups;
+    std::set<cor::LightID> mIgnorableLightsForGroups;
 
     /// string for what version the json data is.
     QString mVersion;

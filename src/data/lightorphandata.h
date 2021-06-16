@@ -25,7 +25,7 @@ public:
      * @param groups the groups that store lights
      */
     void generateOrphans(const std::vector<cor::Group>& groups) {
-        std::vector<QString> orphans;
+        std::vector<cor::LightID> orphans;
         for (const auto& uniqueID : mAllLights) {
             bool lightFound = false;
             for (const auto& group : groups) {
@@ -50,7 +50,7 @@ public:
      * @param uniqueID the unique ID of the light
      * @param groups all the groups currently stored
      */
-    void addNewLight(QString uniqueID, const std::vector<cor::Group>& groups) {
+    void addNewLight(const cor::LightID& uniqueID, const std::vector<cor::Group>& groups) {
         if (std::find(mAllLights.begin(), mAllLights.end(), uniqueID) == mAllLights.end()) {
             mAllLights.push_back(uniqueID);
         }
@@ -62,7 +62,7 @@ public:
      * OrphanData
      * @param uniqueID the unique ID to remove from all lights and the oprahns, if in either
      */
-    void removeLight(QString uniqueID) {
+    void removeLight(const cor::LightID& uniqueID) {
         // remove from orphans if its in it
         auto result = std::find(mAllLights.begin(), mAllLights.end(), uniqueID);
         if (result != mAllLights.end()) {
@@ -76,19 +76,19 @@ public:
     }
 
     /// getter for all orphans
-    const std::vector<QString>& keys() const noexcept { return mOrphans; }
+    const std::vector<cor::LightID>& keys() const noexcept { return mOrphans; }
 
     /// autogenerates a group that stores all orpans.
     cor::Group group() const noexcept {
-        return {0u, "Miscellaneous", cor::EGroupType::group, mOrphans};
+        return {cor::kMiscGroupKey, "Miscellaneous", cor::EGroupType::group, mOrphans};
     }
 
 private:
     /// stores all known lights
-    std::vector<QString> mAllLights;
+    std::vector<cor::LightID> mAllLights;
 
     /// stores all known lights with no groups or rooms associated.
-    std::vector<QString> mOrphans;
+    std::vector<cor::LightID> mOrphans;
 };
 
 #endif // OPRHANDATA_H

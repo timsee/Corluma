@@ -36,7 +36,7 @@ public:
     void showStates(const std::vector<cor::GroupState>& states);
 
     /// highlight the lights listed, removing highlights from all others.
-    void highlightStates(const std::vector<QString>& lights) {
+    void highlightStates(const std::vector<cor::UUID>& lights) {
         mStateContainer->highlightStates(lights);
     }
 
@@ -59,19 +59,19 @@ public:
 signals:
 
     /// emits when a state is clicked.
-    void clickedState(QString, cor::LightState);
+    void clickedState(cor::UUID, cor::LightState);
 
 private slots:
     /// handles when a light is clicked, emits the full cor::LightState
-    void stateClicked(QString uniqueID) {
+    void stateClicked(cor::UUID uniqueID) {
         // highlight only the light that was clicked
         if (mSingleStateMode) {
             mStateContainer->highlightStates({uniqueID});
         }
         // emit the light that was clicked
         for (const auto& storedState : mStates) {
-            if (storedState.stringUniqueID() == uniqueID) {
-                emit clickedState(storedState.stringUniqueID(), storedState.state());
+            if (storedState.uniqueID() == uniqueID) {
+                emit clickedState(storedState.uniqueID(), storedState.state());
             }
         }
     }

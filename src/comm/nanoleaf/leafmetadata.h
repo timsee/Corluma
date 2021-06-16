@@ -42,10 +42,10 @@ public:
           mIPVerified{false} {}
 
     /// true if valid metadata, false otherwise.
-    bool isValid() const noexcept { return !mSerialNumber.isEmpty(); }
+    bool isValid() const noexcept { return mSerialNumber.isValid(); }
 
     /// getter for serial number, unique for each light
-    const QString& serialNumber() const noexcept { return mSerialNumber; }
+    const cor::LightID& serialNumber() const noexcept { return mSerialNumber; }
 
     /// getter for hardware name given to light.
     const QString& hardwareName() const noexcept { return mHardwareName; }
@@ -297,7 +297,7 @@ private:
     QString mHardwareName;
 
     /// serial number of light
-    QString mSerialNumber;
+    cor::LightID mSerialNumber;
 
     /// name of light
     QString mName;

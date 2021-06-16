@@ -55,7 +55,7 @@ void MenuPaletteContainer::selectPalette(cor::Palette palette) {
     for (const auto& existingWidget : mListLayout.widgets()) {
         auto widget = qobject_cast<StoredPaletteWidget*>(existingWidget);
         Q_ASSERT(widget);
-        if (widget->key() == palette.uniqueID()) {
+        if (widget->key() == palette.uniqueID().toString()) {
             // widget->setSelected(true);
         } else {
             // widget->setSelected(false);
