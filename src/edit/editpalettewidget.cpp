@@ -7,25 +7,32 @@
 
 EditPaletteWidget::EditPaletteWidget(QWidget* parent)
     : QWidget(parent),
-      mColorPicker{new SingleColorPicker(this)},
+      mColorPicker{new ColorPicker(this)},
       mPaletteColors{new PaletteColorPicker(this)},
       mAddButton{new QPushButton("+", this)},
       mRemoveButton{new QPushButton("-", this)},
       mNameInput{new QLineEdit(this)},
-      mSaveButton{new QPushButton("save", this)},
+      mSaveButton{new QPushButton("Save", this)},
       mRowHeight{10} {
+    const QString buttonStyleSheet = "font:bold; font-size:20pt;";
+
     mColorPicker->updateBrightness(100);
     mColorPicker->enable(true, EColorPickerType::color);
+    mColorPicker->changeMode(EColorPickerMode::RGB);
     connect(mColorPicker, SIGNAL(colorUpdate(QColor)), this, SLOT(colorChanged(QColor)));
     connect(mPaletteColors,
             SIGNAL(selectionChanged(QColor, std::uint32_t)),
             this,
             SLOT(changedSelection(QColor, std::uint32_t)));
 
+    mAddButton->setStyleSheet(buttonStyleSheet);
+    mRemoveButton->setStyleSheet(buttonStyleSheet);
+
     mRemoveButton->setEnabled(false);
     connect(mAddButton, SIGNAL(clicked(bool)), this, SLOT(addButtonPressed(bool)));
     connect(mRemoveButton, SIGNAL(clicked(bool)), this, SLOT(removeButtonPressed(bool)));
     connect(mSaveButton, SIGNAL(clicked(bool)), this, SLOT(saveButtonPresed(bool)));
+    isOpen(false);
 }
 
 void EditPaletteWidget::loadPalette(const cor::Palette& palette) {
@@ -52,7 +59,6 @@ void EditPaletteWidget::colorChanged(const QColor& color) {
 }
 
 void EditPaletteWidget::saveButtonPresed(bool) {
-    qDebug() << " save button pressed!";
     cor::Palette palette(mPalette.uniqueID(), mNameInput->text(), mPaletteColors->colors());
     emit savePalette(palette);
 }
@@ -78,7 +84,7 @@ void EditPaletteWidget::resize() {
     int rowHeight = this->height() / 8;
     auto xSpacer = width() * 0.025;
     auto standardWidth = width() - xSpacer * 2;
-    auto buttonWidth = rowHeight;
+    auto buttonWidth = width() / 8;
     auto yPos = 0;
     mNameInput->setGeometry(xSpacer, yPos, standardWidth - buttonWidth * 2, rowHeight);
     mSaveButton->setGeometry(xSpacer + mNameInput->width(), 0, buttonWidth * 2, rowHeight);

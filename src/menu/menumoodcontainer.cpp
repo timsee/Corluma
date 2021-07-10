@@ -4,7 +4,7 @@
 
 MenuMoodContainer::MenuMoodContainer(QWidget* parent)
     : QWidget(parent),
-      mListLayout(cor::EListType::grid) {}
+      mListLayout(cor::EListType::twoColumns) {}
 
 
 void MenuMoodContainer::showMoods(const std::vector<cor::Mood>& moods, int height) {

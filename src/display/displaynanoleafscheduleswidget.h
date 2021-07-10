@@ -25,7 +25,7 @@ public:
     /// constructor
     explicit DisplayNanoleafSchedulesWidget(QWidget* parent)
         : QWidget(parent),
-          mListWidget{new cor::ListWidget(this, cor::EListType::linear)} {}
+          mListWidget{new cor::ListWidget(this, cor::EListType::oneColumn)} {}
 
     /// update the nanoleaf schedules in the widget
     void updateSchedules(std::vector<nano::LeafSchedule> schedules, bool isOn) {

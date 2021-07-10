@@ -65,6 +65,8 @@ MainWindow::MainWindow(QWidget* parent, const QSize& startingSize, const QSize& 
       mChooseEditPage{new ChooseEditPage(this)},
       mChooseGroupWidget{new ChooseGroupWidget(this, mComm, mAppData)},
       mChooseMoodWidget{new ChooseMoodWidget(this, mComm, mAppData)},
+      mSingleRoutinePage{new RoutinePage(this, ERoutineGroup::single)},
+      mMultiRoutinePage{new RoutinePage(this, ERoutineGroup::multi)},
       mGreyOut{new GreyOutOverlay(!mLeftHandMenu->alwaysOpen(), this)},
       mLoadingScreen{new LoadingScreen(mComm, mAppSettings, this)} {
 
@@ -256,6 +258,14 @@ void MainWindow::loadPages() {
             this,
             SLOT(editGroupSelected(cor::UUID)));
 
+    mSingleRoutinePage->setVisible(false);
+    mSingleRoutinePage->isOpen(false);
+    connect(mSingleRoutinePage, SIGNAL(closePressed()), this, SLOT(routinePageClosePressed()));
+
+    mMultiRoutinePage->setVisible(false);
+    mMultiRoutinePage->isOpen(false);
+    connect(mMultiRoutinePage, SIGNAL(closePressed()), this, SLOT(routinePageClosePressed()));
+
     mChooseMoodWidget->setVisible(false);
     mChooseMoodWidget->isOpen(false);
     connect(mChooseMoodWidget, SIGNAL(pressedClose()), this, SLOT(editPageClosePressed()));
@@ -292,17 +302,17 @@ void MainWindow::setupStateObserver() {
             mStateObserver,
             SLOT(paletteChanged(cor::Palette)));
 
-    connect(mMainViewport->palettePage()->colorPicker(),
-            SIGNAL(schemeUpdate(std::vector<QColor>, std::uint32_t)),
+    connect(mMainViewport->colorPage()->colorPicker(),
+            SIGNAL(schemeUpdate(std::vector<QColor>)),
             mStateObserver,
-            SLOT(updateScheme(std::vector<QColor>, std::uint32_t)));
+            SLOT(updateScheme(std::vector<QColor>)));
 
-    connect(mMainViewport->palettePage()->colorPicker(),
+    connect(mMainViewport->colorPage()->colorPicker(),
             SIGNAL(selectionChanged(std::uint32_t, QColor)),
             mStateObserver,
             SLOT(multiColorSelectionChange(std::uint32_t, QColor)));
 
-    connect(mMainViewport->palettePage()->colorPicker(),
+    connect(mMainViewport->colorPage()->colorPicker(),
             SIGNAL(schemeUpdated(EColorSchemeType)),
             mStateObserver,
             SLOT(colorSchemeTypeChanged(EColorSchemeType)));
@@ -324,12 +334,6 @@ void MainWindow::setupStateObserver() {
             mStateObserver,
             SLOT(isOnChanged(bool)));
 
-    // single light brightness
-    connect(mTopMenu->singleLightBrightness(),
-            SIGNAL(brightnessChanged(std::uint32_t)),
-            mStateObserver,
-            SLOT(singleLightBrightnessChanged(std::uint32_t)));
-
     // mood page
     connect(mMainViewport->moodPage()->moodDetailedWidget(),
             SIGNAL(enableMood(cor::Mood)),
@@ -343,11 +347,11 @@ void MainWindow::setupStateObserver() {
             SLOT(protocolSettingsChanged(EProtocolType, bool)));
 
     // routine state widget
-    connect(mMainViewport->colorPage()->routines(),
+    connect(mSingleRoutinePage->routines(),
             SIGNAL(newRoutineSelected(ERoutine, int, int)),
             mStateObserver,
             SLOT(routineChanged(ERoutine, int, int)));
-    connect(mMainViewport->palettePage()->routines(),
+    connect(mMultiRoutinePage->routines(),
             SIGNAL(newRoutineSelected(ERoutine, int, int)),
             mStateObserver,
             SLOT(routineChanged(ERoutine, int, int)));
@@ -563,32 +567,15 @@ void MainWindow::editPageClosePressed() {
     }
 }
 
+void MainWindow::routinePageClosePressed() {
+    pushOutSingleRoutinePage();
+    pushOutMultiRoutinePage();
+}
 
 void MainWindow::editButtonClicked(bool isMood) {
     mIsMoodEdit = isMood;
     pushOutLeftHandMenu();
     pushInChooseEditPage();
-}
-
-void MainWindow::resizeFullPageWidget(QWidget* widget, bool isOpen) {
-    QSize fullScreenSize = size();
-    if (isOpen) {
-        pushInFullPageWidget(widget);
-
-        if (mLeftHandMenu->isIn()) {
-            widget->move(QPoint(mLeftHandMenu->width(), widget->geometry().y()));
-        } else {
-            widget->move(QPoint(0, widget->geometry().y()));
-        }
-    } else {
-        int diff = widget->geometry().width()
-                   - fullScreenSize.width(); // adjust x coordinate of discovery page as it
-                                             // scales since its sitting next to main page.
-        widget->setGeometry(widget->geometry().x() - diff,
-                            widget->geometry().y(),
-                            fullScreenSize.width(),
-                            fullScreenSize.height());
-    }
 }
 
 
@@ -640,12 +627,37 @@ void MainWindow::resize() {
                                      mChooseEditPage->height());
     }
 
+    resizeFullPageWidget(mSingleRoutinePage, mSingleRoutinePage->isOpen());
+    resizeFullPageWidget(mMultiRoutinePage, mMultiRoutinePage->isOpen());
+
     resizeFullPageWidget(mChooseGroupWidget, mChooseGroupWidget->isOpen());
     resizeFullPageWidget(mChooseMoodWidget, mChooseMoodWidget->isOpen());
 
     mNoWifiWidget->setGeometry(QRect(0, 0, geometry().width(), geometry().height()));
 
     mLoadingScreen->setGeometry(QRect(0, 0, geometry().width(), geometry().height()));
+}
+
+
+void MainWindow::resizeFullPageWidget(QWidget* widget, bool isOpen) {
+    QSize fullScreenSize = size();
+    if (isOpen) {
+        pushInFullPageWidget(widget);
+
+        if (mLeftHandMenu->isIn()) {
+            widget->move(QPoint(mLeftHandMenu->width(), widget->geometry().y()));
+        } else {
+            widget->move(QPoint(0, widget->geometry().y()));
+        }
+    } else {
+        int diff = widget->geometry().width()
+                   - fullScreenSize.width(); // adjust x coordinate of discovery page as it
+                                             // scales since its sitting next to main page.
+        widget->setGeometry(widget->geometry().x() - diff,
+                            widget->geometry().y(),
+                            fullScreenSize.width(),
+                            fullScreenSize.height());
+    }
 }
 
 void MainWindow::greyoutClicked() {
@@ -732,6 +744,14 @@ void MainWindow::leftHandMenuButtonPressed(EPage page) {
 
     if (mChooseMoodWidget->isOpen()) {
         pushOutChooseMoodPage();
+    }
+
+    if (mSingleRoutinePage->isOpen()) {
+        pushOutSingleRoutinePage();
+    }
+
+    if (mMultiRoutinePage->isOpen()) {
+        pushOutMultiRoutinePage();
     }
 
     pushInTapToSelectLights();
@@ -840,6 +860,36 @@ void MainWindow::pushOutChooseEditPage() {
     mChooseEditPage->pushOut(QPoint(width(), 0u));
 }
 
+
+void MainWindow::pushInSingleRoutinePage() {
+    pushInFullPageWidget(mSingleRoutinePage);
+    if (mLeftHandMenu->alwaysOpen()) {
+        mSingleRoutinePage->pushIn(QPoint(width(), 0), QPoint(mLeftHandMenu->width(), 0));
+    } else {
+        mSingleRoutinePage->pushIn(QPoint(width(), 0), QPoint(0u, 0u));
+    }
+}
+
+void MainWindow::pushOutSingleRoutinePage() {
+    pushOutFullPageWidget(mSingleRoutinePage);
+
+    mSingleRoutinePage->pushOut(QPoint(width(), 0u));
+}
+
+void MainWindow::pushInMultiRoutinePage() {
+    pushInFullPageWidget(mMultiRoutinePage);
+    if (mLeftHandMenu->alwaysOpen()) {
+        mMultiRoutinePage->pushIn(QPoint(width(), 0), QPoint(mLeftHandMenu->width(), 0));
+    } else {
+        mMultiRoutinePage->pushIn(QPoint(width(), 0), QPoint(0u, 0u));
+    }
+}
+
+void MainWindow::pushOutMultiRoutinePage() {
+    pushOutFullPageWidget(mMultiRoutinePage);
+
+    mMultiRoutinePage->pushOut(QPoint(width(), 0u));
+}
 
 void MainWindow::pushInChooseGroupPage(cor::EGroupAction action) {
     mChooseGroupWidget->showGroups(cor::groupVectorToIDs(mAppData->groups()->groupDict().items()),

@@ -39,7 +39,7 @@ CommLayer::CommLayer(QObject* parent, AppData* parser, PaletteData* palettes)
             this,
             SLOT(deletedLights(ECommType, std::vector<cor::LightID>)));
 
-    mNanoleaf = new CommNanoleaf(palettes);
+    mNanoleaf = new CommNanoleaf();
     connect(mNanoleaf, SIGNAL(updateReceived(ECommType)), this, SLOT(receivedUpdate(ECommType)));
     connect(mNanoleaf,
             SIGNAL(newLightsFound(ECommType, std::vector<cor::LightID>)),
@@ -396,6 +396,17 @@ std::vector<std::uint32_t> CommLayer::secondsUntilTimeout(const std::vector<cor:
     }
     return timeoutLeft;
 }
+
+
+std::vector<cor::PaletteGroup> CommLayer::paletteGroups() {
+    // only nanoleafs currently store palettes
+    if (mNanoleaf->isActive()) {
+        return mNanoleaf->palettesByLight();
+    } else {
+        return {};
+    }
+}
+
 
 QTime CommLayer::lastReceiveTime() {
     QTime time = mArduCor->lastReceiveTime();

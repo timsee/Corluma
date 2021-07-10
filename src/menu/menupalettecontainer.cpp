@@ -4,7 +4,7 @@
 
 MenuPaletteContainer::MenuPaletteContainer(QWidget* parent)
     : QWidget(parent),
-      mListLayout{cor::EListType::grid},
+      mListLayout{cor::EListType::threeColumns},
       mHeight{10u} {}
 
 

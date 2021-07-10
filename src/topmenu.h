@@ -112,9 +112,6 @@ public:
     /// getter for global brightness widget
     GlobalBrightnessWidget* globalBrightness() { return mGlobalBrightness; }
 
-    /// getter for single light brightness
-    SingleLightBrightnessWidget* singleLightBrightness() { return mSingleLightBrightness; }
-
     /// update the lights menus
     void updateLightsMenu();
 
@@ -146,7 +143,7 @@ public slots:
      * \brief updateScheme update the color scheme chosen by the app
      * \param colors the colors to use in the new color scheme
      */
-    void updateScheme(const std::vector<QColor>& colors, std::uint32_t);
+    void updateScheme(const std::vector<QColor>& colors);
 
 protected:
     /// resizes assets in the widget
@@ -282,17 +279,12 @@ private:
     /// slider for changing the brightness of all of the lights
     GlobalBrightnessWidget* mGlobalBrightness;
 
-    /// slider for changing the brightness of a single light
-    SingleLightBrightnessWidget* mSingleLightBrightness;
-
-    /// floating layout for palette page.
-    FloatingLayout* mPaletteFloatingLayout;
-
     /// floating layout for palette page when there is a routine.
     FloatingLayout* mPaletteAndRoutineFloatingLayout;
 
-    /// floating layout for moods page.
-    FloatingLayout* mMoodsFloatingLayout;
+    /// floating layout on the right hand side for adding new instances of the current page (IE, for
+    /// the mood page, it adds new moods. for the palette page, it adds new palettes).
+    FloatingLayout* mAddNewFloatingLayout;
 
     /// floating layout for color page.
     FloatingLayout* mColorFloatingLayout;

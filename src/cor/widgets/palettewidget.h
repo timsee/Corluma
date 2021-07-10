@@ -43,6 +43,11 @@ public:
         mPreferPalettesOverRoutines = preferPalettes;
     }
 
+    /// handles if a minimum brightness should be used or not when displaying the colors.
+    void shouldUseMinBrightness(bool shouldUseMinBrightness) {
+        mUseMinimumBrightness = shouldUseMinBrightness;
+    }
+
     /// changes the mode of how brightness is handled (IE, should all lights be averaged together,
     /// should each light show its brighntess independently, etc.)
     void setBrightnessMode(EBrightnessMode mode) { mBrightnessMode = mode; }
@@ -107,6 +112,10 @@ private:
     /// calculates the brgihtness for light states
     float calculateBrightness(const std::vector<cor::LightState>&, EBrightnessMode);
 
+    /// converts a color to a new color by applying the minimum brightness, if the minimum
+    /// brightness mode is one.
+    QColor applyMinimumBrightness(QColor);
+
     /// vector of colors to be used as the palette.
     std::vector<QColor> mSolidColors;
 
@@ -127,6 +136,12 @@ private:
 
     /// true if all components should be rendered as a square, false if they are stretched to fit.
     bool mForceSquares;
+
+    /// true to use the minimum brightness setting.
+    bool mUseMinimumBrightness;
+
+    /// stores the minimum brightness amount.
+    int mMinBrightness;
 
     /// mode for displaying the brightness of the widget
     EBrightnessMode mBrightnessMode;

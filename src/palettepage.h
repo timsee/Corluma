@@ -2,18 +2,17 @@
 #ifndef PresetColorsPage_H
 #define PresetColorsPage_H
 
-#include "colorpicker/multicolorpicker.h"
+#include "comm/commlayer.h"
 #include "cor/objects/page.h"
 #include "data/palettedata.h"
 #include "edit/editpalettewidget.h"
 #include "greyoutoverlay.h"
 #include "palettedetailedwidget.h"
-#include "routines/routinecontainer.h"
+#include "routines/routinepage.h"
 
 class PaletteScrollArea;
 
-/// mode of the page
-enum class EGroupMode { presets, wheel, routines };
+enum class EPaletteMode { reserved, custom, external };
 
 /*!
  * \copyright
@@ -45,20 +44,11 @@ public:
     /*!
      * \brief Constructor
      */
-    explicit PalettePage(QWidget* parent, PaletteData* palettes);
+    explicit PalettePage(QWidget* parent, CommLayer* comm, PaletteData* palettes);
 
     /// called whenever the app's light data is updated in a way that would impact the PalettePage
     /// (IE the number of selected lights changed)
     void update(std::size_t count, const std::vector<QColor>& colorScheme);
-
-    /// getter for current mode of page
-    EGroupMode mode() { return mMode; }
-
-    /// programmatically set the mode of the page
-    void setMode(EGroupMode mode);
-
-    /// update the brightness of the palette page assets
-    void updateBrightness(std::uint32_t brightness);
 
     /// widget that shows the details of a palette.
     PaletteDetailedWidget* detailedWidget() { return mDetailedWidget; }
@@ -66,26 +56,14 @@ public:
     /// push in the new palette page.
     void pushInNewPalettePage();
 
-    /*!
-     * show the preset greset group widgets, but show the version
-     * with less features designed for selecting hue colors.
-     */
-    void showPresetHueGroups();
-
     /// called to programmatically resize the widget
     void resize();
-
-    /// getter for color picker
-    MultiColorPicker* colorPicker() { return mColorPicker; }
 
     /// getter for currently selected color scheme
     const std::vector<QColor>& colorScheme() const noexcept { return mPalette.colors(); }
 
     /// creates a palette based on the settings of its pages
     cor::Palette palette() { return mPalette; }
-
-    /// getter for the routine
-    RoutineContainer* routines() { return mRoutineWidget; }
 
 signals:
 
@@ -112,6 +90,18 @@ private slots:
     /// handles when a delete palette button is clicked.
     void deletePaletteClicked(cor::Palette);
 
+    /// handles when the edit button is clicked.
+    void editPaletteClicked(cor::Palette);
+
+    /// handles when the custom palette button is clicked
+    void customPalettesClicked();
+
+    /// handles when the external palette button is clicked
+    void externalPalettesClicked();
+
+    /// handles when the reserved palette button is clicked
+    void reservedPalettesClicked();
+
 protected:
     /*!
      * \brief resizeEvent called every time the main window is resized.
@@ -119,14 +109,8 @@ protected:
     void resizeEvent(QResizeEvent*);
 
 private:
-    /// changes the light count, affecting the menus on the page
-    void lightCountChanged(std::size_t count);
-
-    /// called when a request for a detailed palette is sent
-    void detailedPaletteView(const cor::Palette& palette);
-
-    /// mode
-    EGroupMode mMode;
+    /// pointer to comm data
+    CommLayer* mComm;
 
     /// palette that is currently selected.
     cor::Palette mPalette;
@@ -134,15 +118,22 @@ private:
     /// pointer to the app's palette data.
     PaletteData* mPaletteData;
 
+    /// button for custom palettes, these are palettes that are created by the user and can be
+    /// modified.
+    QPushButton* mCustomPalettes;
+
+    /// button for reserved palettes. these are palettes that cannot be changed.
+    QPushButton* mReservedPalettes;
+
+    /// button for external palettes, only displayed if any lights with external palettes are
+    /// selected.
+    QPushButton* mExternalPalettes;
+
+    /// mode for current palette.
+    EPaletteMode mMode;
+
     /// scroll area that displays the palettes
     PaletteScrollArea* mPaletteScrollArea;
-
-    /// color picker for color schemes
-    MultiColorPicker* mColorPicker;
-
-    /// widget that determines which routine displays the colors (IE, show all colors on random
-    /// lights, fade between colors, etc.)
-    RoutineContainer* mRoutineWidget;
 
     /// widget that displays details about a selected palette.
     PaletteDetailedWidget* mDetailedWidget;
@@ -152,6 +143,12 @@ private:
 
     /// greyout for mood detailed widget
     GreyOutOverlay* mGreyOut;
+
+    /// called when a request for a detailed palette is sent
+    void detailedPaletteView(const cor::Palette& palette);
+
+    /// change the mode of what palettes are displayed.
+    void changeMode(EPaletteMode);
 };
 
 #endif // PresetColorsPage_H

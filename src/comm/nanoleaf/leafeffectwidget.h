@@ -2,6 +2,7 @@
 #define LEAFEFFECTWIDGET_H
 
 #include <QLabel>
+#include <QMessageBox>
 #include <QPainter>
 #include <QStyleOption>
 #include <QWidget>
@@ -31,11 +32,15 @@ public:
           mMetadata{new QLabel(this)},
           mPalette{new cor::PaletteWidget(this)},
           mCheckBox{new cor::CheckBox(this)},
-          mDisplayCheckbox{true} {
+          mSaveLocallyButton{new QPushButton("Save Palette", this)},
+          mDisplayCheckbox{true},
+          mDisplaySaveLocally{true} {
         setStyleSheet(cor::kDarkerGreyBackground);
         mMetadata->setWordWrap(true);
         mMetadata->setAlignment(Qt::AlignTop);
         update(effect, isSelected);
+
+        connect(mSaveLocallyButton, SIGNAL(clicked(bool)), this, SLOT(saveLocallyPressed(bool)));
 
         connect(mCheckBox,
                 SIGNAL(clicked(ECheckboxState)),
@@ -56,10 +61,16 @@ public:
         setSelected(isSelected);
     }
 
-    /// overrides the state of the checkbox, determines if it should be checked or not.
+    /// overrides the state of the checkbox, determines if it should be displayed or not.
     void displayCheckbox(bool display) {
         mDisplayCheckbox = display;
         mCheckBox->setVisible(display);
+    }
+
+    /// overrides the state of the save locally button, determines if it should be displayed or not
+    void displaySaveLocally(bool display) {
+        mDisplaySaveLocally = display;
+        mSaveLocallyButton->setVisible(false);
     }
 
     /// programmatically select or deselect the checkbox
@@ -75,6 +86,9 @@ signals:
 
     /// emits when a effect is selected.
     void selectEffect(QString);
+
+    /// emits when a palette should be saved.
+    void savePalette(cor::Palette);
 
 protected:
     /// detects when widget is resized
@@ -98,6 +112,8 @@ protected:
         painter.drawLine(0, 0, width(), 0);
     }
 
+    /// show the button to save a palette.
+    void showPaletteButton(bool shouldShow) { mSaveLocallyButton->setVisible(shouldShow); }
 
 private slots:
 
@@ -106,6 +122,22 @@ private slots:
         if (state != ECheckboxState::checked) {
             mCheckBox->checkboxState(ECheckboxState::checked);
             emit selectEffect(mEffect.name());
+        }
+    }
+
+    /// handles when the save locally button is pressed.
+    void saveLocallyPressed(bool) {
+        // TODO: check why the UUID for effects overlap, seems like a bug.
+        auto palette = cor::Palette(cor::UUID::makeNew(), mEffect.name(), mEffect.colors());
+        QMessageBox::StandardButton reply;
+        QString text = "Do you want to save the palette from " + mEffect.name()
+                       + " to this app? This will allow you to use the palette on other lights.";
+
+        reply = QMessageBox::question(this, "Save?", text, QMessageBox::Yes | QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+            emit savePalette(palette);
+        } else {
+            qDebug() << "INFO: not saving this palette: " << palette;
         }
     }
 
@@ -125,8 +157,11 @@ private:
         yPos += mPalette->height();
 
         auto xPos = 0;
-        mMetadata->setGeometry(xPos, yPos, width(), rowHeight * 4);
+        mMetadata->setGeometry(xPos, yPos, width(), rowHeight * 3);
         xPos += mMetadata->width();
+        yPos += mMetadata->height();
+
+        mSaveLocallyButton->setGeometry(0, yPos, width() / 3, rowHeight);
     }
 
     /// generate metadata about the effect
@@ -160,11 +195,17 @@ private:
     /// checkbox to select/deselect effect
     cor::CheckBox* mCheckBox;
 
+    /// button to save a palette locally.
+    QPushButton* mSaveLocallyButton;
+
     /// stores the effect data.
     nano::LeafEffect mEffect;
 
     /// true to display the checkbox, false if not. defaults to true.
     bool mDisplayCheckbox;
+
+    /// true to display the save locally button, false if not. defaults to true.
+    bool mDisplaySaveLocally;
 };
 
 } // namespace nano

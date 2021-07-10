@@ -14,6 +14,8 @@ PaletteWidget::PaletteWidget(QWidget* parent)
       mSkipOffLightStates{false},
       mIsSingleLine{false},
       mForceSquares{false},
+      mUseMinimumBrightness{false},
+      mMinBrightness{50},
       mBrightnessMode{EBrightnessMode::none} {}
 
 void PaletteWidget::show(const std::vector<QColor>& colors) {
@@ -120,6 +122,18 @@ QRect PaletteWidget::correctRenderRegionEdgeCases(QRect rect,
     return rect;
 }
 
+QColor PaletteWidget::applyMinimumBrightness(QColor color) {
+    if (mUseMinimumBrightness) {
+        auto brightness = color.valueF();
+        auto brightRange = 100 - mMinBrightness;
+        brightness = brightness * brightRange;
+        return QColor::fromHsvF(color.hueF(),
+                                color.saturationF(),
+                                (brightness + mMinBrightness) / 100);
+    }
+    return color;
+}
+
 void PaletteWidget::changeEvent(QEvent*) {
     // qDebug() << " event " << event->type();
 
@@ -143,6 +157,7 @@ void PaletteWidget::drawSolidColor(QPainter& painter,
     if (mBrightnessMode != EBrightnessMode::none) {
         colorCopy = QColor::fromHsvF(color.hueF(), color.saturationF(), brightness);
     }
+    colorCopy = applyMinimumBrightness(colorCopy);
     painter.fillRect(renderRect, QBrush(colorCopy));
 }
 
@@ -168,15 +183,15 @@ void PaletteWidget::drawColorsFromStates(QPainter& painter,
     std::sort(inputVector.begin(), inputVector.end(), sortVectorByHue);
     auto count = 0u;
     for (const auto& colorAndSizePair : inputVector) {
-        painter.fillRect(QRect(xPos, 0, colorAndSizePair.second, height()),
-                         QBrush(colorAndSizePair.first));
+        auto color = colorAndSizePair.first;
+        color = applyMinimumBrightness(color);
+        painter.fillRect(QRect(xPos, 0, colorAndSizePair.second, height()), QBrush(color));
         xPos += colorAndSizePair.second;
         ++count;
         if (count == inputVector.size() - 1) {
             if (xPos < width()) {
                 auto remainingArea = width() - xPos;
-                painter.fillRect(QRect(xPos, 0, remainingArea, height()),
-                                 QBrush(colorAndSizePair.first));
+                painter.fillRect(QRect(xPos, 0, remainingArea, height()), QBrush(color));
             }
         }
     }

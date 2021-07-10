@@ -41,10 +41,14 @@ void LightList::updateState(const cor::LightState& newState) {
         if (newState.routine() > cor::ERoutineSingleColorEnd) {
             /*!
              * hues are not individually addressable, mock a color group by setting
-             * each individual light as a color
+             * each individual light as a color. Also, arduinos are not good at custom plaettes, so
+             * verify that they are not custom. If they are, just treat it like a hue.
              */
+            auto arduCorWithCustomPalette = (!mPalettes.isReservedPalette(newState.palette())
+                                             && light.protocol() == EProtocolType::arduCor);
+
             std::vector<QColor> colors = newState.palette().colors();
-            if (light.protocol() == EProtocolType::hue) {
+            if (light.protocol() == EProtocolType::hue || arduCorWithCustomPalette) {
                 auto colorIndex = std::uint32_t(hueCount) % colors.size();
                 auto color = colors[colorIndex];
                 // apply brightness
@@ -52,6 +56,9 @@ void LightList::updateState(const cor::LightState& newState) {
                               color.saturationF(),
                               color.valueF() * newState.paletteBrightness() / 100.0);
                 stateCopy.color(color);
+                if (arduCorWithCustomPalette) {
+                    stateCopy.routine(ERoutine::singleGlimmer);
+                }
                 ++hueCount;
             }
         }
@@ -279,47 +286,26 @@ std::vector<QColor> LightList::multiColorScheme() {
             break;
         }
     }
-    bool hasCapabilities = hasLightWithProtocol(EProtocolType::arduCor)
-                           || hasLightWithProtocol(EProtocolType::nanoleaf);
 
     std::vector<QColor> colorScheme;
     int count = 0;
     int max = 6;
 
-    if (!hasMultiRoutine) {
-        if (hasCapabilities) {
-            return cor::defaultCustomColors();
-        } else {
-            // all are showing single color routines, just treat
-            // each one as a new color in a palette
-            for (const auto& light : mLights) {
-                auto state = light.state();
-                colorScheme.push_back(state.color());
-                count++;
-                if (count >= max) {
-                    break;
-                }
-            }
-        }
-    } else {
-        // first pass only adds multi color schemes
-        for (const auto& light : mLights) {
-            auto state = light.state();
-            if ((light.protocol() == EProtocolType::arduCor
-                 || light.protocol() == EProtocolType::nanoleaf)
-                && count < max) {
-                if (light.state().routine() > cor::ERoutineSingleColorEnd) {
-                    for (const auto& color : state.palette().colors()) {
-                        colorScheme.push_back(color);
-                        count++;
-                        if (count >= max) {
-                            break;
-                        }
+    for (const auto& light : mLights) {
+        auto state = light.state();
+        if ((light.protocol() == EProtocolType::arduCor
+             || light.protocol() == EProtocolType::nanoleaf)
+            && count < max) {
+            if (light.state().routine() > cor::ERoutineSingleColorEnd) {
+                for (const auto& color : state.palette().colors()) {
+                    colorScheme.push_back(color);
+                    count++;
+                    if (count >= max) {
+                        break;
                     }
                 }
             }
         }
-
         if (count < max) {
             // second pass adds single color schemes to fill in the space
             for (const auto& light : mLights) {

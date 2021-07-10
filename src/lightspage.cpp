@@ -5,12 +5,13 @@
 
 LightsPage::LightsPage(QWidget* parent,
                        CommLayer* comm,
+                       PaletteData* palettes,
                        cor::LightList* lights,
                        AppSettings* appSettings)
     : QWidget(parent),
       mComm{comm},
       mSelectedLights{lights},
-      mControllerWidget{new ControllerWidget(parent, comm, lights)},
+      mControllerWidget{new ControllerWidget(parent, palettes, comm, lights)},
       mDiscoveryWidget{new DiscoveryWidget(this, lights, comm, appSettings, mControllerWidget)} {
     connect(mDiscoveryWidget,
             SIGNAL(showControllerWidget()),

@@ -13,6 +13,7 @@
 #include <QTimer>
 
 #include "appsettings.h"
+#include "cor/widgets/loadingscreen.h"
 #include "mainwindow.h"
 #include "utils/exception.h"
 #include "utils/qt.h"
@@ -126,21 +127,8 @@ int main(int argc, char* argv[]) {
 
 
 #ifndef DISABLE_SPLASH_SCREEN
-#ifdef MOBILE_BUILD
-    QPixmap splashScreen(":images/splash_screen.png");
-    splashScreen = splashScreen.scaled(size.width(),
-                                       size.height(),
-                                       Qt::KeepAspectRatio,
-                                       Qt::SmoothTransformation);
-    QSplashScreen splash(splashScreen, Qt::WindowStaysOnTopHint);
-#else
-    QPixmap splashScreen(":images/desktop_splash_screen.png");
-    auto side = std::min(size.width(), size.height()) / 2;
-    splashScreen = splashScreen.scaled(side, side, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    QSplashScreen splash(splashScreen, Qt::WindowStaysOnTopHint);
+    QSplashScreen splash(LoadingScreen::splashScreenPixmap(size), Qt::WindowStaysOnTopHint);
 #endif
-#endif
-
 
     //--------------------
     // check for first time opening

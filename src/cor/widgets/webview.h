@@ -13,6 +13,7 @@
 #include <QtGui>
 
 #include "cor/widgets/topwidget.h"
+#include "utils/qt.h"
 
 namespace cor {
 
@@ -76,7 +77,7 @@ public:
 #endif
 
 signals:
-    /// emits whenever wthe close button is pressed
+    /// emits whenever the close button is pressed
     void closePressed();
 
 #ifdef USE_EXPERIMENTAL_FEATURES
@@ -101,7 +102,7 @@ protected:
         QPainter painter(this);
 
         painter.setRenderHint(QPainter::Antialiasing);
-        painter.fillRect(rect(), QBrush(QColor(48, 47, 47)));
+        painter.fillRect(rect(), QBrush(cor::kLighterBackgroundColor));
     }
 
 

@@ -18,7 +18,7 @@ DiscoveryNanoLeafWidget::DiscoveryNanoLeafWidget(QWidget* parent,
                                                  ControllerWidget* controllerPage)
     : DiscoveryTypeWidget(parent, comm, controllerPage),
       mSelectedLights{selectedLights},
-      mListWidget{new cor::ListWidget(this, cor::EListType::grid)},
+      mListWidget{new cor::ListWidget(this, cor::EListType::twoColumns)},
       mPlaceholderWidget{new ListPlaceholderWidget(
           this,
           "No Nanoleaf lights have been discovered. Give the lights up to a minute to discover "

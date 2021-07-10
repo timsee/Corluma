@@ -55,6 +55,7 @@ StandardLightsMenu::StandardLightsMenu(QWidget* parent,
       mOutlineBox{new cor::WidgetOutlineBox(cor::EPaintRectOptions::allSides, this)},
       mButtonHeight{0u},
       mPositionY{0u},
+      mLastLightCountForNoGroups{0u},
       mSingleLightMode{false},
       mName{name} {
     mScrollTopWidget = new LeftHandMenuTopLightWidget(this);
@@ -117,6 +118,10 @@ void StandardLightsMenu::updateMenu() {
     }
 
     if (uiGroups.size() != parentGroups.size()) {
+        resize(this->geometry(), mButtonHeight);
+    }
+    if (mLastLightCountForNoGroups != mComm->allLights().size()) {
+        mLastLightCountForNoGroups = mComm->allLights().size();
         resize(this->geometry(), mButtonHeight);
     }
     updateLightStates();

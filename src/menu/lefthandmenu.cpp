@@ -65,17 +65,13 @@ LeftHandMenu::LeftHandMenu(bool alwaysOpen,
     connect(mLightsButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
     mLightsButton->shouldHightlght(true);
 
-    mSingleColorButton = new LeftHandButton("Single Color",
-                                            EPage::colorPage,
-                                            ":/images/single_color_icon.png",
-                                            this);
+    mSingleColorButton =
+        new LeftHandButton("Colors", EPage::colorPage, ":/images/single_color_icon.png", this);
     mSingleColorButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mSingleColorButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 
-    mMultiColorButton = new LeftHandButton("Multi Color",
-                                           EPage::palettePage,
-                                           ":/images/multi_color_icon.png",
-                                           this);
+    mMultiColorButton =
+        new LeftHandButton("Palettes", EPage::palettePage, ":/images/multi_color_icon.png", this);
     mMultiColorButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(mMultiColorButton, SIGNAL(pressed(EPage)), this, SLOT(buttonPressed(EPage)));
 

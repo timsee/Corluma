@@ -20,7 +20,7 @@ class PaletteColorPicker : public QWidget {
 public:
     explicit PaletteColorPicker(QWidget* parent)
         : QWidget(parent),
-          mMaxColors{6},
+          mMaxColors{12},
           mButtons{std::vector<QPushButton*>(mMaxColors, nullptr)},
           mColors{std::vector<QColor>(mMaxColors, QColor(140, 140, 140))},
           mColorCount{2u} {
@@ -46,6 +46,24 @@ public:
                     break;
                 case 5:
                     connect(mButtons[i], SIGNAL(clicked()), this, SLOT(buttonPressed5()));
+                    break;
+                case 6:
+                    connect(mButtons[i], SIGNAL(clicked()), this, SLOT(buttonPressed6()));
+                    break;
+                case 7:
+                    connect(mButtons[i], SIGNAL(clicked()), this, SLOT(buttonPressed7()));
+                    break;
+                case 8:
+                    connect(mButtons[i], SIGNAL(clicked()), this, SLOT(buttonPressed8()));
+                    break;
+                case 9:
+                    connect(mButtons[i], SIGNAL(clicked()), this, SLOT(buttonPressed9()));
+                    break;
+                case 10:
+                    connect(mButtons[i], SIGNAL(clicked()), this, SLOT(buttonPressed10()));
+                    break;
+                case 11:
+                    connect(mButtons[i], SIGNAL(clicked()), this, SLOT(buttonPressed11()));
                     break;
                 default:
                     break;
@@ -77,7 +95,7 @@ public:
 
         for (auto i = 0u; i < colors.size(); ++i) {
             int size =
-                std::min(int(mButtons[i]->width() * 0.8f), int(mButtons[i]->height() * 0.8f));
+                std::min(int(mButtons[i]->width() * 0.95f), int(mButtons[i]->height() * 0.95f));
             QImage image(size, size, QImage::Format_RGB32);
             image.fill(mColors[i]);
             mButtons[i]->setIcon(QIcon(QPixmap::fromImage(image)));
@@ -128,6 +146,7 @@ public:
                 mButtons[i]->setVisible(true);
             }
         }
+        resize();
         updateColors(colors());
     }
 
@@ -137,17 +156,29 @@ protected:
     void resizeEvent(QResizeEvent*) { resize(); }
 
 private slots:
-    void buttonPressed0() { deselectLights(0u); }
+    void buttonPressed0() { selectColor(0u); }
 
-    void buttonPressed1() { deselectLights(1u); }
+    void buttonPressed1() { selectColor(1u); }
 
-    void buttonPressed2() { deselectLights(2u); }
+    void buttonPressed2() { selectColor(2u); }
 
-    void buttonPressed3() { deselectLights(3u); }
+    void buttonPressed3() { selectColor(3u); }
 
-    void buttonPressed4() { deselectLights(4u); }
+    void buttonPressed4() { selectColor(4u); }
 
-    void buttonPressed5() { deselectLights(5u); }
+    void buttonPressed5() { selectColor(5u); }
+
+    void buttonPressed6() { selectColor(6u); }
+
+    void buttonPressed7() { selectColor(7u); }
+
+    void buttonPressed8() { selectColor(8u); }
+
+    void buttonPressed9() { selectColor(9u); }
+
+    void buttonPressed10() { selectColor(10u); }
+
+    void buttonPressed11() { selectColor(11u); }
 
 signals:
 
@@ -156,11 +187,25 @@ signals:
 private:
     /// programmatically resize
     void resize() {
-        auto buttonWidth = this->width() / mMaxColors;
-        auto xPos = 0;
-        for (auto i = 0u; i < mButtons.size(); ++i) {
-            mButtons[i]->setGeometry(xPos, 0, buttonWidth, height());
-            xPos += mButtons[i]->width();
+        auto buttonWidth = this->width() / 6;
+        if (mColorCount > 6) {
+            auto xPos = 0;
+            auto buttonHeight = height() / 2;
+            for (auto i = 0u; i < 6; ++i) {
+                mButtons[i]->setGeometry(xPos, 0, buttonWidth, buttonHeight);
+                xPos += mButtons[i]->width();
+            }
+            xPos = 0;
+            for (auto i = 6u; i < mButtons.size(); ++i) {
+                mButtons[i]->setGeometry(xPos, buttonHeight, buttonWidth, buttonHeight);
+                xPos += mButtons[i]->width();
+            }
+        } else {
+            auto xPos = 0;
+            for (auto i = 0u; i < mButtons.size(); ++i) {
+                mButtons[i]->setGeometry(xPos, 0, buttonWidth, height());
+                xPos += mButtons[i]->width();
+            }
         }
     }
 
@@ -175,12 +220,13 @@ private:
     }
 
     /// deselect all lights except the one at the index provided.
-    void deselectLights(std::uint32_t keepSelected) {
+    void selectColor(std::uint32_t keepSelected) {
         for (auto i = 0u; i < mButtons.size(); ++i) {
             if (i != keepSelected) {
                 mButtons[i]->setChecked(false);
             }
         }
+        emit selectionChanged(mColors[keepSelected], keepSelected);
     }
 
     /// the total number of colors supported by the widget

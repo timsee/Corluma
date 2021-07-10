@@ -4,7 +4,7 @@
 
 #include <QWidget>
 
-#include "colorpicker/singlecolorpicker.h"
+#include "colorpicker/colorpicker.h"
 #include "cor/objects/page.h"
 #include "routines/routinecontainer.h"
 
@@ -37,16 +37,20 @@ public:
      *
      * \param page the new page type for the hue page.
      */
-    void changePageType(ESingleColorPickerMode page) {
+    void changePageType(EColorPickerMode page) {
         if (page != pageType()) {
             switch (page) {
-                case ESingleColorPickerMode::HSV:
-                    showRoutines(false);
+                case EColorPickerMode::HSV:
+                    mColorPicker->changeMode(EColorPickerMode::HSV);
                     mColorPicker->enable(mColorPicker->isEnabled(), EColorPickerType::color);
                     break;
-                case ESingleColorPickerMode::ambient:
-                    showRoutines(false);
+                case EColorPickerMode::ambient:
+                    mColorPicker->changeMode(EColorPickerMode::ambient);
                     mColorPicker->enable(mColorPicker->isEnabled(), EColorPickerType::CT);
+                    break;
+                case EColorPickerMode::multi:
+                    mColorPicker->changeMode(EColorPickerMode::multi);
+                    mColorPicker->enable(mColorPicker->isEnabled(), EColorPickerType::color);
                     break;
                 default:
                     break;
@@ -55,13 +59,14 @@ public:
     }
 
     /// getter for current type of color page (ambiance, RGB, etc.)
-    ESingleColorPickerMode pageType() { return mColorPicker->mode(); }
+    EColorPickerMode pageType() { return mColorPicker->mode(); }
 
     /// programmatically updates brightness
     void updateBrightness(std::uint32_t brightness);
 
     /// called when the app state is updated (IE when the selected lights changed)
     void update(const QColor& color,
+                const std::vector<QColor>& colorScheme,
                 std::uint32_t brightness,
                 std::size_t lightCount,
                 EColorPickerType bestType);
@@ -69,11 +74,8 @@ public:
     /// getter for currently selected color
     const QColor color() const noexcept { return mColor; }
 
-    /// getter for the routines.
-    RoutineContainer* routines() { return mRoutineWidget; }
-
-    /// true to show routines, false to show the color wheel
-    void showRoutines(bool shouldShow);
+    /// pointer to the colorpicker
+    ColorPicker* colorPicker() { return mColorPicker; }
 
 signals:
 
@@ -113,14 +115,14 @@ private:
     /// stores last value for the color
     QColor mColor;
 
+    /// vector for multi color pickers.
+    std::vector<QColor> mScheme;
+
     /// best possible type of color picker allowed by selected lights
     EColorPickerType mBestType;
 
     /// main feature of widget, this allows the user to select colors for the LEDs
-    SingleColorPicker* mColorPicker;
-
-    /// routine widget for changing how the lights use the single color
-    RoutineContainer* mRoutineWidget;
+    ColorPicker* mColorPicker;
 };
 
 #endif // SINGLECOLORPAGE_H

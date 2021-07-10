@@ -129,6 +129,16 @@ public:
     /// getter for all effects stored on the nanoleaf
     const cor::Dictionary<nano::LeafEffect> effects() const noexcept { return mEffects; }
 
+    /// getter for all palettes that back the effects. the Palettes are given random UUIDs each time
+    /// they are generated.
+    std::vector<cor::Palette> effectPalettes() const noexcept {
+        std::vector<cor::Palette> palettes;
+        for (const auto& effect : mEffects.items()) {
+            palettes.push_back(effect.palette());
+        }
+        return palettes;
+    }
+
     /// setter for all effects stored on the nanoleaf
     void effects(const cor::Dictionary<nano::LeafEffect>& effects) { mEffects = effects; }
 

@@ -63,13 +63,15 @@ void ListWidget::resizeWidgets() {
 
     auto widgetHeight = mWidgetHeight;
     if (!mUseWidgetHeight) {
-        if (mListLayout.type() == cor::EListType::linear) {
+        if (mListLayout.type() == cor::EListType::oneColumn) {
             widgetHeight = parentWidget()->height() / 8;
-        } else if (mListLayout.type() == cor::EListType::grid) {
+        } else if (mListLayout.type() == cor::EListType::twoColumns) {
+            widgetHeight = parentWidget()->height() / 6;
+        } else if (mListLayout.type() == cor::EListType::threeColumns) {
             widgetHeight = parentWidget()->height() / 6;
         }
     }
-    if (mListLayout.type() == cor::EListType::linear) {
+    if (mListLayout.type() == cor::EListType::oneColumn) {
         int maxWidth = parentWidget()->width();
         for (auto widget : mListLayout.widgets()) {
             QSize size = widget->geometry().size();
@@ -80,9 +82,22 @@ void ListWidget::resizeWidgets() {
             widget->setHidden(false);
             yPos += size.height();
         }
-    } else if (mListLayout.type() == cor::EListType::grid) {
+    } else if (mListLayout.type() == cor::EListType::twoColumns) {
         for (auto widget : mListLayout.widgets()) {
             int maxWidth = width() / 2;
+            QPoint position = mListLayout.widgetPosition(widget);
+            widget->setGeometry(position.x() * maxWidth,
+                                position.y() * widgetHeight,
+                                maxWidth,
+                                widgetHeight);
+            widget->setHidden(false);
+            if (position.x() == 0) {
+                yPos += widget->height();
+            }
+        }
+    } else if (mListLayout.type() == cor::EListType::threeColumns) {
+        for (auto widget : mListLayout.widgets()) {
+            int maxWidth = width() / 3;
             QPoint position = mListLayout.widgetPosition(widget);
             widget->setGeometry(position.x() * maxWidth,
                                 position.y() * widgetHeight,
@@ -121,10 +136,12 @@ void ListWidget::resize() {
     auto width = std::max(contentSpace, 10);
     mWidget->setFixedWidth(width);
     for (auto widget : mListLayout.widgets()) {
-        if (mListLayout.type() == cor::EListType::linear) {
+        if (mListLayout.type() == cor::EListType::oneColumn) {
             widget->setFixedWidth(mWidget->width());
-        } else if (mListLayout.type() == cor::EListType::grid) {
+        } else if (mListLayout.type() == cor::EListType::twoColumns) {
             widget->setFixedWidth(mWidget->width() / 2);
+        } else if (mListLayout.type() == cor::EListType::threeColumns) {
+            widget->setFixedWidth(mWidget->width() / 3);
         }
     }
 }

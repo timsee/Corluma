@@ -1,6 +1,7 @@
 #ifndef RGBSLIDERS_H
 #define RGBSLIDERS_H
 
+#include <QLineEdit>
 #include <QWidget>
 
 #include "cor/widgets/slider.h"
@@ -34,6 +35,9 @@ public:
     /// getter for current color
     QColor color();
 
+    /// getter for overall "brightness" of the color.
+    std::uint32_t brightness();
+
 signals:
 
     /*!
@@ -63,6 +67,15 @@ private slots:
      */
     void blueSliderChanged(int);
 
+    /// handles when the line edit changes for red.
+    void lineRedEditChanged(QString);
+
+    /// handles when the line edit changes for green.
+    void lineGreenEditChanged(QString);
+
+    /// handles when the line edit changes for blue.
+    void lineBlueEditChanged(QString);
+
     /*!
      * \brief releasedSlider uses the QSlider inside of the LightsSlider to pick up
      *        when the slider is released. This always sets the color of the color picker.
@@ -73,6 +86,31 @@ private slots:
     void releasedSlider();
 
 private:
+    /// handle the text input for a line edit, makes sure the value is between 0 and 255.
+    int handleTextInputString(QLineEdit* lineEdit, QString input);
+
+    /*!
+     * \brief mRLabel puts that little "R" in front of the slider.
+     */
+    QLabel* mRLabel;
+    /*!
+     * \brief mGLabel puts that little "G" in front of the slider.
+     */
+    QLabel* mGLabel;
+    /*!
+     * \brief mBLabel puts that little "B" in front of the slider.
+     */
+    QLabel* mBLabel;
+
+    /// line edit for adding specific values for red.
+    QLineEdit* mRLineEdit;
+
+    /// line edit for adding specific values for green.
+    QLineEdit* mGLineEdit;
+
+    /// line edit for adding specific values for blue.
+    QLineEdit* mBLineEdit;
+
     /*!
      * \brief mRedSlider top slider. Used for choosing amount of red in color.
      */
@@ -87,19 +125,6 @@ private:
      * \brief mBlueSlider bottom slider. Used for choosing amount of blue in color.
      */
     cor::Slider* mBlueSlider;
-
-    /*!
-     * \brief mRLabel puts that little "R" in front of the slider.
-     */
-    QLabel* mRLabel;
-    /*!
-     * \brief mGLabel puts that little "G" in front of the slider.
-     */
-    QLabel* mGLabel;
-    /*!
-     * \brief mBLabel puts that little "B" in front of the slider.
-     */
-    QLabel* mBLabel;
 };
 
 #endif // RGBSLIDERS_H

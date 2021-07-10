@@ -49,31 +49,14 @@ void StateObserver::globalBrightnessChanged(std::uint32_t brightness) {
         if (mData->supportsRoutines()) {
             mTopMenu->singleColorStateWidget()->updateState(
                 mData->mainColor(),
-                mColorPage->routines()->state().routine());
+                mMainWindow->singleRoutines()->state().routine());
         } else {
             mTopMenu->singleColorStateWidget()->updateState(mData->mainColor(),
                                                             ERoutine::singleSolid);
         }
     } else if (mMainViewport->currentPage() == EPage::palettePage) {
-        mPalettePage->updateBrightness(brightness);
+        //   mPalettePage->updateBrightness(brightness);
         mTopMenu->multiColorStateWidget()->updateState(mData->multiColorScheme());
-    }
-}
-
-void StateObserver::singleLightBrightnessChanged(std::uint32_t brightness) {
-    if (mPalettePage->mode() == EGroupMode::wheel) {
-        // update the color scheme color in mData
-        auto scheme = mData->multiColorScheme();
-        auto color = scheme[mPalettePage->colorPicker()->selectedLight()];
-        color.setHsvF(color.hueF(), color.saturationF(), brightness / 100.0);
-        scheme[mPalettePage->colorPicker()->selectedLight()] = color;
-        // now that brightness is applied, treat the rest of this update as a standard scheme
-        // update.
-        updateScheme(scheme, mPalettePage->colorPicker()->selectedLight());
-        // update the states of the color picker widget as well, since this state change is coming
-        // from another widget
-        mPalettePage->updateBrightness(brightness);
-        updateTime();
     }
 }
 
@@ -92,11 +75,11 @@ void StateObserver::colorChanged(QColor color) {
     mData->isOn(true);
 
     // grab the values from the routine container
-    mSpeed = mColorPage->routines()->state().speed();
-    mRoutineParameter = mColorPage->routines()->state().param();
+    mSpeed = mMainWindow->singleRoutines()->state().speed();
+    mRoutineParameter = mMainWindow->singleRoutines()->state().param();
 
     // UI update
-    mColorPage->routines()->changeColor(color);
+    mMainWindow->singleRoutines()->changeColor(color);
 }
 
 void StateObserver::routineChanged(ERoutine, int speed, int param) {
@@ -145,18 +128,18 @@ void StateObserver::multiColorSelectionChange(std::uint32_t, const QColor& color
     // changing the selection doesnt change the light states, but it does change what displays
     // in the single light brightness widget.
     if (mMainViewport->currentPage() == EPage::palettePage) {
-        if (mPalettePage->colorPicker()->currentScheme() == EColorSchemeType::custom) {
-            mTopMenu->singleLightBrightness()->updateColor(color);
-        }
+        //        if (mColorPage->colorPicker()->currentScheme() == EColorSchemeType::custom) {
+        //            mTopMenu->singleLightBrightness()->updateColor(color);
+        //        }
     }
 }
 
-void StateObserver::updateScheme(const std::vector<QColor>& colors, std::uint32_t index) {
+void StateObserver::updateScheme(const std::vector<QColor>& colors) {
     mData->isOn(true);
     updateTime();
 
     mData->updateColorScheme(colors);
-    mTopMenu->updateScheme(colors, index);
+    mTopMenu->updateScheme(colors);
 }
 
 void StateObserver::colorSchemeTypeChanged(EColorSchemeType) {
@@ -196,29 +179,30 @@ void StateObserver::lightCountChanged() {
 
     if (mColorPage->isOpen()) {
         if (mData->empty() || !mData->supportsRoutines()) {
-            mColorPage->showRoutines(false);
+            mMainWindow->pushOutSingleRoutinePage();
             mTopMenu->closeRoutinesPage();
         } else {
             auto routineAndParam = mData->routineAndParam();
-            mColorPage->routines()->highlightRoutine(routineAndParam.first, routineAndParam.second);
-            mColorPage->routines()->changeColor(mData->mainColor());
-            mColorPage->routines()->changeProtocol(protocolType);
+            mMainWindow->singleRoutines()->highlightRoutine(routineAndParam.first,
+                                                            routineAndParam.second);
+            mMainWindow->singleRoutines()->changeColor(mData->mainColor());
+            mMainWindow->singleRoutines()->changeProtocol(protocolType);
             /// main color used on palette page for speed slider
-            mPalettePage->routines()->changeColor(mData->mainColor());
-            mPalettePage->routines()->changeProtocol(protocolType);
+            mMainWindow->multiRoutines()->changeColor(mData->mainColor());
+            mMainWindow->multiRoutines()->changeProtocol(protocolType);
         }
     }
 
     if (mPalettePage->isOpen()) {
         if (mData->empty() || !mData->supportsRoutines()) {
-            mPalettePage->setMode(EGroupMode::presets);
-            mTopMenu->highlightButton("Preset");
+            mMainWindow->pushOutMultiRoutinePage();
+            //            mTopMenu->highlightButton("Preset");
         } else {
             auto routineAndParam = mData->routineAndParam();
-            mPalettePage->routines()->highlightRoutine(routineAndParam.first,
-                                                       routineAndParam.second);
-            mPalettePage->routines()->changeColorScheme(mData->multiColorScheme());
-            mPalettePage->routines()->changeProtocol(protocolType);
+            mMainWindow->multiRoutines()->highlightRoutine(routineAndParam.first,
+                                                           routineAndParam.second);
+            mMainWindow->multiRoutines()->changeColorScheme(mData->multiColorScheme());
+            mMainWindow->multiRoutines()->changeProtocol(protocolType);
         }
     }
 }
@@ -244,12 +228,12 @@ void StateObserver::computeState() {
             cor::LightState state;
             state.isOn(mData->isOn());
             if (mData->supportsRoutines()) {
-                state.routine(mColorPage->routines()->state().routine());
+                state.routine(mMainWindow->singleRoutines()->state().routine());
             } else {
                 state.routine(ERoutine::singleSolid);
             }
 
-            if (mColorPage->pageType() == ESingleColorPickerMode::ambient) {
+            if (mColorPage->pageType() == EColorPickerMode::ambient) {
                 state.temperature(mTemperature);
                 auto color = cor::colorTemperatureToRGB(mTemperature);
                 color.setHsvF(color.hueF(), color.saturationF(), mBrightness / 100.0);
@@ -261,7 +245,7 @@ void StateObserver::computeState() {
                 state.param(mRoutineParameter);
                 state.speed(mSpeed);
             }
-            mColorPage->routines()->highlightRoutine(state.routine(), state.param());
+            mMainWindow->singleRoutines()->highlightRoutine(state.routine(), state.param());
             mData->updateState(state);
             mTopMenu->updateState(state);
             break;
@@ -270,25 +254,15 @@ void StateObserver::computeState() {
             cor::LightState state;
             state.isOn(mData->isOn());
             state.speed(mSpeed);
-            state.routine(mPalettePage->routines()->state().routine());
+            state.routine(mMainWindow->multiRoutines()->state().routine());
+            state.param(mMainWindow->multiRoutines()->state().param());
+            auto palette = mPalettePage->palette();
+            state.paletteBrightness(mTopMenu->globalBrightness()->brightness());
+            state.palette(palette);
 
-            if (mPalettePage->mode() == EGroupMode::wheel) {
-                state.param(mPalettePage->routines()->state().param());
-                auto palette = mPalettePage->palette();
-                if (mPalettePage->colorPicker()->currentScheme() != EColorSchemeType::custom) {
-                    state.paletteBrightness(mTopMenu->globalBrightness()->brightness());
-                }
-                state.palette(palette);
-            } else if (mPalettePage->mode() == EGroupMode::presets
-                       || mPalettePage->mode() == EGroupMode::routines) {
-                state.param(mPalettePage->routines()->state().param());
-                auto palette = mPalettePage->palette();
-                state.paletteBrightness(mTopMenu->globalBrightness()->brightness());
-                state.palette(palette);
-            }
-            mPalettePage->routines()->highlightRoutine(state.routine(), state.param());
+            mMainWindow->multiRoutines()->highlightRoutine(state.routine(), state.param());
             /// main color used on palette page for speed slider
-            mPalettePage->routines()->changeColor(state.palette().averageColor());
+            mMainWindow->multiRoutines()->changeColor(state.palette().averageColor());
             mData->updateState(state);
             mTopMenu->updateState(state);
             break;
@@ -301,7 +275,7 @@ void StateObserver::computeState() {
             // for all of these cases, theres no universal state for the page.
             break;
     }
-}
+} // namespace cor
 
 void StateObserver::updateTime() {
     mTimeObserver->updateTime();

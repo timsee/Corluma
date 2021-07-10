@@ -27,6 +27,7 @@ public:
         mPaletteWidget->showInSingleLine(true);
         mPaletteWidget->shouldPreferPalettesOverRoutines(true);
         mPaletteWidget->skipOffLightStates(true);
+        mPaletteWidget->shouldUseMinBrightness(true);
         mPaletteWidget->setBrightnessMode(cor::EBrightnessMode::none);
         setStyleSheet(cor::kTransparentStylesheet);
     }

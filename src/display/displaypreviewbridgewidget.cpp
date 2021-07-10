@@ -32,7 +32,6 @@ DisplayPreviewBridgeWidget::DisplayPreviewBridgeWidget(const hue::Bridge& bridge
       mMetadata{new QLabel(this)},
       mManageButton{new QPushButton("Manage", this)},
       mRowHeight{rowHeight} {
-    setStyleSheet(cor::kTransparentStylesheet);
     mNameWidget = new QLabel("<b>Name:</b> " + bridge.customName(), this);
     mNameWidget->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
@@ -41,6 +40,8 @@ DisplayPreviewBridgeWidget::DisplayPreviewBridgeWidget(const hue::Bridge& bridge
             this,
             SLOT(checkBoxClicked(ECheckboxState)));
     mCheckBox->setVisible(false);
+
+    mLights->setVisible(false);
 
     mMetadata->setWordWrap(true);
 
@@ -80,7 +81,8 @@ void DisplayPreviewBridgeWidget::handleBridgeState(EBridgeDiscoveryState state) 
     auto imageSide = std::min(mImage->width(), mImage->height());
     auto imageSize = QSize(imageSide, imageSide);
     if (state != EBridgeDiscoveryState::connected) {
-        imageSize = QSize(imageSide * 2, imageSide * 2);
+        auto newSide = std::min(int(width() * 0.6), imageSide * 2);
+        imageSize = QSize(newSide, newSide);
     }
     if (state != mState || (mBridgePixmap.size() != QSize(imageSide, imageSide))) {
         if (state == EBridgeDiscoveryState::connected) {
@@ -90,6 +92,7 @@ void DisplayPreviewBridgeWidget::handleBridgeState(EBridgeDiscoveryState state) 
                                                  Qt::KeepAspectRatio,
                                                  Qt::SmoothTransformation);
             mImage->setPixmap(mBridgePixmap);
+            mLights->setVisible(true);
             mCheckBox->setVisible(false); // NOTE: currently checkbox is always hidden
         } else if (state == EBridgeDiscoveryState::lookingForUsername) {
             mBridgePixmap = QPixmap(":images/hue_bridge_press.png");
@@ -98,12 +101,14 @@ void DisplayPreviewBridgeWidget::handleBridgeState(EBridgeDiscoveryState state) 
                                                  Qt::KeepAspectRatio,
                                                  Qt::SmoothTransformation);
             mImage->setPixmap(mBridgePixmap);
+            mLights->setVisible(false);
             mCheckBox->setVisible(false);
         } else if (state == EBridgeDiscoveryState::lookingForResponse
                    || state == EBridgeDiscoveryState::testingConnectionInfo) {
             mMovie->setScaledSize(imageSize);
             mImage->setMovie(mMovie);
             mMovie->start();
+            mLights->setVisible(false);
             mCheckBox->setVisible(false);
         }
         mState = state;
@@ -118,7 +123,7 @@ void DisplayPreviewBridgeWidget::setChecked(bool checked) {
 void DisplayPreviewBridgeWidget::handleButtonState() {
     if (mState == EBridgeDiscoveryState::connected) {
         mManageButton->setText("Manage");
-        mManageButton->setStyleSheet(cor::kStandardGreyBackground);
+        mManageButton->setStyleSheet(cor::kLighterGreyBackground);
     } else {
         mManageButton->setText("Delete");
         mManageButton->setStyleSheet(cor::kDeleteButtonBackground);

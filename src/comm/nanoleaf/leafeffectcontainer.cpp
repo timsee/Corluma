@@ -3,7 +3,7 @@ namespace nano {
 
 LeafEffectContainer::LeafEffectContainer(QWidget* parent)
     : QWidget(parent),
-      mListLayout(cor::EListType::linear) {}
+      mListLayout(cor::EListType::oneColumn) {}
 
 
 void LeafEffectContainer::showEffects(const QString& currentEffectName,
@@ -21,6 +21,7 @@ void LeafEffectContainer::showEffects(const QString& currentEffectName,
     for (const auto& effect : sortedEffects) {
         auto widget = new nano::LeafEffectWidget(effect, currentEffectName == effect.name(), this);
         connect(widget, SIGNAL(selectEffect(QString)), this, SLOT(effectSelected(QString)));
+        connect(widget, SIGNAL(savePalette(cor::Palette)), this, SLOT(paletteSaved(cor::Palette)));
         mListLayout.insertWidget(widget);
     }
 

@@ -1,9 +1,9 @@
 #ifndef COR_MOOD_H
 #define COR_MOOD_H
 
-#include "cor/objects/uuid.h"
 #include "cor/objects/groupstate.h"
 #include "cor/objects/light.h"
+#include "cor/objects/uuid.h"
 
 namespace cor {
 

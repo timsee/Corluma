@@ -31,6 +31,7 @@ namespace cor {
 
 const QColor kHighlightColor = QColor(100, 99, 99);
 const QColor kBackgroundColor = QColor(33, 32, 32);
+const QColor kLighterBackgroundColor = QColor(48, 47, 47);
 
 //-------------
 // Qt Utils

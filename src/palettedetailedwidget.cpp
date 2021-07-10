@@ -18,13 +18,16 @@ PaletteDetailedWidget::PaletteDetailedWidget(QWidget* parent)
     connect(mSyncButton, SIGNAL(clicked(bool)), this, SLOT(syncButtonPressed(bool)));
     connect(mCloseButton, SIGNAL(clicked(bool)), this, SLOT(closeButtonPressed(bool)));
     connect(mDeleteButton, SIGNAL(clicked(bool)), this, SLOT(deleteButtonPressed(bool)));
+    connect(mEditButton, SIGNAL(clicked(bool)), this, SLOT(editButtonPressed(bool)));
 }
 
-void PaletteDetailedWidget::update(const cor::Palette& palette) {
+void PaletteDetailedWidget::update(const cor::Palette& palette, bool isReserved) {
     mPalette = palette;
     mName->setText(palette.name());
     mPaletteWidget->show(palette.colors());
     mSyncWidget->changeState(ESyncState::hidden);
+    mEditButton->setVisible(!isReserved);
+    mDeleteButton->setVisible(!isReserved);
 }
 
 void PaletteDetailedWidget::paintEvent(QPaintEvent*) {
@@ -44,28 +47,31 @@ void PaletteDetailedWidget::resize() {
     auto rowHeight = height() / 9;
     auto yPos = 0;
 
+    auto xSpacing = width() * 0.1;
+    auto xSpacingTop = width() * 0.025;
+    auto ySpacing = height() * 0.05;
 
     auto syncButtonWidth = std::min(width() - rowHeight * 4, int(rowHeight * 3));
     mCloseButton->setGeometry(0, yPos, rowHeight, rowHeight);
-    mDeleteButton->setGeometry(mCloseButton->width(), yPos, rowHeight * 2, rowHeight);
-    mSyncWidget->setGeometry(width() - rowHeight * 2 - syncButtonWidth, yPos, rowHeight, rowHeight);
-    mSyncButton->setGeometry(width() - rowHeight - syncButtonWidth,
-                             yPos,
-                             syncButtonWidth,
-                             rowHeight);
-    mEditButton->setGeometry(width() - rowHeight, yPos, rowHeight, rowHeight);
+    mName->setGeometry(mCloseButton->width() + xSpacingTop,
+                       yPos,
+                       width() - mCloseButton->width() - xSpacingTop,
+                       rowHeight);
+
     yPos += mCloseButton->height();
+    mSyncWidget->setGeometry(width() - rowHeight * 2 - syncButtonWidth, yPos, rowHeight, rowHeight);
+    mSyncButton->setGeometry(width() - syncButtonWidth, yPos, syncButtonWidth, rowHeight);
+    yPos += mSyncButton->height();
 
-    mName->setGeometry(width() * 0.05, yPos, width() * 0.95, rowHeight);
-    yPos += mName->height();
-
-
-    auto xSpacing = width() * 0.1;
-    auto ySpacing = height() * 0.05;
     mPaletteWidget->setGeometry(xSpacing,
                                 yPos + ySpacing,
                                 width() - xSpacing * 2,
                                 rowHeight * 6 - ySpacing * 2);
+
+    yPos += mPaletteWidget->height() + ySpacing * 2;
+    mDeleteButton->setGeometry(0, yPos, width() / 3, rowHeight);
+    mEditButton->setGeometry(width() - rowHeight, yPos, rowHeight, rowHeight);
+
     resizeIcons();
 }
 

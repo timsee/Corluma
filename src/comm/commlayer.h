@@ -14,6 +14,7 @@
 #include "cor/objects/group.h"
 #include "cor/objects/light.h"
 #include "cor/objects/mood.h"
+#include "cor/objects/palettegroup.h"
 #include "cor/protocols.h"
 #include "data/appdata.h"
 #include "data/palettedata.h"
@@ -208,6 +209,9 @@ public:
 
     /// seconds until a group of lights timeout
     std::vector<std::uint32_t> secondsUntilTimeout(const std::vector<cor::LightID>& lights);
+
+    /// getter for all palettes stored on-device for specific lights.
+    std::vector<cor::PaletteGroup> paletteGroups();
 
     /// getter for UPnP object
     UPnPDiscovery* UPnP() { return mUPnP; }

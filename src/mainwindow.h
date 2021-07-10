@@ -32,6 +32,7 @@
 #include "mainviewport.h"
 #include "menu/lefthandmenu.h"
 #include "nowifiwidget.h"
+#include "routines/routinepage.h"
 #include "settingspage.h"
 #include "touchlistener.h"
 
@@ -86,6 +87,18 @@ public:
     /// getter for the greyout overlay
     GreyOutOverlay* greyOut() { return mGreyOut; }
 
+    /// pointer to the container used for single color routines. This is only accessible when lights
+    /// with individually addressable LEDs are selected (IE, nanoleafs or arduinos). This allows the
+    /// user to select things such as "fade in a single color, show a single color statically, blink
+    /// a single color".
+    RoutineContainer* singleRoutines() { return mSingleRoutinePage->routines(); }
+
+    /// pointer to the container used for multi color routines. This is only accessible when lights
+    /// with individually addressable LEDs are selected (IE, nanoleafs or arduinos). This allows the
+    /// user to select things such as "show a different color on each LED randomly, fade between
+    /// each color, etc.".
+    RoutineContainer* multiRoutines() { return mMultiRoutinePage->routines(); }
+
     /// true if any widget is showing above the main window (such as the SettingsPage)
     bool isAnyWidgetAbove();
 
@@ -122,6 +135,19 @@ public slots:
     /// hides the edit page
     void pushOutChooseEditPage();
 
+    /// displays the single routine page
+    void pushInSingleRoutinePage();
+
+    /// hides the single routine page
+    void pushOutSingleRoutinePage();
+
+    /// displays the multi routine page
+    void pushInMultiRoutinePage();
+
+    /// hides the multi routine page
+    void pushOutMultiRoutinePage();
+
+
     /// displays the choose group page
     void pushInChooseGroupPage(cor::EGroupAction action);
 
@@ -150,6 +176,9 @@ public slots:
 
     /// close the edit page
     void editPageClosePressed();
+
+    /// handles when any routine page is closed.
+    void routinePageClosePressed();
 
     /*!
      * \brief topMenuButtonPressed button is pressed from top menu. Gives back the key of the
@@ -383,9 +412,21 @@ private:
     /// widget for choosing a mood to either delete or edit
     ChooseMoodWidget* mChooseMoodWidget;
 
+    /// pointer to the page used for single color routines. This is only accessible when lights
+    /// with individually addressable LEDs are selected (IE, nanoleafs or arduinos). This allows the
+    /// user to select things such as "fade in a single color, show a single color statically, blink
+    /// a single color".
+    RoutinePage* mSingleRoutinePage;
+
+    /// pointer to the container used for multi color routines. This is only accessible when lights
+    /// with individually addressable LEDs are selected (IE, nanoleafs or arduinos). This allows the
+    /// user to select things such as "show a different color on each LED randomly, fade between
+    /// each color, etc.".
+    RoutinePage* mMultiRoutinePage;
+
     /*!
-     * \brief mGreyOut overlay that greys out the entire main window. Used in conjunction with the
-     * mEditPage
+     * \brief mGreyOut overlay that greys out the entire main window. Used in conjunction with
+     * the mEditPage
      */
     GreyOutOverlay* mGreyOut;
 

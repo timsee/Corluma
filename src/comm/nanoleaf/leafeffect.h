@@ -51,7 +51,9 @@ public:
 
     /// creates a palette based off of a LeafEffect given a global brightness.
     cor::Palette palette() const {
-        auto palette = cor::Palette(cor::kUnknownPaletteID, mName, mColors);
+        // UUIDs on the stored for the effects aren't unique, they seem to map to... something...
+        // but not a 1 per effect... wtf?
+        auto palette = cor::Palette(cor::UUID::makeNew(), mName, mColors);
         return palette;
     }
 
@@ -93,6 +95,9 @@ public:
     /// "simple" name for legacy plugins (such as highlight). For newer plugins, this will just
     /// return a default string.
     QString pluginSimpleName() const noexcept { return pluginUUIDToLegacyEffect(mPluginUUID); }
+
+    /// getter for UUID.
+    const cor::UUID& uniqueID() const noexcept { return mPluginUUID; }
 
     /// getter for color type (HSB)
     const QString& colorType() const noexcept { return mColorType; }
@@ -371,7 +376,7 @@ private:
     QString mPluginType;
 
     /// the UUID of the plugin being ran
-    QString mPluginUUID;
+    cor::UUID mPluginUUID;
 
     /// all the colors in the palette
     std::vector<QColor> mColors;

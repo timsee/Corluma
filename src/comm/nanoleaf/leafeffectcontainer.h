@@ -42,10 +42,16 @@ signals:
     /// emits when an effect is selected
     void selectEffect(QString);
 
+    /// emits when a palette should be saved locally
+    void savePalette(cor::Palette);
+
 private slots:
 
     /// handles when an effect is selected
     void effectSelected(QString);
+
+    /// emits when a palette should be saved.
+    void paletteSaved(cor::Palette palette) { emit savePalette(palette); }
 
 private:
     /// layout for widget

@@ -23,7 +23,7 @@ public:
     /// constructor
     explicit MenuGroupStateContainer(QWidget* parent, bool allowInteraction)
         : QWidget(parent),
-          mLayout(cor::EListType::linear),
+          mLayout(cor::EListType::oneColumn),
           mAllowInteraction{allowInteraction},
           mDisplayState{true} {
         QScroller::grabGesture(this, QScroller::LeftMouseButtonGesture);

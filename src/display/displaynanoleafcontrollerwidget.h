@@ -38,7 +38,9 @@
 class DisplayNanoleafControllerWidget : public QWidget {
     Q_OBJECT
 public:
-    explicit DisplayNanoleafControllerWidget(QWidget* parent, CommLayer* comm)
+    explicit DisplayNanoleafControllerWidget(QWidget* parent,
+                                             PaletteData* palettes,
+                                             CommLayer* comm)
         : QWidget(parent),
           mComm{comm},
           mPanelImage{new nano::LeafPanelImage(this)},
@@ -57,7 +59,7 @@ public:
           mSchedulesWidget{new DisplayNanoleafSchedulesWidget(this)},
           mGreyout{new GreyOutOverlay(true, parentWidget()->parentWidget())},
           mEffect{new nano::LeafEffectWidget({}, false, this)},
-          mEffectsPage{new nano::LeafEffectPage(parentWidget()->parentWidget())},
+          mEffectsPage{new nano::LeafEffectPage(palettes, parentWidget()->parentWidget())},
           mSpeedWidget{new SpeedWidget(parentWidget()->parentWidget())},
           mChangeNameInput{new cor::TextInputWidget(parentWidget()->parentWidget())},
           mRotateLightWidget{new RotateLightWidget(parentWidget()->parentWidget())},
@@ -84,6 +86,7 @@ public:
         mDeleteButton->setStyleSheet(cor::kDeleteButtonBackground);
 
         mEffect->displayCheckbox(false);
+        mEffect->displaySaveLocally(false);
 
         mDisplayLights->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
 

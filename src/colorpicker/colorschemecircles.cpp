@@ -165,14 +165,12 @@ ColorSchemeCircles::ColorSchemeCircles(std::size_t count, ColorWheel* wheel, QWi
 void ColorSchemeCircles::updateColorScheme(const std::vector<QColor>& colorScheme,
                                            bool shouldRecomputeLocations) {
     mCount = colorScheme.size();
-
     std::size_t numberOfSelectedDevices;
     if (colorScheme.size() >= mCircles.size()) {
         numberOfSelectedDevices = mCircles.size();
     } else {
         numberOfSelectedDevices = std::uint32_t(colorScheme.size());
     }
-
     for (std::size_t i = 0; i < numberOfSelectedDevices; ++i) {
         // get color from scheme
         const auto& schemeColor = colorScheme[i];
@@ -187,6 +185,7 @@ void ColorSchemeCircles::updateColorScheme(const std::vector<QColor>& colorSchem
     for (std::size_t i = numberOfSelectedDevices; i < mCircles.size(); ++i) {
         mCircles[i].shouldShow = false;
     }
+
     update();
 }
 

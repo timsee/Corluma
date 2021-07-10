@@ -13,10 +13,7 @@ ColorPage::ColorPage(QWidget* parent)
     : QWidget(parent),
       mColor{0, 255, 0},
       mBestType{EColorPickerType::color},
-      mColorPicker{new SingleColorPicker(this)},
-      mRoutineWidget{new RoutineContainer(this, ERoutineGroup::single)} {
-    showRoutines(false);
-
+      mColorPicker{new ColorPicker(this)} {
     connect(mColorPicker, SIGNAL(colorUpdate(QColor)), this, SLOT(colorChanged(QColor)));
     connect(mColorPicker,
             SIGNAL(ambientUpdate(std::uint32_t, std::uint32_t)),
@@ -40,18 +37,17 @@ void ColorPage::ambientUpdateReceived(std::uint32_t newAmbientValue, std::uint32
     emit ambientUpdate(newAmbientValue, newBrightness);
 }
 
-void ColorPage::showRoutines(bool shouldShow) {
-    mRoutineWidget->setVisible(shouldShow);
-}
-
 void ColorPage::update(const QColor& color,
+                       const std::vector<QColor>& colorScheme,
                        std::uint32_t brightness,
                        std::size_t lightCount,
                        EColorPickerType bestType) {
     mColor = color;
+    mScheme = colorScheme;
     mBestType = bestType;
     mColorPicker->updateBrightness(brightness);
-    mRoutineWidget->changeColor(color);
+    mColorPicker->updateColorScheme(mScheme);
+    mColorPicker->updateColorCount(lightCount);
     if (lightCount == 0) {
         mColorPicker->enable(false, mBestType);
     } else {
@@ -66,5 +62,4 @@ void ColorPage::resizeEvent(QResizeEvent*) {
 
     auto rect = QRect(xSpacer, ySpacer, width() - xSpacer * 2, height() - ySpacer * 2);
     mColorPicker->setGeometry(rect);
-    mRoutineWidget->setGeometry(rect);
 }

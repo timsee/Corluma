@@ -96,3 +96,20 @@ bool LoadingScreen::verifyIfEnoughLightsConnected() {
 
     return hueIsReady && arduCorIsReady && nanoleafIsReady;
 }
+
+
+QPixmap LoadingScreen::splashScreenPixmap(const QSize& size) {
+#ifdef MOBILE_BUILD
+    QPixmap splashScreen(":images/splash_screen.png");
+    // TODO: if the aspect ratio is wrong, make the image overly large
+    splashScreen = splashScreen.scaled(size.width(),
+                                       size.height(),
+                                       Qt::IgnoreAspectRatio,
+                                       Qt::SmoothTransformation);
+#else
+    QPixmap splashScreen(":images/desktop_splash_screen.png");
+    auto side = std::min(size.width(), size.height()) / 2;
+    splashScreen = splashScreen.scaled(side, side, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+#endif
+    return splashScreen;
+}

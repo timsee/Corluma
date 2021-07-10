@@ -32,6 +32,11 @@ public:
                 this,
                 SLOT(effectSelected(QString)));
 
+        connect(mEffectContainer,
+                SIGNAL(savePalette(cor::Palette)),
+                this,
+                SLOT(paletteSaved(cor::Palette)));
+
         mScrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         QScroller::grabGesture(mScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
         mScrollArea->setWidget(mEffectContainer);
@@ -77,10 +82,16 @@ signals:
     /// emits when an effect is selected.
     void selectEffect(QString);
 
+    /// emits when a palette should be saved.
+    void savePalette(cor::Palette);
+
 private slots:
 
     /// handles when an effect is selected.
     void effectSelected(QString name) { emit selectEffect(name); }
+
+    /// handles when a palette should be saved.
+    void paletteSaved(cor::Palette palette) { emit savePalette(palette); }
 
 private:
     /// scroll area for showing the MenuLightContainer

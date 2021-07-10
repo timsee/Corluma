@@ -22,9 +22,9 @@ MainViewport::MainViewport(MainWindow* parent,
       mAppData{appData},
       mAppSettings{settings},
       mMainWindow{parent},
-      mLightsPage{new LightsPage(parent, comm, data, settings)},
+      mLightsPage{new LightsPage(parent, comm, appData->palettes(), data, settings)},
       mColorPage{new ColorPage(parent)},
-      mPalettePage{new PalettePage(parent, palettes)},
+      mPalettePage{new PalettePage(parent, comm, palettes)},
       mMoodPage{new MoodPage(parent, appData, comm)},
       mTimeoutPage{new TimeoutPage(parent, comm, data, dataSyncTimeout)},
       mSettingsPage{new SettingsPage(parent, mAppData, mComm, mAppSettings)} {
@@ -178,6 +178,7 @@ void MainViewport::showMainPage(EPage page, bool skipTransition) {
 
     if (page == EPage::colorPage) {
         mColorPage->update(mData->mainColor(),
+                           mData->multiColorScheme(),
                            mData->brightness(),
                            mData->lights().size(),
                            mComm->bestColorPickerType(mData->lights()));

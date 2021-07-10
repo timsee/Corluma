@@ -25,7 +25,10 @@
 class ControllerWidget : public QWidget, public cor::Page {
     Q_OBJECT
 public:
-    explicit ControllerWidget(QWidget* parent, CommLayer* comm, cor::LightList* selectedLights);
+    explicit ControllerWidget(QWidget* parent,
+                              PaletteData* palettes,
+                              CommLayer* comm,
+                              cor::LightList* selectedLights);
 
     /// getter for nanoleaf widget
     DisplayNanoleafControllerWidget* nanoleafWidget() { return mNanoleafWidget; }

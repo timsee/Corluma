@@ -7,7 +7,7 @@
  */
 
 #include <QWidget>
-#include "colorpicker/singlecolorpicker.h"
+#include "colorpicker/colorpicker.h"
 #include "cor/objects/lightstate.h"
 #include "data/palettedata.h"
 #include "floatinglayout.h"
@@ -84,7 +84,7 @@ private:
     void fixButtonHighlight();
 
     /// color picker for choosing colors
-    SingleColorPicker* mColorPicker;
+    ColorPicker* mColorPicker;
 
     /// palette scroll area for choosing palettes
     PaletteScrollArea* mPaletteScrollArea;

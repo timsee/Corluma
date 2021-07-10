@@ -25,6 +25,7 @@ class LightsPage : public QWidget, public cor::Page {
 public:
     explicit LightsPage(QWidget* parent,
                         CommLayer* comm,
+                        PaletteData* palettes,
                         cor::LightList* lights,
                         AppSettings* appSettings);
 

@@ -59,6 +59,7 @@ void MenuLightContainer::moveLightWidgets(QSize size, QPoint offset) {
                                                actualSize.width(),
                                                actualSize.height());
     }
+    setFixedHeight(mRowHeight * mLightLayout.widgets().size());
 }
 
 std::vector<cor::LightID> MenuLightContainer::highlightedLights() {

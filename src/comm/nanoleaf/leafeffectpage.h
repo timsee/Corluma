@@ -29,8 +29,9 @@ namespace nano {
 class LeafEffectPage : public QWidget, public cor::Page {
     Q_OBJECT
 public:
-    explicit LeafEffectPage(QWidget* parent)
+    explicit LeafEffectPage(PaletteData* paletteData, QWidget* parent)
         : QWidget(parent),
+          mPalettes{paletteData},
           mBackButton(new QPushButton("<", this)),
           mHeader(new QLabel(this)),
           mMetadata{new QLabel(this)},
@@ -49,12 +50,21 @@ public:
         connect(mSoundButton, SIGNAL(clicked(bool)), this, SLOT(soundButtonPressed(bool)));
 
         mMetadata->setVisible(false);
+
+        connect(mStandardEffects,
+                SIGNAL(savePalette(cor::Palette)),
+                this,
+                SLOT(paletteSaved(cor::Palette)));
         connect(mStandardEffects,
                 SIGNAL(selectEffect(QString)),
                 this,
                 SLOT(effectSelected(QString)));
 
         connect(mSoundEffects, SIGNAL(selectEffect(QString)), this, SLOT(effectSelected(QString)));
+        connect(mSoundEffects,
+                SIGNAL(savePalette(cor::Palette)),
+                this,
+                SLOT(paletteSaved(cor::Palette)));
 
         mSoundEffects->setVisible(false);
         highlightButtons();
@@ -159,6 +169,9 @@ private slots:
     /// handles when an effect is selected, tells the nanoleaf to use this effect.
     void effectSelected(QString name) { emit selectEffect(mLeaf.serialNumber(), name); }
 
+    /// emits when a palette should be saved.
+    void paletteSaved(cor::Palette palette) { emit savePalette(palette); }
+
     /// handles when a standard button is pressed.
     void standardButtonPressed(bool) {
         mIsSoundControlled = false;
@@ -177,6 +190,18 @@ private slots:
         mSoundEffects->setVisible(true);
         mStandardEffects->setVisible(false);
         resize();
+    }
+
+    /// saves the palette to the app data. If it is unscuessful, a message pops up.
+    void savePalette(cor::Palette palette) {
+        auto result = mPalettes->addPalette(palette);
+        if (!result) {
+            QMessageBox message;
+            message.setText("Could not save palette.");
+            message.exec();
+        } else {
+            qDebug() << "INFO: Saved this palette to memory: " << palette;
+        }
     }
 
 protected:
@@ -205,6 +230,8 @@ private:
         }
     }
 
+    /// app data for palettes.
+    PaletteData* mPalettes;
 
     /// the current nanoleaf
     nano::LeafMetadata mLeaf;

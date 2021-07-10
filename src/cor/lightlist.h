@@ -10,6 +10,7 @@
 #include "cor/objects/mood.h"
 #include "cor/objects/palette.h"
 #include "cor/protocols.h"
+#include "data/palettedata.h"
 
 namespace cor {
 
@@ -230,6 +231,9 @@ private:
      *       size 1 in preparation.
      */
     std::vector<cor::Light> mLights;
+
+    /// class used to verify if palettes are reserved or not.
+    PaletteData mPalettes;
 };
 
 } // namespace cor

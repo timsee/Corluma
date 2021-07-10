@@ -43,13 +43,13 @@ void StoredPaletteWidget::resize() {
     auto xSpacer = width() / 15;
     auto ySpacer = height() / 15;
 
-    mLabel->setGeometry(xSpacer, yPos, width() - xSpacer * 2, rowHeight);
+    mLabel->setGeometry(xSpacer, yPos, width() - xSpacer * 2, rowHeight * 1.75);
     yPos += mLabel->height();
 
     mLightVector->setGeometry(xSpacer,
                               yPos + ySpacer,
                               width() - xSpacer * 2,
-                              (rowHeight * 3) - ySpacer * 2);
+                              (rowHeight * 2.25) - ySpacer * 2);
     // yPos += mLightVector->height();
 
 

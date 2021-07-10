@@ -3,6 +3,7 @@
 
 #include <QLabel>
 #include <QQuickWidget>
+#include <QSplashScreen>
 #include <QWidget>
 #include "appsettings.h"
 #include "comm/commlayer.h"
@@ -27,6 +28,12 @@ public:
 
     /// cancel the timer of the page that updates the UI.
     void cancelTimer() { mUpdateTimer->stop(); }
+
+    /// method for generating the initial splash screen for the app. This is different from the
+    /// loading screen. A splash screen is always static, and loads before the GUI  has initialized.
+    /// The LoadingScreen loads after the GUI has initialized, but before the rest of the app has
+    /// loaded.
+    static QPixmap splashScreenPixmap(const QSize& screenSize);
 
 signals:
     /// signals when the loading screen has completed loading and is ready to close.

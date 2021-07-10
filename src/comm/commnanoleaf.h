@@ -12,6 +12,7 @@
 #include "comm/nanoleaf/leafschedule.h"
 #include "comm/upnpdiscovery.h"
 #include "commtype.h"
+#include "cor/objects/palettegroup.h"
 #include "data/palettedata.h"
 
 /*!
@@ -29,7 +30,7 @@ class CommNanoleaf : public CommType {
     Q_OBJECT
 public:
     /// constructor
-    CommNanoleaf(PaletteData* palettes);
+    CommNanoleaf();
 
     /// destructor
     ~CommNanoleaf() = default;
@@ -126,6 +127,9 @@ public:
     /// returns the timeout schedule, if one exists. The second flag is true if it does exist and
     /// false if it does not.
     std::pair<nano::LeafSchedule, bool> timeoutSchedule(const cor::LightID& uniqueID);
+
+    /// getter for the palettes stored on-device for each of the nanoleafs.
+    std::vector<cor::PaletteGroup> palettesByLight();
 
 private slots:
     /*!
@@ -232,9 +236,6 @@ private:
 
     /// pointer to the UPnPDiscovery object.
     UPnPDiscovery* mUPnP;
-
-    /// pointer to global palette data
-    PaletteData* mPalettes;
 
     /// handles converting packets from Json from nanolefs to Corluma data types and vice versa
     nano::LeafPacketParser mPacketParser;

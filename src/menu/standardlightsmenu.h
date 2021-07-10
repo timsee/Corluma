@@ -144,6 +144,9 @@ private:
     /// queries the light states from the commlayer and updates the palettewidget for each group.
     void updateLightStates();
 
+    /// handle the outline of the widget.
+    void handleOutline(int height);
+
     /// counts the number of selected lights and the number of reachable lights for a vector of
     /// groups
     std::unordered_map<cor::UUID, std::pair<std::uint32_t, std::uint32_t>>
@@ -205,6 +208,10 @@ private:
 
     /// stores the offset of the widget
     int mPositionY;
+
+    /// tracks the last light count for the case when there are no groups, to handle an edge case
+    /// with its outline.
+    std::uint32_t mLastLightCountForNoGroups;
 
     /// stores the selected lights for displaying highlights properly
     std::vector<cor::LightID> mSelectedLights;

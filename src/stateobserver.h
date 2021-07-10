@@ -54,9 +54,6 @@ public slots:
     /// on/off changed from GlobalBrightnessWidget
     void isOnChanged(bool);
 
-    /// brightness changed from SingleLightBrightnessWidget
-    void singleLightBrightnessChanged(std::uint32_t);
-
     /// ambient color changed from color page
     void ambientColorChanged(std::uint32_t, std::uint32_t);
 
@@ -85,7 +82,7 @@ public slots:
      * \brief updateScheme update the color scheme chosen by the app
      * \param colors the colors to use in the new color scheme
      */
-    void updateScheme(const std::vector<QColor>& colors, std::uint32_t);
+    void updateScheme(const std::vector<QColor>& colors);
 
     /// the selection for the multi color picker changed
     void multiColorSelectionChange(std::uint32_t index, const QColor& color);

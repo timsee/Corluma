@@ -27,7 +27,7 @@ public:
     explicit PaletteDetailedWidget(QWidget* parent);
 
     /// update the palette in the widget
-    void update(const cor::Palette& palette);
+    void update(const cor::Palette& palette, bool isReserved);
 
     /// pushes in the widget
     void pushIn();
@@ -57,6 +57,9 @@ signals:
     /// emits when a palette should be deleted.
     void deletePalette(cor::Palette);
 
+    /// emits when a palette should be edited.
+    void editPalette(cor::Palette);
+
 protected:
     /*!
      * \brief paintEvent used to draw the background of the widget.
@@ -85,6 +88,17 @@ private slots:
         if (reply == QMessageBox::Yes) {
             // signal to remove from app
             emit deletePalette(mPalette);
+        }
+    }
+
+    /// handles when the edit button is clicked.
+    void editButtonPressed(bool) {
+        QMessageBox::StandardButton reply;
+        QString text = "Edit " + mPalette.name() + "?";
+
+        reply = QMessageBox::question(this, "Edit?", text, QMessageBox::Yes | QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+            emit editPalette(mPalette);
         }
     }
 

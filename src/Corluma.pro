@@ -14,7 +14,7 @@ linux:!android {
     TARGET = corluma
 }
 TEMPLATE = app
-VERSION = 0.22.00
+VERSION = 0.22.02
 
 #----------
 # Build flags
@@ -212,6 +212,7 @@ ICON = images/icon.icns
 #----------
 
 SOURCES += main.cpp \
+    colorpicker/colorpicker.cpp \
     comm/arducor/arducordiscovery.cpp \
     comm/arducor/arducorpacketparser.cpp \
     comm/arducor/controller.cpp \
@@ -232,7 +233,6 @@ SOURCES += main.cpp \
     comm/nanoleaf/leafmetadata.cpp \
     comm/nanoleaf/leafpanelimage.cpp \
     comm/upnpdiscovery.cpp \
-    colorpicker/colorpicker.cpp \
     colorpicker/rgbsliders.cpp \
     colorpicker/tempbrightsliders.cpp \
     colorpicker/colorschemecircles.cpp \
@@ -241,8 +241,6 @@ SOURCES += main.cpp \
     colorpicker/colorschemebutton.cpp \
     colorpicker/hsvsliders.cpp \
     colorpicker/colorwheel.cpp \
-    colorpicker/singlecolorpicker.cpp \
-    colorpicker/multicolorpicker.cpp \
     colorpicker/schemegenerator.cpp \
     controllerwidget.cpp \
     cor/lightlist.cpp \
@@ -281,6 +279,7 @@ SOURCES += main.cpp \
     menu/groupstatelistmenu.cpp \
     menu/kitchentimerwidget.cpp \
     menu/lightslistmenu.cpp \
+    menu/menugenericgroupcontainer.cpp \
     menu/menugroupcontainer.cpp \
     menu/menugroupstatecontainer.cpp \
     menu/menulightcontainer.cpp \
@@ -345,6 +344,7 @@ SOURCES += main.cpp \
     touchlistener.cpp
 
 HEADERS  +=  comm/arducor/arducordiscovery.h \
+    colorpicker/colorpicker.h \
     comm/arducor/arducormetadata.h \
     comm/arducor/arducorpacketparser.h \
     comm/arducor/controller.h \
@@ -376,7 +376,6 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     comm/nanoleaf/leafprotocols.h \
     comm/nanoleaf/leafschedulewidget.h \
     comm/upnpdiscovery.h \
-    colorpicker/colorpicker.h \
     colorpicker/rgbsliders.h \
     colorpicker/tempbrightsliders.h \
     colorpicker/colorschemecircles.h \
@@ -385,14 +384,13 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     colorpicker/colorschemebutton.h \
     colorpicker/hsvsliders.h \
     colorpicker/colorwheel.h \
-    colorpicker/singlecolorpicker.h \
-    colorpicker/multicolorpicker.h \
     colorpicker/schemegenerator.h \
     connectionbutton.h \
     controllerwidget.h \
     cor/lightlist.h \
     cor/objects/groupstate.h \
     cor/objects/lightid.h \
+    cor/objects/palettegroup.h \
     cor/objects/uuid.h \
     cor/stylesheets.h \
     cor/widgets/expandingtextscrollarea.h \
@@ -461,6 +459,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     menu/lefthandmenutoplightwidget.h \
     menu/lightslistmenu.h \
     menu/lightstimeoutmenu.h \
+    menu/menugenericgroupcontainer.h \
     menu/menugroupcontainer.h \
     menu/menugroupstatecontainer.h \
     menu/menulightcontainer.h \
@@ -477,6 +476,7 @@ HEADERS  +=  comm/arducor/arducordiscovery.h \
     routines/routinecontainer.h \
     mooddetailedwidget.h \
     moodsyncwidget.h \
+    routines/routinepage.h \
     routines/routinewidget.h \
     routines/multiglimmerroutinewidget.h \
     routines/multibarsroutinewidget.h \

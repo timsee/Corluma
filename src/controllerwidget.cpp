@@ -3,14 +3,17 @@
 #include <QStyleOption>
 #include "comm/hue/bridge.h"
 
-ControllerWidget::ControllerWidget(QWidget* parent, CommLayer* comm, cor::LightList* selectedLights)
+ControllerWidget::ControllerWidget(QWidget* parent,
+                                   PaletteData* palettes,
+                                   CommLayer* comm,
+                                   cor::LightList* selectedLights)
     : QWidget(parent),
       mComm{comm},
       mSelectedLights{selectedLights},
       mRenderTimer{new QTimer(this)},
       mTopWidget{new cor::TopWidget("", ":images/arrowLeft.png", this)},
       mArduCorWidget{new DisplayArduCorControllerWidget(this, comm, selectedLights)},
-      mNanoleafWidget{new DisplayNanoleafControllerWidget(this, comm)},
+      mNanoleafWidget{new DisplayNanoleafControllerWidget(this, palettes, comm)},
       mHueBridgeWidget{new DisplayHueBridgeWidget(this, comm, selectedLights)} {
     connect(mTopWidget, SIGNAL(clicked(bool)), this, SLOT(handleBackButtonPressed(bool)));
 

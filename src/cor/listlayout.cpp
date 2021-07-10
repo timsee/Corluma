@@ -31,8 +31,10 @@ void ListLayout::clear() {
 void ListLayout::removeWidget(cor::ListItemWidget* widget) {
     mWidgetDictionary.remove(widget);
     auto iterator = std::find(mWidgets.begin(), mWidgets.end(), widget);
-    mWidgets.erase(iterator);
-    delete widget;
+    if (iterator != mWidgets.end()) {
+        mWidgets.erase(iterator);
+        delete widget;
+    }
 }
 
 void ListLayout::removeWidget(const QString& key) {
@@ -53,13 +55,17 @@ QPoint ListLayout::widgetPosition(QWidget* widget) {
         return {-1, -1};
     }
 
-    if (mType == EListType::grid) {
-        int x = index % 2; // 2 rows per column
-        int y = index / 2; // new column every other index
+    if (mType == EListType::oneColumn) {
+        int x = 0;     // 1 column per row
+        int y = index; // new row every index
         return {x, y};
-    } else if (mType == EListType::linear) {
-        int x = 0;     // 1 row per column
-        int y = index; // new column every index
+    } else if (mType == EListType::twoColumns) {
+        int x = index % 2; // 2 columns per row
+        int y = index / 2; // new row every other index
+        return {x, y};
+    } else if (mType == EListType::threeColumns) {
+        int x = index % 3; // 3 columns per row
+        int y = index / 3; // each row contains three
         return {x, y};
     }
     return {-1, -1};
@@ -88,9 +94,11 @@ std::pair<cor::ListItemWidget*, bool> ListLayout::widget(const QString& key) {
 
 QSize ListLayout::widgetSize(QSize parentSize) {
     switch (mType) {
-        case EListType::grid:
+        case EListType::threeColumns:
+            return {parentSize.width() / 3, parentSize.height()};
+        case EListType::twoColumns:
             return {parentSize.width() / 2, parentSize.height()};
-        case EListType::linear:
+        case EListType::oneColumn:
             return {parentSize.width(), parentSize.height()};
     }
     return {parentSize.height(), parentSize.height()};
@@ -121,24 +129,37 @@ void ListLayout::sortDeviceWidgets() {
 
 QSize ListLayout::overallSize() {
     int height = 0;
-    bool useHeight = true;
+    auto i = int(mWidgets.size());
+    auto prevI = -1;
     for (const auto& widget : mWidgets) {
-        if (mType == cor::EListType::grid) {
-            if (useHeight) {
-                height += widget->height();
-                useHeight = false;
-            } else {
-                useHeight = true;
+        switch (mType) {
+            case EListType::threeColumns: {
+                if (i / 3 > prevI) {
+                    prevI = i;
+                    height += widget->height();
+                }
+                break;
             }
-        } else {
-            height += widget->height();
+            case EListType::twoColumns: {
+                if (i / 2 > prevI) {
+                    prevI = i;
+                    height += widget->height();
+                }
+                break;
+            }
+            case EListType::oneColumn:
+                height += widget->height();
+                break;
         }
+        ++i;
     }
 
     int width = 0;
     if (!mWidgets.empty()) {
-        if (mType == cor::EListType::grid) {
+        if (mType == cor::EListType::twoColumns) {
             width = mWidgets[0]->width() * 2;
+        } else if (mType == cor::EListType::threeColumns) {
+            width = mWidgets[0]->width() * 3;
         } else {
             width = mWidgets[0]->width();
         }

@@ -23,10 +23,9 @@
 //#define DEBUG_LEAF_TOUCHY
 
 
-CommNanoleaf::CommNanoleaf(PaletteData* palettes)
+CommNanoleaf::CommNanoleaf()
     : CommType(ECommType::nanoleaf),
       mUPnP{nullptr},
-      mPalettes{palettes},
       mPacketParser{},
       mScheduleTimer{new QTimer(this)},
       mEffectTimer{new QTimer(this)} {
@@ -705,4 +704,12 @@ bool CommNanoleaf::deleteNanoleaf(const cor::LightID& serialNumber, const QStrin
 
     // remove from saved data
     return mDiscovery->removeNanoleaf(leafMetadata);
+}
+
+std::vector<cor::PaletteGroup> CommNanoleaf::palettesByLight() {
+    std::vector<cor::PaletteGroup> paletteGroups;
+    for (const auto& light : mDiscovery->foundLights().items()) {
+        paletteGroups.push_back(cor::PaletteGroup(light.name(), light.effectPalettes()));
+    }
+    return paletteGroups;
 }

@@ -9,8 +9,8 @@
 
 ChooseStateWidget::ChooseStateWidget(QWidget* parent, PaletteData* palettes)
     : QWidget(parent),
-      mColorPicker{new SingleColorPicker(this)},
-      mPaletteScrollArea{new PaletteScrollArea(this, palettes->palettes())},
+      mColorPicker{new ColorPicker(this)},
+      mPaletteScrollArea{new PaletteScrollArea(this, palettes->allPalettes())},
       mRoutinesWidget{new RoutineContainer(this, ERoutineGroup::all)},
       mTopFloatingLayout{new FloatingLayout(this)} {
     mTopFloatingLayout->setVisible(false);
@@ -85,9 +85,9 @@ void ChooseStateWidget::updateState(const cor::LightState& state, EProtocolType 
 
 void ChooseStateWidget::fixButtonHighlight() {
     if (mColorPicker->isVisible()) {
-        if (mColorPicker->mode() == ESingleColorPickerMode::ambient) {
+        if (mColorPicker->mode() == EColorPickerMode::ambient) {
             mTopFloatingLayout->highlightButton("Temperature");
-        } else if (mColorPicker->mode() == ESingleColorPickerMode::HSV) {
+        } else if (mColorPicker->mode() == EColorPickerMode::HSV) {
             mTopFloatingLayout->highlightButton("HSV");
         }
     }

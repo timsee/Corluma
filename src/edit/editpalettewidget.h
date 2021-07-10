@@ -3,7 +3,7 @@
 
 #include <QLineEdit>
 #include <QWidget>
-#include "colorpicker/singlecolorpicker.h"
+#include "colorpicker/colorpicker.h"
 #include "colorpicker/swatchvectorwidget.h"
 #include "cor/objects/page.h"
 #include "cor/objects/palette.h"
@@ -77,7 +77,7 @@ private:
     void changeColorCount(bool addOne);
 
     /// picker for choosing a single color
-    SingleColorPicker* mColorPicker;
+    ColorPicker* mColorPicker;
 
     /// widget that allows you to choose individual colors in the palette
     PaletteColorPicker* mPaletteColors;

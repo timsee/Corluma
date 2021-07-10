@@ -8,7 +8,6 @@
 
 #include <QGraphicsOpacityEffect>
 #include <QInputDialog>
-#include <QMessageBox>
 #include <QStyleOption>
 #include <QtCore>
 #include <QtGui>

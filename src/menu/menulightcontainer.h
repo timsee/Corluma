@@ -23,7 +23,7 @@ public:
     /// constructor
     explicit MenuLightContainer(QWidget* parent, bool allowInteraction, const QString& name)
         : QWidget(parent),
-          mLightLayout(cor::EListType::linear),
+          mLightLayout(cor::EListType::oneColumn),
           mAllowInteraction{allowInteraction},
           mDisplayState{true},
           mRowHeight{10},

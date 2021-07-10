@@ -40,6 +40,7 @@ GroupButton::GroupButton(const QString& key, const QString& text, QWidget* paren
     mPaletteWidget->skipOffLightStates(true);
     mPaletteWidget->showInSingleLine(true);
     mPaletteWidget->shouldPreferPalettesOverRoutines(true);
+    mPaletteWidget->shouldUseMinBrightness(50);
     mPaletteWidget->setBrightnessMode(cor::EBrightnessMode::average);
 
     mTitle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);

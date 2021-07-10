@@ -80,8 +80,8 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             || mNames[i] == "Group_Lights" || mNames[i] == "Group_Details"
             || mNames[i] == "Group_Edit" || mNames[i] == "Discovery"
             || mNames[i] == "Select_Devices" || mNames[i] == "HueLightSearch"
-            || mNames[i] == "New_Group" || mNames[i] == "Plus" || mNames[i] == "New_Palette"
-            || mNames[i] == "Help" || mNames[i] == "Close") {
+            || mNames[i] == "Add_New" || mNames[i] == "Plus" || mNames[i] == "Help"
+            || mNames[i] == "Close") {
             foundMatch = true;
             mButtons[i] = new QPushButton(this);
             mButtons[i]->setCheckable(true);
@@ -95,6 +95,26 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
             mButtons[i] = static_cast<QPushButton*>(lightsButton);
             Q_ASSERT(mButtons[i]);
         } else if (mNames[i] == "Preset") {
+            foundMatch = true;
+            cor::Palette palette(cor::UUID::invalidID(),
+                                 "fake_name",
+                                 {QColor(80, 0, 180),
+                                  QColor(120, 0, 255),
+                                  QColor(0, 0, 0),
+                                  QColor(25, 0, 25),
+                                  QColor(60, 60, 60),
+                                  QColor(120, 0, 255),
+                                  QColor(80, 0, 180),
+                                  QColor(40, 0, 90),
+                                  QColor(80, 0, 180)});
+
+            state.routine(ERoutine::multiFade);
+            state.palette(palette);
+            state.speed(100);
+            auto lightsButton = new cor::Button(this, state);
+            mButtons[i] = static_cast<QPushButton*>(lightsButton);
+            Q_ASSERT(mButtons[i]);
+        } else if (mNames[i] == "Multi") {
             foundMatch = true;
             cor::Palette palette(cor::UUID::invalidID(),
                                  "fake_name",
@@ -160,7 +180,7 @@ void FloatingLayout::setupButtons(const std::vector<QString>& buttons, EButtonSi
                     cor::resizeIcon(mButtons[i], ":/images/wifi.png");
                 } else if (mNames[i] == "Select_Devices") {
                     cor::resizeIcon(mButtons[i], ":/mages/wheels/color_wheel_hsv.png");
-                } else if (mNames[i] == "New_Group") {
+                } else if (mNames[i] == "Add_New") {
                     cor::resizeIcon(mButtons[i], ":/images/plusIcon.png");
                 } else if (mNames[i] == "Plus") {
                     cor::resizeIcon(mButtons[i], ":/images/plusIcon.png");
@@ -210,7 +230,7 @@ void FloatingLayout::updateColorPageButton(const QString& resource) {
 
 void FloatingLayout::updateCollectionButton(const QString& resource) {
     for (std::size_t i = 0u; i < mButtons.size(); ++i) {
-        if (mNames[i] == "New_Group") {
+        if (mNames[i] == "Add_New") {
             cor::resizeIcon(mButtons[i], resource);
         }
     }
@@ -292,7 +312,8 @@ void FloatingLayout::useDarkTheme() {
 
 
 bool FloatingLayout::isALightsButton(std::uint32_t index) {
-    return (mNames[index] == "Preset" || mNames[index] == "Routine" || mNames[index] == "Off");
+    return (mNames[index] == "Preset" || mNames[index] == "Multi" || mNames[index] == "Routine"
+            || mNames[index] == "Off");
 }
 
 QSize FloatingLayout::buttonSize() {

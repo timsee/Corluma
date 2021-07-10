@@ -11,7 +11,7 @@
 namespace cor {
 
 /// type of list
-enum class EListType { grid, linear };
+enum class EListType { oneColumn, twoColumns, threeColumns };
 
 /*!
  * \copyright
