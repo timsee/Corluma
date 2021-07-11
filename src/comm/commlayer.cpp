@@ -399,12 +399,18 @@ std::vector<std::uint32_t> CommLayer::secondsUntilTimeout(const std::vector<cor:
 
 
 std::vector<cor::PaletteGroup> CommLayer::paletteGroups() {
-    // only nanoleafs currently store palettes
-    if (mNanoleaf->isActive()) {
-        return mNanoleaf->palettesByLight();
-    } else {
-        return {};
+    std::vector<cor::PaletteGroup> retVector;
+    // shows ArduCor palettes if any ardu cor is used.
+    if (!mArduCor->discovery()->controllers().empty()) {
+        auto arduCorVector = mArduCor->palettes();
+        retVector.insert(retVector.end(), arduCorVector.begin(), arduCorVector.end());
     }
+    // nanoleafs store palettes in their effects.
+    if (!mNanoleaf->discovery()->foundLights().empty()) {
+        auto nanoleafVector = mNanoleaf->palettesByLight();
+        retVector.insert(retVector.end(), nanoleafVector.begin(), nanoleafVector.end());
+    }
+    return retVector;
 }
 
 

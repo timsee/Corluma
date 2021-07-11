@@ -8,6 +8,7 @@
 #include "comm/arducor/arducormetadata.h"
 #include "comm/arducor/crccalculator.h"
 #include "comm/commtype.h"
+#include "cor/objects/palettegroup.h"
 #include "data/palettedata.h"
 
 class CommUDP;
@@ -93,6 +94,9 @@ public:
 
     /// convert a list of names of lights into their full cor::Light representation.
     std::vector<cor::Light> lightsFromNames(const std::vector<QString>&);
+
+    /// the polettes used by ardu cor lights.
+    std::vector<cor::PaletteGroup> palettes();
 
 signals:
 
@@ -188,6 +192,9 @@ private:
 
     /// pointer to global palette data
     PaletteData* mPalettes;
+
+    /// stores all the currently known palettes.
+    cor::Dictionary<cor::Palette> mPaletteDict;
 };
 
 #endif // COMMARDUCOR_H

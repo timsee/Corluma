@@ -55,68 +55,65 @@ std::vector<ColorSelection> SchemeGenerator::colorScheme(const ColorSelection& s
                 auto firstDistanceMultiplier = 0.9;
                 auto secondDistanceMultiplier = 0.6;
                 auto thirdDistanceMultiplier = 0.3;
-                if (scheme[x].shouldShow) {
-                    if (similarCounter == 0) {
-                        // second color
-                        newAngle = angle - firstAngle;
-                        if (newAngle < 0) {
-                            newAngle += 360;
-                        }
-                        newDistance = distance * firstDistanceMultiplier;
-                    } else if (similarCounter == 1) {
-                        // third color
-                        newAngle = angle + firstAngle;
-                        if (newAngle > 359) {
-                            newAngle -= 360;
-                        }
-                        newDistance = distance * firstDistanceMultiplier;
-                    } else if (similarCounter == 2) {
-                        // third color
-                        newAngle = angle - secondAngle;
-                        if (newAngle < 0) {
-                            newAngle += 360;
-                        }
-                        newDistance = distance * secondDistanceMultiplier;
-                    } else if (similarCounter == 3) {
-                        // third color
-                        newAngle = angle + secondAngle;
-                        if (newAngle > 359) {
-                            newAngle -= 360;
-                        }
-                        newDistance = distance * secondDistanceMultiplier;
-                    } else if (similarCounter == 4) {
-                        newDistance = distance * thirdDistanceMultiplier;
+                if (similarCounter == 0) {
+                    // second color
+                    newAngle = angle - firstAngle;
+                    if (newAngle < 0) {
+                        newAngle += 360;
                     }
-                    similarCounter++;
-                    QLineF line(wheelCenter, center);
-                    line.setAngle(newAngle);
-                    line.setLength(newDistance);
-                    updateCircleCenterAndColor(scheme[x], line, wheel);
+                    newDistance = distance * firstDistanceMultiplier;
+                } else if (similarCounter == 1) {
+                    // third color
+                    newAngle = angle + firstAngle;
+                    if (newAngle > 359) {
+                        newAngle -= 360;
+                    }
+                    newDistance = distance * firstDistanceMultiplier;
+                } else if (similarCounter == 2) {
+                    // fourth color
+                    newAngle = angle - secondAngle;
+                    if (newAngle < 0) {
+                        newAngle += 360;
+                    }
+                    newDistance = distance * secondDistanceMultiplier;
+                } else if (similarCounter == 3) {
+                    // fifth color
+                    newAngle = angle + secondAngle;
+                    if (newAngle > 359) {
+                        newAngle -= 360;
+                    }
+                    newDistance = distance * secondDistanceMultiplier;
+                } else if (similarCounter == 4) {
+                    // reset color
+                    newDistance = distance * thirdDistanceMultiplier;
                 }
+                similarCounter++;
+                QLineF line(wheelCenter, center);
+                line.setAngle(newAngle);
+                line.setLength(newDistance);
+                updateCircleCenterAndColor(scheme[x], line, wheel);
             }
         } break;
         case EColorSchemeType::complement: {
             bool flipColor = true;
             for (std::size_t x = 1u; x < scheme.size(); ++x) {
-                if (scheme[x].shouldShow) {
-                    // compute new angle
-                    auto newAngle = angle;
-                    if (flipColor) {
-                        flipColor = false;
-                        newAngle = newAngle - 180;
-                        if (newAngle < 0) {
-                            newAngle += 360;
-                        }
-                    } else {
-                        flipColor = true;
+                // compute new angle
+                auto newAngle = angle;
+                if (flipColor) {
+                    flipColor = false;
+                    newAngle = newAngle - 180;
+                    if (newAngle < 0) {
+                        newAngle += 360;
                     }
-                    QLineF line(wheelCenter, center);
-                    line.setAngle(newAngle);
-
-                    line.setLength(distance * (6 - x) / 6.0);
-
-                    updateCircleCenterAndColor(scheme[x], line, wheel);
+                } else {
+                    flipColor = true;
                 }
+                QLineF line(wheelCenter, center);
+                line.setAngle(newAngle);
+
+                line.setLength(distance * (6 - x) / 6.0);
+
+                updateCircleCenterAndColor(scheme[x], line, wheel);
             }
         } break;
         case EColorSchemeType::triad: {
@@ -124,39 +121,37 @@ std::vector<ColorSelection> SchemeGenerator::colorScheme(const ColorSelection& s
             for (std::size_t x = 1u; x < scheme.size(); ++x) {
                 // compute new angle
                 auto newAngle = angle;
-                if (scheme[x].shouldShow) {
-                    if (triadCounter == 0) {
-                        // second color
-                        newAngle = angle - 120;
-                        if (newAngle < 0) {
-                            newAngle += 360;
-                        }
-                        triadCounter = 1;
-                    } else if (triadCounter == 1) {
-                        // third color
-                        newAngle = angle - 240;
-                        if (newAngle < 0) {
-                            newAngle += 360;
-                        }
-                        triadCounter = 2;
-                    } else if (triadCounter == 2) {
-                        // original color
-                        newAngle = angle;
-                        triadCounter = 0;
+                if (triadCounter == 0) {
+                    // second color
+                    newAngle = angle - 120;
+                    if (newAngle < 0) {
+                        newAngle += 360;
                     }
-                    QLineF line(wheelCenter, center);
-                    line.setAngle(newAngle);
-
-                    // compute new center
-                    auto newDistance = distance;
-                    if (x >= 3) {
-                        newDistance = newDistance * 0.66;
+                    triadCounter = 1;
+                } else if (triadCounter == 1) {
+                    // third color
+                    newAngle = angle - 240;
+                    if (newAngle < 0) {
+                        newAngle += 360;
                     }
-                    // compute new center
-                    line.setLength(newDistance);
-
-                    updateCircleCenterAndColor(scheme[x], line, wheel);
+                    triadCounter = 2;
+                } else if (triadCounter == 2) {
+                    // original color
+                    newAngle = angle;
+                    triadCounter = 0;
                 }
+                QLineF line(wheelCenter, center);
+                line.setAngle(newAngle);
+
+                // compute new center
+                auto newDistance = distance;
+                if (x >= 3) {
+                    newDistance = newDistance * 0.66;
+                }
+                // compute new center
+                line.setLength(newDistance);
+
+                updateCircleCenterAndColor(scheme[x], line, wheel);
             }
         } break;
         case EColorSchemeType::compound:
@@ -166,40 +161,38 @@ std::vector<ColorSelection> SchemeGenerator::colorScheme(const ColorSelection& s
                 auto newAngle = angle;
                 auto newDistance = distance;
 
-                if (scheme[x].shouldShow) {
-                    if (compountCounter == 0) {
-                        // second color
-                        newAngle = angle - 30;
-                        if (newAngle < 0) {
-                            newAngle += 360;
-                        }
-                    } else if (compountCounter == 1) {
-                        // third color
-                        newAngle = angle - 165;
-                        if (newAngle < 0) {
-                            newAngle += 360;
-                        }
-                    } else if (compountCounter == 2) {
-                        // third color
-                        newAngle = angle - 150;
-                        if (newAngle < 0) {
-                            newAngle += 360;
-                        }
-                    } else if (compountCounter == 3) {
-                        // third color
-                        newAngle = angle - 30;
-                        if (newAngle < 0) {
-                            newAngle += 360;
-                        }
-                        newDistance = distance / 2;
+                if (compountCounter == 0) {
+                    // second color
+                    newAngle = angle - 30;
+                    if (newAngle < 0) {
+                        newAngle += 360;
                     }
-                    compountCounter++;
-                    QLineF line(wheelCenter, center);
-                    line.setAngle(newAngle);
-                    line.setLength(newDistance);
-
-                    updateCircleCenterAndColor(scheme[x], line, wheel);
+                } else if (compountCounter == 1) {
+                    // third color
+                    newAngle = angle - 165;
+                    if (newAngle < 0) {
+                        newAngle += 360;
+                    }
+                } else if (compountCounter == 2) {
+                    // third color
+                    newAngle = angle - 150;
+                    if (newAngle < 0) {
+                        newAngle += 360;
+                    }
+                } else if (compountCounter == 3) {
+                    // third color
+                    newAngle = angle - 30;
+                    if (newAngle < 0) {
+                        newAngle += 360;
+                    }
+                    newDistance = distance / 2;
                 }
+                compountCounter++;
+                QLineF line(wheelCenter, center);
+                line.setAngle(newAngle);
+                line.setLength(newDistance);
+
+                updateCircleCenterAndColor(scheme[x], line, wheel);
             }
             break;
     }

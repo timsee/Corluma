@@ -163,15 +163,9 @@ ColorSchemeCircles::ColorSchemeCircles(std::size_t count, ColorWheel* wheel, QWi
 }
 
 void ColorSchemeCircles::updateColorScheme(const std::vector<QColor>& colorScheme,
+                                           std::uint32_t count,
                                            bool shouldRecomputeLocations) {
-    mCount = colorScheme.size();
-    std::size_t numberOfSelectedDevices;
-    if (colorScheme.size() >= mCircles.size()) {
-        numberOfSelectedDevices = mCircles.size();
-    } else {
-        numberOfSelectedDevices = std::uint32_t(colorScheme.size());
-    }
-    for (std::size_t i = 0; i < numberOfSelectedDevices; ++i) {
+    for (std::size_t i = 0; i < count; ++i) {
         // get color from scheme
         const auto& schemeColor = colorScheme[i];
         if (shouldRecomputeLocations) {
@@ -179,14 +173,16 @@ void ColorSchemeCircles::updateColorScheme(const std::vector<QColor>& colorSchem
             auto point = mWheel->findPixelByColor(schemeColor);
             mCircles[i].center = point;
         }
-        mCircles[i].shouldShow = true;
         mCircles[i].color = schemeColor;
     }
-    for (std::size_t i = numberOfSelectedDevices; i < mCircles.size(); ++i) {
-        mCircles[i].shouldShow = false;
-    }
+    updateCount(count);
 
     update();
+}
+
+void ColorSchemeCircles::changeColorSchemeType(EColorSchemeType type) {
+    mSchemeType = type;
+    updateScheme(0);
 }
 
 void ColorSchemeCircles::updateSingleColor(const QColor& color) {
@@ -199,8 +195,14 @@ void ColorSchemeCircles::updateSingleColor(const QColor& color) {
 
 void ColorSchemeCircles::updateScheme(std::size_t i) {
     if (mSchemeType != EColorSchemeType::custom) {
-        mCircles = SchemeGenerator::colorScheme(mCircles[i], mCount, mWheel, mSchemeType);
+        auto newScheme = SchemeGenerator::colorScheme(mCircles[i], mCount, mWheel, mSchemeType);
+        for (auto i = 0u; i < newScheme.size(); ++i) {
+            mCircles[i] = newScheme[i];
+        }
     }
+    updateCount(mCount);
+
+    update();
 }
 
 int ColorSchemeCircles::positionIsUnderCircle(QPointF newPos) {
@@ -210,6 +212,8 @@ int ColorSchemeCircles::positionIsUnderCircle(QPointF newPos) {
     const auto& rect = mWheel->rect();
     const auto& wheelRect = mWheel->wheelRect();
 
+    int bestGuess = -1;
+    int distance = std::numeric_limits<int>::max();
     for (int x = mCircles.size() - 1; x >= 0; --x) {
         auto center = cor::circlePointToDenormalizedPoint(mCircles[x].center, rect, wheelRect);
         auto lowX = int(center.x() - radius);
@@ -220,10 +224,40 @@ int ColorSchemeCircles::positionIsUnderCircle(QPointF newPos) {
         if (newPos.x() >= lowX && newPos.x() <= highX && newPos.y() >= lowY
             && newPos.y() <= highY) {
             return int(x);
+        } else if (mCircles[x].shouldShow) {
+            auto xDiff = 0;
+            if (xDiff < lowX) {
+                xDiff = lowX - xDiff;
+            } else if (xDiff > highX) {
+                xDiff = highX - xDiff;
+            }
+            auto yDiff = 0;
+            if (yDiff < lowY) {
+                yDiff = lowY - yDiff;
+            } else if (yDiff > highY) {
+                yDiff = highY - yDiff;
+            }
+            // the best guess is the first circle that can be moved that is shown.
+            int newDistance = yDiff + xDiff;
+            if (newDistance < distance) {
+                distance = newDistance;
+                bestGuess = x;
+            }
         }
     }
     return -1;
 }
+
+void ColorSchemeCircles::updateCount(std::uint32_t count) {
+    mCount = count;
+    for (std::size_t i = 0; i < count; ++i) {
+        mCircles[i].shouldShow = true;
+    }
+    for (std::size_t i = count; i < mCircles.size(); ++i) {
+        mCircles[i].shouldShow = false;
+    }
+}
+
 
 void ColorSchemeCircles::hideCircles() {
     for (auto&& circle : mCircles) {

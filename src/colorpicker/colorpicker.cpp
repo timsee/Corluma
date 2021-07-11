@@ -208,14 +208,15 @@ void ColorPicker::changeMode(EColorPickerMode mode) {
             mColorWheel->updateBrightness(oldBrightness);
             setBackgroundForSliders(mTempBrightSliders);
         } else if (mCurrentMode == EColorPickerMode::multi) {
-            // TODO
+            mColorSchemeCircles->updateColorScheme(mScheme, mCount, true);
             mColorWheel->changeType(EWheelType::HS);
             mColorSchemeCircles->setVisible(true);
             mColorSchemeChooser->setVisible(true);
         }
 
-
-        mSelectionCircle->hideCircles();
+        if (mCurrentMode != EColorPickerMode::multi) {
+            mSelectionCircle->hideCircles();
+        }
         resize();
         update();
     }
@@ -263,7 +264,7 @@ void ColorPicker::updateBrightness(std::uint32_t brightness) {
         && (mCurrentMode != EColorPickerMode::RGB) && mColorWheel->brightness() != brightness) {
         mColorWheel->updateBrightness(brightness);
     }
-    mSelectionCircle->hideCircles();
+    // mSelectionCircle->hideCircles();
 }
 
 void ColorPicker::updateMultiBrightness(std::uint32_t brightness) {
@@ -280,7 +281,7 @@ void ColorPicker::updateMultiBrightness(std::uint32_t brightness) {
             actualColor.setHsvF(actualColor.hueF(), actualColor.saturationF(), mBrightness / 100.0);
             mScheme[i] = actualColor;
         }
-        mColorSchemeCircles->updateColorScheme(schemeCopy, false);
+        mColorSchemeCircles->updateColorScheme(schemeCopy, mCount, false);
     }
 }
 
@@ -312,7 +313,7 @@ void ColorPicker::mouseMoveEvent(QMouseEvent* event) {
     if (mCurrentMode == EColorPickerMode::multi) {
         auto colorScheme = mColorSchemeCircles->moveStandardCircle(mCircleIndex, event->pos());
         if (!colorScheme.empty()) {
-            for (std::size_t i = 0u; i < mColorSchemeCircles->circles().size(); ++i) {
+            for (std::size_t i = 0u; i < mCount; ++i) {
                 if (mColorSchemeChooser->currentScheme() == EColorSchemeType::custom) {
                     if (i == mCircleIndex) {
                         updateSchemeColors(i, colorScheme[i]);
@@ -333,7 +334,9 @@ void ColorPicker::mouseMoveEvent(QMouseEvent* event) {
 }
 
 void ColorPicker::mouseReleaseEvent(QMouseEvent*) {
-    mSelectionCircle->hideCircles();
+    if (mCurrentMode != EColorPickerMode::multi) {
+        mSelectionCircle->hideCircles();
+    }
     update();
 }
 
@@ -368,7 +371,6 @@ void ColorPicker::slidersColorChanged(const QColor& color) {
         mRGBSliders->changeColor(color);
         emit brightnessUpdate(mRGBSliders->brightness());
     }
-    mSelectionCircle->hideCircles();
     update();
 }
 
@@ -380,7 +382,6 @@ void ColorPicker::wheelCTChanged(std::uint32_t temp, std::uint32_t bright) {
 }
 
 void ColorPicker::tempBrightSlidersChanged(std::uint32_t temperature, std::uint32_t brightness) {
-    mSelectionCircle->hideCircles();
     chooseAmbient(temperature, brightness);
     mColorWheel->updateBrightness(brightness);
     update();
@@ -409,7 +410,7 @@ void ColorPicker::updateColorScheme(const std::vector<QColor>& colorSchemes) {
             newScheme[i] = colorSchemes[i];
         }
         mScheme = newScheme;
-        mColorSchemeCircles->updateColorScheme(mScheme, true);
+        mColorSchemeCircles->updateColorScheme(mScheme, mCount, true);
     }
 }
 
@@ -420,17 +421,51 @@ void ColorPicker::changedScheme(EColorSchemeType key) {
 }
 
 void ColorPicker::updateColorCount(std::size_t count) {
-    mCount = count;
-    mColorSchemeChooser->enableButton(EColorSchemeType::custom, count > 0);
     if (count > mMaxCount) {
         count = mMaxCount;
     }
+    mCount = count;
     if (count < int(EColorSchemeType::MAX)) {
-        for (std::size_t i = 1; i <= count; ++i) {
-            mColorSchemeChooser->enableButton(EColorSchemeType(i), true);
-        }
-        for (std::size_t i = count + 1; i < std::uint32_t(EColorSchemeType::MAX); ++i) {
-            mColorSchemeChooser->enableButton(EColorSchemeType(i), false);
+        switch (count) {
+            case 0:
+                mColorSchemeChooser->enableButton(EColorSchemeType::custom, false);
+                mColorSchemeChooser->enableButton(EColorSchemeType::similar, false);
+                mColorSchemeChooser->enableButton(EColorSchemeType::complement, false);
+                mColorSchemeChooser->enableButton(EColorSchemeType::triad, false);
+                mColorSchemeChooser->enableButton(EColorSchemeType::compound, false);
+                break;
+            case 1:
+                mColorSchemeChooser->enableButton(EColorSchemeType::custom, true);
+                mColorSchemeChooser->enableButton(EColorSchemeType::similar, false);
+                mColorSchemeChooser->enableButton(EColorSchemeType::complement, false);
+                mColorSchemeChooser->enableButton(EColorSchemeType::triad, false);
+                mColorSchemeChooser->enableButton(EColorSchemeType::compound, false);
+                break;
+            case 2:
+                mColorSchemeChooser->enableButton(EColorSchemeType::custom, true);
+                mColorSchemeChooser->enableButton(EColorSchemeType::similar, true);
+                mColorSchemeChooser->enableButton(EColorSchemeType::complement, true);
+                mColorSchemeChooser->enableButton(EColorSchemeType::triad, false);
+                mColorSchemeChooser->enableButton(EColorSchemeType::compound, false);
+                break;
+            case 3:
+                mColorSchemeChooser->enableButton(EColorSchemeType::custom, true);
+                mColorSchemeChooser->enableButton(EColorSchemeType::similar, true);
+                mColorSchemeChooser->enableButton(EColorSchemeType::complement, true);
+                mColorSchemeChooser->enableButton(EColorSchemeType::triad, true);
+                mColorSchemeChooser->enableButton(EColorSchemeType::compound, false);
+                break;
+            case 4:
+            case 5:
+            case 6:
+                mColorSchemeChooser->enableButton(EColorSchemeType::custom, true);
+                mColorSchemeChooser->enableButton(EColorSchemeType::similar, true);
+                mColorSchemeChooser->enableButton(EColorSchemeType::complement, true);
+                mColorSchemeChooser->enableButton(EColorSchemeType::triad, true);
+                mColorSchemeChooser->enableButton(EColorSchemeType::compound, true);
+                break;
+            default:
+                break;
         }
     } else {
         for (std::size_t i = 1; i < int(EColorSchemeType::MAX); ++i) {
@@ -438,6 +473,7 @@ void ColorPicker::updateColorCount(std::size_t count) {
         }
     }
 
+    mColorSchemeCircles->updateCount(count);
     mColorSchemeChooser->adjustSelection();
     update();
 }

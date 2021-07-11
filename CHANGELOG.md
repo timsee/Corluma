@@ -1346,3 +1346,11 @@ _Json save data from previous versions will no longer work._
 - Added three new sub-pages to the `PalettePage`: a page for "reserved" palettes that cannot be changed, a page for "custom" palettes that the user can create, edit, and delete, and a page for "external" palettes, which are palettes stored on other devices such as Nanoleafs.
 - Moved the `RoutineWidget` into its own `RoutinePage`.
 - Redesigned the `EditPaletteWidget` and the `PaletteDetailedWidget`.
+
+### **v0.22.03**
+### Bug Fixes
+- Combined the `SingleColorPicker` and `MultiColorPicker` into a single `ColorPicker`.
+- Moved the `MultiColorPicker` from the `PalettePage` to the `ColorPage`.
+- Added three new sub-pages to the `PalettePage`: a page for "reserved" palettes that cannot be changed, a page for "custom" palettes that the user can create, edit, and delete, and a page for "external" palettes, which are palettes stored on other devices such as Nanoleafs.
+- Moved the `RoutineWidget` into its own `RoutinePage`.
+- Redesigned the `EditPaletteWidget` and the `PaletteDetailedWidget`.

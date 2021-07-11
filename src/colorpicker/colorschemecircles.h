@@ -52,7 +52,9 @@ public:
      * \param colorScheme new values for the color scheme.
      * \param shouldRecomputePosition true to adjust the actual color positions
      */
-    void updateColorScheme(const std::vector<QColor>& colorScheme, bool shouldRecomputePosition);
+    void updateColorScheme(const std::vector<QColor>& colorScheme,
+                           std::uint32_t count,
+                           bool shouldRecomputePosition);
 
     /*!
      * \brief moveStandardCircle move a standard circle to a new position
@@ -66,7 +68,10 @@ public:
     const std::vector<ColorSelection>& circles() const noexcept { return mCircles; }
 
     /// change the color scheme for the circles
-    void changeColorSchemeType(EColorSchemeType type) noexcept { mSchemeType = type; }
+    void changeColorSchemeType(EColorSchemeType type);
+
+    /// update the count of colors in scheme.
+    void updateCount(std::uint32_t count);
 
 protected:
     /// called when rendering

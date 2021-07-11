@@ -46,8 +46,8 @@ void ColorPage::update(const QColor& color,
     mScheme = colorScheme;
     mBestType = bestType;
     mColorPicker->updateBrightness(brightness);
-    mColorPicker->updateColorScheme(mScheme);
     mColorPicker->updateColorCount(lightCount);
+    mColorPicker->updateColorScheme(mScheme);
     if (lightCount == 0) {
         mColorPicker->enable(false, mBestType);
     } else {

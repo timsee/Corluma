@@ -49,6 +49,7 @@ public:
             mDescription->setVisible(true);
             mDescription->updateText(group.description());
         }
+        mLights->clear();
         mLights->addLights(group.lights());
         mMetadata->update(group, groupExistsAlready);
         resize();

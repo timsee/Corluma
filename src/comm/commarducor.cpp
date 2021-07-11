@@ -252,6 +252,12 @@ std::vector<cor::Light> CommArduCor::lightsFromNames(const std::vector<QString>&
     return retVector;
 }
 
+std::vector<cor::PaletteGroup> CommArduCor::palettes() {
+    return std::vector<cor::PaletteGroup>(
+        1,
+        cor::PaletteGroup("ArduCor", mPalettes->reservedPalettes()));
+}
+
 void CommArduCor::parsePacket(const QString& sender, const QString& packet, ECommType type) {
     // split into vector of strings
     std::vector<std::string> packetVector;

@@ -38,7 +38,6 @@ public:
                     emit paletteAdded(palette.name());
                 } else {
                     qDebug() << "INFO: insert into palette dict failed " << palette;
-                    qDebug() << mPaletteDict.items();
                 }
                 return result;
             } else {
